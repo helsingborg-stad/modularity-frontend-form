@@ -4,8 +4,102 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ce99b95927856b2f4fd112dbd515e7a",
-    "packages": [],
+    "content-hash": "eadc2af41b6cc346569c1a44907f2c84",
+    "packages": [
+        {
+            "name": "helsingborg-stad/acfservice",
+            "version": "0.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/helsingborg-stad/acfservice.git",
+                "reference": "9783f35b00f1a0621a124171be4b479e94b9d2d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/helsingborg-stad/acfservice/zipball/9783f35b00f1a0621a124171be4b479e94b9d2d8",
+                "reference": "9783f35b00f1a0621a124171be4b479e94b9d2d8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "helsingborg-stad/phpcs": "^0.3.5",
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AcfService\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thor Brink",
+                    "email": "thor.brink@helsingborg.se"
+                }
+            ],
+            "description": "Simplifies ACF integration by providing a centralized AcfService that exposes global ACF functions in a streamlined manner. Simplify your development workflow and enhance ACF integration with ease.",
+            "support": {
+                "issues": "https://github.com/helsingborg-stad/acfservice/issues",
+                "source": "https://github.com/helsingborg-stad/acfservice/tree/0.9.1"
+            },
+            "time": "2025-04-04T18:25:04+00:00"
+        },
+        {
+            "name": "helsingborg-stad/wpservice",
+            "version": "2.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/helsingborg-stad/wpservice.git",
+                "reference": "5fa494bbb8ac3a8ca8e969715772bb35424df9cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/helsingborg-stad/wpservice/zipball/5fa494bbb8ac3a8ca8e969715772bb35424df9cc",
+                "reference": "5fa494bbb8ac3a8ca8e969715772bb35424df9cc",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "helsingborg-stad/phpcs": "^0.3.5",
+                "johnpbloch/wordpress": "^6.6",
+                "php-stubs/generator": "*",
+                "php-stubs/wordpress-stubs": "^6.6",
+                "phpunit/phpunit": "^9.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WpService\\": "src/",
+                    "WpCronService\\": "src/WpCronService/",
+                    "WpService\\Generator\\": "generator/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thor Brink",
+                    "email": "thor.brink@helsingborg.se"
+                }
+            ],
+            "description": "Simplifies WordPress integration by providing a centralized WpService that exposes global WordPress functions in a streamlined manner. Simplify your development workflow and enhance WordPress integration with ease.",
+            "support": {
+                "issues": "https://github.com/helsingborg-stad/wpservice/issues",
+                "source": "https://github.com/helsingborg-stad/wpservice/tree/2.0.8"
+            },
+            "time": "2024-11-22T10:51:26+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "2bj/phanybar",

@@ -20,7 +20,10 @@
         }
     },
     "minimum-stability": "stable",
-    "require": {},
+    "require": {
+        "helsingborg-stad/wpservice": "^2.0",
+        "helsingborg-stad/acfservice": "^0.9.1"
+    },
     "require-dev": {
         "brain/monkey": "^2.6",
         "codedungeon/phpunit-result-printer": "^0.31.0",

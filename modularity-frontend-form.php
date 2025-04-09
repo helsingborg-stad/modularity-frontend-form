@@ -36,7 +36,7 @@ add_action('init', function () {
 });
 
 add_filter('/Modularity/externalViewPath', function ($arr) {
-    $arr['mod-form'] = MODULARITYFRONTENDFORM_MODULE_VIEW_PATH;
+    $arr['mod-frontend-form'] = MODULARITYFRONTENDFORM_MODULE_VIEW_PATH;
     return $arr;
 }, 10, 3);
 

@@ -2,9 +2,9 @@
 
 namespace ModularityFrontendForm\Module;
 
-class Form extends \Modularity\Module
+class FrontendForm extends \Modularity\Module
 {
-    public $slug = 'form';
+    public $slug = 'frontend-form';
     public $supports = array();
     public $blockSupports = array(
         'align' => ['full'],
@@ -14,9 +14,9 @@ class Form extends \Modularity\Module
     public function init()
     {
         //Define module
-        $this->nameSingular = __("Form", 'modularity-frontend-form');
-        $this->namePlural = __("Forms", 'modularity-frontend-form');
-        $this->description = __("Outputs a form.", 'modularity-frontend-form');
+        $this->nameSingular = __("Frontend Form", 'modularity-frontend-form');
+        $this->namePlural = __("Frontend Forms", 'modularity-frontend-form');
+        $this->description = __("Outputs a frontend form.", 'modularity-frontend-form');
     }
 
      /**

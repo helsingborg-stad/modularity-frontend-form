@@ -8,14 +8,6 @@
 
 namespace ModularityFrontendForm\Module;
 
-use ModularityFrontendForm\Module\FormStep;
-use ComponentLibrary\Init as ComponentLibraryInit;
-use Throwable;
-
-use AcfService\Contracts\EnqueueUploader;
-use AcfService\Contracts\Form;
-use AcfService\Contracts\FormHead;
-use AcfService\Contracts\GetFieldGroups;
 use AcfService\Implementations\NativeAcfService;
 
 use WpService\Contracts\WpEnqueueStyle;
@@ -35,6 +27,8 @@ use AcfService\AcfService;
 use AcfService\Contracts\AcfGetFields;
 use ModularityFrontendForm\Module\FormatSteps;
 
+use ModularityFrontendForm\Helper\CacheBust;
+
 /**
  * @property string $description
  * @property string $namePlural
@@ -47,14 +41,11 @@ class FrontendForm extends \Modularity\Module
     public $supports = [];
     public $hidden   = false;
     public $cacheTtl = 0;
+    public CacheBust $cacheBust;
 
     private $formStepQueryParam  = 'step'; // The query parameter for the form steps.
     private $formIdQueryParam    = 'formid'; // The query parameter for the form id.
     private $formTokenQueryParam = 'token';  // The query parameter for the form token.
-
-    private $formSecurity = null; // The form security service.
-
-    private $blade = null;
 
     private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta $wpService;
     private AcfService $acfService;
@@ -66,6 +57,8 @@ class FrontendForm extends \Modularity\Module
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService   = new NativeAcfService();
         $this->formatSteps  = new FormatSteps($this->acfService);
+
+        $this->cacheBust    = new CacheBust();
 
         //Manages form security
         $this->formSecurity = new FormSecurity(
@@ -160,6 +153,13 @@ class FrontendForm extends \Modularity\Module
      */
     public function script(): void
     {
+        $this->wpService->wpRegisterScript(
+            'js-init',
+            MODULARITYFRONTENDFORM_URL . '/dist/' . 
+            $this->cacheBust->name('js-init.js')
+        );
+
+        $this->wpService->wpEnqueueScript('js-init');
     }
 
     /**
@@ -193,4 +193,14 @@ class FrontendForm extends \Modularity\Module
             ]
         );
     }
+
+    /**
+     * Available "magic" methods for modules:
+     * init()            What to do on initialization
+     * data()            Use to send data to view (return array)
+     * style()           Enqueue style only when module is used on page
+     * script            Enqueue script only when module is used on page
+     * adminEnqueue()    Enqueue scripts for the module edit/add page in admin
+     * template()        Return the view template (blade) the module should use when displayed
+     */
 }

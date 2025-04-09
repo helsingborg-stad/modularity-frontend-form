@@ -12,7 +12,7 @@ class CacheBust
     public function name($name)
     {
         $jsonPath = MODULARITYFRONTENDACFFORM_PATH . apply_filters(
-            'LikePosts/Helper/CacheBust/RevManifestPath',
+            'ModularityFrontendAcfForm/Helper/CacheBust/RevManifestPath',
             'dist/manifest.json'
         );
 

@@ -23,7 +23,6 @@ define('MODULARITYFRONTENDACFFORM_URL', plugins_url('', __FILE__));
 define('MODULARITYFRONTENDACFFORM_MODULE_VIEW_PATH', MODULARITYFRONTENDACFFORM_PATH . 'source/php/Module/views');
 
 // Endpoint address
-define('OSM_ENDPOINT', 'osm/v1/');
 
 require_once MODULARITYFRONTENDACFFORM_PATH . 'Public.php';
 

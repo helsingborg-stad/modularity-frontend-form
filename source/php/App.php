@@ -1,11 +1,11 @@
 <?php
 
 
-namespace ModularityForm;
+namespace ModularityFrontendForm;
 
 /**
  * Class App
- * @package ModularityForm
+ * @package ModularityFrontendForm
  */
 class App
 {
@@ -22,8 +22,8 @@ class App
     {
         if (function_exists('modularity_register_module')) {
             modularity_register_module(
-                MODULARITYFORM_PATH . 'source/php/Module/',
-                'Form'
+                MODULARITYFRONTENDFORM_PATH . 'source/php/Module/',
+                'FrontendForm'
             );
         }
     }

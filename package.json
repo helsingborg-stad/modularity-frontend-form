@@ -1,17 +1,17 @@
 {
-    "name": "@helsingborg-stad/modularity-form",
+    "name": "@helsingborg-stad/modularity-frontend-form",
     "description": "A boilerplate repo for WordPress plugins.",
     "main": "",
     "repository": {
         "type": "git",
-        "url": "https://github.com/helsingborg-stad/modularity-form"
+        "url": "https://github.com/helsingborg-stad/modularity-frontend-form"
     },
     "author": "Niclas Norin",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/helsingborg-stad/modularity-form/issues"
+        "url": "https://github.com/helsingborg-stad/modularity-frontend-form/issues"
     },
-    "homepage": "https://github.com/helsingborg-stad/modularity-form",
+    "homepage": "https://github.com/helsingborg-stad/modularity-frontend-form",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "watch": "cross-env NODE_ENV=development webpack --watch",

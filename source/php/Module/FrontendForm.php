@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityForm\Module;
+namespace ModularityFrontendForm\Module;
 
 class Form extends \Modularity\Module
 {
@@ -14,9 +14,9 @@ class Form extends \Modularity\Module
     public function init()
     {
         //Define module
-        $this->nameSingular = __("Form", 'modularity-form');
-        $this->namePlural = __("Forms", 'modularity-form');
-        $this->description = __("Outputs a form.", 'modularity-form');
+        $this->nameSingular = __("Form", 'modularity-frontend-form');
+        $this->namePlural = __("Forms", 'modularity-frontend-form');
+        $this->description = __("Outputs a form.", 'modularity-frontend-form');
     }
 
      /**
@@ -32,7 +32,7 @@ class Form extends \Modularity\Module
 
     public function template(): string
     {
-        return "form.blade.php";
+        return "frontend-form.blade.php";
     }
 
     /**

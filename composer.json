@@ -1,6 +1,6 @@
 {
-    "name": "helsingborg-stad/modularity-form",
-    "description": "Form for Modularity.",
+    "name": "helsingborg-stad/modularity-frontend-form",
+    "description": "Frontend Form for Modularity.",
     "type": "wordpress-plugin",
     "license": "MIT",
     "scripts": {
@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "ModularityForm\\": "source/php/"
+            "ModularityFrontendForm\\": "source/php/"
         }
     },
     "minimum-stability": "stable",

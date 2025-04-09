@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendAcfForm\Helper;
+namespace ModularityForm\Helper;
 
 class CacheBust
 {
@@ -11,8 +11,8 @@ class CacheBust
      */
     public function name($name)
     {
-        $jsonPath = MODULARITYFRONTENDACFFORM_PATH . apply_filters(
-            'ModularityFrontendAcfForm/Helper/CacheBust/RevManifestPath',
+        $jsonPath = MODULARITYFORM_PATH . apply_filters(
+            'ModularityForm/Helper/CacheBust/RevManifestPath',
             'dist/manifest.json'
         );
 
@@ -20,7 +20,7 @@ class CacheBust
         if (file_exists($jsonPath)) {
             $revManifest = json_decode(file_get_contents($jsonPath), true);
         } elseif ($this->isDebug()) {
-            echo '<div style="color:red">Error: Assets not built. Go to ' . MODULARITYFRONTENDACFFORM_PATH . ' and run gulp. See ' . MODULARITYFRONTENDACFFORM_PATH . 'README.md for more info.</div>';
+            echo '<div style="color:red">Error: Assets not built. Go to ' . MODULARITYFORM_PATH . ' and run gulp. See ' . MODULARITYFORM_PATH . 'README.md for more info.</div>';
         }
 
         if (!isset($revManifest[$name])) {

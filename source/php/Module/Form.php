@@ -1,10 +1,10 @@
 <?php
 
-namespace ModularityFrontendAcfForm\Module;
+namespace ModularityForm\Module;
 
-class FrontendAcfForm extends \Modularity\Module
+class Form extends \Modularity\Module
 {
-    public $slug = 'frontend-acf-form';
+    public $slug = 'form';
     public $supports = array();
     public $blockSupports = array(
         'align' => ['full'],
@@ -14,9 +14,9 @@ class FrontendAcfForm extends \Modularity\Module
     public function init()
     {
         //Define module
-        $this->nameSingular = __("Frontend Acf Form", 'modularity-frontend-acf-form');
-        $this->namePlural = __("Frontend Acf Forms", 'modularity-frontend-acf-form');
-        $this->description = __("Outputs a map.", 'modularity-frontend-acf-form');
+        $this->nameSingular = __("Form", 'modularity-form');
+        $this->namePlural = __("Forms", 'modularity-form');
+        $this->description = __("Outputs a form.", 'modularity-form');
     }
 
      /**
@@ -32,7 +32,7 @@ class FrontendAcfForm extends \Modularity\Module
 
     public function template(): string
     {
-        return "frontend-acf-form.blade.php";
+        return "form.blade.php";
     }
 
     /**

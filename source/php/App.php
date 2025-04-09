@@ -1,7 +1,8 @@
 <?php
 
-
 namespace ModularityFrontendForm;
+
+use WpService\WpService;
 
 /**
  * Class App
@@ -9,7 +10,7 @@ namespace ModularityFrontendForm;
  */
 class App
 {
-    public function __construct()
+    public function __construct(private WpService $wpService)
     {
         add_action('plugins_loaded', array($this, 'registerModule'));
     }

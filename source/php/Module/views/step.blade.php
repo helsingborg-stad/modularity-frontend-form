@@ -1,5 +1,4 @@
 @if (!empty($step['fields']))
-@dump($step)
     @if($step['title'])
         @typography([
             'element' => 'h2',
@@ -9,6 +8,5 @@
     @endif
     @foreach($step['fields'] as $field)
         @includeIf('fields.' . $field['view'], ['field' => $field])
-        @dump($field['view'])
     @endforeach
 @endif

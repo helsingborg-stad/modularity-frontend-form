@@ -11,13 +11,11 @@ class FrontendAcfForm extends \Modularity\Module
         'mode' => false
     );
 
-
-
     public function init()
     {
         //Define module
-        $this->nameSingular = __("FrontendAcfForm", 'modularity-frontend-acf-form');
-        $this->namePlural = __("FrontendAcfForms", 'modularity-frontend-acf-form');
+        $this->nameSingular = __("Frontend Acf Form", 'modularity-frontend-acf-form');
+        $this->namePlural = __("Frontend Acf Forms", 'modularity-frontend-acf-form');
         $this->description = __("Outputs a map.", 'modularity-frontend-acf-form');
     }
 

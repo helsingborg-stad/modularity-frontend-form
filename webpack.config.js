@@ -16,6 +16,7 @@ module.exports = {
      * Add your entry files here
      */
     entry: {
+        'js-init': './source/js/init.ts'
     },
     
     /**

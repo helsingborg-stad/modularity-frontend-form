@@ -13,6 +13,8 @@
  * Domain Path:       /languages
  */
 
+use WpService\Implementations\NativeWpService;
+
  // Protect agains direct file access
 if (! defined('WPINC')) {
     die;
@@ -23,7 +25,7 @@ define('MODULARITYFRONTENDFORM_URL', plugins_url('', __FILE__));
 define('MODULARITYFRONTENDFORM_MODULE_VIEW_PATH', MODULARITYFRONTENDFORM_PATH . 'source/php/Module/views');
 
 // Endpoint address
-
+$wpService = new NativeWpService();
 require_once MODULARITYFRONTENDFORM_PATH . 'Public.php';
 
 // Register the autoloader
@@ -31,25 +33,26 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require __DIR__ . '/vendor/autoload.php';
 }
 
-add_action('init', function () {
-    load_plugin_textdomain('modularity-frontend-form', false, plugin_basename(dirname(__FILE__)) . '/languages');
+$wpService->addAction('init', function () use ($wpService) {
+    $wpService->loadPluginTextdomain('modularity-frontend-form', false, $wpService->pluginBasename(dirname(__FILE__)) . '/languages');
 });
 
-add_filter('/Modularity/externalViewPath', function ($arr) {
+$wpService->addFilter('/Modularity/externalViewPath', function ($arr) {
     $arr['mod-frontend-form'] = MODULARITYFRONTENDFORM_MODULE_VIEW_PATH;
     return $arr;
 }, 10, 3);
 
 // Acf auto import and export
-add_action('acf/init', function () {
+$wpService->addAction('acf/init', function () {
     $acfExportManager = new \AcfExportManager\AcfExportManager();
     $acfExportManager->setTextdomain('modularity-frontend-form');
     $acfExportManager->setExportFolder(MODULARITYFRONTENDFORM_PATH . 'source/php/AcfFields/');
     $acfExportManager->autoExport(array(
-
+        'mod-frontend-form' => 'group_6627a5e16d84f'
     ));
+
     $acfExportManager->import();
 });
 
 // Start application
-new ModularityFrontendForm\App();
+new ModularityFrontendForm\App($wpService);

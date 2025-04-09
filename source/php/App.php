@@ -1,11 +1,11 @@
 <?php
 
 
-namespace ModularityFrontendACFForm;
+namespace ModularityFrontendAcfForm;
 
 /**
  * Class App
- * @package ModularityFrontendACFForm
+ * @package ModularityFrontendAcfForm
  */
 class App
 {

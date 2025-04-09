@@ -52,3 +52,4 @@ add_action('acf/init', function () {
 });
 
 // Start application
+new ModularityFrontendAcfForm\App();

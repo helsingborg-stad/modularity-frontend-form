@@ -38,6 +38,9 @@
                     @element([
                         'attributeList' => [
                             'data-js-repeater-row-fields' => 'true'
+                        ],
+                        'classList' => [
+                            'mod-frontend-form__repeater-row-fields'
                         ]
                     ])
                         @foreach ($field['fields'] as $subField)
@@ -63,7 +66,7 @@
             @endelement
         @endelement
         @button([
-            'text' => 'New row [+]',
+            'text' => 'New row [+]', // TODO: Translation
             'color' => 'primary',
             'style' => 'filled',
             'attributeList' => [

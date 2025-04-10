@@ -88,7 +88,7 @@ class FormatSteps {
             'type'        => $type,
             'view'        => $type,
             'label'       => $field['label'],
-            'name'        => $field['name'],
+            'name'        => $field['key'],
             'required'    => $field['required'] ?? false,
             'description' => $field['instructions'] ?? '',
         ];
@@ -188,9 +188,11 @@ class FormatSteps {
     private function mapRepeater(array $field): array
     {
         $subfields = [];
-        foreach ($field['sub_fields'] as $subfield) {
+        $id = 'row_repeater_id_' . $field['key'];
+        foreach ($field['sub_fields'] as $index => $subfield) {
             $mappedSubfield = $this->fieldMapper($subfield);
-            $mappedSubfield['id'] = 'repeater_id';
+            $mappedSubfield['id'] = $id . '_' . $index;
+            $mappedSubfield['name'] = $mappedSubfield['name'] . '[]';
             $subfields[] = $mappedSubfield;
         }
 

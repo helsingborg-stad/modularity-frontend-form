@@ -1,0 +1,19 @@
+.mod-frontend-form__repeater-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mod-frontend-form__repeater-row {
+    display: grid;
+    gap: .5rem;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+
+    .mod-frontend-form__repeater-row-remove.c-button {
+        background-color: #f0f0f0;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+    }
+}

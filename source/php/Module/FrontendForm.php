@@ -145,6 +145,24 @@ class FrontendForm extends \Modularity\Module
     }
 
     /**
+     * Enqueues the form styles.
+     *
+     * This method enqueues the form styles.
+     *
+     * @return void
+     */
+    public function style(): void
+    {
+        $this->wpService->wpRegisterStyle(
+            'css-main',
+            MODULARITYFRONTENDFORM_URL . '/dist/' . 
+            $this->cacheBust->name('css-main.css')
+        );
+
+        $this->wpService->wpEnqueueStyle('css-main');
+    }
+
+    /**
      * Enqueues the form scripts.
      *
      * This method enqueues the form scripts.
@@ -160,17 +178,6 @@ class FrontendForm extends \Modularity\Module
         );
 
         $this->wpService->wpEnqueueScript('js-init');
-    }
-
-    /**
-     * Enqueues the form styles.
-     *
-     * This method enqueues the form styles.
-     *
-     * @return void
-     */
-    public function style(): void
-    {
     }
 
     /**

@@ -1,7 +1,10 @@
 @element([
-  'attributeList' => [
-    'data-js-frontend-form' => 'true'
-  ]
+    'classList' => [
+        'mod-frontend-form'
+    ],
+    'attributeList' => [
+        'data-js-frontend-form' => 'true'
+    ]
 ])
     @form([])
         @foreach($steps as $step)

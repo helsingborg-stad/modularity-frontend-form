@@ -10,7 +10,7 @@ class Form {
 
     private setupRepeaters() {
         this.formContainer.querySelectorAll('[data-js-form-repeater]').forEach((repeaterContainer) => {
-            RepeaterFactory.createRepeater(repeaterContainer as HTMLElement);
+            RepeaterFactory.createRepeater(repeaterContainer as HTMLElement)?.init();
         });
     }
 }

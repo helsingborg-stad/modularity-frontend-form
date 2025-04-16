@@ -28,6 +28,8 @@ use AcfService\Contracts\AcfGetFields;
 use ModularityFrontendForm\Module\FormatSteps;
 
 use ModularityFrontendForm\Helper\CacheBust;
+use WpService\Contracts\GetRestUrl;
+use WpService\Contracts\WpLocalizeScript;
 
 /**
  * @property string $description
@@ -47,7 +49,7 @@ class FrontendForm extends \Modularity\Module
     private $formIdQueryParam    = 'formid'; // The query parameter for the form id.
     private $formTokenQueryParam = 'token';  // The query parameter for the form token.
 
-    private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta $wpService;
+    private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl $wpService;
     private AcfService $acfService;
 
     private FormatSteps $formatSteps;
@@ -175,6 +177,15 @@ class FrontendForm extends \Modularity\Module
             'js-init',
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
             $this->cacheBust->name('js-init.js')
+        );
+
+        $this->wpService->wpLocalizeScript(
+            'js-init',
+            'modularityFrontendForm',
+            [
+                'lang'    => $this->getLang(),
+                'placeSearchApiUrl' => $this->wpService->getRestUrl(null, 'placesearch/v1/openstreetmap'),
+            ]
         );
 
         $this->wpService->wpEnqueueScript('js-init');

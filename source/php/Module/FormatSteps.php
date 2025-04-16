@@ -60,8 +60,8 @@ class FormatSteps {
                 return $this->mapTimePicker($field);
             case 'button_group':
                 return $this->mapButtonGroup($field);
-            case 'open_street_map':
-                return ['type' => 'null', 'view' => 'null'];
+            case 'google_map':
+                return $this->mapGoogleMap($field);
             case 'url':
                 return $this->mapUrl($field);
             case 'textarea':
@@ -92,6 +92,18 @@ class FormatSteps {
             'required'    => $field['required'] ?? false,
             'description' => $field['instructions'] ?? '',
         ];
+    }
+
+    private function mapGoogleMap(array $field): array
+    {
+        $mapped = $this->mapBasic($field, 'googleMap');
+
+        $mapped['height'] = $field['height'] ?: '400';
+        $mapped['lat'] = $field['center_lat'] ?: '59.32932';
+        $mapped['lng'] = $field['center_lng'] ?: '18.06858';
+        $mapped['zoom'] = $field['zoom'] ?: '14';
+
+        return $mapped;
     }
 
     private function mapImage(array $field): array

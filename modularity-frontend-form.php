@@ -5,7 +5,7 @@
  * Plugin URI:        https://github.com/helsingborg-stad/modularity-frontend-form
  * Description:       A plugin to create a modularity module for a form.
  * Version: 0.0.0
- * Author:            Niclas Norin
+ * Author:            Niclas Norin, Sebastian Thulin
  * Author URI:        https://github.com/helsingborg-stad
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT

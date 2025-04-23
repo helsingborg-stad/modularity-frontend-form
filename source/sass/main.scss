@@ -1,8 +1,6 @@
-// @import "~@helsingborg-stad/openstreetmap/dist/main.css";
+@import "~@helsingborg-stad/openstreetmap/dist/main.css";
 $color-primary: var(--color-primary, #ae0b05) !default;
 $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
-
-@import "../js/osm/OpenStreetMap/sass/main.scss";
 
 .mod-frontend-form form {
     display: flex;

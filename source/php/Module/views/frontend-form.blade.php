@@ -6,6 +6,9 @@
         'data-js-frontend-form' => 'true'
     ]
 ])
+
+    @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
+
     @form([])
         @foreach($steps as $index => $step)
             @include('step', ['step' => $step, 'index' => $index])

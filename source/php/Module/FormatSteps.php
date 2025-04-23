@@ -79,7 +79,7 @@ class FormatSteps {
         // TODO: Repeater
         // TODO: OSM Field
         // TODO: Location field google maps/osm?
-        echo '<pre>' . print_r( $field, true ) . '</pre>';die;
+        //echo '<pre>' . print_r( $field, true ) . '</pre>';die;
     }
 
     private function mapBasic(array $field, string $type)

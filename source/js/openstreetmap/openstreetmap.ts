@@ -22,8 +22,6 @@ class Openstreetmap {
             },
             zoom: this.zoom,
         }).create();
-
-        console.log(this.modularityFrontendForm.placeSearchApiUrl)
     
         const createMarker = new CreateMarker();
 

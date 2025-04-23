@@ -96,6 +96,7 @@ class FrontendForm extends \Modularity\Module
         $fields = (object) $this->getFields();
 
         $data['steps'] = $this->formatSteps->formatSteps($fields->formSteps ?? []);
+        $data['lang'] = $this->getLang();
 
         return $data;
     }
@@ -134,7 +135,7 @@ class FrontendForm extends \Modularity\Module
             'edit'              => $this->wpService->__('Edit', 'modularity-frontend-form'),
             'submit'            => $this->wpService->__('Submit', 'modularity-frontend-form'),
             'previous'          => $this->wpService->__('Previous', 'modularity-frontend-form'),
-            'next'              => $this->wpService->__('Save and go to next step', 'modularity-frontend-form'),
+            'next'              => $this->wpService->__('Next', 'modularity-frontend-form'),
             'of'                => $this->wpService->__('of', 'modularity-frontend-form'),
             'step'              => $this->wpService->__('Step', 'modularity-frontend-form'),
             'completed'         => $this->wpService->__('Completed', 'modularity-frontend-form'),

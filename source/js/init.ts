@@ -1,5 +1,7 @@
 import OpenstreetmapFactory from "./openstreetmap/openstreetmapFactory";
 import RepeaterFactory from "./repeater/repeaterFactory";
+import Steps from "./steps/steps";
+
 
 declare const modularityFrontendForm: ModularityFrontendForm;
 
@@ -8,8 +10,21 @@ class Form {
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
+        this.setupSteps();
         this.setupRepeaters()
         this.setupOpenstreetmap();
+    }
+
+    private setupSteps() {
+        const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
+        const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
+
+        if (!nextButton || !previousButton) {
+            console.error("Missing next or previous button");
+            return;
+        }
+
+        new Steps(this.formContainer, nextButton as HTMLButtonElement, previousButton as HTMLButtonElement).init();
     }
 
     private setupRepeaters() {

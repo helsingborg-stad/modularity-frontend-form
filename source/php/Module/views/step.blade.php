@@ -2,11 +2,12 @@
     @if (!empty($step['fields']))
         @element([
             'attributeList' => [
-                'data-js-frontend-form-step' => $index
+                'data-js-frontend-form-step' => $index,
+                'style' => $index === 0 ? '' : 'display: none;',
             ],
             'classList' => [
                 'mod-frontend-form__step',
-                $index === 0 ? 'u-display--block' : '',
+                $index === 0 ? 'is-visible' : '',
             ]
         ])
             @if($step['title'])

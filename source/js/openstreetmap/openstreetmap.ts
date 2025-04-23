@@ -36,7 +36,7 @@ class Openstreetmap {
             .addTo(this.map);
         this.search = new CreateSearch()
             .create({
-                noResultsText: this.modularityFrontendForm.lang.noResultsText ?? 'No items found.',
+                noResultsText: this.modularityFrontendForm.lang.noResultsFound ?? 'No items found.',
                 placeholder: this.modularityFrontendForm.lang.searchPlaceholder ?? 'Search location...',
             })
             .setApiUrl(this.modularityFrontendForm.placeSearchApiUrl)

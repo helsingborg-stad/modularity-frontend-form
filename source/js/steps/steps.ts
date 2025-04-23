@@ -6,14 +6,15 @@ class Steps {
     private activeStep: number = 0;
     private maxSteps: number = 0;
     private visibilityHiddenClass: string = 'u-visibility--hidden';
-    private displayNoneClass: string = 'u-display--none';
-    private displayBlockClass: string = 'u-display--block';
+    private nextButtonTextElement: HTMLElement | null = null;
 
     constructor(
         private formContainer: HTMLElement,
         private nextButton: HTMLButtonElement,
-        private previousButton: HTMLButtonElement
+        private previousButton: HTMLButtonElement,
+        private lang: ModularityFrontendFormLang
     ) {
+        this.nextButtonTextElement = this.nextButton.querySelector('.c-button__label-text');
     }
 
     public init() {
@@ -29,7 +30,7 @@ class Steps {
             this.steps[stepId] = StepFactory.createStep(stepContainer as HTMLElement, stepId);
         });
 
-        this.maxSteps = Object.keys(this.steps).length;
+        this.maxSteps = Object.keys(this.steps).length - 1;
 
         this.setupPrevious();
         this.setupNext();
@@ -38,15 +39,39 @@ class Steps {
     private setupNext() {
         this.nextButton.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            console.log('next')
+            if (this.activeStep < this.maxSteps) {
+                this.steps[this.activeStep].hide();
+                this.activeStep++;
+                this.steps[this.activeStep].show();
+            }
+
+            if (this.activeStep === this.maxSteps && this.nextButtonTextElement) {
+                this.nextButtonTextElement.innerHTML = this.lang.submit ?? 'Submit';
+            }
+
+            if (this.activeStep > 0) {
+                this.previousButton.classList.remove(this.visibilityHiddenClass);
+            }
         });
     }
 
     private setupPrevious() {
         this.previousButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('previous')
+
+            if (this.activeStep > 0) {
+                this.steps[this.activeStep].hide();
+                this.activeStep--;
+                this.steps[this.activeStep].show();
+            }
+
+            if (this.activeStep !== this.maxSteps && this.nextButtonTextElement) {
+                this.nextButtonTextElement.innerHTML = this.lang.next ?? 'Next';
+            }
+
+            if (this.activeStep === 0) {
+                this.previousButton.classList.add(this.visibilityHiddenClass);
+            }
         });
     }
 }

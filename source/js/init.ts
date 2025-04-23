@@ -24,7 +24,11 @@ class Form {
             return;
         }
 
-        new Steps(this.formContainer, nextButton as HTMLButtonElement, previousButton as HTMLButtonElement).init();
+        new Steps(
+            this.formContainer,
+            nextButton as HTMLButtonElement,
+            previousButton as HTMLButtonElement,
+            modularityFrontendForm.lang).init();
     }
 
     private setupRepeaters() {

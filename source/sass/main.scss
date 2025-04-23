@@ -16,6 +16,10 @@ $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
     padding: .25rem;
 }
 
+.mod-frontend-form__step {
+    display: none;
+}
+
 .mod-frontend-form__step-buttons {
     display: flex;
     justify-content: space-between;

@@ -4,7 +4,8 @@
             'data-js-frontend-form-step' => $index
         ],
         'classList' => [
-            $index === 0 ? '' : 'u-display--none',
+            'mod-frontend-form__step',
+            $index === 0 ? 'u-display--block' : '',
         ]
     ])
         @if($step['title'])

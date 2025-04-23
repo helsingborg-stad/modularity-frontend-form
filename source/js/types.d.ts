@@ -1,7 +1,12 @@
 type ModularityFrontendForm = {
     placeSearchApiUrl: string;
-    lang: {
-        noResultsText?: string;
-        searchPlaceholder?: string;
-    };
+    lang: ModularityFrontendFormLang;
 }
+
+type ModularityFrontendFormLang = {
+    noResultsFound?: string;
+    searchPlaceholder?: string;
+    next?: string;
+    previous?: string;
+    submit?: string;
+};

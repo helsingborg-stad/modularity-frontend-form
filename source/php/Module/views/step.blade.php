@@ -4,7 +4,7 @@
             'data-js-frontend-form-step' => $index
         ],
         'classList' => [
-            'u-display--none',
+            $index === 0 ? '' : 'u-display--none',
         ]
     ])
         @if($step['title'])
@@ -16,7 +16,6 @@
         @endif
         @foreach($step['fields'] as $field)
             @includeIf('fields.' . $field['view'], ['field' => $field])
-            @dump($field['view'])
         @endforeach
     @endelement
 @endif

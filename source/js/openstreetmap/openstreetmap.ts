@@ -1,5 +1,4 @@
-import { MarkerInterface, CreateMarker, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, Marker, MapInterface } from '@helsingborg-stad/openstreetmap';
-import { CreateSearch, PlaceObject, SearchInterface } from '../osm/OpenStreetMap/js';
+import { MarkerInterface, CreateMarker, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, Marker, MapInterface, CreateSearch, PlaceObject, SearchInterface } from '@helsingborg-stad/openstreetmap';
 
 class Openstreetmap {
     private search!: SearchInterface;
@@ -38,7 +37,10 @@ class Openstreetmap {
             .setUrl(tiles.url)
             .addTo(this.map);
         this.search = new CreateSearch()
-            .create({})
+            .create({
+                noResultsText: this.modularityFrontendForm.lang.noResultsText ?? 'No items found.',
+                placeholder: this.modularityFrontendForm.lang.searchPlaceholder ?? 'Search location...',
+            })
             .setApiUrl(this.modularityFrontendForm.placeSearchApiUrl)
             .setSearchParam('q')
             .addTo(this.map)

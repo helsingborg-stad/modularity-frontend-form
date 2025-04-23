@@ -1,4 +1,4 @@
 interface StepInterface {
-    show(): void;
-    hide(): void;
+    animateStepHelperInstance: AnimateStepHelper
+    showStepAndHidePrevious(previousStep: StepInterface): void;
 }

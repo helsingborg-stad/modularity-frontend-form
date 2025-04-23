@@ -1,8 +1,11 @@
+import AnimateStepHelper from './animation/animateStepHelper';
 import Step from './step';
 
 class StepFactory {
-    public static createStep(step: HTMLElement, index: number): Step {
-        return new Step(step, index);
+    public static createStep(formContainer: HTMLElement, step: HTMLElement, index: number): Step {
+        return new Step(
+            new AnimateStepHelper(step)
+        );
     }
 }
 

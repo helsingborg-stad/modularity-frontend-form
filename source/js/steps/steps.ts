@@ -27,7 +27,7 @@ class Steps {
             }
 
             const stepId = parseInt(id);
-            this.steps[stepId] = StepFactory.createStep(stepContainer as HTMLElement, stepId);
+            this.steps[stepId] = StepFactory.createStep(this.formContainer, stepContainer as HTMLElement, stepId);
         });
 
         this.maxSteps = Object.keys(this.steps).length - 1;
@@ -37,18 +37,17 @@ class Steps {
     }
 
     private setupNext() {
-        this.nextButton.addEventListener('click', (e) => {
+        this.nextButton.addEventListener('click', async (e) => {
             e.preventDefault();
             if (this.activeStep < this.maxSteps) {
-                this.steps[this.activeStep].hide();
                 this.activeStep++;
-                this.steps[this.activeStep].show();
+                this.steps[this.activeStep].showStepAndHidePrevious(this.steps[this.activeStep - 1]);
             }
 
             if (this.activeStep === this.maxSteps && this.nextButtonTextElement) {
                 this.nextButtonTextElement.innerHTML = this.lang.submit ?? 'Submit';
             }
-
+    
             if (this.activeStep > 0) {
                 this.previousButton.classList.remove(this.visibilityHiddenClass);
             }
@@ -56,13 +55,12 @@ class Steps {
     }
 
     private setupPrevious() {
-        this.previousButton.addEventListener('click', (e) => {
+        this.previousButton.addEventListener('click', async (e) => {
             e.preventDefault();
 
             if (this.activeStep > 0) {
-                this.steps[this.activeStep].hide();
                 this.activeStep--;
-                this.steps[this.activeStep].show();
+                this.steps[this.activeStep].showStepAndHidePrevious(this.steps[this.activeStep + 1]);
             }
 
             if (this.activeStep !== this.maxSteps && this.nextButtonTextElement) {

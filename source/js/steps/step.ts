@@ -1,15 +1,15 @@
+import AnimateStepHelper from "./animation/animateStepHelper";
+
 class Step implements StepInterface {
-    private displayBlockClass: string = 'u-display--block';
 
-    constructor(private container: HTMLElement, private index: number) {
+    constructor(public animateStepHelperInstance: AnimateStepHelperInterface) {
     }
 
-    public show(): void {
-        this.container.classList.add(this.displayBlockClass);
-    }
-
-    public hide(): void {
-        this.container.classList.remove(this.displayBlockClass);
+    public async showStepAndHidePrevious(previousStep: StepInterface): Promise<void> {
+        previousStep.animateStepHelperInstance.preHide();
+        this.animateStepHelperInstance.preShow();
+        await previousStep.animateStepHelperInstance.hide();
+        this.animateStepHelperInstance.show();
     }
 }
 

@@ -17,7 +17,15 @@ $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
 }
 
 .mod-frontend-form__step {
-    display: none;
+    opacity: 0;
+    transition: all 0.25s ease-in-out;
+    transform: translateX(1rem);
+    overflow: hidden;
+
+    &.is-visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .mod-frontend-form__step-buttons {

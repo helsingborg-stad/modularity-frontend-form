@@ -1,5 +1,7 @@
 class StepUIManager {
     private visibilityHiddenClass: string = 'u-visibility--hidden';
+    private editIconName: string = 'edit';
+    private closeIconName: string = 'close';
     private nextButtonLabelElement: HTMLElement|null;
     private maxSteps: number;
 
@@ -21,6 +23,10 @@ class StepUIManager {
         }
 
         this.prevButton.classList.toggle(this.visibilityHiddenClass, activeStep === 0);
+    }
+
+    public toggleEditButtonState(activeStep: number): void {
+
     }
 }
 

@@ -5,6 +5,10 @@ interface StepInterface {
     onEdit(callback: () => void): void;
 }
 
+interface SubmitInterface {
+    submit(): void;
+}
+
 interface StepsInterface {
     init(): void;
 }

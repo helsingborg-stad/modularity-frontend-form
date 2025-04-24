@@ -1,5 +1,9 @@
 class StepNavigator implements StepNavigatorInterface {
-    constructor(private steps: StepsObject, private activeStep: number = 0) {
+    constructor(
+        private steps: StepsObject,
+        private submit: SubmitInterface,
+        private activeStep: number = 0
+    ) {
     }
 
     public goTo(id: number): StepInterface|null {
@@ -15,6 +19,10 @@ class StepNavigator implements StepNavigatorInterface {
         if (this.activeStep < Object.keys(this.steps).length - 1) {
             this.activeStep++;
             return this.steps[this.activeStep];
+        }
+
+        if (this.activeStep === Object.keys(this.steps).length - 1) {
+            this.submit.submit();
         }
 
         return null;

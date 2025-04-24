@@ -4,6 +4,7 @@ import { getSteps } from "./steps/helper/getSteps";
 import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
 import StepUIManager from "./steps/StepUIManager";
+import Submit from "./steps/submit/submit";
 
 
 declare const modularityFrontendForm: ModularityFrontendForm;
@@ -31,8 +32,12 @@ class Form {
 
         new Steps(
             steps,
-            new StepNavigator(steps),
-            new StepUIManager(steps,
+            new StepNavigator(
+                steps,
+                new Submit(this.form)
+            ),
+            new StepUIManager(
+                steps,
                 modularityFrontendForm.lang,
                 nextButton as HTMLButtonElement,
                 previousButton as HTMLButtonElement

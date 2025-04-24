@@ -10,7 +10,7 @@ abstract class RestApiEndpoint
 {
     final public function register()
     {
-        add_action('rest_api_init', array($this, 'handleRegisterRestRoute'));
+      $this->handleRegisterRestRoute();
     }
 
     abstract public function handleRegisterRestRoute(): bool;

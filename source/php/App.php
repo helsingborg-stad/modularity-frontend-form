@@ -38,6 +38,8 @@ class App implements \Modularity\HooksRegistrar\Hookable {
                 MODULARITYFRONTENDFORM_PATH . 'source/php/Module/',
                 'FrontendForm'
             );
+        } else {
+            throw new \Exception('Modularity is not active: frontend form module cannot be registered.');
         }
     }
 

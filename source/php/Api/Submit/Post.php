@@ -21,32 +21,32 @@ class Post extends RestApiEndpoint
      */
     public function handleRegisterRestRoute(): bool
     {
-        return register_rest_route(self::NAMESPACE, self::ROUTE, array(
-            'methods'             => WP_REST_Server::CREATABLE,
-            'callback'            => array($this, 'handleRequest'),
-            'permission_callback' => array($this, 'permissionCallback'),
-            'args'                => [
-                'module-id' => [
-                    'description' => __('The id that the request originates from', 'municipio'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true
-                ],
-                'data' => [
-                    'description' => __('Description.', 'municipio'),
-                    'type'        => 'string',
-                    'required'    => false,
-                    'default'     => null
-                ],
-                'return'      => [
-                    'description' => __('Return', 'municipio'),
-                    'type'        => 'string',
-                    'enum'        => ['html', 'src', 'id'],
-                    'required'    => false,
-                    'default'     => 'html'
-                ]
-            ]
-        ));
+      return register_rest_route(self::NAMESPACE, self::ROUTE, array(
+          'methods'             => WP_REST_Server::CREATABLE,
+          'callback'            => array($this, 'handleRequest'),
+          'permission_callback' => array($this, 'permissionCallback'),
+          'args'                => [
+              'module-id' => [
+                  'description' => __('The id that the request originates from', 'municipio'),
+                  'type'        => 'integer',
+                  'format'      => 'uri',
+                  'required'    => true
+              ],
+              'data' => [
+                  'description' => __('Description.', 'municipio'),
+                  'type'        => 'string',
+                  'required'    => false,
+                  'default'     => null
+              ],
+              'return'      => [
+                  'description' => __('Return', 'municipio'),
+                  'type'        => 'string',
+                  'enum'        => ['html', 'src', 'id'],
+                  'required'    => false,
+                  'default'     => 'html'
+              ]
+          ]
+      ));
     }
 
 

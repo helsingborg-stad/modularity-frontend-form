@@ -13,6 +13,7 @@ class Post extends RestApiEndpoint
 {
     private const NAMESPACE = 'modularity-frontend-form/v1';
     private const ROUTE     = 'submit/post';
+    private const KEY       = 'submit-post';
 
     /**
      * Registers a REST route
@@ -27,7 +28,7 @@ class Post extends RestApiEndpoint
           'permission_callback' => array($this, 'permissionCallback'),
           'args'                => [
               'module-id' => [
-                  'description' => __('The id that the request originates from', 'municipio'),
+                  'description' => __('The module id that the request originates from', 'municipio'),
                   'type'        => 'integer',
                   'format'      => 'uri',
                   'required'    => true

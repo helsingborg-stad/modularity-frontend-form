@@ -8,6 +8,12 @@ class AnimateStepHelper implements AnimateStepHelperInterface {
     }
 
     public show(): void {
+        const handleTransitionEnd = (event: TransitionEvent) => {
+            this.container.removeEventListener('transitionend', handleTransitionEnd);
+            this.container.style.maxHeight = '';
+        };
+
+        this.container.addEventListener('transitionend', handleTransitionEnd, {once: true});
         this.container.style.maxHeight = this.getHeight();
         this.container.classList.add(this.isVisible);
     }

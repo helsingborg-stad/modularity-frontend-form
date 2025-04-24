@@ -27,7 +27,7 @@
                 @endif
             @endelement
             @button([
-                'icon' => 'edit',
+                'icon' => $index === 0 ? 'close' : 'edit',
                 'size' => 'md',
                 'style' => 'basic',
                 'classList' => [

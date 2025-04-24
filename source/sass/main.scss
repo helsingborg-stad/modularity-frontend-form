@@ -18,13 +18,16 @@ $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
 
 .mod-frontend-form__step {
     opacity: 0;
-    transition: all 0.25s ease-in-out;
-    transform: translateX(1rem);
+    transition: all 0.2s ease-in-out;
+    transform: scaleY(0);
+    transform-origin: top;
     overflow: hidden;
+    max-height: 0px;
 
     &.is-visible {
         opacity: 1;
-        transform: translateX(0);
+        transform: scaleY(1);
+        max-height: 100%;
     }
 }
 .mod-frontend-form__step-header {

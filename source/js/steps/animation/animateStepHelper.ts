@@ -1,4 +1,4 @@
-class AnimateStepHelper {
+class AnimateStepHelper implements AnimateStepHelperInterface {
     private isVisible: string = 'is-visible';
     private static prevHeight: string = '0px';
     private originalHeight: string = '0px';
@@ -6,45 +6,19 @@ class AnimateStepHelper {
     constructor(private container: HTMLElement) {
 
     }
-    public preHide(): void {
-        AnimateStepHelper.prevHeight = this.getHeight();
-    }
-
-    public preShow(): void {
-        this.container.style.display = 'block';
-    
-        this.container.offsetHeight;
-    
-        requestAnimationFrame(() => {
-            this.originalHeight = this.getHeight();
-            this.container.style.minHeight = AnimateStepHelper.prevHeight;
-            this.container.style.maxHeight = AnimateStepHelper.prevHeight;
-            this.container.style.position = 'absolute';
-        });
-    }
 
     public show(): void {
-        requestAnimationFrame(() => {
-            const handleTransitionEnd = () => {
-                this.container.removeEventListener('transitionend', handleTransitionEnd);
-                this.container.style.minHeight = '';
-                this.container.style.maxHeight = '';
-            };
-    
-            this.container.style.position = 'relative';
-            this.container.style.minHeight = this.originalHeight;
-            this.container.style.maxHeight = this.originalHeight;
-            this.container.addEventListener('transitionend', handleTransitionEnd, { once: true });
-            this.container.classList.add(this.isVisible);
-        });
+        this.container.style.maxHeight = this.getHeight();
+        this.container.classList.add(this.isVisible);
     }
 
     public hide(): Promise<void> {
         return new Promise((resolve) => {
+            this.container.style.maxHeight = this.getHeight();
+            void this.container.offsetHeight;
             const handleTransitionEnd = (event: TransitionEvent) => {
                 this.container.removeEventListener('transitionend', handleTransitionEnd);
-                this.container.style.display = 'none';
-                this.container.style.maxHeight = '0px';
+                this.container.style.maxHeight = '';
                 resolve();
             };
     

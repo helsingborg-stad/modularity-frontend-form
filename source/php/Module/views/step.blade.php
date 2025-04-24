@@ -27,11 +27,12 @@
                 @endif
             @endelement
             @button([
-                'icon' => $index === 0 ? 'close' : 'edit',
+                'icon' => 'edit',
                 'size' => 'md',
                 'style' => 'basic',
                 'classList' => [
                     'mod-frontend-form__step-header-edit',
+                    $index === 0 ? 'u-visibility--hidden' : ''
                 ],
                 'attributeList' => [
                     'role' => 'button',

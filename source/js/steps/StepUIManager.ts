@@ -1,8 +1,5 @@
 class StepUIManager implements StepUIManagerInterface {
     private visibilityHiddenClass: string = 'u-visibility--hidden';
-    private editIconName: string = 'edit';
-    private closeIconName: string = 'close';
-    private iconAttribute: string = 'data-material-symbol';
     private nextButtonLabelElement: HTMLElement|null;
     private maxSteps: number;
 
@@ -24,8 +21,8 @@ class StepUIManager implements StepUIManagerInterface {
         }
 
         this.prevButton.classList.toggle(this.visibilityHiddenClass, activeStep === 0);
-        this.steps[activeStep].getEditButtonIcon().setAttribute(this.iconAttribute, this.closeIconName);
-        this.steps[previousActiveStep].getEditButtonIcon().setAttribute(this.iconAttribute, this.editIconName);
+        this.steps[previousActiveStep].getEditButton().classList.remove(this.visibilityHiddenClass);
+        this.steps[activeStep].getEditButton().classList.add(this.visibilityHiddenClass);
     }
 }
 

@@ -5,7 +5,6 @@ interface StepInterface {
     onEdit(callback: () => void): void;
     getStepContainer(): HTMLElement;
     getEditButton(): HTMLElement;
-    getEditButtonIcon(): HTMLElement;
 }
 
 interface SubmitInterface {

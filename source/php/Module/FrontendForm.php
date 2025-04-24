@@ -158,13 +158,17 @@ class FrontendForm extends \Modularity\Module
      */
     public function style(): void
     {
+        if (!$this->hasModule()) {
+            return;
+        }
+
         $this->wpService->wpRegisterStyle(
-            'css-main',
+            'modularity-frontend-form',
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
             $this->cacheBust->name('css-main.css')
         );
 
-        $this->wpService->wpEnqueueStyle('css-main');
+        $this->wpService->wpEnqueueStyle('modularity-frontend-form');
     }
 
     /**
@@ -176,14 +180,18 @@ class FrontendForm extends \Modularity\Module
      */
     public function script(): void
     {
+        if (!$this->hasModule()) {
+            return;
+        }
+
         $this->wpService->wpRegisterScript(
-            'js-init',
+            'modularity-frontend-form',
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
             $this->cacheBust->name('js-init.js')
         );
 
         $this->wpService->wpLocalizeScript(
-            'js-init',
+            'modularity-frontend-form',
             'modularityFrontendForm',
             [
                 'lang'    => $this->getLang(),
@@ -191,7 +199,7 @@ class FrontendForm extends \Modularity\Module
             ]
         );
 
-        $this->wpService->wpEnqueueScript('js-init');
+        $this->wpService->wpEnqueueScript('modularity-frontend-form');
     }
 
     /**

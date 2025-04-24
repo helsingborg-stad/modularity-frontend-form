@@ -3,26 +3,36 @@
 namespace ModularityFrontendForm\Api;
 
 use WpService\WpService;
-use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
+use Api\RestApiEndpointsRegistry;
 
 class RestApiRoutes 
 {
   public function __construct(private WpService $wpSevice, private $restApiEndpointsRegistry){}
 
+  /**
+   * Add hooks to WordPress
+   * @return void
+   */
   public function addHooks() {
     $this->wpService->addAction('wp_head', array($this, 'renderApiRoutes'));
   }
 
+  /**
+   * Render the API routes
+   * @return void
+   */
   public function renderApiRoutes() {
     $routes = $this->restApiEndpointsRegistry::getRegisteredRoutes();
-    
+    if($routes) {
+      $routes = array_map(function($route) {
+        return $this->wpSevice->restUrl($route);
+      }, $routes);
 
-    //Add wp localize object 
-    $this->wpService->addAction('wp_localize_script', function($handle, $objectName, $data) use ($routes) {
-      if ($handle === 'frontend-form') {
-        $data['apiRoutes'] = $routes;
-      }
-      return $data;
-    }, 10, 3);
+      $this->wpService->wpLocalizeScript(
+          'modularity-frontend-form',
+          'modularityFrontendFormRoutes',
+          $routes
+      );
+    }    
   }
 }

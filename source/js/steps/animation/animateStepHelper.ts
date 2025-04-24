@@ -1,7 +1,5 @@
 class AnimateStepHelper implements AnimateStepHelperInterface {
     private isVisible: string = 'is-visible';
-    private static prevHeight: string = '0px';
-    private originalHeight: string = '0px';
 
     constructor(private container: HTMLElement) {
 

@@ -2,7 +2,6 @@ class AnimateStepHelper implements AnimateStepHelperInterface {
     private isVisible: string = 'is-visible';
 
     constructor(private container: HTMLElement) {
-
     }
 
     public show(): void {

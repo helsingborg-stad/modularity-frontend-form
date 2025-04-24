@@ -3,6 +3,7 @@ import StepUIManager from "./StepUIManager";
 
 class Steps implements StepsInterface {
     constructor(
+        private steps: StepsObject,
         private stepNavigator: StepNavigator,
         private stepUIManager: StepUIManager,
         private nextButton: HTMLButtonElement,
@@ -13,6 +14,21 @@ class Steps implements StepsInterface {
     public init() {
         this.setupPrevious();
         this.setupNext();
+        this.setupEdit();
+    }
+
+    private setupEdit() {
+        for (const step of Object.values(this.steps)) {
+            step.onEdit(() => {
+                const prevStep = this.stepNavigator.getActiveStep();
+                const nextStep = this.stepNavigator.goTo(step.getId());
+
+                if (nextStep) {
+                    nextStep.showStepAndHidePrevious(prevStep);
+                    this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex());
+                }
+            })
+        }
     }
 
     private setupNext() {

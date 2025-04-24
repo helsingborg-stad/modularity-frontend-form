@@ -1,7 +1,6 @@
 import OpenstreetmapFactory from "./openstreetmap/openstreetmapFactory";
 import RepeaterFactory from "./repeater/repeaterFactory";
 import { getSteps } from "./steps/helper/getSteps";
-import StepFactory from "./steps/stepFactory";
 import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
 import StepUIManager from "./steps/StepUIManager";
@@ -31,6 +30,7 @@ class Form {
         const steps = getSteps(this.formContainer);
 
         new Steps(
+            steps,
             new StepNavigator(steps),
             new StepUIManager(steps,
                 modularityFrontendForm.lang,

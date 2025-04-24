@@ -1,6 +1,8 @@
 interface StepInterface {
     animateStepHelperInstance: AnimateStepHelper
     showStepAndHidePrevious(previousStep: StepInterface): void;
+    getId(): number;
+    onEdit(callback: () => void): void;
 }
 
 interface StepsInterface {

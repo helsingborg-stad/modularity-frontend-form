@@ -1,6 +1,10 @@
 import OpenstreetmapFactory from "./openstreetmap/openstreetmapFactory";
 import RepeaterFactory from "./repeater/repeaterFactory";
+import { getSteps } from "./steps/helper/getSteps";
+import StepFactory from "./steps/stepFactory";
+import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
+import StepUIManager from "./steps/StepUIManager";
 
 
 declare const modularityFrontendForm: ModularityFrontendForm;
@@ -24,11 +28,17 @@ class Form {
             return;
         }
 
+        const steps = getSteps(this.formContainer);
+
         new Steps(
-            this.formContainer,
+            new StepNavigator(steps),
+            new StepUIManager(steps,
+                modularityFrontendForm.lang,
+                nextButton as HTMLButtonElement,
+                previousButton as HTMLButtonElement
+            ),
             nextButton as HTMLButtonElement,
-            previousButton as HTMLButtonElement,
-            modularityFrontendForm.lang).init();
+            previousButton as HTMLButtonElement).init();
     }
 
     private setupRepeaters() {

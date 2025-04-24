@@ -1,5 +1,3 @@
-import AnimateStepHelper from "./animation/animateStepHelper";
-
 class Step implements StepInterface {
 
     constructor(public animateStepHelperInstance: AnimateStepHelperInterface) {

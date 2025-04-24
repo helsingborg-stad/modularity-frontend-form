@@ -1,37 +1,16 @@
-import Step from "./step";
-import StepFactory from "./stepFactory";
+import StepNavigator from "./stepNavigator";
+import StepUIManager from "./StepUIManager";
 
-class Steps {
-    private steps: { [key: number]: Step } = {};
-    private activeStep: number = 0;
-    private maxSteps: number = 0;
-    private visibilityHiddenClass: string = 'u-visibility--hidden';
-    private nextButtonTextElement: HTMLElement | null = null;
-
+class Steps implements StepsInterface {
     constructor(
-        private formContainer: HTMLElement,
+        private stepNavigator: StepNavigator,
+        private stepUIManager: StepUIManager,
         private nextButton: HTMLButtonElement,
         private previousButton: HTMLButtonElement,
-        private lang: ModularityFrontendFormLang
     ) {
-        this.nextButtonTextElement = this.nextButton.querySelector('.c-button__label-text');
     }
 
     public init() {
-        this.formContainer.querySelectorAll('[data-js-frontend-form-step]').forEach((stepContainer) => {
-            const id = stepContainer.getAttribute('data-js-frontend-form-step');
-
-            if (!id) {
-                console.error("Missing data-js-frontend-form-step attribute");
-                return;
-            }
-
-            const stepId = parseInt(id);
-            this.steps[stepId] = StepFactory.createStep(this.formContainer, stepContainer as HTMLElement, stepId);
-        });
-
-        this.maxSteps = Object.keys(this.steps).length - 1;
-
         this.setupPrevious();
         this.setupNext();
     }
@@ -39,17 +18,12 @@ class Steps {
     private setupNext() {
         this.nextButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            if (this.activeStep < this.maxSteps) {
-                this.activeStep++;
-                this.steps[this.activeStep].showStepAndHidePrevious(this.steps[this.activeStep - 1]);
-            }
+            const prevStep = this.stepNavigator.getActiveStep();
+            const nextStep = this.stepNavigator.goNext();
 
-            if (this.activeStep === this.maxSteps && this.nextButtonTextElement) {
-                this.nextButtonTextElement.innerHTML = this.lang.submit ?? 'Submit';
-            }
-    
-            if (this.activeStep > 0) {
-                this.previousButton.classList.remove(this.visibilityHiddenClass);
+            if (nextStep) {
+                nextStep.showStepAndHidePrevious(prevStep);
+                this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex());
             }
         });
     }
@@ -57,18 +31,12 @@ class Steps {
     private setupPrevious() {
         this.previousButton.addEventListener('click', async (e) => {
             e.preventDefault();
+            const prevStep = this.stepNavigator.getActiveStep();
+            const nextStep = this.stepNavigator.goPrevious();
 
-            if (this.activeStep > 0) {
-                this.activeStep--;
-                this.steps[this.activeStep].showStepAndHidePrevious(this.steps[this.activeStep + 1]);
-            }
-
-            if (this.activeStep !== this.maxSteps && this.nextButtonTextElement) {
-                this.nextButtonTextElement.innerHTML = this.lang.next ?? 'Next';
-            }
-
-            if (this.activeStep === 0) {
-                this.previousButton.classList.add(this.visibilityHiddenClass);
+            if (nextStep) {
+                nextStep.showStepAndHidePrevious(prevStep);
+                this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex());
             }
         });
     }

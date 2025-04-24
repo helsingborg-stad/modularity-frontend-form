@@ -7,15 +7,24 @@ use WpService\WpService;
 use Api\RestApiEndpointsRegistry;
 use Api\Submit\Post;
 
+use \Modularity\HooksRegistrar\Hookable;
+
 /**
  * Class App
  * @package ModularityFrontendForm
  */
-class App 
-{
-    public function __construct(private WpService $wpService)
+class App implements \Modularity\HooksRegistrar\Hookable {
+
+    public function __construct(private WpService $wpService){}
+
+    /**
+     * Add hooks to WordPress
+     * @return void
+     */
+    public function addHooks(): void
     {
-        add_action('plugins_loaded', array($this, 'registerModule'));
+        $this->wpService->addAction('plugins_loaded', array($this, 'registerModule'));
+        $this->wpService->addAction('rest_api_init', array($this, 'registerApi'));
     }
 
     /**
@@ -32,6 +41,10 @@ class App
         }
     }
 
+    /**
+     * Register the API
+     * @return void
+     */
     public function registerApi()
     {
         $restEndpoints = [

@@ -3,6 +3,9 @@ interface StepInterface {
     showStepAndHidePrevious(previousStep: StepInterface): void;
     getId(): number;
     onEdit(callback: () => void): void;
+    getStepContainer(): HTMLElement;
+    getEditButton(): HTMLElement;
+    getEditButtonIcon(): HTMLElement;
 }
 
 interface SubmitInterface {
@@ -20,8 +23,8 @@ interface StepNavigatorInterface {
     getActiveStepIndex(): number;
 }
 
-interface StepUIManager {
-    updateButtonStates(activeStep): void;
+interface StepUIManagerInterface {
+    updateButtonStates(activeStep: number, previousActiveStep: number): void;
 }
 
 type StepsObject = { [key: number]: StepInterface }

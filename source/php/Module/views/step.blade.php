@@ -43,12 +43,10 @@
             @element([
                 'attributeList' => [
                     'data-js-frontend-form-step' => $index,
-                    'style' => $index === 0 ? '' : 'display: none;',
                 ],
                 'classList' => [
                     'mod-frontend-form__step',
-                    $index === 0 ? 'is-visible' : '',
-                    'u-margin__top--2'
+                    $index === 0 ? 'is-visible' : ''
                 ]
             ])
                 @foreach($step['fields'] as $field)

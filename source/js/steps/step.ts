@@ -2,6 +2,7 @@ class Step implements StepInterface {
 
     constructor(
         private editButton: HTMLElement,
+        private editButtonIcon: HTMLElement,
         private stepContainer: HTMLElement,
         public animateStepHelperInstance: AnimateStepHelperInterface,
         private id: number
@@ -18,6 +19,18 @@ class Step implements StepInterface {
             e.preventDefault();
             callback();
         });
+    }
+
+    public getStepContainer(): HTMLElement {
+        return this.stepContainer;
+    }
+
+    public getEditButton(): HTMLElement {
+        return this.editButton;
+    }
+
+    public getEditButtonIcon(): HTMLElement {
+        return this.editButtonIcon;
     }
 
     public getId(): number {

@@ -9,8 +9,6 @@ class Step implements StepInterface {
     }
 
     public async showStepAndHidePrevious(previousStep: StepInterface): Promise<void> {
-        previousStep.animateStepHelperInstance.preHide();
-        this.animateStepHelperInstance.preShow();
         await previousStep.animateStepHelperInstance.hide();
         this.animateStepHelperInstance.show();
     }

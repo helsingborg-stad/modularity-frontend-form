@@ -24,9 +24,7 @@ define('MODULARITYFRONTENDFORM_PATH', plugin_dir_path(__FILE__));
 define('MODULARITYFRONTENDFORM_URL', plugins_url('', __FILE__));
 define('MODULARITYFRONTENDFORM_MODULE_VIEW_PATH', MODULARITYFRONTENDFORM_PATH . 'source/php/Module/views');
 
-// Endpoint address
 $wpService = new NativeWpService();
-require_once MODULARITYFRONTENDFORM_PATH . 'Public.php';
 
 // Register the autoloader
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {

@@ -11,7 +11,7 @@ use Api\Submit\Post;
  * Class App
  * @package ModularityFrontendForm
  */
-class App
+class App 
 {
     public function __construct(private WpService $wpService)
     {

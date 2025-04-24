@@ -48,7 +48,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
     public function registerApi()
     {
         $restEndpoints = [
-            'sideload' => new Api\Submit\Post()
+            new Api\Submit\Post()
         ];
 
         $this->wpService->applyFilters(

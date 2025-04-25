@@ -54,6 +54,8 @@ class FrontendForm extends \Modularity\Module
 
     private FormatSteps $formatSteps;
 
+    private FormSecurity $formSecurity;
+
     public function init(): void
     {
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());

@@ -29,15 +29,11 @@ class RestApiRoutes
         return $this->wpService->restUrl($route);
       }, $routes);
 
-      $inlineAdded = $this->wpService->wpAddInlineScript(
+      $this->wpService->wpAddInlineScript(
         'modularity-frontend-form',
         'window.modularityFrontendFormRoutes = ' . json_encode($routes) . ';',
         'before'
       );
-
-      if(!$inlineAdded) {
-        throw new \Exception('Failed to add routes to inline script.');
-      }
     }    
   }
 }

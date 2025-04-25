@@ -51,7 +51,9 @@
                 ]
             ])
                 @foreach($step['fields'] as $field)
-                    @includeIf('fields.' . $field['view'], ['field' => $field])
+                    @if (isset($field['view']))  
+                        @includeIf('fields.' . $field['view'], ['field' => $field])
+                    @endif
                 @endforeach
             @endelement
     @endpaper

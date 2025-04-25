@@ -8,9 +8,9 @@ use WP_REST_Response;
 
 abstract class RestApiEndpoint
 {
-    protected const NAMESPACE = 'modularity-frontend-form/v1';
-    protected const ROUTE     = null;
-    protected const KEY       = null;
+    public const NAMESPACE = 'modularity-frontend-form/v1';
+    public const ROUTE     = null;
+    public const KEY       = null;
 
     final public function register()
     {

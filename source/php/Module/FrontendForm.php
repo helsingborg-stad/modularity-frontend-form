@@ -163,12 +163,12 @@ class FrontendForm extends \Modularity\Module
         }
 
         $this->wpService->wpRegisterStyle(
-            'modularity-frontend-form',
+            $this->getScriptHandle(),
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
             $this->cacheBust->name('css-main.css')
         );
 
-        $this->wpService->wpEnqueueStyle('modularity-frontend-form');
+        $this->wpService->wpEnqueueStyle($this->getScriptHandle());
     }
 
     /**
@@ -184,22 +184,61 @@ class FrontendForm extends \Modularity\Module
             return;
         }
 
+        // Register the script
         $this->wpService->wpRegisterScript(
-            'modularity-frontend-form',
+            $this->getScriptHandle(),
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
             $this->cacheBust->name('js-init.js')
         );
 
+        // Language strings
         $this->wpService->wpLocalizeScript(
-            'modularity-frontend-form',
-            'modularityFrontendForm',
-            [
-                'lang'    => $this->getLang(),
-                'placeSearchApiUrl' => $this->wpService->getRestUrl(null, 'placesearch/v1/openstreetmap'),
-            ]
+            $this->getScriptHandle(),
+            'modularityFrontendFormLang',
+            (array) $this->getLang() ?? []
         );
 
-        $this->wpService->wpEnqueueScript('modularity-frontend-form');
+        // MiscData thats needed in frontend
+        $data = $this->getScriptData();
+        $data = json_encode($data);
+        $this->wpService->wpAddInlineScript(
+            $this->getScriptHandle(),
+            'var modularityFrontendFormData = ' . $data . ';',
+            'before'
+        );
+
+        // Enqueue the script
+        $this->wpService->wpEnqueueScript($this->getScriptHandle());
+    }
+
+    /**
+     * Retrieves the script data.
+     *
+     * This method retrieves the script data by applying filters to the data array.
+     *
+     * @return array The script data.
+     */
+    private function getScriptData(): array
+    {
+        return $this->wpService->applyFilters(
+            'Modularity/Module/FrontendForm/Assets/Data', 
+            [
+                'placeSearchApiUrl' => $this->wpService->getRestUrl(null, 'placesearch/v1/openstreetmap'),
+            ]
+        ); 
+    }
+
+    /**
+     * Retrieves the script handle.
+     *
+     * This method retrieves the script handle for the form.
+     *
+     * @param string|null $suffix The suffix to append to the script handle.
+     * @return string The script handle.
+     */
+    private function getScriptHandle($suffix = null): string
+    {
+        return 'modularity-' . $this->slug . ($suffix ? '-' . $suffix : '');
     }
 
     /**

@@ -3,37 +3,62 @@
 namespace ModularityFrontendForm\Api;
 
 use WpService\WpService;
-use Api\RestApiEndpointsRegistry;
 
-class RestApiRoutes 
+class RestApiRoutes implements \Modularity\HooksRegistrar\Hookable
 {
-  public function __construct(private WpService $wpService, private $restApiEndpointsRegistry){}
+  public function __construct(
+    private WpService $wpService, 
+    private  $restApiEndpointsRegistry
+  ){}
 
   /**
    * Add hooks to WordPress
    * @return void
    */
-  public function addHooks() {
-    $this->wpService->addAction('wp_head', array($this, 'renderApiRoutes'));
+  public function addHooks(): void {
+    $this->wpService->addAction('init', array($this, 'renderApiRoutes'));
+  }
+
+  /**
+   * Register the API routes
+   * @return array|null
+   */
+  public function createApiRouteUrls(): ?array{
+    $endpoints = $this->restApiEndpointsRegistry::getAddedEndpoints();
+
+    if($endpoints !== null) {
+      $endpoints = array_map(function($endpoint) {
+        return $this->wpService->restUrl($endpoint->getRoute());
+      }, $endpoints);
+
+      return $endpoints;
+    }
+
+    return null;
   }
 
   /**
    * Render the API routes
+   * 
+   * @throws \Exception
    * @return void
    */
   public function renderApiRoutes() {
-    $routes = $this->restApiEndpointsRegistry::getRegisteredRoutes();
+    $endpoints = $this->createApiRouteUrls();
 
-    if($routes !== null) {
-      $routes = array_map(function($route) {
-        return $this->wpService->restUrl($route);
-      }, $routes);
+    if($endpoints === null) {
+      throw new \Exception('No API routes found.');
+    }
 
-      $this->wpService->wpAddInlineScript(
-        'modularity-frontend-form',
-        'window.modularityFrontendFormRoutes = ' . json_encode($routes) . ';',
-        'before'
-      );
-    }    
+    $this->wpService->addFilter(
+      'Modularity/Module/FrontendForm/Assets/Data',
+      function($data) use ($endpoints) {
+        if(!is_array($data)) {
+          $data = [];
+        }
+        $data['apiRoutes'] = $endpoints;
+        return $data;
+      }
+    );
   }
 }

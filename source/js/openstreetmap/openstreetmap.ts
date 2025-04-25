@@ -5,8 +5,8 @@ class Openstreetmap {
     private marker: MarkerInterface|null = null;
     private map!: MapInterface;
     constructor(
-        private modularityFrontendFormData: modularityFrontendFormData,
-        private modularityFrontendFormLang: modularityFrontendFormLang,
+        private modularityFrontendFormData: ModularityFrontendFormData,
+        private modularityFrontendFormLang: ModularityFrontendFormLang,
         private id: string,
         private lat: number,
         private lng: number,

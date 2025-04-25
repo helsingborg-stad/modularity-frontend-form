@@ -5,6 +5,9 @@ import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
 import StepUIManager from "./steps/StepUIManager";
 import Submit from "./steps/submit/submit";
+import FieldBuilder from "./fields/fieldBuilder";
+import Fields from "./fields/fields";
+import ConditionBuilder from "./conditions/conditionBuilder";
 
 
 declare const modularityFrontendForm: ModularityFrontendForm;
@@ -14,9 +17,24 @@ class Form {
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
+        this.setupConditionalLogic();
         this.setupSteps();
         this.setupRepeaters()
         this.setupOpenstreetmap();
+    }
+
+    private setupConditionalLogic() {
+        const builder = new FieldBuilder(
+            new ConditionBuilder()
+        );
+
+        let fields: FieldInterface[] = [];
+
+        this.form.querySelectorAll('[data-js-field]').forEach(field => {
+            fields.push(builder.build(field as HTMLElement, field.getAttribute('data-js-field') ?? ''));
+        });
+
+        new Fields(this.form, fields).init();
     }
 
     private setupSteps() {

@@ -5,7 +5,8 @@ class Openstreetmap {
     private marker: MarkerInterface|null = null;
     private map!: MapInterface;
     constructor(
-        private modularityFrontendForm: ModularityFrontendForm,
+        private modularityFrontendFormData: modularityFrontendFormData,
+        private modularityFrontendFormLang: modularityFrontendFormLang,
         private id: string,
         private lat: number,
         private lng: number,
@@ -36,10 +37,10 @@ class Openstreetmap {
             .addTo(this.map);
         this.search = new CreateSearch()
             .create({
-                noResultsText: this.modularityFrontendForm.lang.noResultsFound ?? 'No items found.',
-                placeholder: this.modularityFrontendForm.lang.searchPlaceholder ?? 'Search location...',
+                noResultsText: this.modularityFrontendFormLang.noResultsFound ?? 'No items found.',
+                placeholder: this.modularityFrontendFormLang.searchPlaceholder ?? 'Search location...',
             })
-            .setApiUrl(this.modularityFrontendForm.placeSearchApiUrl)
+            .setApiUrl(this.modularityFrontendFormData.placeSearchApiUrl)
             .setSearchParam('q')
             .addTo(this.map)
             .addListItemListener((e) => this.handleClick(e, createMarker));

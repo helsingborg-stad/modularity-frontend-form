@@ -91,6 +91,11 @@ class FormatSteps {
             'name'        => $field['key'],
             'required'    => $field['required'] ?? false,
             'description' => $field['instructions'] ?? '',
+            'attributeList' => [
+                'data-js-conditional-logic' => $this->structureConditionalLogic($field['conditional_logic'] ?? null),
+                'data-js-field' => $type,
+                'data-js-field-name' => $field['key'],
+            ]
         ];
     }
 
@@ -134,10 +139,11 @@ class FormatSteps {
     {
         // TODO: Max words (maxlength)?
         $mapped = $this->mapBasic($field, 'textarea');
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
-        $mapped['rows']        = $field['rows'] ?? 5;
-        $mapped['multiline']   = true;
+
+        $mapped['placeholder']        = $field['placeholder'] ?? '';
+        $mapped['value']              = $field['default_value'] ?? '';
+        $mapped['rows']               = $field['rows'] ?? 5;
+        $mapped['fieldAttributeList'] = ['data-js-conditional-logic' => $this->structureConditionalLogic($field['conditional_logic'] ?? null)];
 
         return $mapped;
     }
@@ -164,7 +170,7 @@ class FormatSteps {
                 'type' => $mapped['type'],
                 'label' => $value,
                 'required' => $mapped['required'] ?? false,
-                'name' => $field['name'],
+                'name' => $field['key'],
                 'value' => $key,
                 'checked' => ($field['default_value'] ?? '') === $key,
             ];
@@ -224,6 +230,7 @@ class FormatSteps {
         // TODO: Should we add description to select/checkbox component?
         $mapped['type']        = $field['field_type'] ?? 'checkbox';
         $mapped['terms'] = $this->structureTerms($mapped, $this->getTermsFromTaxonomy($field));
+        
 
         return $mapped;
     }
@@ -233,10 +240,9 @@ class FormatSteps {
         $mapped = $this->mapBasic($field, 'text');
         
         // TODO: Add maxLength to component (field)?
-        // 'maxlength'     => $field['maxlength'] ?? '',
         $mapped['placeholder']                         = $field['placeholder'] ?? '';
         $mapped['value']                               = $field['default_value'] ?? '';
-        $mapped['moveAttributesListToFieldAttributes'] = false;
+        $mapped['moveAttributesListToFieldAttributes'] = true;
 
         return $mapped;
     }
@@ -254,13 +260,14 @@ class FormatSteps {
     private function mapCheckbox(array $field): array
     {
         $mapped = $this->mapBasic($field, 'checkbox');
+
         $mapped['choices'] = [];
         foreach ($field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type' => $mapped['type'],
                 'label' => $value,
                 'required' => $mapped['required'] ?? false,
-                'name' => $field['name'],
+                'name' => $field['key'],
                 'value' => $key,
                 'checked' => in_array($key, ($field['default_value'] ?? [])),
             ];
@@ -278,7 +285,7 @@ class FormatSteps {
                 'type' => $mapped['type'],
                 'label' => $value,
                 'required' => $mapped['required'] ?? false,
-                'name' => $field['name'],
+                'name' => $field['key'],
                 'value' => $key,
                 'checked' => ($field['default_value'] ?? '') === $key,
             ];
@@ -299,6 +306,15 @@ class FormatSteps {
         return $mapped;
     }
 
+    private function structureConditionalLogic($conditionalLogic)
+    {
+        if (!is_array($conditionalLogic)) {
+            return $conditionalLogic;
+        }
+
+        return json_encode($conditionalLogic);
+    }
+
     private function structureTerms(array $mapped, array $terms): array
     {
         // TODO: Needs to be compatible with select, radio and checkbox (multiselect for select/checkbox/radio)
@@ -307,6 +323,7 @@ class FormatSteps {
             $structured[$term->term_id] = [
                 'name' => $mapped['name'],
                 'type' => $mapped['type'],
+                'attributeList' => $mapped['attributeList'] ?? [],
                 'label' => $term->name,
                 'required' => !empty($mapped['required']) ? true : false,
             ];

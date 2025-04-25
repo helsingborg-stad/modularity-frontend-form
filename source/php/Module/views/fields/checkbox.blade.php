@@ -1,5 +1,7 @@
 {{-- TODO: How should we use checkbox? --}}
-@element([])
+@element([
+    'attributeList' => $field['attributeList'] ?? [],
+])
     @foreach ($field['choices'] as $choice)
         @option($choice)
         @endoption

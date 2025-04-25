@@ -64,7 +64,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
         ];
 
         $this->wpService->applyFilters(
-            'modularity_frontend_form_rest_api_endpoints',
+            'Modularity/Module/FrontendForm/Api/Endpoints',
             $restEndpoints
         );
 

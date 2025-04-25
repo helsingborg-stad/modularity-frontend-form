@@ -5,7 +5,7 @@
  * Plugin URI:        https://github.com/helsingborg-stad/modularity-frontend-form
  * Description:       A plugin to create a modularity module for a form.
  * Version: 0.0.0
- * Author:            Niclas Norin
+ * Author:            Niclas Norin, Sebastian Thulin
  * Author URI:        https://github.com/helsingborg-stad
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
@@ -24,9 +24,7 @@ define('MODULARITYFRONTENDFORM_PATH', plugin_dir_path(__FILE__));
 define('MODULARITYFRONTENDFORM_URL', plugins_url('', __FILE__));
 define('MODULARITYFRONTENDFORM_MODULE_VIEW_PATH', MODULARITYFRONTENDFORM_PATH . 'source/php/Module/views');
 
-// Endpoint address
 $wpService = new NativeWpService();
-require_once MODULARITYFRONTENDFORM_PATH . 'Public.php';
 
 // Register the autoloader
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
@@ -55,4 +53,5 @@ $wpService->addAction('acf/init', function () {
 });
 
 // Start application
-new ModularityFrontendForm\App($wpService);
+$app = new ModularityFrontendForm\App($wpService);
+$app->addHooks();

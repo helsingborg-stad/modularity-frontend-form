@@ -1,6 +1,6 @@
-type ModularityFrontendForm = {
+type ModularityFrontendFormData = {
     placeSearchApiUrl: string;
-    lang: ModularityFrontendFormLang;
+    apiRoutes?: array;
 }
 
 type ModularityFrontendFormLang = {

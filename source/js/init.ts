@@ -10,7 +10,8 @@ import Fields from "./fields/fields";
 import ConditionBuilder from "./conditions/conditionBuilder";
 
 
-declare const modularityFrontendForm: ModularityFrontendForm;
+declare const modularityFrontendFormData: ModularityFrontendFormData;
+declare const modularityFrontendFormLang: ModularityFrontendFormLang;
 
 class Form {
     constructor(
@@ -56,7 +57,7 @@ class Form {
             ),
             new StepUIManager(
                 steps,
-                modularityFrontendForm.lang,
+                modularityFrontendFormLang,
                 nextButton as HTMLButtonElement,
                 previousButton as HTMLButtonElement
             ),
@@ -71,12 +72,16 @@ class Form {
     }
 
     private setupOpenstreetmap() {
-        if (!modularityFrontendForm.placeSearchApiUrl) {
+        if (!modularityFrontendFormData.placeSearchApiUrl) {
             return;
         }
 
         this.formContainer.querySelectorAll('[data-js-openstreetmap]').forEach((osmContainer) => {
-            OpenstreetmapFactory.createOpenstreetmap(osmContainer as HTMLElement, modularityFrontendForm)?.init();
+            OpenstreetmapFactory.createOpenstreetmap(
+                osmContainer as HTMLElement, 
+                modularityFrontendFormData, 
+                modularityFrontendFormLang
+            )?.init();
         });
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
 namespace ModularityFrontendForm\Api;
+use ModularityFrontendForm\Api\RestApiEndpointsRegistryInterface;
 
-class RestApiEndpointsRegistry
+class RestApiEndpointsRegistry implements RestApiEndpointsRegistryInterface
 {
     private static array $endpoints = [];
 
@@ -24,8 +25,6 @@ class RestApiEndpointsRegistry
 
       // Register the endpoint
       $endpoint->register();
-
-      var_dump("Endpoint $route registered.");
 
       // Add the endpoint to the registry
       self::$endpoints[

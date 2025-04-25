@@ -2,8 +2,8 @@
 
 namespace ModularityFrontendForm\Api;
 
-interface RestApiEndpointsRegistry
+interface RestApiEndpointsRegistryInterface
 {
     public static function add(RestApiEndpoint $endpoint);
-    public static function getRegisteredRoutes(): array;
+    public static function getRegisteredRoutes(): ?array;
 }

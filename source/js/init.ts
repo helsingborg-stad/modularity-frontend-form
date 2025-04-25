@@ -10,8 +10,8 @@ import Fields from "./fields/fields";
 import ConditionBuilder from "./conditions/conditionBuilder";
 
 
-declare const modularityFrontendFormData: modularityFrontendFormData;
-declare const modularityFrontendFormLang: modularityFrontendFormLang;
+declare const modularityFrontendFormData: ModularityFrontendFormData;
+declare const modularityFrontendFormLang: ModularityFrontendFormLang;
 
 class Form {
     constructor(

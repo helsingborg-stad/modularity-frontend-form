@@ -49,6 +49,7 @@ class FormatSteps {
             case 'true_false':
                 return $this->mapTrueFalse($field);
             case 'text':
+            case 'email':
                 return $this->mapText($field);  
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
@@ -65,6 +66,7 @@ class FormatSteps {
             case 'url':
                 return $this->mapUrl($field);
             case 'textarea':
+            case 'message':
                 return $this->mapTextarea($field);
             case 'radio':
                 return $this->mapRadio($field);

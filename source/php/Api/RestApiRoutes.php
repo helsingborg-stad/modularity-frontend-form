@@ -7,7 +7,7 @@ use Api\RestApiEndpointsRegistry;
 
 class RestApiRoutes 
 {
-  public function __construct(private WpService $wpSevice, private $restApiEndpointsRegistry){}
+  public function __construct(private WpService $wpService, private $restApiEndpointsRegistry){}
 
   /**
    * Add hooks to WordPress
@@ -23,16 +23,21 @@ class RestApiRoutes
    */
   public function renderApiRoutes() {
     $routes = $this->restApiEndpointsRegistry::getRegisteredRoutes();
-    if($routes) {
+
+    if($routes !== null) {
       $routes = array_map(function($route) {
-        return $this->wpSevice->restUrl($route);
+        return $this->wpService->restUrl($route);
       }, $routes);
 
-      $this->wpService->wpLocalizeScript(
-          'modularity-frontend-form',
-          'modularityFrontendFormRoutes',
-          $routes
+      $inlineAdded = $this->wpService->wpAddInlineScript(
+        'modularity-frontend-form',
+        'window.modularityFrontendFormRoutes = ' . json_encode($routes) . ';',
+        'before'
       );
+
+      if(!$inlineAdded) {
+        throw new \Exception('Failed to add routes to inline script.');
+      }
     }    
   }
 }

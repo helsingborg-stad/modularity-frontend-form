@@ -11,9 +11,9 @@ use WP_REST_Server;
 
 class Post extends RestApiEndpoint
 {
-    private const NAMESPACE = 'modularity-frontend-form/v1';
-    private const ROUTE     = 'submit/post';
-    private const KEY       = 'submit-post';
+    protected const NAMESPACE = 'modularity-frontend-form/v1';
+    protected const ROUTE     = 'submit/post';
+    protected const KEY       = 'submit-post';
 
     /**
      * Registers a REST route

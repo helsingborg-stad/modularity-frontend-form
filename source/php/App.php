@@ -14,7 +14,6 @@ use \Modularity\HooksRegistrar\Hookable;
  * @package ModularityFrontendForm
  */
 class App implements \Modularity\HooksRegistrar\Hookable {
-
     public function __construct(private WpService $wpService){}
 
     /**
@@ -24,7 +23,13 @@ class App implements \Modularity\HooksRegistrar\Hookable {
     public function addHooks(): void
     {
         $this->wpService->addAction('plugins_loaded', array($this, 'registerModule'));
-        $this->wpService->addAction('rest_api_init', array($this, 'registerApi'));
+        $this->wpService->addAction('init', array($this, 'registerApi'));
+
+        // Register the API routes as a js object
+        (new Api\RestApiRoutes(
+            $this->wpService, 
+            Api\RestApiEndpointsRegistry::class
+        ))->addHooks();
     }
 
     /**

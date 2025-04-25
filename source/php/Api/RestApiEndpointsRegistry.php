@@ -15,15 +15,17 @@ class RestApiEndpointsRegistry
      */
     public static function add(RestApiEndpoint $endpoint)
     {
-
       //Get route and check if it is already registered
       $route = $endpoint->getRoute();
+
       if (in_array($route, self::$endpoints)) {
         throw new \Exception("Endpoint $route is already registered.");
       }
 
       // Register the endpoint
       $endpoint->register();
+
+      var_dump("Endpoint $route registered.");
 
       // Add the endpoint to the registry
       self::$endpoints[
@@ -36,8 +38,8 @@ class RestApiEndpointsRegistry
      *
      * @return array
      */
-    public static function getRegisteredRoutes(): array
+    public static function getRegisteredRoutes(): ?array
     {
-      return self::$endpoints;
+      return self::$endpoints ?? null;
     }
 }

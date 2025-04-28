@@ -3,6 +3,11 @@ class NullCondition implements ConditionInterface {
         return true;
     }
 
+    public getConditions(): Condition[] {
+        return [];
+    }
+
+
     public getConditionFieldNames(): string[] {
         return [];
     }

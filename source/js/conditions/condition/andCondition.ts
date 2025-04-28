@@ -6,6 +6,10 @@ class AndCondition implements ConditionInterface {
         return true;
     }
 
+    public getConditions(): Condition[] {
+        return this.conditions;
+    }
+
     public getConditionFieldNames(): string[] {
         return this.conditions.flatMap(condition => condition.field ? [condition.field] : []);
     }

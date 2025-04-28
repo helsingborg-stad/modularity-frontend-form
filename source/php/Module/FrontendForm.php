@@ -97,7 +97,13 @@ class FrontendForm extends \Modularity\Module
         $data   = [];
         $fields = (object) $this->getFields();
 
+        //The module id
+        $data['moduleId'] = $this->ID;
+
+        //Steps
         $data['steps'] = $this->formatSteps->formatSteps($fields->formSteps ?? []);
+
+        //Language
         $data['lang'] = $this->getLang();
 
         return $data;

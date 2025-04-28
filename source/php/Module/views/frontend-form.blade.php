@@ -9,7 +9,11 @@
 
     @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
 
-    @form([])
+    @form([
+        'attributeList' => [
+            'data-js-frontend-form-id' => $moduleId,
+        ],
+    ])
         @foreach($steps as $index => $step)
             @include('step', ['step' => $step, 'index' => $index])
         @endforeach

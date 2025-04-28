@@ -53,7 +53,10 @@ class Form {
             steps,
             new StepNavigator(
                 steps,
-                new Submit(this.form)
+                new Submit(
+                    this.form, 
+                    modularityFrontendFormData
+                ),
             ),
             new StepUIManager(
                 steps,

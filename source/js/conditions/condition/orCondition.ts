@@ -3,8 +3,7 @@ class OrCondition implements ConditionInterface {
     }
 
     public validate(): boolean {
-        // Implement validation logic
-        return true;
+        return this.condition.class?.getConditionValidator().validate(this.condition) ?? true;
     }
 
     public getConditions(): Condition[] {

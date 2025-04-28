@@ -6,6 +6,7 @@ interface FieldInterface {
     init(conditionBuilder: ConditionBuilderInterface): void;
     getName(): string;
     getConditionsHandler(): ConditionsHandlerInterface;
+    getConditionValidator(): ConditionValidatorInterface;
 }
 
 interface CheckboxInterface extends FieldInterface {
@@ -22,6 +23,10 @@ interface ConditionsHandlerInterface {
     getConditions(): ConditionInterface[];
     validate(): boolean;
     addValueChangeListener(field: FieldInterface): void;
+}
+
+interface ConditionValidatorInterface {
+    validate(condition: Condition): boolean;
 }
 
 type FieldsObject = {

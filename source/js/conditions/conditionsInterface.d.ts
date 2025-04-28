@@ -8,10 +8,6 @@ interface ConditionInterface {
     getConditionFieldNames(): string[];
 }
 
-interface ConditionValidatorInterface {
-    validate(condition: Condition): boolean;
-}
-
 type Condition = {
     field: string;
     class: FieldInterface|null;

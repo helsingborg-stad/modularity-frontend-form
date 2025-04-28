@@ -12,11 +12,6 @@ class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 		this.setValueChangeListener();
 	}
 
-	public validateCondition(conditions: Condition[]): boolean {
-		console.log(conditions);
-		return true;
-	}
-
 	public validate(): boolean {
 		this.getConditions().forEach((condition) => {
 			condition.validate();

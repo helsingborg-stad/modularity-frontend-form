@@ -3,6 +3,19 @@ class AndCondition implements ConditionInterface {
     }
 
     public validate(): boolean {
+        let isValid: boolean[] = [];
+        this.conditions.forEach(condition => {
+            if (!condition.class) {
+                return;
+            }
+
+            isValid.push(condition.class.getConditionValidator().validate(condition));
+        });
+
+        if (isValid.includes(false)) {
+            return false;
+        }
+
         return true;
     }
 

@@ -1,8 +1,9 @@
 import Checkbox from "./field/checkbox/checkbox";
 import CheckboxConditionsHandler from "./field/checkbox/checkboxConditionsHandler";
+import CheckboxConditionValidator from "./field/checkbox/checkboxConditionValidator";
 import NullFieldConditionsHandler from "./field/nullField/nullFieldConditionsHandler";
 import NullField from "./field/nullField/nullField";
-import CheckboxValidator from "../conditions/validate/checkboxValidator";
+import NullFieldConditionValidator from "./field/nullField/nullFieldConditionValidator";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -27,6 +28,7 @@ class FieldBuilder implements FieldBuilderInterface {
             field,
             type,
             this.getFieldName(field),
+            new NullFieldConditionValidator(),
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
         );
     }
@@ -38,7 +40,7 @@ class FieldBuilder implements FieldBuilderInterface {
             field,
             choices,
             this.getFieldName(field),
-            new CheckboxValidator(),
+            new CheckboxConditionValidator(),
             new CheckboxConditionsHandler(this.getFieldCondition(field))
         );
     }

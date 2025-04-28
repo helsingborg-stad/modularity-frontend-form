@@ -25,17 +25,21 @@ class Form {
     }
 
     private setupConditionalLogic() {
-        const builder = new FieldBuilder(
-            new ConditionBuilder()
-        );
+        const builder = new FieldBuilder();
+        let fieldsObject: FieldsObject = {};
 
-        let fields: FieldInterface[] = [];
-
-        this.form.querySelectorAll('[data-js-field]').forEach(field => {
-            fields.push(builder.build(field as HTMLElement, field.getAttribute('data-js-field') ?? ''));
+        this.form.querySelectorAll('[data-js-field]').forEach(element => {
+            const field = builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '');
+            fieldsObject[field.getName()] = field;
         });
 
-        new Fields(this.form, fields).init();
+        const conditionBuilder = new ConditionBuilder(fieldsObject);
+
+        for (const fieldName in fieldsObject) {
+            fieldsObject[fieldName].init(conditionBuilder);
+        }
+
+        new Fields(this.form, fieldsObject).init();
     }
 
     private setupSteps() {

@@ -1,12 +1,12 @@
-import Checkbox from "./field/checkbox";
-import NullField from "./field/nullField";
+import Checkbox from "./field/checkbox/checkbox";
+import CheckboxConditionsHandler from "./field/checkbox/checkboxConditionsHandler";
+import NullFieldConditionsHandler from "./field/nullField/nullFieldConditionsHandler";
+import NullField from "./field/nullField/nullField";
+import CheckboxValidator from "../conditions/validate/checkboxValidator";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
     private condition: string = 'data-js-conditional-logic';
-
-    constructor(private conditionBuilder: ConditionBuilderInterface) {
-    }
 
     public build(field: HTMLElement, type: string): FieldInterface {
         if (!this.validateRequiredAttributes(field)) {
@@ -27,19 +27,19 @@ class FieldBuilder implements FieldBuilderInterface {
             field,
             type,
             this.getFieldName(field),
-            this.getFieldCondition(field)
+            new NullFieldConditionsHandler(field, this.getFieldCondition(field))
         );
     }
 
     public buildCheckbox(field: HTMLElement): FieldInterface {
-        const choices = field.querySelectorAll('input[type="checkbox"]');
-
+        const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
         return new Checkbox(
             field,
-            choices as NodeListOf<HTMLInputElement>,
+            choices,
             this.getFieldName(field),
-            this.getFieldCondition(field)
+            new CheckboxValidator(),
+            new CheckboxConditionsHandler(this.getFieldCondition(field))
         );
     }
 
@@ -47,8 +47,9 @@ class FieldBuilder implements FieldBuilderInterface {
         return field.getAttribute('data-js-field-name') as string;
     }
 
-    private getFieldCondition(field: HTMLElement): ConditionInterface[] {
+    private getFieldCondition(field: HTMLElement): any {
         let condition = 0;
+
 
         try {
             condition = JSON.parse(field.getAttribute('data-js-conditional-logic') as string);
@@ -56,7 +57,8 @@ class FieldBuilder implements FieldBuilderInterface {
             condition = 0;
         }
 
-        return this.conditionBuilder.build(condition);
+        // return this.conditionBuilder.build(condition);
+        return condition;
     }
 
     private validateRequiredAttributes(field: HTMLElement): boolean {

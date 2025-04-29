@@ -3,20 +3,21 @@ class AndCondition implements ConditionInterface {
     }
 
     public validate(): boolean {
-        let isValid: boolean[] = [];
-        // TODO: No need to check all, if one is false it is false.
-        this.conditions.forEach(condition => {
+        for (const condition of this.conditions) {
             if (!condition.class) {
-                return;
+                continue;
             }
 
-            isValid.push(condition.class.getConditionValidator().validate(condition));
-        });
+            if (condition.class.getConditionsHandler().getIsDisabled()) {
+                return false;
+            }
 
-        if (isValid.includes(false)) {
-            return false;
+            const isValid = condition.class.getConditionValidator().validate(condition);
+            if (!isValid) {
+                return false;
+            }
         }
-
+    
         return true;
     }
 

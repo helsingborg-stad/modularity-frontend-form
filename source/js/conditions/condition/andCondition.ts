@@ -12,8 +12,7 @@ class AndCondition implements ConditionInterface {
                 return false;
             }
 
-            const isValid = condition.class.getConditionValidator().validate(condition);
-            if (!isValid) {
+            if (!condition.class.getConditionValidator().validate(condition)) {
                 return false;
             }
         }

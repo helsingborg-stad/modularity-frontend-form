@@ -11,7 +11,7 @@ class FieldBuilder implements FieldBuilderInterface {
 
     public build(field: HTMLElement, type: string): FieldInterface {
         if (!this.validateRequiredAttributes(field)) {
-            console.error('Field name and conditional is required');
+            console.error('Field name and conditional logic are required');
             return this.buildNullField(field, type);
         }
 
@@ -46,7 +46,13 @@ class FieldBuilder implements FieldBuilderInterface {
     }
 
     private getFieldName(field: HTMLElement): string {
-        return field.getAttribute('data-js-field-name') as string;
+        const name = field.getAttribute('data-js-field-name');
+        if (!name) {
+            console.error('Field is missing data-js-field-name attribute');
+            return 'unknown';
+        }
+
+        return name;
     }
 
     private getFieldCondition(field: HTMLElement): any {
@@ -64,14 +70,15 @@ class FieldBuilder implements FieldBuilderInterface {
     }
 
     private validateRequiredAttributes(field: HTMLElement): boolean {
-        [this.name, this.condition].forEach((attribute) => {
+        const isValid = [this.name, this.condition].every((attribute) => {
             if (!field.getAttribute(attribute)) {
                 console.error(`Field is missing required attribute: ${attribute}`);
                 return false;
             }
+            return true;
         });
 
-        return true;
+        return isValid;
     }
 }
 

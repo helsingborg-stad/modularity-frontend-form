@@ -5,7 +5,7 @@
     "license": "MIT",
     "scripts": {
         "test": "./vendor/bin/phpunit --testdox",
-        "coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testdox",
+        "test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testdox",
         "minimal": "./vendor/bin/phpunit"
     },
     "authors": [

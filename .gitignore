@@ -50,9 +50,6 @@ Thumbs.db
 dist/temp
 dist/.temp
 
-# ignore jest coverage
-coverage
-
 # -------------------------
 # BEGIN Whitelisted Files
 # -------------------------

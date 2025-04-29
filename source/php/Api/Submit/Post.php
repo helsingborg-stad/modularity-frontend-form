@@ -96,7 +96,7 @@ class Post extends RestApiEndpoint
      *
      * @return WP_Error|int The result of the post insertion
      */
-    private function insertPost($moduleID = null, $fieldMeta = null): WP_Error|int {
+    public function insertPost($moduleID = null, $fieldMeta = null): WP_Error|int {
         
         $result = $this->wpService->wpInsertPost([
             'post_title'    => 'Test post',
@@ -108,14 +108,10 @@ class Post extends RestApiEndpoint
             ],
         ]);
 
-        if (is_wp_error($result)) {
+        if ($this->wpService->isWpError($result)) {
             return $result;
         }
 
-        if(is_numeric($result)) {
-            return $result;
-        }
-
-        throw new \Exception('Unexpected result from post creation: ' . print_r($result, true));
+        return $result;
     }
 }

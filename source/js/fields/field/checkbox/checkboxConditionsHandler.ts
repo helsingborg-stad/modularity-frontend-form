@@ -1,5 +1,3 @@
-import { TilesHelper } from "../../../../../dist/js-init.0f85b13b34f29a8d87e4";
-
 class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
 	private parent: CheckboxInterface | null = null;
@@ -21,12 +19,13 @@ class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 
 			this.parent?.getChoices().forEach((checkbox, index) => {
 				if (index === 0) {
-					checkbox.dispatchEvent(new Event('change'));
 					this.parent?.getField().classList.toggle('u-display--none', disabled)
 				}
-
+				
 				checkbox.disabled = disabled;
 			});
+
+			this.dispatchUpdateEvent();
 		}
 	}
 
@@ -41,6 +40,18 @@ class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 		}
 
 		this.updateDisabled(!isValid);
+	}
+
+	public dispatchUpdateEvent(): void {
+		const choice = this.parent?.getChoices()[0];
+
+		if (choice) {
+			choice.dispatchEvent(new Event('change'));
+		}
+	}
+
+	public getIsDisabled(): boolean {
+		return this.isDisabled;
 	}
 
 	public getConditions(): ConditionInterface[] {

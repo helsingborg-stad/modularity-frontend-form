@@ -23,8 +23,10 @@ interface FieldBuilderInterface {
 interface ConditionsHandlerInterface {
     init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void;
     getConditions(): ConditionInterface[];
+    getIsDisabled(): boolean;
     validate(): void;
     addValueChangeListener(field: FieldInterface): void;
+    dispatchUpdateEvent(): void;
 }
 
 interface ConditionValidatorInterface {

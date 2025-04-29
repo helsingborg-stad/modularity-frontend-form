@@ -16,6 +16,10 @@ class Fields implements FieldsInterface {
                 });
             });
         }
+
+        for (const fieldName in this.fields) {
+            this.fields[fieldName].getConditionsHandler().dispatchUpdateEvent();
+        }
     }
 }
 

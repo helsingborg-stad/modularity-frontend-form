@@ -12,6 +12,7 @@ class NullField implements FieldInterface {
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
+        this.nullFieldConditionValidator.init(this);
     }
 
     public getField(): HTMLElement {

@@ -6,11 +6,11 @@ class Checkbox implements CheckboxInterface {
         private checkboxValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface
     ) {
-
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
+        this.checkboxValidator.init(this);
     }
 
     public getName(): string {
@@ -27,6 +27,10 @@ class Checkbox implements CheckboxInterface {
 
     public getChoices(): NodeListOf<HTMLInputElement> {
         return this.choices;
+    }
+
+    public getSelectedChoices(): string[] {
+        return [...this.getChoices()].filter(choice => choice.checked).map(choice => choice.value);
     }
 
     public getField(): HTMLElement {

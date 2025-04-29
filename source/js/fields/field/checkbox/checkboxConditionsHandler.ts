@@ -1,7 +1,10 @@
+import { TilesHelper } from "../../../../../dist/js-init.0f85b13b34f29a8d87e4";
+
 class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
 	private parent: CheckboxInterface | null = null;
 	private conditions: ConditionInterface[] = [];
+	private isDisabled: boolean = false;
 
 	constructor(private unstructuredConditions: any) {
 	}
@@ -12,12 +15,32 @@ class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 		this.setValueChangeListener();
 	}
 
-	public validate(): boolean {
-		this.getConditions().forEach((condition) => {
-			condition.validate();
-		})
+	private updateDisabled(disabled: boolean): void {
+		if (this.isDisabled !== disabled) {
+			this.isDisabled = disabled;
 
-		return false;
+			this.parent?.getChoices().forEach((checkbox, index) => {
+				if (index === 0) {
+					checkbox.dispatchEvent(new Event('change'));
+					this.parent?.getField().classList.toggle('u-display--none', disabled)
+				}
+
+				checkbox.disabled = disabled;
+			});
+		}
+	}
+
+	public validate(): void {
+		console.log(this.parent?.getName())
+		let isValid: boolean = false;
+		for (const condition of this.getConditions()) {
+			if (condition.validate()) {
+				isValid = true;
+				break;
+			}
+		}
+
+		this.updateDisabled(!isValid);
 	}
 
 	public getConditions(): ConditionInterface[] {

@@ -58,14 +58,12 @@ class FieldBuilder implements FieldBuilderInterface {
     private getFieldCondition(field: HTMLElement): any {
         let condition = 0;
 
-
         try {
             condition = JSON.parse(field.getAttribute('data-js-conditional-logic') as string);
         } catch (error) {
             condition = 0;
         }
 
-        // return this.conditionBuilder.build(condition);
         return condition;
     }
 

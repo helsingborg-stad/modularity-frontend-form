@@ -30,7 +30,6 @@ class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 	}
 
 	public validate(): void {
-		console.log(this.parent?.getName())
 		let isValid: boolean = false;
 		for (const condition of this.getConditions()) {
 			if (condition.validate()) {

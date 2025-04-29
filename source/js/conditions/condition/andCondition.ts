@@ -4,6 +4,7 @@ class AndCondition implements ConditionInterface {
 
     public validate(): boolean {
         let isValid: boolean[] = [];
+        // TODO: No need to check all, if one is false it is false.
         this.conditions.forEach(condition => {
             if (!condition.class) {
                 return;

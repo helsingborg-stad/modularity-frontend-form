@@ -7,9 +7,11 @@ class OrCondition implements ConditionInterface {
             return true;
         }
 
-        return this.condition.class.getConditionsHandler().getIsDisabled() ?
-            false :
-            (this.condition.class.getConditionValidator().validate(this.condition) ?? true);
+        if (this.condition.class.getConditionsHandler().getIsDisabled()) {
+            return false;
+        }
+
+        return this.condition.class.getConditionValidator().validate(this.condition);
     }
 
     public getConditions(): Condition[] {

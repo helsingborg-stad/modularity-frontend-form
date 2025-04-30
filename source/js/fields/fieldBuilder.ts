@@ -7,6 +7,9 @@ import NullFieldConditionValidator from "./field/nullField/nullFieldConditionVal
 import Text from "./field/text/text";
 import TextConditionsHandler from "./field/text/textConditionHandler";
 import TextConditionValidator from "./field/text/textConditionValidator";
+import Select from "./field/select/select";
+import SelectConditionHandler from "./field/select/selectConditionHandler";
+import SelectConditionValidator from "./field/select/selectConditionValidator";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -23,6 +26,8 @@ class FieldBuilder implements FieldBuilderInterface {
                 return this.buildCheckbox(field);
             case 'text':
                 return this.buildText(field);
+            case 'select':
+                return this.buildSelect(field);
         }
 
         return this.buildNullField(field, type);
@@ -36,6 +41,27 @@ class FieldBuilder implements FieldBuilderInterface {
             new NullFieldConditionValidator(),
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
         );
+    }
+    
+    private buildSelect(field: HTMLElement): FieldInterface {
+        console.log(field)
+        const select = field.querySelector('select') as HTMLSelectElement;
+        const options = select?.querySelectorAll('option') as NodeListOf<HTMLOptionElement>;
+
+        if (!options || options.length === 0) {
+            console.error('Select field is missing select element or options');
+            return this.buildNullField(field, 'select');
+        }
+
+        return new Select(
+            field,
+            select,
+            options,
+            this.getFieldName(field),
+            new SelectConditionValidator(),
+            new SelectConditionHandler(this.getFieldCondition(field))
+        )
+        return this.buildNullField(field, 'select');
     }
 
     private buildText(field: HTMLElement): FieldInterface {

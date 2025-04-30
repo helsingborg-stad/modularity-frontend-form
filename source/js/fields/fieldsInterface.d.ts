@@ -19,6 +19,11 @@ interface TextInterface extends FieldInterface {
     getInput(): HTMLInputElement;
 }
 
+interface SelectInterface extends FieldInterface {
+    getSelect(): HTMLSelectElement;
+    getOptions(): NodeListOf<HTMLOptionElement>;
+}
+
 interface FieldBuilderInterface {
     build(field: HTMLElement, type: string): FieldInterface;
 }

@@ -7,8 +7,8 @@ class CheckboxConditionsHandler implements ConditionsHandlerInterface {
 	constructor(private unstructuredConditions: any) {
 	}
 
-	public init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void {
-		this.parent = parent as CheckboxInterface;
+	public init(parent: CheckboxInterface, conditionsBuilder: ConditionBuilderInterface): void {
+		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 		this.setValueChangeListener();
 	}

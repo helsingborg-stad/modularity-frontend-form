@@ -19,9 +19,9 @@ class Form {
         private form: HTMLFormElement
     ) {
         this.setupConditionalLogic();
-        this.setupSteps();
-        this.setupRepeaters()
+        this.setupRepeaters();
         this.setupOpenstreetmap();
+        this.setupSteps();
     }
 
     private setupConditionalLogic() {

@@ -3,9 +3,7 @@ import NullCondition from "./condition/nullCondition";
 import OrCondition from "./condition/orCondition";
 
 class ConditionBuilder implements ConditionBuilderInterface {
-    constructor(private fields: FieldsObject) {
-
-    }
+    constructor(private fields: FieldsObject) {}
 
     public build(conditions: any): ConditionInterface[] {
         if (!Array.isArray(conditions) || conditions.length === 0) {
@@ -16,17 +14,25 @@ class ConditionBuilder implements ConditionBuilderInterface {
         conditions.forEach(conditionSet => {
             if (!Array.isArray(conditionSet) || conditionSet.length === 0) {
                 conditionsList.push(new NullCondition());
+                return;
             }
 
             if (conditionSet.length === 1) {
-                conditionSet[0].class = this.fields[conditionSet[0].field] ?? null;
-                conditionsList.push(new OrCondition(conditionSet[0]));
+                if (this.checkConditionValidity(conditionSet[0])) {
+                    conditionSet[0].class = this.fields[conditionSet[0].field];
+                    conditionsList.push(new OrCondition(conditionSet[0]));
+                }
             } else {
-                conditionSet.forEach((condition: Condition) => {
-                    condition.class = this.fields[condition.field] ?? null;
-                });
+                const validConditions = conditionSet
+                    .filter((condition: Condition) => this.checkConditionValidity(condition))
+                    .map((condition: Condition) => ({
+                        ...condition,
+                        class: this.fields[condition.field]
+                    }));
 
-                conditionsList.push(new AndCondition(conditionSet));
+                if (validConditions.length > 0) {
+                    conditionsList.push(new AndCondition(validConditions));
+                }
             }
         });
 
@@ -35,6 +41,18 @@ class ConditionBuilder implements ConditionBuilderInterface {
         }
 
         return [new NullCondition()];
+    }
+
+    private checkConditionValidity(condition: any): boolean {
+        if (typeof condition !== 'object') {
+            return false;
+        }
+
+        if (!('field' in condition) || !('operator' in condition) || !('value' in condition) || !this.fields[condition.field]) {
+            return false;
+        }
+
+        return true;
     }
 }
 

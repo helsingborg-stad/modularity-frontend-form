@@ -2,7 +2,6 @@ import { describe, expect, it } from '@jest/globals';
 import FieldBuilder from './fieldBuilder';
 import NullField from './field/nullField/nullField';
 import Checkbox from './field/checkbox/checkbox';
-import { normalModuleLoaderHook } from 'webpack-manifest-plugin/dist/hooks';
 
 describe('Field Builder', () => {
     const fieldBuilder = new FieldBuilder();

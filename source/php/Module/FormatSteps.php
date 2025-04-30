@@ -244,7 +244,7 @@ class FormatSteps {
         // TODO: Add maxLength to component (field)?
         $mapped['placeholder']                         = $field['placeholder'] ?? '';
         $mapped['value']                               = $field['default_value'] ?? '';
-        $mapped['moveAttributesListToFieldAttributes'] = true;
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }

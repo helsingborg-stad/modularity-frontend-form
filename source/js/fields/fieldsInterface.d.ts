@@ -17,7 +17,6 @@ interface CheckboxInterface extends FieldInterface {
 
 interface FieldBuilderInterface {
     build(field: HTMLElement, type: string): FieldInterface;
-    buildCheckbox(field: HTMLElement): FieldInterface;
 }
 
 interface ConditionsHandlerInterface {

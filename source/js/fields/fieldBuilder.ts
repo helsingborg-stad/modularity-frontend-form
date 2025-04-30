@@ -23,7 +23,7 @@ class FieldBuilder implements FieldBuilderInterface {
         return this.buildNullField(field, type);
     }
 
-    public buildNullField(field: HTMLElement, type: string): FieldInterface {
+    private buildNullField(field: HTMLElement, type: string): FieldInterface {
         return new NullField(
             field,
             type,
@@ -33,8 +33,13 @@ class FieldBuilder implements FieldBuilderInterface {
         );
     }
 
-    public buildCheckbox(field: HTMLElement): FieldInterface {
+    private buildCheckbox(field: HTMLElement): FieldInterface {
         const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
+
+        if (choices.length === 0) {
+            console.error('Checkbox field is missing input elements');
+            return this.buildNullField(field, 'checkbox');
+        }
 
         return new Checkbox(
             field,

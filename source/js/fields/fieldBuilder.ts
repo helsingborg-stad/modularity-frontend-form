@@ -4,6 +4,9 @@ import CheckboxConditionValidator from "./field/checkbox/checkboxConditionValida
 import NullFieldConditionsHandler from "./field/nullField/nullFieldConditionsHandler";
 import NullField from "./field/nullField/nullField";
 import NullFieldConditionValidator from "./field/nullField/nullFieldConditionValidator";
+import Text from "./field/text/text";
+import TextConditionsHandler from "./field/text/textConditionHandler";
+import TextConditionValidator from "./field/text/textConditionValidator";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -18,6 +21,8 @@ class FieldBuilder implements FieldBuilderInterface {
         switch (type) {
             case 'checkbox':
                 return this.buildCheckbox(field);
+            case 'text':
+                return this.buildText(field);
         }
 
         return this.buildNullField(field, type);
@@ -30,6 +35,23 @@ class FieldBuilder implements FieldBuilderInterface {
             this.getFieldName(field),
             new NullFieldConditionValidator(),
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
+        );
+    }
+
+    private buildText(field: HTMLElement): FieldInterface {
+        const input = field.querySelector('input[type="text"]') as HTMLInputElement;
+        
+        if (!input) {
+            console.error('Text field is an input element');
+            return this.buildNullField(field, 'text');
+        }
+
+        return new Text(
+            field as HTMLInputElement,
+            input,
+            this.getFieldName(field),
+            new TextConditionValidator(),
+            new TextConditionsHandler(this.getFieldCondition(field))
         );
     }
 

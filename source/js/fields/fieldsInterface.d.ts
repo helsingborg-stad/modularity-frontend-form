@@ -15,6 +15,10 @@ interface CheckboxInterface extends FieldInterface {
     getSelectedChoices(): string[];
 }
 
+interface TextInterface extends FieldInterface {
+    getInput(): HTMLInputElement;
+}
+
 interface FieldBuilderInterface {
     build(field: HTMLElement, type: string): FieldInterface;
 }

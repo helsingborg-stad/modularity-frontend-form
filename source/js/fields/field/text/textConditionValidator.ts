@@ -1,7 +1,7 @@
 class TextConditionValidator implements ConditionValidatorInterface {
     private parent: TextInterface|null = null;
 
-    public init(parent: TextInterface) {
+    public init(parent: TextInterface): void {
         this.parent = parent;
     }
 

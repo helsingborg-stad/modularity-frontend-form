@@ -1,6 +1,7 @@
 class CheckboxConditionValidator implements ConditionValidatorInterface {
     private parent: CheckboxInterface|null = null;
-    public init(parent: CheckboxInterface) {
+
+    public init(parent: CheckboxInterface): void {
         this.parent = parent;
     }
 

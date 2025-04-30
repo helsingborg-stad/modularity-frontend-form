@@ -12,5 +12,5 @@ type Condition = {
     field: string;
     class: FieldInterface|null;
     operator: string;
-    value: any;
+    value?: any;
 }

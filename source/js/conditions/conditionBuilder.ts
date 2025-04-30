@@ -48,7 +48,7 @@ class ConditionBuilder implements ConditionBuilderInterface {
             return false;
         }
 
-        if (!('field' in condition) || !('operator' in condition) || !('value' in condition) || !this.fields[condition.field]) {
+        if (!('field' in condition) || !('operator' in condition) || !this.fields[condition.field]) {
             return false;
         }
 

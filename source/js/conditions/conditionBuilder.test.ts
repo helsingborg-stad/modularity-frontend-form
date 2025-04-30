@@ -38,14 +38,11 @@ describe('Condition Builder', () => {
     it('build() returns an array with a NullCondition if conditionSet doesnt contain valid conditionalData', () => {
         const faultyItemType = conditionBuilder.build([['item', 'item']]);
         const faultyObjectMissingFieldName = conditionBuilder.build([[{operator: '==', value: 1}]]);
-        const faultyObjectMissingValue = conditionBuilder.build([[{field: 'field', operator: '=='}]]);
         const faultyObjectMissingOperator = conditionBuilder.build([[{field: 'field', value: 1}]]);
         expect(faultyItemType).toHaveLength(1);
         expect(faultyItemType[0]).toBeInstanceOf(NullCondition);
         expect(faultyObjectMissingFieldName).toHaveLength(1);
         expect(faultyObjectMissingFieldName[0]).toBeInstanceOf(NullCondition);
-        expect(faultyObjectMissingValue).toHaveLength(1);
-        expect(faultyObjectMissingValue[0]).toBeInstanceOf(NullCondition);
         expect(faultyObjectMissingOperator).toHaveLength(1);
         expect(faultyObjectMissingOperator[0]).toBeInstanceOf(NullCondition);
     });

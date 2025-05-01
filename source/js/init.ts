@@ -8,7 +8,7 @@ import Submit from "./steps/submit/submit";
 import FieldBuilder from "./fields/fieldBuilder";
 import Fields from "./fields/fields";
 import ConditionBuilder from "./conditions/conditionBuilder";
-
+import AsyncNonce from "./asyncNonce/asyncNonce";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -59,7 +59,8 @@ class Form {
                 steps,
                 new Submit(
                     this.form, 
-                    modularityFrontendFormData
+                    modularityFrontendFormData,
+                    new AsyncNonce(modularityFrontendFormData)
                 ),
             ),
             new StepUIManager(

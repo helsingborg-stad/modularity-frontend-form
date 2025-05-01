@@ -1,0 +1,113 @@
+interface AsyncNonceInterface {
+  setup(form: HTMLFormElement): Promise<void>;
+}
+
+class AsyncNonce {
+  /**
+   * Constructor for AsyncNonce.
+   * @param modularityFrontendFormData The form data object containing API routes.
+   */
+  constructor(
+    private modularityFrontendFormData: ModularityFrontendFormData
+  ) {}
+
+  /**
+   * Fetch the nonce from the server.
+   * @returns The nonce string or null if not found.
+   */
+  public async get(): Promise<string | null> {
+    const url = this.modularityFrontendFormData?.apiRoutes?.nonceGet;
+
+    if (!url) {
+      console.error("Nonce URL is not defined.");
+      return null;
+    }
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+
+      const json = await response.json();
+      return json?.nonce ?? null;
+    } catch (error: any) {
+      console.error("Nonce fetching failed:", error?.message || error);
+      return null;
+    }
+  }
+
+  /**
+   * Inject the nonce into the form as a hidden input field.
+   * @param form The form element to inject the nonce into.
+   * @param nonce The nonce value to inject.
+   */
+  public inject(form: HTMLFormElement, nonce: string, nonceElementId: string): void {
+    if (this.isNoncePresent(form, nonceElementId)) {
+      this.removeNonce(form, nonceElementId);
+    }
+
+    form.appendChild(
+      this.createNonceElement(nonce, nonceElementId)
+    );
+  }
+
+  /**
+   * Check if the nonce is already present in the form.
+   * @param form The form element to check.
+   * @returns True if the nonce is present, false otherwise.
+   */
+  public isNoncePresent(form: HTMLFormElement, nonceElementId: string): boolean {
+    return form.querySelector("#" + nonceElementId) !== null;
+  }
+
+  /**
+   * Remove the nonce from the form.
+   * @param form The form element to remove the nonce from.
+   */
+  public removeNonce(form: HTMLFormElement, nonceElementId: string): void {
+    const existingNonceInput = form.querySelector("#" + nonceElementId);
+    if (existingNonceInput) {
+      form.removeChild(existingNonceInput);
+    }   
+  }
+
+  /**
+   * Create a nonce element to be injected into the form.
+   * @param nonce The nonce value to inject.
+   * @param nonceElementId The ID for the nonce input element.
+   * @returns The created input element.
+   */
+  public createNonceElement(nonce: string, nonceElementId: string): HTMLInputElement {
+    const nonceInput = document.createElement("input");
+
+    nonceInput.id     = nonceElementId;
+    nonceInput.type   = "hidden";
+    nonceInput.name   = "nonce";
+    nonceInput.value  = nonce;
+
+    nonceInput.setAttribute("aria-hidden", "true");
+    nonceInput.setAttribute("autocomplete", "off");
+    nonceInput.setAttribute("autocorrect", "off");
+
+    return nonceInput;
+  }
+
+  /**
+   * Setup the nonce by fetching it and injecting it into the form.
+   * @param form The form element to inject the nonce into.
+   */
+  public async setup(
+    form: HTMLFormElement
+  ): Promise<void> {
+    console.log("Setting up nonce...");
+    const nonce = await this.get();
+    if (nonce) {
+      console.log("Nonce fetched successfully:", nonce);
+      this.inject(form, nonce, "async-nonce-element");
+    } else {
+      console.error("Nonce is not defined.");
+    }
+  }
+}
+export default AsyncNonce;

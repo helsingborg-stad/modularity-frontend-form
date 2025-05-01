@@ -1,10 +1,13 @@
+import AsyncNonce from "../../asyncNonce/asyncNonce";
 interface SubmitInterface {
     submit(event: Event): void | Promise<void>;
 }
+
 class Submit implements SubmitInterface {
     constructor(
       private form: HTMLFormElement,
-      private modularityFrontendFormData: ModularityFrontendFormData
+      private modularityFrontendFormData: ModularityFrontendFormData,
+      private asyncNonce: AsyncNonce
     ) {}
     
   
@@ -17,6 +20,9 @@ class Submit implements SubmitInterface {
         console.error("Submit URL is not defined.");
         return;
       }
+
+      //Init nonce by fetching nonce from endpoint and injecting it into the form
+      await this.asyncNonce.setup(this.form);
     
       try {
         const response = await fetch(url, {

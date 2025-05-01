@@ -119,11 +119,95 @@ class Post extends RestApiEndpoint
             ],
         ]);
 
-        if ($this->wpService->isWpError($result)) {
-            return $result;
+        // Post Successfully created, store the fields
+        if (!$this->wpService->isWpError($result)) {
+            $sanitizedFieldMetaKeys = $this->filterUnmappedFieldKeysForPostType(
+                array_keys($fieldMeta),
+                'post'
+            );
+            $this->storeFields($fieldMeta, $result);
         }
 
-        return $result;
+        return $result; // Probobly a Wp_Error
+    }
+
+    /**
+     * Stores the fields in the database
+     *
+     * @param array $fields The fields to store
+     * @param int $postID The ID of the post to store the fields for
+     */
+    public function storeFields($fields, $postID)
+    {
+        $sanitizedFieldMetaKeys = $this->filterUnmappedFieldKeysForPostType(
+            array_keys($fields),
+            'post'
+        );
+
+        foreach ($sanitizedFieldMetaKeys as $key) {
+            if (isset($fields[$key])) {
+                $this->acfService->updateField(
+                    $key, 
+                    $this->santitileFieldValue($fields[$key], $key), 
+                    $postID
+                );
+            }
+        }
+    }
+
+    /**
+     * Removes fields that are not registered in any of the field groups mapped to the post type
+     *
+     * @param array $fields The fields to check
+     * @param string $postType The post type to check against
+     * @param array $defualtKeys The default keys to include, if any.
+     * 
+     * @return array The filtered fields
+     */
+    private function filterUnmappedFieldKeysForPostType(array $fieldKeys, string $postType, array $defualtKeys = []): array
+    {
+        $fieldGroups = $this->acfService->getFieldGroups($postType);
+
+        foreach ($fieldGroups as $group) {
+            $fields = $this->acfService->getFields($group['key']);
+
+            foreach ($fields as $field) {
+                if (isset($field['key']) && in_array($field['key'], $fieldKeys, true)) {
+                    $validKeys[] = $field['key'];
+                }
+            }
+        }
+
+        return array_merge($validKeys, $defualtKeys);
+    }
+
+    /**
+     * Sanitizes the field value based on its type
+     *
+     * @param mixed $value The value to sanitize
+     * @param string $fieldKey The key of the field
+     *
+     * @return mixed The sanitized value
+     */
+    private function santitileFieldValue($value, $fieldKey) {
+        $field = $this->acfService->getField($fieldKey);
+
+        if (isset($field['type'])) {
+            switch ($field['type']) {
+                case 'text':
+                    return sanitize_text_field($value);
+                case 'email':
+                    return sanitize_email($value);
+                case 'url':
+                    return esc_url_raw($value);
+                case 'number':
+                    return intval($value);
+                default:
+                    return $value;
+            }
+        }
+
+        return $value;
     }
 
     /**

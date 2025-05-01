@@ -4,8 +4,10 @@ namespace ModularityFrontendForm;
 
 use WpService\WpService;
 
-use Api\RestApiEndpointsRegistry;
-use Api\Submit\Post;
+use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
+use ModularityFrontendForm\Api\Submit\Post;
+
+use ModularityFrontendForm\Config\Config;
 
 use \Modularity\HooksRegistrar\Hookable;
 
@@ -15,7 +17,7 @@ use \Modularity\HooksRegistrar\Hookable;
  */
 class App implements \Modularity\HooksRegistrar\Hookable {
 
-    public function __construct(private WpService $wpService){}
+    public function __construct(private WpService $wpService, private Config $config){}
 
     /**
      * Add hooks to WordPress
@@ -59,12 +61,14 @@ class App implements \Modularity\HooksRegistrar\Hookable {
      */
     public function registerApi()
     {
+        
         $restEndpoints = [
-            new Api\Submit\Post($this->wpService),
+            new Api\Submit\Post($this->wpService, $this->config),
+            new Api\Nonce\Get($this->wpService, $this->config),
         ];
 
         $this->wpService->applyFilters(
-            'Modularity/Module/FrontendForm/Api/Endpoints',
+            $this->config->createFilterKey('Api/Endpoints'),
             $restEndpoints
         );
 

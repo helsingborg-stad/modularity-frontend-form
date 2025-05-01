@@ -3,11 +3,13 @@
 namespace ModularityFrontendForm\Api\Submit;
 
 use ModularityFrontendForm\Api\RestApiEndpoint;
+use \ModularityFrontendForm\Config\ConfigInterface;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
+use WpService\WpService;
 
 class Post extends RestApiEndpoint
 {
@@ -16,7 +18,8 @@ class Post extends RestApiEndpoint
     public const KEY       = 'submitForm';
 
     public function __construct(
-        private \WpService\WpService $wpService
+        private WpService $wpService,
+        private ConfigInterface $config
     ) {}
 
     /**
@@ -26,19 +29,19 @@ class Post extends RestApiEndpoint
      */
     public function handleRegisterRestRoute(): bool
     {
-      return register_rest_route(self::NAMESPACE, self::ROUTE, array(
-          'methods'             => WP_REST_Server::CREATABLE,
-          'callback'            => array($this, 'handleRequest'),
-          'permission_callback' => array($this, 'permissionCallback'),
-          'args'                => [
-              'module-id' => [
-                'description' => __('The module id that the request originates from', 'municipio'),
-                'type'        => 'integer',
-                'format'      => 'uri',
-                'required'    => false
-              ]
-          ]
-      ));
+        return register_rest_route(self::NAMESPACE, self::ROUTE, array(
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => array($this, 'handleRequest'),
+            'permission_callback' => array($this, 'permissionCallback'),
+            'args'                => [
+                'module-id' => [
+                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
+                    'type'        => 'integer',
+                    'format'      => 'uri',
+                    'required'    => false
+                ]
+            ]
+        ));
     }
 
 
@@ -54,26 +57,34 @@ class Post extends RestApiEndpoint
         $params          = $request->get_json_params();
         $a               = $params['url'] ?? null;
 
+        // Check if the request is valid
+        if(!$this->validateNonce($params['nonce'] ?? '')) {
+            return rest_ensure_response(new WP_Error(
+                'invalid_nonce',
+                __('Invalid nonce', 'modularity-frontend-form'),
+                array('status' => WP_Http::UNAUTHORIZED)
+            ));
+        }
+
         $insert = $this->insertPost();
 
         if (is_wp_error($insert)) {
-            $error = new WP_Error(
-                $a->get_error_code(),
-                $a->get_error_message(),
+            return rest_ensure_response(new WP_Error(
+                $insert->get_error_code(),
+                $insert->get_error_message(),
                 array('status' => WP_Http::BAD_REQUEST)
-            );
-            return rest_ensure_response($error);
+            ));
         } elseif (is_numeric($insert)) {
             return rest_ensure_response([
                 'status' => 'success',
-                'message' => __('Post created successfully', 'municipio'),
+                'message' => __('Post created successfully', 'modularity-frontend-form'),
                 'postId' => $insert,
             ]);
         }
 
         return rest_ensure_response(new WP_Error(
             502,
-            __('Unexpected result from post creation', 'municipio'),
+            __('Unexpected result from post creation', 'modularity-frontend-form'),
             array('status' => WP_Http::BAD_REQUEST)
         ));
     }
@@ -113,5 +124,17 @@ class Post extends RestApiEndpoint
         }
 
         return $result;
+    }
+
+    /**
+     * Validates the nonce for the request
+     *
+     * @param string $nonce The nonce to validate
+     *
+     * @return bool Whether the nonce is valid
+     */
+    public function validateNonce($nonce): bool
+    {
+        return $this->wpService->wpVerifyNonce($nonce, $this->config->getNonceKey());
     }
 }

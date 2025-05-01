@@ -53,5 +53,8 @@ $wpService->addAction('acf/init', function () {
 });
 
 // Start application
-$app = new ModularityFrontendForm\App($wpService);
+$app = new ModularityFrontendForm\App(
+    $wpService, 
+    new ModularityFrontendForm\Config\Config($wpService, 'Modularity/FrontendForm')
+);
 $app->addHooks();

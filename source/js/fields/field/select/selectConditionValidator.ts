@@ -6,20 +6,20 @@ class SelectConditionValidator implements ConditionValidatorInterface {
     }
 
     public validate(condition: any): boolean {
-        const value = this.parent?.getSelect().value ?? '';
+        const selected: string[] = this.parent?.getSelectedOptions() || [];
 
         switch (condition.operator) {
             case '==':
             case '=':
             case '===':
-                return value === condition.value;
+                return selected.includes(condition.value);
             case '!=':
             case '!==':
-                return value !== condition.value;
+                return !selected.includes(condition.value);
             case '==empty':
-                return value.length === 0;
+                return selected.length === 0;
             case '!=empty':
-                return value.length > 0;
+                return selected.length > 0;
             default:
                 return false;
         }

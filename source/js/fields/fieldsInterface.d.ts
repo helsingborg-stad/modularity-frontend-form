@@ -22,6 +22,7 @@ interface TextInterface extends FieldInterface {
 interface SelectInterface extends FieldInterface {
     getSelect(): HTMLSelectElement;
     getOptions(): NodeListOf<HTMLOptionElement>;
+    getSelectedOptions(): string[];
 }
 
 interface FieldBuilderInterface {

@@ -37,6 +37,10 @@ class Select implements SelectInterface {
     public getOptions(): NodeListOf<HTMLOptionElement> {
         return this.options;
     }
+
+    public getSelectedOptions(): string[] {
+        return [...this.getOptions()].filter(option => option.selected).map(option => option.value);
+    }
 }
 
 export default Select;

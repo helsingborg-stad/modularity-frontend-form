@@ -57,6 +57,7 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 
 	private setValueChangeListener(): void {
         this.parent?.getSelect().addEventListener('change', () => {
+            console.log('change')
             for (const fieldName in this.fieldsObject) {
                 this.fieldsObject[fieldName].getConditionsHandler().validate();
             }

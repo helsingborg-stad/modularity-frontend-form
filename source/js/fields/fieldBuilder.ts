@@ -61,7 +61,6 @@ class FieldBuilder implements FieldBuilderInterface {
             new SelectConditionValidator(),
             new SelectConditionHandler(this.getFieldCondition(field))
         )
-        return this.buildNullField(field, 'select');
     }
 
     private buildText(field: HTMLElement): FieldInterface {

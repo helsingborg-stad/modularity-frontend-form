@@ -38,8 +38,8 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 	}
 
 	public dispatchUpdateEvent(): void {
-		if (this.parent?.getField()) {
-			this.parent.getField().dispatchEvent(new Event('input'));
+        if (this.parent?.getSelect()) {
+			this.parent.getSelect().dispatchEvent(new Event('change'));
 		}
 	}
 
@@ -56,7 +56,7 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
     }
 
 	private setValueChangeListener(): void {
-        this.parent?.getSelect().addEventListener('input', () => {
+        this.parent?.getSelect().addEventListener('change', () => {
             for (const fieldName in this.fieldsObject) {
                 this.fieldsObject[fieldName].getConditionsHandler().validate();
             }

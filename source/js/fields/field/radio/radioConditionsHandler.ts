@@ -9,7 +9,6 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 
 	public init(parent: RadioInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
-		console.log(this.unstructuredConditions);
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 		this.setValueChangeListener();
 	}

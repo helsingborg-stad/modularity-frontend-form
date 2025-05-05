@@ -253,31 +253,15 @@ class FormatSteps {
 
     private function mapTrueFalse(array $field): array
     {
-        $mapped = $this->mapBasic($field, 'trueFalse');
 
-        $mapped['checked'] = !empty($field['default_value']) ? true : false;
-        $mapped['type']    = 'radio';
-        $mapped['attributeList']['role'] = 'radiogroup';
-        $mapped['attributeList']['style'] = 'display: flex;';
-
-        $mapped['choices'] = [
-            [
-                'type' => $mapped['type'],
-                'label' => __('No', 'modularity-frontend-form'),
-                'name' => $field['key'],
-                'value' => false,
-                'checked' => !$mapped['checked'],
-            ],
-            [
-                'type' => $mapped['type'],
-                'label' => __('Yes', 'modularity-frontend-form'),
-                'required' => $mapped['required'] ?? false,
-                'name' => $field['key'],
-                'value' => true,
-                'checked' => $mapped['checked'],
-            ],
+        $field['choices'] = [
+            0 => __('No', 'modularity-frontend-form'),
+            1 => __('Yes', 'modularity-frontend-form'),
         ];
 
+        $mapped = $this->mapRadio($field);
+
+        $mapped['attributeList']['style'] = 'display: flex;';
 
         return $mapped;
     }

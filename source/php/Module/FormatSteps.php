@@ -68,8 +68,9 @@ class FormatSteps {
             case 'url':
                 return $this->mapUrl($field);
             case 'textarea':
-            case 'message':
                 return $this->mapTextarea($field);
+            case 'message':
+                return $this->mapBasic($field, 'message');
             case 'radio':
                 return $this->mapRadio($field);
             case 'number':

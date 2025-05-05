@@ -7,7 +7,6 @@ class RadioConditionValidator implements ConditionValidatorInterface {
 
     public validate(condition: Condition): boolean {
         const selected = this.parent?.getSelectedChoice() ?? '';
-        console.log(condition, 'selected', selected);
 
         switch (condition.operator) {
             case '==':

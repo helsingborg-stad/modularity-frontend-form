@@ -39,7 +39,10 @@ class AsyncNonce implements AsyncNonceInterface {
       const json = await response.json();
       return json?.nonce ?? null;
     } catch (error: any) {
-      console.error("Nonce fetching failed:", error?.message || error);
+      submitStatusHandler.setStatus(
+        SubmitStatus.Error,
+        "Failed to fetch security validation key, please try again."
+      );
       return null;
     }
   }

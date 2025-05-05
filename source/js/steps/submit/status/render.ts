@@ -1,6 +1,7 @@
 import SubmitStatus from './enum';
+import SubmitStatusRendererInterface from './renderInterface';
 
-class SubmitStatusRenderer {
+class SubmitStatusRenderer implements SubmitStatusRendererInterface {
   private container: HTMLElement;
 
   constructor(container: HTMLElement) {

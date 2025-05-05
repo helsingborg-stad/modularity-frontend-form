@@ -182,10 +182,11 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'time');
 
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
-        $mapped['minTime']     = $field['min_time'] ?? '';
-        $mapped['maxTime']     = $field['max_time'] ?? '';
+        $mapped['placeholder']                         = $field['placeholder'] ?? null;
+        $mapped['value']                               = $field['default_value'] ?? null;
+        $mapped['minTime']                             = $field['min_time'] ?? null;
+        $mapped['maxTime']                             = $field['max_time'] ?? null;
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }

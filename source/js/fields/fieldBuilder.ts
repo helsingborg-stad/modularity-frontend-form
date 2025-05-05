@@ -31,6 +31,7 @@ class FieldBuilder implements FieldBuilderInterface {
             case 'email':
             case 'url':
             case 'date':
+            case 'time':
                 return this.buildText(field);
             case 'select':
                 return this.buildSelect(field);
@@ -89,9 +90,10 @@ class FieldBuilder implements FieldBuilderInterface {
     }
 
     private buildText(field: HTMLElement): FieldInterface {
-        const input = field.querySelector('input:is([type="text"], [type="email"], [type="url"], [type="date"])') as HTMLInputElement;
+        const input = field.querySelector('input:is([type="text"], [type="email"], [type="url"], [type="date"], [type="time"])') as HTMLInputElement;
+        console.log(field);
         if (!input) {
-            console.error('Text field is not an input element with type "text", "email" or "url"');
+            console.error('Text field is not an input element with type "text", "email" or "url", "date" or "time"');
             return this.buildNullField(field, 'text');
         }
 

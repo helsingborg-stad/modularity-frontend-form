@@ -226,14 +226,22 @@ class FormatSteps {
     
     private function mapTaxonomy(array $field): array
     {
-        $mapped = $this->mapBasic($field, 'taxonomy');
+        $field['choices'] = $this->structureTerms($this->getTermsFromTaxonomy($field));
 
-        // TODO: Should we add description to select/checkbox component?
-        $mapped['type']        = $field['field_type'] ?? 'checkbox';
-        $mapped['terms'] = $this->structureTerms($mapped, $this->getTermsFromTaxonomy($field));
-        
+        $type = $field['field_type'] ?? 'checkbox';
 
-        return $mapped;
+        switch ($type) {
+            case 'radio':
+                return $this->mapRadio($field);
+            case 'select':
+                return $this->mapSelect($field);
+            case 'multi_select':
+                $field['multiple'] = true;
+                return $this->mapSelect($field);
+            case 'checkbox':
+            default:
+                return $this->mapCheckbox($field);
+        }
     }
 
     private function mapText(array $field): array
@@ -331,7 +339,7 @@ class FormatSteps {
     private function mapSelect(array $field): array
     {
         $mapped = $this->mapBasic($field, 'select');
-
+        echo '<pre>' . print_r( $field['choices'], true ) . '</pre>';
         $mapped['options']     = $field['choices'] ?? [];
         $mapped['preselected'] = $field['default_value'] ?? null;
         $mapped['placeholder'] = $field['placeholder'] ?? '';
@@ -349,18 +357,12 @@ class FormatSteps {
         return json_encode($conditionalLogic);
     }
 
-    private function structureTerms(array $mapped, array $terms): array
+    private function structureTerms(array $terms): array
     {
-        // TODO: Needs to be compatible with select, radio and checkbox (multiselect for select/checkbox/radio)
         $structured = [];
+
         foreach ($terms as $term) {
-            $structured[$term->term_id] = [
-                'name' => $mapped['name'],
-                'type' => $mapped['type'],
-                'attributeList' => $mapped['attributeList'] ?? [],
-                'label' => $term->name,
-                'required' => !empty($mapped['required']) ? true : false,
-            ];
+            $structured[$term->term_id] = $term->name ?? $term->term_id;
         }
 
         return $structured;

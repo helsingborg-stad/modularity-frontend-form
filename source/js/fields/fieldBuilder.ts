@@ -32,6 +32,7 @@ class FieldBuilder implements FieldBuilderInterface {
             case 'select':
                 return this.buildSelect(field);
             case 'radio':
+            case 'trueFalse':
                 return this.buildRadio(field);
         }
 

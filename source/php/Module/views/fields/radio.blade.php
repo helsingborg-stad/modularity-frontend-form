@@ -1,7 +1,5 @@
 @element([
-    'attributeList' => [
-        'role' => 'radiogroup',
-    ]
+    'attributeList' => $field['attributeList'] ?? []
 ])
     @foreach ($field['choices'] as $choice)
         @option($choice)

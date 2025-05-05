@@ -3,6 +3,7 @@
 namespace ModularityFrontendForm\Module;
 
 use AcfService\AcfService;
+use WpService\Contracts\__;
 
 class FormatSteps {
     public function __construct(private AcfService $acfService)
@@ -254,7 +255,28 @@ class FormatSteps {
         $mapped = $this->mapBasic($field, 'trueFalse');
 
         $mapped['checked'] = !empty($field['default_value']) ? true : false;
-        $mapped['type']    = 'checkbox';
+        $mapped['type']    = 'radio';
+        $mapped['attributeList']['role'] = 'radiogroup';
+        $mapped['attributeList']['style'] = 'display: flex;';
+
+        $mapped['choices'] = [
+            [
+                'type' => $mapped['type'],
+                'label' => __('No', 'modularity-frontend-form'),
+                'name' => $field['key'],
+                'value' => false,
+                'checked' => !$mapped['checked'],
+            ],
+            [
+                'type' => $mapped['type'],
+                'label' => __('Yes', 'modularity-frontend-form'),
+                'required' => $mapped['required'] ?? false,
+                'name' => $field['key'],
+                'value' => true,
+                'checked' => $mapped['checked'],
+            ],
+        ];
+
 
         return $mapped;
     }

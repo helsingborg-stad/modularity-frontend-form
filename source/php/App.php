@@ -57,11 +57,10 @@ class App implements \Modularity\HooksRegistrar\Hookable {
 
     /**
      * Register the API
-     * @return void
+     * @return voidxw
      */
     public function registerApi()
     {
-        
         $restEndpoints = [
             new Api\Submit\Post($this->wpService, $this->config),
             new Api\Nonce\Get($this->wpService, $this->config),

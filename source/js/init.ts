@@ -62,7 +62,8 @@ class Form {
                 new Submit(
                     this.form, 
                     modularityFrontendFormData,
-                    new AsyncNonce(modularityFrontendFormData),
+                    modularityFrontendFormLang,
+                    new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
                     new SubmitStatusHandler(this.formContainer),
                     new SubmitStatusRenderer(this.formContainer)
                 ),

@@ -9,4 +9,15 @@ type ModularityFrontendFormLang = {
     next?: string;
     previous?: string;
     submit?: string;
+
+    submitInit?: string;
+    submitUrlError?: string;
+    submitError?: string;
+    submitSuccess?: string;
+
+
+    nonceRequest?: string;
+    nonceUrlMissing?: string;
+    nonceRequestFailed?: string;
+    nonceRequestSuccess?: string;
 };

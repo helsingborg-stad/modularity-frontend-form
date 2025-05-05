@@ -9,6 +9,7 @@ class AsyncNonce implements AsyncNonceInterface {
    */
   constructor(
     private modularityFrontendFormData: ModularityFrontendFormData,
+    private modularityFrontendFormLang: ModularityFrontendFormLang,
   ) {}
 
   /**
@@ -21,7 +22,8 @@ class AsyncNonce implements AsyncNonceInterface {
     if (!url) {
       submitStatusHandler.setStatus(
         SubmitStatus.Error,
-        "Could not find the nonce URL. Please check your configuration."
+        this.modularityFrontendFormLang?.nonceUrlMissing ?? "Could not find the nonce URL. Please check your configuration.",
+        0
       );
       return null;
     }
@@ -29,21 +31,24 @@ class AsyncNonce implements AsyncNonceInterface {
     try {
       submitStatusHandler.setStatus(
         SubmitStatus.Working,
-        "Fetching security validation key..."
+        this.modularityFrontendFormLang?.nonceRequest ?? "Fetching security validation key...",
+        30
       );
 
       const response = await fetch(url);
       if (!response.ok) {
         submitStatusHandler.setStatus(
           SubmitStatus.Error,
-          "Failed to fetch security validation key, please try again."
+          this.modularityFrontendFormLang?.nonceRequestFailed ?? "Failed to fetch security validation key, please try again.",
+          0
         );
         throw new Error(`HTTP error: ${response.status}`);
       }
 
       submitStatusHandler.setStatus(
         SubmitStatus.Working,
-        "Fetched security validation key..."
+        this.modularityFrontendFormLang?.nonceRequestSuccess ?? "Fetched security validation key...",
+        60
       );
 
       const json = await response.json();
@@ -51,7 +56,8 @@ class AsyncNonce implements AsyncNonceInterface {
     } catch (error: any) {
       submitStatusHandler.setStatus(
         SubmitStatus.Error,
-        "Failed to fetch security validation key, please try again."
+        this.modularityFrontendFormLang?.nonceRequestFailed ?? "Failed to fetch security validation key, please try again.",
+        0
       );
       return null;
     }

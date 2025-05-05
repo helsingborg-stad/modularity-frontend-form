@@ -8,6 +8,7 @@ class Submit implements SubmitInterface {
     constructor(
       private form: HTMLFormElement,
       private modularityFrontendFormData: ModularityFrontendFormData,
+      private modularityFrontendFormLang: ModularityFrontendFormLang,
       private asyncNonce: AsyncNonce,
       private submitStatusHandler: SubmitStatusHandler,
       private submitStatusRenderer: SubmitStatusRenderer,
@@ -27,7 +28,8 @@ class Submit implements SubmitInterface {
       // Set the initial status to working
       this.submitStatusHandler.setStatus(
         SubmitStatus.Working,
-        "Hey, im submitting now! Please wait a moment..."
+        this.modularityFrontendFormLang?.submitInit ?? "Submitting your form, please wait...",
+        0
       );
 
       const url = this.modularityFrontendFormData.apiRoutes?.submitForm;
@@ -35,7 +37,8 @@ class Submit implements SubmitInterface {
       if (!url) {
         this.submitStatusHandler.setStatus(
           SubmitStatus.Error,
-          "Could not find the submit URL. Please check your configuration."
+          this.modularityFrontendFormLang?.submitUrlError ?? "Could not find the submit URL. Please check your configuration.",
+          10
         );
         return;
       }
@@ -54,17 +57,18 @@ class Submit implements SubmitInterface {
         }
     
         const json = await response.json();
-        console.log("Form submitted successfully:", json);
 
         // Set the status to success
         this.submitStatusHandler.setStatus(
           SubmitStatus.Success,
-          "Form submitted successfully! Thank you for your submission."
+          this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
+          100
         );
       } catch (error: any) {
         this.submitStatusHandler.setStatus(
           SubmitStatus.Error,
-          "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : "")
+          this.modularityFrontendFormLang?.submitError ?? "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : ""),
+          0
         );
       }
     }

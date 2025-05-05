@@ -156,26 +156,10 @@ class FormatSteps {
 
         return $mapped;
     }
-    
-    // TODO: We do not have anything like this
+
     private function mapButtonGroup(array $field): array
     {
-        $mapped = $this->mapBasic($field, 'buttonGroup');
-        $mapped['type'] = 'radio';
-
-        $mapped['choices'] = [];
-        foreach ($field['choices'] as $key => $value) {
-            $mapped['choices'][$key] = [
-                'type' => $mapped['type'],
-                'label' => $value,
-                'required' => $mapped['required'] ?? false,
-                'name' => $field['key'],
-                'value' => $key,
-                'checked' => ($field['default_value'] ?? '') === $key,
-            ];
-        }
-
-        return $mapped; 
+        return $this->mapRadio($field);
     }
 
     private function mapTimePicker(array $field): array

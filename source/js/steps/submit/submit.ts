@@ -2,7 +2,6 @@ import AsyncNonce from "../../asyncNonce/asyncNonce";
 import SubmitStatusHandler from "./status/handler";
 import SubmitStatusRenderer from "./status/render";
 import SubmitStatus from "./status/enum";
-import AsyncNonceInterface from "../../asyncNonce/asyncNonceInterface";
 import SubmitInterface from "./submitInterface";
 
 class Submit implements SubmitInterface {
@@ -10,10 +9,16 @@ class Submit implements SubmitInterface {
       private form: HTMLFormElement,
       private modularityFrontendFormData: ModularityFrontendFormData,
       private asyncNonce: AsyncNonce,
-      private submitStatusHandler: SubmitStatusHandler = new SubmitStatusHandler(form),
-      private submitStatusRenderer: SubmitStatusRenderer = new SubmitStatusRenderer(form),
+      private submitStatusHandler: SubmitStatusHandler,
+      private submitStatusRenderer: SubmitStatusRenderer,
     ) {}
     
+    /**
+     * Setup the submit functionality.
+     * @param form The form element to be submitted.
+     * 
+     * @returns A promise that resolves when the form is submitted.
+     */
     public async submit(): Promise<void> {
 
       // Render the submit status when changed
@@ -57,7 +62,10 @@ class Submit implements SubmitInterface {
           "Form submitted successfully! Thank you for your submission."
         );
       } catch (error: any) {
-        console.error("Form submission failed:", error?.message || error);
+        this.submitStatusHandler.setStatus(
+          SubmitStatus.Error,
+          "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : "")
+        );
       }
     }
 }

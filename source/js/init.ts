@@ -10,6 +10,7 @@ import Fields from "./fields/fields";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
 import SubmitStatusHandler from "./steps/submit/status/handler";
+import SubmitStatusRenderer from "./steps/submit/status/render";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -63,6 +64,7 @@ class Form {
                     modularityFrontendFormData,
                     new AsyncNonce(modularityFrontendFormData),
                     new SubmitStatusHandler(this.formContainer),
+                    new SubmitStatusRenderer(this.formContainer)
                 ),
             ),
             new StepUIManager(

@@ -27,6 +27,11 @@ class AsyncNonce implements AsyncNonceInterface {
     }
 
     try {
+      submitStatusHandler.setStatus(
+        SubmitStatus.Working,
+        "Fetching security validation key..."
+      );
+
       const response = await fetch(url);
       if (!response.ok) {
         submitStatusHandler.setStatus(
@@ -35,6 +40,11 @@ class AsyncNonce implements AsyncNonceInterface {
         );
         throw new Error(`HTTP error: ${response.status}`);
       }
+
+      submitStatusHandler.setStatus(
+        SubmitStatus.Working,
+        "Fetched security validation key..."
+      );
 
       const json = await response.json();
       return json?.nonce ?? null;

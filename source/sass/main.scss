@@ -94,3 +94,14 @@ $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
     gap: 1rem;
 }
 
+
+.status-message {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    background: #fff;
+    padding: 16px 32px;
+    transform: translate(-50%, 90px);
+    border-radius: 8px;
+    box-shadow: 0 0 35px #00000024;
+}

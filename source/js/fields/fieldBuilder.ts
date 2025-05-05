@@ -29,6 +29,7 @@ class FieldBuilder implements FieldBuilderInterface {
                 return this.buildCheckbox(field);
             case 'text':
             case 'email':
+            case 'url':
                 return this.buildText(field);
             case 'select':
                 return this.buildSelect(field);

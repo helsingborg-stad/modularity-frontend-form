@@ -15,6 +15,11 @@ interface CheckboxInterface extends FieldInterface {
     getSelectedChoices(): string[];
 }
 
+interface RadioInterface extends FieldInterface {
+    getChoices(): NodeListOf<HTMLInputElement>;
+    getSelectedChoice(): string;
+}
+
 interface TextInterface extends FieldInterface {
     getInput(): HTMLInputElement;
 }

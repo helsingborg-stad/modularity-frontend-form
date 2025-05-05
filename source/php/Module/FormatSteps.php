@@ -282,6 +282,7 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'radio');
         $mapped['choices'] = [];
+        $mapped['attributeList']['role'] = 'radiogroup';
         foreach ($field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type' => $mapped['type'],

@@ -10,6 +10,9 @@ import TextConditionValidator from "./field/text/textConditionValidator";
 import Select from "./field/select/select";
 import SelectConditionHandler from "./field/select/selectConditionHandler";
 import SelectConditionValidator from "./field/select/selectConditionValidator";
+import Radio from "./field/radio/radio";
+import RadioConditionValidator from "./field/radio/radioConditionValidator";
+import RadioConditionsHandler from "./field/radio/radioConditionsHandler";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -28,6 +31,8 @@ class FieldBuilder implements FieldBuilderInterface {
                 return this.buildText(field);
             case 'select':
                 return this.buildSelect(field);
+            case 'radio':
+                return this.buildRadio(field);
         }
 
         return this.buildNullField(field, type);
@@ -42,9 +47,25 @@ class FieldBuilder implements FieldBuilderInterface {
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
         );
     }
+
+    private buildRadio(field: HTMLElement): FieldInterface {
+        const choices = field.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
+
+        if (choices.length === 0) {
+            console.error('Radio field is missing input elements');
+            return this.buildNullField(field, 'radio');
+        }
+
+        return new Radio(
+            field,
+            choices,
+            this.getFieldName(field),
+            new RadioConditionValidator(),
+            new RadioConditionsHandler(this.getFieldCondition(field))
+        );
+    }
     
     private buildSelect(field: HTMLElement): FieldInterface {
-        console.log(field)
         const select = field.querySelector('select') as HTMLSelectElement;
         const options = select?.querySelectorAll('option') as NodeListOf<HTMLOptionElement>;
 

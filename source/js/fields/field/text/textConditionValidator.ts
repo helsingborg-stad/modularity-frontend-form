@@ -29,6 +29,7 @@ class TextConditionValidator implements ConditionValidatorInterface {
             case '<':
                 return Number(value) < Number(condition.value);
             default:
+                console.error('Invalid operator:', condition.operator);
                 return false;
         }
 

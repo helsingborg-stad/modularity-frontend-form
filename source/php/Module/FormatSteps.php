@@ -50,8 +50,9 @@ class FormatSteps {
             case 'true_false':
                 return $this->mapTrueFalse($field);
             case 'text':
-            case 'email':
                 return $this->mapText($field);  
+            case 'email':
+                return $this->mapEmail($field);
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
             case 'repeater':
@@ -78,10 +79,6 @@ class FormatSteps {
             
         }
 
-        // TODO: Conditionals
-        // TODO: Repeater
-        // TODO: OSM Field
-        // TODO: Location field google maps/osm?
         //echo '<pre>' . print_r( $field, true ) . '</pre>';die;
     }
 
@@ -155,8 +152,9 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'url');
 
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
+        $mapped['placeholder']                         = $field['placeholder'] ?? '';
+        $mapped['value']                               = $field['default_value'] ?? '';
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }
@@ -243,6 +241,17 @@ class FormatSteps {
         $mapped = $this->mapBasic($field, 'text');
         
         // TODO: Add maxLength to component (field)?
+        $mapped['placeholder']                         = $field['placeholder'] ?? '';
+        $mapped['value']                               = $field['default_value'] ?? '';
+        $mapped['moveAttributesListToFieldAttributes'] = false;
+
+        return $mapped;
+    }
+
+    private function mapEmail(array $field): array
+    {
+        $mapped = $this->mapBasic($field, 'email');
+
         $mapped['placeholder']                         = $field['placeholder'] ?? '';
         $mapped['value']                               = $field['default_value'] ?? '';
         $mapped['moveAttributesListToFieldAttributes'] = false;

@@ -1,31 +1,38 @@
-interface AsyncNonceInterface {
-  setup(form: HTMLFormElement): Promise<void>;
-}
+import SubmitStatusHandler from "../steps/submit/status/handler";
+import SubmitStatus from "../steps/submit/status/enum";
+import AsyncNonceInterface from "./asyncNonceInterface";
+class AsyncNonce implements AsyncNonceInterface {
 
-class AsyncNonce {
   /**
    * Constructor for AsyncNonce.
    * @param modularityFrontendFormData The form data object containing API routes.
    */
   constructor(
-    private modularityFrontendFormData: ModularityFrontendFormData
+    private modularityFrontendFormData: ModularityFrontendFormData,
   ) {}
 
   /**
    * Fetch the nonce from the server.
    * @returns The nonce string or null if not found.
    */
-  public async get(): Promise<string | null> {
+  public async get(submitStatusHandler: SubmitStatusHandler): Promise<string | null> {
     const url = this.modularityFrontendFormData?.apiRoutes?.nonceGet;
 
     if (!url) {
-      console.error("Nonce URL is not defined.");
+      submitStatusHandler.setStatus(
+        SubmitStatus.Error,
+        "Could not find the nonce URL. Please check your configuration."
+      );
       return null;
     }
 
     try {
       const response = await fetch(url);
       if (!response.ok) {
+        submitStatusHandler.setStatus(
+          SubmitStatus.Error,
+          "Failed to fetch security validation key, please try again."
+        );
         throw new Error(`HTTP error: ${response.status}`);
       }
 
@@ -98,15 +105,12 @@ class AsyncNonce {
    * @param form The form element to inject the nonce into.
    */
   public async setup(
-    form: HTMLFormElement
+    form: HTMLFormElement,
+    submitStatusHandler: SubmitStatusHandler,
   ): Promise<void> {
-    console.log("Setting up nonce...");
-    const nonce = await this.get();
+    const nonce = await this.get(submitStatusHandler);
     if (nonce) {
-      console.log("Nonce fetched successfully:", nonce);
       this.inject(form, nonce, "async-nonce-element");
-    } else {
-      console.error("Nonce is not defined.");
     }
   }
 }

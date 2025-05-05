@@ -21,7 +21,6 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 
 	public validate(): void {
 		let isValid: boolean = false;
-        console.log(this.getConditions());
 		for (const condition of this.getConditions()) {
 			if (condition.validate()) {
 				isValid = true;

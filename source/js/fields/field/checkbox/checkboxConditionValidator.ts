@@ -12,9 +12,11 @@ class CheckboxConditionValidator implements ConditionValidatorInterface {
             case '==':
             case '=':
             case '===':
+            case '==contains':
                 return selected.includes(condition.value);
             case '!=':
             case '!==':
+            case '!=contains':
                 return !selected.includes(condition.value);
             case '==empty':
                 return selected.length === 0;
@@ -25,6 +27,7 @@ class CheckboxConditionValidator implements ConditionValidatorInterface {
             case '<':
                 return selected.some(selectedValue => Number(selectedValue) < Number(condition.value));
             default:
+                console.error('Invalid operator:', condition.operator);
                 return false;
         }
     }

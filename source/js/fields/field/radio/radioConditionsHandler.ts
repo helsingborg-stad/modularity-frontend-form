@@ -1,24 +1,29 @@
-class SelectConditionHandler implements ConditionsHandlerInterface {
+class RadioConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
-	private parent: SelectInterface|null = null;
+	private parent: RadioInterface | null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
 	constructor(private unstructuredConditions: any) {
 	}
 
-	public init(parent: SelectInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(parent: RadioInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 		this.setValueChangeListener();
 	}
 
 	private updateDisabled(disabled: boolean): void {
-		if (this.parent && this.isDisabled !== disabled) {
+		if (this.isDisabled !== disabled) {
 			this.isDisabled = disabled;
 
-            this.parent.getField().classList.toggle('u-display--none', disabled);
-            this.parent.getSelect().disabled = disabled;
+			this.parent?.getChoices().forEach((checkbox, index) => {
+				if (index === 0) {
+					this.parent?.getField().classList.toggle('u-display--none', disabled)
+				}
+				
+				checkbox.disabled = disabled;
+			});
 
 			this.dispatchUpdateEvent();
 		}
@@ -26,7 +31,6 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 
 	public validate(): void {
 		let isValid: boolean = false;
-
 		for (const condition of this.getConditions()) {
 			if (condition.validate()) {
 				isValid = true;
@@ -38,8 +42,10 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 	}
 
 	public dispatchUpdateEvent(): void {
-        if (this.parent?.getSelect()) {
-			this.parent.getSelect().dispatchEvent(new Event('change'));
+		const choice = this.parent?.getChoices()[0];
+
+		if (choice) {
+			choice.dispatchEvent(new Event('change'));
 		}
 	}
 
@@ -56,12 +62,14 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
     }
 
 	private setValueChangeListener(): void {
-        this.parent?.getSelect().addEventListener('change', () => {
-            for (const fieldName in this.fieldsObject) {
-                this.fieldsObject[fieldName].getConditionsHandler().validate();
-            }
-        });
+		this.parent?.getChoices().forEach((radio) => {
+			radio.addEventListener('change', () => {
+				for (const fieldName in this.fieldsObject) {
+					this.fieldsObject[fieldName].getConditionsHandler().validate();
+				}
+			});
+		});
 	}
 }
 
-export default SelectConditionHandler;
+export default RadioConditionsHandler;

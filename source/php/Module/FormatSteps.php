@@ -3,6 +3,7 @@
 namespace ModularityFrontendForm\Module;
 
 use AcfService\AcfService;
+use WpService\Contracts\__;
 
 class FormatSteps {
     public function __construct(private AcfService $acfService)
@@ -49,8 +50,9 @@ class FormatSteps {
             case 'true_false':
                 return $this->mapTrueFalse($field);
             case 'text':
-            case 'email':
                 return $this->mapText($field);  
+            case 'email':
+                return $this->mapEmail($field);
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
             case 'repeater':
@@ -76,12 +78,6 @@ class FormatSteps {
                 return $this->mapImage($field);
             
         }
-
-        // TODO: Conditionals
-        // TODO: Repeater
-        // TODO: OSM Field
-        // TODO: Location field google maps/osm?
-        //echo '<pre>' . print_r( $field, true ) . '</pre>';die;
     }
 
     private function mapBasic(array $field, string $type)
@@ -154,8 +150,9 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'url');
 
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
+        $mapped['placeholder']                         = $field['placeholder'] ?? '';
+        $mapped['value']                               = $field['default_value'] ?? '';
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }
@@ -185,10 +182,11 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'time');
 
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
-        $mapped['minTime']     = $field['min_time'] ?? '';
-        $mapped['maxTime']     = $field['max_time'] ?? '';
+        $mapped['placeholder']                         = $field['placeholder'] ?? null;
+        $mapped['value']                               = $field['default_value'] ?? null;
+        $mapped['minTime']                             = $field['min_time'] ?? null;
+        $mapped['maxTime']                             = $field['max_time'] ?? null;
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }
@@ -197,10 +195,11 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'date');
         // TODO: Do we need to set format?
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
-        $mapped['minDate']     = $field['min_date'] ?? '';
-        $mapped['maxDate']     = $field['max_date'] ?? '';
+        $mapped['placeholder']                         = $field['placeholder'] ?? null;
+        $mapped['value']                               = $field['default_value'] ?? null;
+        $mapped['minDate']                             = $field['min_date'] ?? null;
+        $mapped['maxDate']                             = $field['max_date'] ?? null;
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }
@@ -227,14 +226,22 @@ class FormatSteps {
     
     private function mapTaxonomy(array $field): array
     {
-        $mapped = $this->mapBasic($field, 'taxonomy');
+        $field['choices'] = $this->structureTerms($this->getTermsFromTaxonomy($field));
 
-        // TODO: Should we add description to select/checkbox component?
-        $mapped['type']        = $field['field_type'] ?? 'checkbox';
-        $mapped['terms'] = $this->structureTerms($mapped, $this->getTermsFromTaxonomy($field));
-        
+        $type = $field['field_type'] ?? 'checkbox';
 
-        return $mapped;
+        switch ($type) {
+            case 'radio':
+                return $this->mapRadio($field);
+            case 'select':
+                return $this->mapSelect($field);
+            case 'multi_select':
+                $field['multiple'] = true;
+                return $this->mapSelect($field);
+            case 'checkbox':
+            default:
+                return $this->mapCheckbox($field);
+        }
     }
 
     private function mapText(array $field): array
@@ -249,12 +256,44 @@ class FormatSteps {
         return $mapped;
     }
 
+    private function mapEmail(array $field): array
+    {
+        $mapped = $this->mapBasic($field, 'email');
+
+        $mapped['placeholder']                         = $field['placeholder'] ?? '';
+        $mapped['value']                               = $field['default_value'] ?? '';
+        $mapped['moveAttributesListToFieldAttributes'] = false;
+
+        return $mapped;
+    }
+
     private function mapTrueFalse(array $field): array
     {
         $mapped = $this->mapBasic($field, 'trueFalse');
 
         $mapped['checked'] = !empty($field['default_value']) ? true : false;
-        $mapped['type']    = 'checkbox';
+        $mapped['type']    = 'radio';
+        $mapped['attributeList']['role'] = 'radiogroup';
+        $mapped['attributeList']['style'] = 'display: flex;';
+
+        $mapped['choices'] = [
+            [
+                'type' => $mapped['type'],
+                'label' => __('No', 'modularity-frontend-form'),
+                'name' => $field['key'],
+                'value' => false,
+                'checked' => !$mapped['checked'],
+            ],
+            [
+                'type' => $mapped['type'],
+                'label' => __('Yes', 'modularity-frontend-form'),
+                'required' => $mapped['required'] ?? false,
+                'name' => $field['key'],
+                'value' => true,
+                'checked' => $mapped['checked'],
+            ],
+        ];
+
 
         return $mapped;
     }
@@ -282,6 +321,7 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'radio');
         $mapped['choices'] = [];
+        $mapped['attributeList']['role'] = 'radiogroup';
         foreach ($field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type' => $mapped['type'],
@@ -317,18 +357,12 @@ class FormatSteps {
         return json_encode($conditionalLogic);
     }
 
-    private function structureTerms(array $mapped, array $terms): array
+    private function structureTerms(array $terms): array
     {
-        // TODO: Needs to be compatible with select, radio and checkbox (multiselect for select/checkbox/radio)
         $structured = [];
+
         foreach ($terms as $term) {
-            $structured[$term->term_id] = [
-                'name' => $mapped['name'],
-                'type' => $mapped['type'],
-                'attributeList' => $mapped['attributeList'] ?? [],
-                'label' => $term->name,
-                'required' => !empty($mapped['required']) ? true : false,
-            ];
+            $structured[$term->term_id] = $term->name ?? $term->term_id;
         }
 
         return $structured;

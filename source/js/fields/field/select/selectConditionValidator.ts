@@ -12,15 +12,18 @@ class SelectConditionValidator implements ConditionValidatorInterface {
             case '==':
             case '=':
             case '===':
+            case '==contains':
                 return selected.includes(condition.value);
             case '!=':
             case '!==':
+            case '!=contains':
                 return !selected.includes(condition.value);
             case '==empty':
                 return selected.length === 0;
             case '!=empty':
                 return selected.length > 0;
             default:
+                console.error('Invalid operator:', condition.operator);
                 return false;
         }
     }

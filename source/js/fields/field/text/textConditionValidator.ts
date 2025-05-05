@@ -20,11 +20,16 @@ class TextConditionValidator implements ConditionValidatorInterface {
                 return value.length === 0;
             case '!=empty':
                 return value.length > 0;
+            case '==contains':
+                return value.includes(condition.value);
+            case '!=contains':
+                return !value.includes(condition.value);
             case '>':
                 return Number(value) > Number(condition.value);
             case '<':
                 return Number(value) < Number(condition.value);
             default:
+                console.error('Invalid operator:', condition.operator);
                 return false;
         }
 

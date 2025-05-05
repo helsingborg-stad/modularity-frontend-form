@@ -10,6 +10,9 @@ import TextConditionValidator from "./field/text/textConditionValidator";
 import Select from "./field/select/select";
 import SelectConditionHandler from "./field/select/selectConditionHandler";
 import SelectConditionValidator from "./field/select/selectConditionValidator";
+import Radio from "./field/radio/radio";
+import RadioConditionValidator from "./field/radio/radioConditionValidator";
+import RadioConditionsHandler from "./field/radio/radioConditionsHandler";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -25,9 +28,16 @@ class FieldBuilder implements FieldBuilderInterface {
             case 'checkbox':
                 return this.buildCheckbox(field);
             case 'text':
+            case 'email':
+            case 'url':
+            case 'date':
+            case 'time':
                 return this.buildText(field);
             case 'select':
                 return this.buildSelect(field);
+            case 'radio':
+            case 'trueFalse':
+                return this.buildRadio(field);
         }
 
         return this.buildNullField(field, type);
@@ -42,9 +52,25 @@ class FieldBuilder implements FieldBuilderInterface {
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
         );
     }
+
+    private buildRadio(field: HTMLElement): FieldInterface {
+        const choices = field.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
+
+        if (choices.length === 0) {
+            console.error('Radio field is missing input elements');
+            return this.buildNullField(field, 'radio');
+        }
+
+        return new Radio(
+            field,
+            choices,
+            this.getFieldName(field),
+            new RadioConditionValidator(),
+            new RadioConditionsHandler(this.getFieldCondition(field))
+        );
+    }
     
     private buildSelect(field: HTMLElement): FieldInterface {
-        console.log(field)
         const select = field.querySelector('select') as HTMLSelectElement;
         const options = select?.querySelectorAll('option') as NodeListOf<HTMLOptionElement>;
 
@@ -64,10 +90,10 @@ class FieldBuilder implements FieldBuilderInterface {
     }
 
     private buildText(field: HTMLElement): FieldInterface {
-        const input = field.querySelector('input[type="text"]') as HTMLInputElement;
-        
+        const input = field.querySelector('input:is([type="text"], [type="email"], [type="url"], [type="date"], [type="time"])') as HTMLInputElement;
+        console.log(field);
         if (!input) {
-            console.error('Text field is an input element');
+            console.error('Text field is not an input element with type "text", "email" or "url", "date" or "time"');
             return this.buildNullField(field, 'text');
         }
 

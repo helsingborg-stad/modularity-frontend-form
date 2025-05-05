@@ -13,6 +13,8 @@ import SelectConditionValidator from "./field/select/selectConditionValidator";
 import Radio from "./field/radio/radio";
 import RadioConditionValidator from "./field/radio/radioConditionValidator";
 import RadioConditionsHandler from "./field/radio/radioConditionsHandler";
+import Message from "./field/message/message";
+import MessageConditionsHandler from "./field/message/messageConditionHandler";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -32,12 +34,15 @@ class FieldBuilder implements FieldBuilderInterface {
             case 'url':
             case 'date':
             case 'time':
+            case 'number':
                 return this.buildText(field);
             case 'select':
                 return this.buildSelect(field);
             case 'radio':
             case 'trueFalse':
                 return this.buildRadio(field);
+            case 'message':
+                return this.buildMessage(field);
         }
 
         return this.buildNullField(field, type);
@@ -51,6 +56,15 @@ class FieldBuilder implements FieldBuilderInterface {
             new NullFieldConditionValidator(),
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
         );
+    }
+
+    private buildMessage(field: HTMLElement): FieldInterface {
+        return new Message(
+            field,
+            this.getFieldName(field),
+            new NullFieldConditionValidator(),
+            new MessageConditionsHandler(this.getFieldCondition(field))
+        )
     }
 
     private buildRadio(field: HTMLElement): FieldInterface {
@@ -90,8 +104,15 @@ class FieldBuilder implements FieldBuilderInterface {
     }
 
     private buildText(field: HTMLElement): FieldInterface {
-        const input = field.querySelector('input:is([type="text"], [type="email"], [type="url"], [type="date"], [type="time"])') as HTMLInputElement;
-        console.log(field);
+        const input = field.querySelector(`input:is(
+            [type="text"],
+            [type="email"],
+            [type="url"],
+            [type="date"],
+            [type="time"],
+            [type="number"]
+        )`) as HTMLInputElement;
+
         if (!input) {
             console.error('Text field is not an input element with type "text", "email" or "url", "date" or "time"');
             return this.buildNullField(field, 'text');

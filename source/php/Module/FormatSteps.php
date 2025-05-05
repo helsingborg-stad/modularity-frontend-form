@@ -68,8 +68,9 @@ class FormatSteps {
             case 'url':
                 return $this->mapUrl($field);
             case 'textarea':
-            case 'message':
                 return $this->mapTextarea($field);
+            case 'message':
+                return $this->mapBasic($field, 'message');
             case 'radio':
                 return $this->mapRadio($field);
             case 'number':
@@ -125,10 +126,12 @@ class FormatSteps {
     {
         // TODO: Append ex. SEK?
         $mapped = $this->mapBasic($field, 'number');
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
-        $mapped['min']         = $field['min'] ?? null;
-        $mapped['max']         = $field['max'] ?? null;
+
+        $mapped['placeholder']                         = $field['placeholder'] ?? '';
+        $mapped['value']                               = $field['default_value'] ?? '';
+        $mapped['moveAttributesListToFieldAttributes'] = false;
+        $mapped['attributeList']['min']                = $field['min'] ?? null;
+        $mapped['attributeList']['max']                = $field['max'] ?? null;
 
         return $mapped;
     }

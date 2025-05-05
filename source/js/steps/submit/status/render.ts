@@ -12,14 +12,10 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
    */
   public setup(): void {
     this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
-      console.log("SubmitStatusRenderer: submitStatusChanged event triggered");
-
       const { status, message, delay = 800 } = (event as CustomEvent).detail;
 
-      // Add the new message to the queue
       this.messageQueue.push({ status, message, delay });
 
-      // Start processing the queue if not already processing
       if (!this.isProcessing) {
         this.processQueue();
       }

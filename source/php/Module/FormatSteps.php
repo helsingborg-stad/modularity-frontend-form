@@ -78,8 +78,6 @@ class FormatSteps {
                 return $this->mapImage($field);
             
         }
-
-        //echo '<pre>' . print_r( $field, true ) . '</pre>';die;
     }
 
     private function mapBasic(array $field, string $type)
@@ -196,10 +194,10 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'date');
         // TODO: Do we need to set format?
-        $mapped['placeholder'] = $field['placeholder'] ?? '';
-        $mapped['value']       = $field['default_value'] ?? '';
-        $mapped['minDate']     = $field['min_date'] ?? '';
-        $mapped['maxDate']     = $field['max_date'] ?? '';
+        $mapped['placeholder'] = $field['placeholder'] ?? null;
+        $mapped['value']       = $field['default_value'] ?? null;
+        $mapped['minDate']     = $field['min_date'] ?? null;
+        $mapped['maxDate']     = $field['max_date'] ?? null;
 
         return $mapped;
     }
@@ -339,7 +337,7 @@ class FormatSteps {
     private function mapSelect(array $field): array
     {
         $mapped = $this->mapBasic($field, 'select');
-        echo '<pre>' . print_r( $field['choices'], true ) . '</pre>';
+
         $mapped['options']     = $field['choices'] ?? [];
         $mapped['preselected'] = $field['default_value'] ?? null;
         $mapped['placeholder'] = $field['placeholder'] ?? '';

@@ -194,10 +194,11 @@ class FormatSteps {
     {
         $mapped = $this->mapBasic($field, 'date');
         // TODO: Do we need to set format?
-        $mapped['placeholder'] = $field['placeholder'] ?? null;
-        $mapped['value']       = $field['default_value'] ?? null;
-        $mapped['minDate']     = $field['min_date'] ?? null;
-        $mapped['maxDate']     = $field['max_date'] ?? null;
+        $mapped['placeholder']                         = $field['placeholder'] ?? null;
+        $mapped['value']                               = $field['default_value'] ?? null;
+        $mapped['minDate']                             = $field['min_date'] ?? null;
+        $mapped['maxDate']                             = $field['max_date'] ?? null;
+        $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;
     }

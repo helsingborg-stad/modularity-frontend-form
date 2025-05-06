@@ -5,6 +5,7 @@ namespace ModularityFrontendForm\Module;
 use AcfService\AcfService;
 use WpService\Contracts\__;
 
+use ModularityFrontendForm\FieldMapping\Mapper;
 class FormatSteps {
     public function __construct(private AcfService $acfService)
     {
@@ -47,6 +48,9 @@ class FormatSteps {
         foreach ($fieldGroups as $fieldGroup) {
             $fields = $this->acfService->acfGetFields($fieldGroup);
             foreach ($fields as $field) {
+                //TODO: REPLACE WITH MAPPER
+                //$formattedStep[] = (new Mapper($field))->map();
+
                 $formattedStep[] = $this->fieldMapper($field);
             }
 
@@ -96,6 +100,9 @@ class FormatSteps {
      * @param array $field The field to map.
      * 
      * @return array The mapped field.
+     * 
+     * 
+     * TODO: REMOVE THIS FUNCTION AND REPLACE WITH MAPPER
      */
     private function fieldMapper(array $field)
     {

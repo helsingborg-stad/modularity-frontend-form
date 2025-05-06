@@ -1,4 +1,5 @@
-class MessageConditionsHandler implements ConditionsHandlerInterface {
+class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
+	private fieldsObject: FieldsObject = {};
 	private parent: FieldInterface|null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
@@ -9,6 +10,7 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 	public init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
+		this.setValueChangeListener();
 	}
 
 	private updateDisabled(disabled: boolean): void {
@@ -16,11 +18,14 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 			this.isDisabled = disabled;
 
             this.parent.getField().classList.toggle('u-display--none', disabled);
+
+			this.dispatchUpdateEvent();
 		}
 	}
 
 	public validate(): void {
 		let isValid: boolean = false;
+
 		for (const condition of this.getConditions()) {
 			if (condition.validate()) {
 				isValid = true;
@@ -32,7 +37,9 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 	}
 
 	public dispatchUpdateEvent(): void {
-		return;
+		if (this.parent?.getField()) {
+			this.parent.getField().dispatchEvent(new Event('modularityFrontendFormOpenstreetmapMarkerAdded'));
+		}
 	}
 
 	public getIsDisabled(): boolean {
@@ -44,12 +51,16 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 	}
 
     public addValueChangeListener(field: FieldInterface): void {
-		return;
+		this.fieldsObject[field.getName()] = field;
     }
 
 	private setValueChangeListener(): void {
-        return;
+        this.parent?.getField().addEventListener('modularityFrontendFormOpenstreetmapMarkerAdded', () => {
+            for (const fieldName in this.fieldsObject) {
+                this.fieldsObject[fieldName].getConditionsHandler().validate();
+            }
+        });
 	}
 }
 
-export default MessageConditionsHandler;
+export default GoogleMapConditionsHandler;

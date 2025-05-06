@@ -20,14 +20,13 @@ class Form {
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
-        this.setupConditionalLogic();
+        this.setupFields();
         this.setupRepeaters();
-        this.setupOpenstreetmap();
         this.setupSteps();
     }
 
-    private setupConditionalLogic() {
-        const builder = new FieldBuilder();
+    private setupFields() {
+        const builder = new FieldBuilder(modularityFrontendFormData, modularityFrontendFormLang);
         let fieldsObject: FieldsObject = {};
 
         this.form.querySelectorAll('[data-js-field]').forEach(element => {
@@ -81,20 +80,6 @@ class Form {
     private setupRepeaters() {
         this.formContainer.querySelectorAll('[data-js-form-repeater]').forEach((repeaterContainer) => {
             RepeaterFactory.createRepeater(repeaterContainer as HTMLElement)?.init();
-        });
-    }
-
-    private setupOpenstreetmap() {
-        if (!modularityFrontendFormData.placeSearchApiUrl) {
-            return;
-        }
-
-        this.formContainer.querySelectorAll('[data-js-openstreetmap]').forEach((osmContainer) => {
-            OpenstreetmapFactory.createOpenstreetmap(
-                osmContainer as HTMLElement, 
-                modularityFrontendFormData, 
-                modularityFrontendFormLang
-            )?.init();
         });
     }
 }

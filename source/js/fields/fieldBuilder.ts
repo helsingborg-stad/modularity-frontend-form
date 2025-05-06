@@ -15,10 +15,19 @@ import RadioConditionValidator from "./field/radio/radioConditionValidator";
 import RadioConditionsHandler from "./field/radio/radioConditionsHandler";
 import Message from "./field/message/message";
 import MessageConditionsHandler from "./field/message/messageConditionHandler";
+import OpenstreetmapFactory from "../openstreetmap/openstreetmapFactory";
+import GoogleMap from "./field/googleMap/googleMap";
+import GoogleMapConditionsHandler from "./field/googleMap/googleMapConditionsHandler";
+import GoogleMapConditionValidator from "./field/googleMap/googleMapConditionValidator";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
     private condition: string = 'data-js-conditional-logic';
+
+    constructor(
+        private modularityFrontendFormData: ModularityFrontendFormData,
+        private modularityFrontendFormLang: ModularityFrontendFormLang
+    ) {}
 
     public build(field: HTMLElement, type: string): FieldInterface {
         if (!this.validateRequiredAttributes(field)) {
@@ -43,6 +52,8 @@ class FieldBuilder implements FieldBuilderInterface {
                 return this.buildRadio(field);
             case 'message':
                 return this.buildMessage(field);
+            case 'googleMap':
+                return this.buildGoogleMap(field);
         }
 
         return this.buildNullField(field, type);
@@ -55,6 +66,27 @@ class FieldBuilder implements FieldBuilderInterface {
             this.getFieldName(field),
             new NullFieldConditionValidator(),
             new NullFieldConditionsHandler(field, this.getFieldCondition(field))
+        );
+    }
+
+    private buildGoogleMap(field: HTMLElement): FieldInterface {
+        const openstreetmapInstance = OpenstreetmapFactory.createOpenstreetmap(
+            field,
+            this.modularityFrontendFormData, 
+            this.modularityFrontendFormLang
+        );
+        
+        if (!openstreetmapInstance) {
+            console.error('Failed to create map instance');
+            return this.buildNullField(field, 'googleMap');
+        }
+
+        return new GoogleMap(
+            field,
+            openstreetmapInstance,
+            this.getFieldName(field),
+            new GoogleMapConditionValidator(),
+            new GoogleMapConditionsHandler(this.getFieldCondition(field))
         );
     }
 

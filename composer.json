@@ -22,7 +22,7 @@
     "minimum-stability": "stable",
     "require": {
         "helsingborg-stad/wpservice": "^2.0",
-        "helsingborg-stad/acfservice": "^0.9.1"
+        "helsingborg-stad/acfservice": "^1.0.1"
     },
     "require-dev": {
         "brain/monkey": "^2.6",

@@ -1,5 +1,5 @@
 @typography([
     'attributeList' => $field['attributeList'],
 ])
-    HELLO
+    {{ $field['message'] }}
 @endtypography

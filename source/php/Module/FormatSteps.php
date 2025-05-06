@@ -70,7 +70,7 @@ class FormatSteps {
             case 'textarea':
                 return $this->mapTextarea($field);
             case 'message':
-                return $this->mapBasic($field, 'message');
+                return $this->mapMessage($field);
             case 'radio':
                 return $this->mapRadio($field);
             case 'number':
@@ -98,6 +98,16 @@ class FormatSteps {
         ];
     }
 
+
+    private function mapMessage(array $field): array
+    {
+        $mapped = $this->mapBasic($field, 'message');
+
+        $mapped['message'] = $field['message'] ?? '';
+
+        return $mapped;
+    }
+
     private function mapGoogleMap(array $field): array
     {
         $mapped = $this->mapBasic($field, 'googleMap');
@@ -106,6 +116,7 @@ class FormatSteps {
         $mapped['lat'] = $field['center_lat'] ?: '59.32932';
         $mapped['lng'] = $field['center_lng'] ?: '18.06858';
         $mapped['zoom'] = $field['zoom'] ?: '14';
+        $mapped['attributeList']['style'] = 'height: ' . $mapped['height'] . 'px; position: relative;';
 
         return $mapped;
     }
@@ -114,10 +125,8 @@ class FormatSteps {
     {
         // TODO: imageinput component missing description
         $mapped = $this->mapBasic($field, 'image');
-        $mapped['multiple']    = $field['multiple'] ?? false;
-        $mapped['maxFileSize'] = $field['max_size'] ?? 0;
-        $mapped['maxHeight']   = $field['max_height'] ?? 0;
-        $mapped['maxWidth']    = $field['max_width'] ?? 0;
+
+        $mapped['accept'] = $field['mime_types'] ? str_replace(' ', ',', $field['mime_types']) : 'image/*';
 
         return $mapped;
     }

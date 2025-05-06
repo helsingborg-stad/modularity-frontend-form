@@ -24,6 +24,10 @@ interface TextInterface extends FieldInterface {
     getInput(): HTMLInputElement;
 }
 
+interface GoogleMapInterface extends FieldInterface {
+    getOpenstreetmap(): OpenstreetmapInterface;
+}
+
 interface SelectInterface extends FieldInterface {
     getSelect(): HTMLSelectElement;
     getOptions(): NodeListOf<HTMLOptionElement>;

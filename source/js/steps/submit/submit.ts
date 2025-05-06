@@ -29,7 +29,8 @@ class Submit implements SubmitInterface {
       this.submitStatusHandler.setStatus(
         SubmitStatus.Working,
         this.modularityFrontendFormLang?.submitInit ?? "Submitting your form, please wait...",
-        0
+        'send',
+        10
       );
 
       const url = this.modularityFrontendFormData.apiRoutes?.submitForm;
@@ -38,7 +39,8 @@ class Submit implements SubmitInterface {
         this.submitStatusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.submitUrlError ?? "Could not find the submit URL. Please check your configuration.",
-          10
+          'link_off',
+          0
         );
         return;
       }
@@ -62,12 +64,14 @@ class Submit implements SubmitInterface {
         this.submitStatusHandler.setStatus(
           SubmitStatus.Success,
           this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
+          'celebration',
           100
         );
       } catch (error: any) {
         this.submitStatusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.submitError ?? "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : ""),
+          'error',
           0
         );
       }

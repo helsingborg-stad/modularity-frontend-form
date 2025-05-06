@@ -15,10 +15,10 @@ class SubmitStatusHandler implements SubmitStatusHandlerInterface {
    * @param status A value from SubmitStatus enum.
    * @param message The status message to display.
    */
-  public setStatus(status: SubmitStatus, message: string, progress: number): void {
+  public setStatus(status: SubmitStatus, message: string, icon: string, progress: number): void {
     this.formContainer.dispatchEvent(
       new CustomEvent(
-        'submitStatusChanged', {detail: {status, message, progress}}
+        'submitStatusChanged', {detail: {status, message, icon, progress}}
       )
     );
   }

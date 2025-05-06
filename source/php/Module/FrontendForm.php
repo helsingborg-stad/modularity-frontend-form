@@ -150,7 +150,7 @@ class FrontendForm extends \Modularity\Module
             'noResultsFound'    => $this->wpService->__('No results found', 'modularity-frontend-form'),
             'searchPlaceholder' => $this->wpService->__('Search location...', 'modularity-frontend-form'),
 
-            'submitInit' => $this->wpService->__('Submitting', 'modularity-frontend-form'),
+            'submitInit' => $this->wpService->__('Preparing to submit', 'modularity-frontend-form'),
             'submitSuccess' => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
             'submitUrlError' => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
             'submitError' => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),

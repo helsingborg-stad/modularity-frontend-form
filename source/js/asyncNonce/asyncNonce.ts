@@ -23,6 +23,7 @@ class AsyncNonce implements AsyncNonceInterface {
       submitStatusHandler.setStatus(
         SubmitStatus.Error,
         this.modularityFrontendFormLang?.nonceUrlMissing ?? "Could not find the nonce URL. Please check your configuration.",
+        "link_off",
         0
       );
       return null;
@@ -32,6 +33,7 @@ class AsyncNonce implements AsyncNonceInterface {
       submitStatusHandler.setStatus(
         SubmitStatus.Working,
         this.modularityFrontendFormLang?.nonceRequest ?? "Fetching security validation key...",
+        "lock_open",
         30
       );
 
@@ -40,6 +42,7 @@ class AsyncNonce implements AsyncNonceInterface {
         submitStatusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.nonceRequestFailed ?? "Failed to fetch security validation key, please try again.",
+          "error",
           0
         );
         throw new Error(`HTTP error: ${response.status}`);
@@ -48,6 +51,7 @@ class AsyncNonce implements AsyncNonceInterface {
       submitStatusHandler.setStatus(
         SubmitStatus.Working,
         this.modularityFrontendFormLang?.nonceRequestSuccess ?? "Fetched security validation key...",
+        "lock",
         60
       );
 
@@ -57,6 +61,7 @@ class AsyncNonce implements AsyncNonceInterface {
       submitStatusHandler.setStatus(
         SubmitStatus.Error,
         this.modularityFrontendFormLang?.nonceRequestFailed ?? "Failed to fetch security validation key, please try again.",
+        "error",
         0
       );
       return null;

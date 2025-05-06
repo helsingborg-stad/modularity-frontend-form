@@ -2,7 +2,7 @@ import SubmitStatus from './enum';
 import SubmitStatusRendererInterface from './renderInterface';
 
 class SubmitStatusRenderer implements SubmitStatusRendererInterface {
-  private messageQueue: Array<{ status: string; message: string; progress: number; delay: number }> = [];
+  private messageQueue: Array<{ status: string; message: string; icon: string; progress: number; delay: number }> = [];
   private isProcessing: boolean = false;
 
   constructor(private formContainer: HTMLElement) {}
@@ -12,11 +12,19 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
    */
   public setup(): void {
     this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
-      const { status, message, progress, delay = 800 } = (event as CustomEvent).detail;
+      const { status, message, icon, progress, delay = 800 } = (event as CustomEvent).detail;
 
-      this.messageQueue.push({ status, message, progress, delay });
+      this.messageQueue.push({ status, message, icon, progress, delay});
 
       if (!this.isProcessing) {
+        const workingElement = this.formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
+        if (workingElement) {
+          workingElement.classList.remove('u-display--none');
+          workingElement.style.opacity = '0';
+          setTimeout(() => {
+            workingElement.style.opacity = '1';
+          }, 10);
+        }
         this.processQueue();
       }
     });
@@ -28,12 +36,35 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
   private processQueue(): void {
     if (this.messageQueue.length === 0) {
       this.isProcessing = false;
+      
+      setTimeout(() => {
+        // Remove all status classes after a delay
+
+        this.formContainer.classList.remove(
+          'is-working',
+          'is-success',
+          'is-error',
+          'is-info',
+          'is-warning',
+          'is-default'
+        );
+
+        //Hide the working element
+        const workingElement = this.formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
+        if (workingElement) {
+          workingElement.style.opacity = '0';
+          setTimeout(() => {
+            workingElement.classList.add('u-display--none');
+          }, 1000);
+        }
+      }, 300);
+
       return;
     }
 
     this.isProcessing = true;
 
-    const { status, message, progress, delay } = this.messageQueue.shift()!;
+    const { status, message, icon, progress, delay } = this.messageQueue.shift()!;
 
     // Remove existing status classes
     this.formContainer.classList.remove(
@@ -48,14 +79,29 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
     // Add the new status class
     this.formContainer.classList.add(`is-${status}`);
 
-    // Render the message into a div.status-message
-    let messageEl = this.formContainer.querySelector('.status-message') as HTMLElement;
-    if (!messageEl) {
-      messageEl = document.createElement('div');
-      messageEl.className = 'status-message';
-      this.formContainer.appendChild(messageEl);
+    // Update progress bar
+    const progressContainer = this.formContainer.querySelector('[data-js-frontend-form-working__progress] .c-progressbar__value') as HTMLElement;
+    if (progressContainer) {
+      progressContainer.style.width = `${progress}%`;
     }
-    messageEl.textContent = (progress > 0 ? `${message} (${progress}%)` : message);
+
+    // Update description
+    const descriptionEl = this.formContainer.querySelector('[data-js-frontend-form-working__description]') as HTMLElement;
+    if (descriptionEl) {
+      descriptionEl.textContent = (progress > 0 ? `${message} (${progress}%)` : message);
+    }
+
+    // Set the icon with fade-out and fade-in effect, only if it changed
+    const iconEl = this.formContainer.querySelector('[data-js-frontend-form-working__icon]') as HTMLElement;
+    if (iconEl && iconEl.getAttribute('data-material-symbol') !== icon) {
+      iconEl.style.transition = 'opacity 0.3s';
+      iconEl.style.opacity = '0';
+
+      setTimeout(() => {
+        iconEl.setAttribute('data-material-symbol', icon);
+        iconEl.style.opacity = '1';
+      }, 300);
+    }
 
     // Wait for the delay before processing the next message
     setTimeout(() => {

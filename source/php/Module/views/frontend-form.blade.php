@@ -13,10 +13,21 @@
         'attributeList' => [
             'data-js-frontend-form-id' => $moduleId,
         ],
+        'classList' => [
+            'mod-frontend-form__form'
+        ],
     ])
-        @foreach($steps as $index => $step)
-            @include('step', ['step' => $step, 'index' => $index])
-        @endforeach
+
+        @element(['classList' => ['u-position--relative']])
+
+            @include('partials.working')
+
+            @foreach($steps as $index => $step)
+                @include('step', ['step' => $step, 'index' => $index])
+            @endforeach
+
+        @endelement
+
         @element([
             'classList' => [
                 'mod-frontend-form__step-buttons'

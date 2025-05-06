@@ -38,8 +38,8 @@ class TextConditionsHandler implements ConditionsHandlerInterface {
 	}
 
 	public dispatchUpdateEvent(): void {
-		if (this.parent?.getField()) {
-			this.parent.getField().dispatchEvent(new Event('input'));
+		if (this.parent?.getInput()) {
+			this.parent.getInput().dispatchEvent(new Event('input'));
 		}
 	}
 
@@ -56,7 +56,7 @@ class TextConditionsHandler implements ConditionsHandlerInterface {
     }
 
 	private setValueChangeListener(): void {
-        this.parent?.getField().addEventListener('input', () => {
+        this.parent?.getInput().addEventListener('input', () => {
             for (const fieldName in this.fieldsObject) {
                 this.fieldsObject[fieldName].getConditionsHandler().validate();
             }

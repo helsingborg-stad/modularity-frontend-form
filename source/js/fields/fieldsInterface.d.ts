@@ -20,7 +20,11 @@ interface RadioInterface extends FieldInterface {
     getSelectedChoice(): string;
 }
 
-interface TextInterface extends FieldInterface {
+interface BasicInterface extends FieldInterface {
+    getInput(): HTMLInputElement;
+}
+
+interface FileInterface extends FieldInterface {
     getInput(): HTMLInputElement;
 }
 

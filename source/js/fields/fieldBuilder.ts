@@ -4,9 +4,9 @@ import CheckboxConditionValidator from "./field/checkbox/checkboxConditionValida
 import NullFieldConditionsHandler from "./field/nullField/nullFieldConditionsHandler";
 import NullField from "./field/nullField/nullField";
 import NullFieldConditionValidator from "./field/nullField/nullFieldConditionValidator";
-import Text from "./field/text/text";
-import TextConditionsHandler from "./field/text/textConditionHandler";
-import TextConditionValidator from "./field/text/textConditionValidator";
+import Basic from "./field/basic/basic";
+import BasicConditionsHandler from "./field/basic/basicConditionHandler";
+import BasicConditionValidator from "./field/basic/basicConditionValidator";
 import Select from "./field/select/select";
 import SelectConditionHandler from "./field/select/selectConditionHandler";
 import SelectConditionValidator from "./field/select/selectConditionValidator";
@@ -19,6 +19,7 @@ import OpenstreetmapFactory from "../openstreetmap/openstreetmapFactory";
 import GoogleMap from "./field/googleMap/googleMap";
 import GoogleMapConditionsHandler from "./field/googleMap/googleMapConditionsHandler";
 import GoogleMapConditionValidator from "./field/googleMap/googleMapConditionValidator";
+import FileConditionValidator from "./field/file/fileConditionValidator";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -36,6 +37,9 @@ class FieldBuilder implements FieldBuilderInterface {
         }
 
         switch (type) {
+            case 'file':
+            case 'image':
+                return this.buildFile(field);
             case 'checkbox':
                 return this.buildCheckbox(field);
             case 'text':
@@ -44,7 +48,7 @@ class FieldBuilder implements FieldBuilderInterface {
             case 'date':
             case 'time':
             case 'number':
-                return this.buildText(field);
+                return this.buildBasic(field);
             case 'select':
                 return this.buildSelect(field);
             case 'radio':
@@ -65,7 +69,24 @@ class FieldBuilder implements FieldBuilderInterface {
             type,
             this.getFieldName(field),
             new NullFieldConditionValidator(),
-            new NullFieldConditionsHandler(field, this.getFieldCondition(field))
+            new NullFieldConditionsHandler(this.getFieldCondition(field))
+        );
+    }
+
+    private buildFile(field: HTMLElement): FieldInterface {
+        const input = field.querySelector('input[type="file"]') as HTMLInputElement;
+
+        if (!input) {
+            console.error('Input field is not an input element with type "file"');
+            return this.buildNullField(field, 'input');
+        }
+
+        return new Basic(
+            field as HTMLInputElement,
+            input,
+            this.getFieldName(field),
+            new FileConditionValidator(),
+            new BasicConditionsHandler(this.getFieldCondition(field))
         );
     }
 
@@ -135,7 +156,7 @@ class FieldBuilder implements FieldBuilderInterface {
         )
     }
 
-    private buildText(field: HTMLElement): FieldInterface {
+    private buildBasic(field: HTMLElement): FieldInterface {
         const input = field.querySelector(`input:is(
             [type="text"],
             [type="email"],
@@ -146,16 +167,16 @@ class FieldBuilder implements FieldBuilderInterface {
         )`) as HTMLInputElement;
 
         if (!input) {
-            console.error('Text field is not an input element with type "text", "email" or "url", "date" or "time"');
+            console.error('Text field is not an input element with type "text", "number", "email", "url", "date" or "time"');
             return this.buildNullField(field, 'text');
         }
 
-        return new Text(
+        return new Basic(
             field as HTMLInputElement,
             input,
             this.getFieldName(field),
-            new TextConditionValidator(),
-            new TextConditionsHandler(this.getFieldCondition(field))
+            new BasicConditionValidator(),
+            new BasicConditionsHandler(this.getFieldCondition(field))
         );
     }
 

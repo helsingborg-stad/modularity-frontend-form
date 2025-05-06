@@ -1,6 +1,6 @@
 import { MarkerInterface, CreateMarker, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, CreateSearch, PlaceObject, SearchInterface, EventData, LatLngObject } from '@helsingborg-stad/openstreetmap';
 
-class Openstreetmap {
+class Openstreetmap implements OpenstreetmapInterface {
     private search!: SearchInterface;
     private marker: MarkerInterface|null = null;
     private map!: MapInterface;
@@ -8,6 +8,7 @@ class Openstreetmap {
     constructor(
         private modularityFrontendFormData: ModularityFrontendFormData,
         private modularityFrontendFormLang: ModularityFrontendFormLang,
+        private parent: HTMLElement,
         private id: string,
         private lat: number,
         private lng: number,
@@ -49,6 +50,10 @@ class Openstreetmap {
         this.map.addListener('click', (e) => this.handleClick(e));
     }
 
+    public hasMarker(): boolean {
+        return this.marker !== null;
+    }
+
     private handleClick(e: EventData): void {
         if (!e.latLng) {
             console.error('No latLng found in event data');
@@ -82,6 +87,7 @@ class Openstreetmap {
             });
 
             this.marker.addTo(this.map);
+            this.parent.dispatchEvent(new CustomEvent('modularityFrontendFormOpenstreetmapMarkerAdded', {}));
         }
     }
 

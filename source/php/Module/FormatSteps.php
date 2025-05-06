@@ -106,6 +106,7 @@ class FormatSteps {
         $mapped['lat'] = $field['center_lat'] ?: '59.32932';
         $mapped['lng'] = $field['center_lng'] ?: '18.06858';
         $mapped['zoom'] = $field['zoom'] ?: '14';
+        $mapped['attributeList']['style'] = 'height: ' . $mapped['height'] . 'px; position: relative;';
 
         return $mapped;
     }

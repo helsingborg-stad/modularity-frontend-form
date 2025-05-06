@@ -4,7 +4,7 @@ import NullField from './field/nullField/nullField';
 import Checkbox from './field/checkbox/checkbox';
 
 describe('Field Builder', () => {
-    const fieldBuilder = new FieldBuilder();
+    const fieldBuilder = new FieldBuilder({placeSearchApiUrl: ''}, {});
     const div = document.createElement('div');
 
 

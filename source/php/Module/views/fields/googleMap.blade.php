@@ -2,9 +2,7 @@
     'classList' => [
         'openstreetmap'
     ],
-    'attributeList' => [
-        'style' => 'height: ' . $field['height'] . 'px; position: relative;',
-    ]
+    'attributeList' => $field['attributeList'] ?? [],
 ])
     @element([
         'id' => $field['name'],

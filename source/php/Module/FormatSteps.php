@@ -115,10 +115,8 @@ class FormatSteps {
     {
         // TODO: imageinput component missing description
         $mapped = $this->mapBasic($field, 'image');
-        $mapped['multiple']    = $field['multiple'] ?? false;
-        $mapped['maxFileSize'] = $field['max_size'] ?? 0;
-        $mapped['maxHeight']   = $field['max_height'] ?? 0;
-        $mapped['maxWidth']    = $field['max_width'] ?? 0;
+
+        $mapped['accept'] = $field['mime_types'] ? str_replace(' ', ',', $field['mime_types']) : 'image/*';
 
         return $mapped;
     }

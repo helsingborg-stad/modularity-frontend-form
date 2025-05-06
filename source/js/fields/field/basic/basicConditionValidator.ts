@@ -1,7 +1,7 @@
-class TextConditionValidator implements ConditionValidatorInterface {
-    private parent: TextInterface|null = null;
+class BasicConditionValidator implements ConditionValidatorInterface {
+    private parent: BasicInterface|null = null;
 
-    public init(parent: TextInterface): void {
+    public init(parent: BasicInterface): void {
         this.parent = parent;
     }
 
@@ -36,4 +36,4 @@ class TextConditionValidator implements ConditionValidatorInterface {
     }
 }
 
-export default TextConditionValidator;
+export default BasicConditionValidator;

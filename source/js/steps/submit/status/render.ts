@@ -12,7 +12,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
    */
   public setup(): void {
     this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
-      const { status, message, icon, progress, delay = 800 } = (event as CustomEvent).detail;
+      const { status, message, icon, progress, delay = 500 } = (event as CustomEvent).detail;
 
       this.messageQueue.push({ status, message, icon, progress, delay});
 
@@ -38,8 +38,6 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
       this.isProcessing = false;
       
       setTimeout(() => {
-        // Remove all status classes after a delay
-
         this.formContainer.classList.remove(
           'is-working',
           'is-success',
@@ -93,14 +91,22 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
 
     // Set the icon with fade-out and fade-in effect, only if it changed
     const iconEl = this.formContainer.querySelector('[data-js-frontend-form-working__icon]') as HTMLElement;
-    if (iconEl && iconEl.getAttribute('data-material-symbol') !== icon) {
-      iconEl.style.transition = 'opacity 0.3s';
-      iconEl.style.opacity = '0';
+    if (iconEl) {
+      const currentIcon = iconEl.getAttribute('data-material-symbol') || '';
+      const [currentBase] = currentIcon.split('_');
+      const [newBase] = icon.split('_');
 
-      setTimeout(() => {
+      if (currentBase !== newBase) {
+        iconEl.style.transition = 'opacity 0.3s';
+        iconEl.style.opacity = '0';
+
+        setTimeout(() => {
+          iconEl.setAttribute('data-material-symbol', icon);
+          iconEl.style.opacity = '1';
+        }, 300);
+      } else {
         iconEl.setAttribute('data-material-symbol', icon);
-        iconEl.style.opacity = '1';
-      }, 300);
+      }
     }
 
     // Wait for the delay before processing the next message

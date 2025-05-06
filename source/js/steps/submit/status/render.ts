@@ -4,6 +4,11 @@ import SubmitStatusRendererInterface from './renderInterface';
 class SubmitStatusRenderer implements SubmitStatusRendererInterface {
   private messageQueue: Array<{ status: string; message: string; icon: string; progress: number; delay: number }> = [];
   private isProcessing: boolean = false;
+  private statusClasses: Array<string> = [
+    'is-working',
+    'is-success',
+    'is-error'
+  ];
 
   constructor(private formContainer: HTMLElement) {}
 
@@ -12,7 +17,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
    */
   public setup(): void {
     this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
-      const { status, message, icon, progress, delay = 500 } = (event as CustomEvent).detail;
+      const { status, message, icon, progress, delay = 400 } = (event as CustomEvent).detail;
 
       this.messageQueue.push({ status, message, icon, progress, delay});
 
@@ -38,14 +43,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
       this.isProcessing = false;
       
       setTimeout(() => {
-        this.formContainer.classList.remove(
-          'is-working',
-          'is-success',
-          'is-error',
-          'is-info',
-          'is-warning',
-          'is-default'
-        );
+        this.formContainer.classList.remove(...this.statusClasses);
 
         //Hide the working element
         const workingElement = this.formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
@@ -65,14 +63,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
     const { status, message, icon, progress, delay } = this.messageQueue.shift()!;
 
     // Remove existing status classes
-    this.formContainer.classList.remove(
-      'is-working',
-      'is-success',
-      'is-error',
-      'is-info',
-      'is-warning',
-      'is-default'
-    );
+    this.formContainer.classList.remove(...this.statusClasses);
 
     // Add the new status class
     this.formContainer.classList.add(`is-${status}`);

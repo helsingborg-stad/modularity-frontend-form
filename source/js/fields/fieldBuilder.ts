@@ -20,6 +20,7 @@ import GoogleMap from "./field/googleMap/googleMap";
 import GoogleMapConditionsHandler from "./field/googleMap/googleMapConditionsHandler";
 import GoogleMapConditionValidator from "./field/googleMap/googleMapConditionValidator";
 import FileConditionValidator from "./field/file/fileConditionValidator";
+import FileConditionsHandler from "./field/file/fileConditionsHandler";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -86,7 +87,7 @@ class FieldBuilder implements FieldBuilderInterface {
             input,
             this.getFieldName(field),
             new FileConditionValidator(),
-            new BasicConditionsHandler(this.getFieldCondition(field))
+            new FileConditionsHandler(this.getFieldCondition(field))
         );
     }
 

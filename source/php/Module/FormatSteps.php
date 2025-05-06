@@ -70,7 +70,7 @@ class FormatSteps {
             case 'textarea':
                 return $this->mapTextarea($field);
             case 'message':
-                return $this->mapBasic($field, 'message');
+                return $this->mapMessage($field);
             case 'radio':
                 return $this->mapRadio($field);
             case 'number':
@@ -96,6 +96,16 @@ class FormatSteps {
                 'data-js-field-name' => $field['key'],
             ]
         ];
+    }
+
+
+    private function mapMessage(array $field): array
+    {
+        $mapped = $this->mapBasic($field, 'message');
+
+        $mapped['message'] = $field['message'] ?? '';
+
+        return $mapped;
     }
 
     private function mapGoogleMap(array $field): array

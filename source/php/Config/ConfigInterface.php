@@ -12,6 +12,7 @@ interface ConfigInterface
         string $filterPrefix,
     );
 
+    public function getModuleSlug(): string;
     public function getNonceKey(): string;
     public function getFilterPrefix(): string;
     public function createFilterKey(string $filter = ""): string;

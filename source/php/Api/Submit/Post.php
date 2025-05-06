@@ -4,6 +4,7 @@ namespace ModularityFrontendForm\Api\Submit;
 
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use \ModularityFrontendForm\Config\ConfigInterface;
+use WP;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
@@ -32,71 +33,97 @@ class Post extends RestApiEndpoint
         return register_rest_route(self::NAMESPACE, self::ROUTE, array(
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array($this, 'handleRequest'),
-            'permission_callback' => array($this, 'permissionCallback'),
+            'permission_callback' => '__return_true',
             'args'                => [
                 'module-id' => [
                     'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
                     'type'        => 'integer',
                     'format'      => 'uri',
-                    'required'    => false
+                    'required'    => false,
+                    'validate_callback' => function ($param, $request, $key) {
+                        return is_numeric($param) && $this->isFormModuleID($param);
+                    },
                 ]
             ]
         ));
     }
 
+    /**
+     * Checks if the module ID is a form module
+     *
+     * @param int $moduleID The module ID to check
+     *
+     * @return bool Whether the module ID is a form module
+     */
+    private function isFormModuleID(int $moduleID): bool
+    {
+        // Form submissions can only originate from the form module
+        if ($this->wpService->getPostType($moduleID) !== $this->config->getModuleSlug()) {
+            return false;
+        }
+
+        // Form submissions can only be submitted from published and private modules
+        if (!in_array($this->wpService->getPostStatus($moduleID), ['publish', 'private'])) {
+            return false;
+        }
+
+        return true;
+    }
+
 
     /**
-     * Handles a REST request and sideloads an image
+     * Handles a REST request to submit a form
      *
      * @param WP_REST_Request $request The REST request object
      *
-     * @return WP_REST_Response|WP_Error The sideloaded image URL or an error object if the sideload fails
+     * @return WP_REST_Response|WP_Error The response object or an error
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response
     {
-        $params          = $request->get_json_params();
+        $params          = $request->get_params();
+        $moduleID        = $params['module-id'] ?? null;
+        $fieldMeta       = $params['frontedForm'] ?? null;
         $a               = $params['url'] ?? null;
 
+        //Get post data
+        $fieldMeta        = $params['mod-frontedform'] ?? null;
+
         // Check if the request is valid
-        if(!$this->validateNonce($params['nonce'] ?? '')) {
+       /* if(!$this->validateNonce($params['nonce'] ?? '')) {
             return rest_ensure_response(new WP_Error(
                 'invalid_nonce',
                 __('Invalid nonce', 'modularity-frontend-form'),
                 array('status' => WP_Http::UNAUTHORIZED)
             ));
         }
+        '*/ 
 
-        $insert = $this->insertPost();
-
-        if (is_wp_error($insert)) {
-            return rest_ensure_response(new WP_Error(
-                $insert->get_error_code(),
-                $insert->get_error_message(),
-                array('status' => WP_Http::BAD_REQUEST)
-            ));
-        } elseif (is_numeric($insert)) {
-            return rest_ensure_response([
-                'status' => 'success',
-                'message' => __('Post created successfully', 'modularity-frontend-form'),
-                'postId' => $insert,
-            ]);
-        }
-
-        return rest_ensure_response(new WP_Error(
-            502,
-            __('Unexpected result from post creation', 'modularity-frontend-form'),
-            array('status' => WP_Http::BAD_REQUEST)
-        ));
+        return $this->formatInsertResponse(
+            $this->insertPost($moduleID, $fieldMeta)
+        );
     }
 
     /**
-     * Callback function for checking if the current user has permission to submit the form
+     * Formats the response for the insert post request
      *
-     * @return bool Whether the user has permission to submit the form
+     * @param WP_Error|int $result The result of the post insertion
+     *
+     * @return WP_REST_Response The formatted response
      */
-    public function permissionCallback(): bool
-    {
-        return true; //May be changed to check for specific capabilities
+    private function formatInsertResponse(WP_Error|int $result): WP_REST_Response {
+        if (is_wp_error($result) || $result === 0) {
+            return rest_ensure_response(new WP_Error(
+                $result instanceof WP_Error ? $result->get_error_code() : 'post_not_created',
+                $result instanceof WP_Error ? $result->get_error_message() : __('Post not created', 'modularity-frontend-form'),
+                ['status' => WP_Http::BAD_REQUEST]
+            ));
+        }
+    
+        return rest_ensure_response([
+            'status' => 'success',
+            'message' => __('Post created successfully', 'modularity-frontend-form'),
+            'postId' => $result,
+        ]);
     }
 
     /**
@@ -107,7 +134,7 @@ class Post extends RestApiEndpoint
      *
      * @return WP_Error|int The result of the post insertion
      */
-    public function insertPost($moduleID = null, $fieldMeta = null): WP_Error|int {
+    public function insertPost(int $moduleID, array|null $fieldMeta): WP_Error|int {
         
         $result = $this->wpService->wpInsertPost([
             'post_title'    => 'Test post',
@@ -120,7 +147,7 @@ class Post extends RestApiEndpoint
         ]);
 
         // Post Successfully created, store the fields
-        if (!$this->wpService->isWpError($result)) {
+        if (!$this->wpService->isWpError($result) && !is_null($fieldMeta)) {
             $sanitizedFieldMetaKeys = $this->filterUnmappedFieldKeysForPostType(
                 array_keys($fieldMeta),
                 'post'
@@ -128,7 +155,7 @@ class Post extends RestApiEndpoint
             $this->storeFields($fieldMeta, $result);
         }
 
-        return $result; // Probobly a Wp_Error
+        return $result;
     }
 
     /**

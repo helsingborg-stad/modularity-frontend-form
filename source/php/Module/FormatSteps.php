@@ -10,6 +10,13 @@ class FormatSteps {
     {
     }
 
+    /**
+     * Formats the steps to be used in the frontend.
+     *
+     * @param array $steps The steps to format.
+     * 
+     * @return array The formatted steps.
+     */
     public function formatSteps(array $steps) 
     {
         $formattedSteps = [];
@@ -25,21 +32,71 @@ class FormatSteps {
         return $formattedSteps;
     }
 
+    /**
+     * Formats a single step to be used in the frontend.
+     *
+     * @param array $unformattedStep The unformatted step to format.
+     * 
+     * @return array The formatted step.
+     */
     public function formatStep(array $unformattedStep) 
     {
         $fieldGroups = $unformattedStep['formStepGroup'] ?? [];
 
         $formattedStep = [];
         foreach ($fieldGroups as $fieldGroup) {
-            $fields = acf_get_fields($fieldGroup);
+            $fields = $this->acfService->acfGetFields($fieldGroup);
             foreach ($fields as $field) {
                 $formattedStep[] = $this->fieldMapper($field);
             }
+
+            $formattedStep = $this->namespaceFieldName($formattedStep);
         }
 
         return $formattedStep;
     }
 
+    /**
+     * Namespaces the field array to group form under a module namespace.
+     *
+     * @param array $fields The fields to namespace.
+     * 
+     * @return array The namespaced fields.
+     */
+    private function namespaceFieldName(array $fields): array
+    {
+        foreach ($fields as $key => $field) {
+            if (isset($field['name'])) {
+                $fields[$key]['name'] = $this->namespaceFieldNameString($field['name']);
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Namespaces the field name to group form under a module namespace.
+     * This function handles single field names, and array field names.
+     *
+     * @param string $name The field name.
+     * 
+     * @return string The namespaced field name.
+     */
+    private function namespaceFieldNameString(string $name): string
+    {
+        if (substr($name, -2) === '[]') {
+            $suffix = substr($name, 0, -2);
+            $name   = str_replace('[]', '', $name);
+        }
+        return sprintf("mod-frontedform['%s']%s", $name, $suffix ?? '');
+    }
+
+    /**
+     * Maps the field to a format that can be used in the frontend.
+     *
+     * @param array $field The field to map.
+     * 
+     * @return array The mapped field.
+     */
     private function fieldMapper(array $field)
     {
         switch ($field['type']) {
@@ -84,6 +141,14 @@ class FormatSteps {
 
     }
 
+    /**
+     * Maps the field to a format that can be used in the frontend.
+     *
+     * @param array $field The field to map.
+     * @param string $type The type of field to map.
+     * 
+     * @return array The mapped field.
+     */
     private function mapBasic(array $field, string $type)
     {
         return [

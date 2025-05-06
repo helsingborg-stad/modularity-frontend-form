@@ -12,6 +12,22 @@ class Config implements ConfigInterface
   ){}
 
   /**
+   * The module post type / slug.
+   * 
+   * Note: mod- prefix is added according 
+   * to modularity standards.
+   * 
+   * @return string
+   */
+  public function getModuleSlug(): string
+  {
+    return "mod-" . $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      'frontend-form'
+    );
+  }
+
+  /**
    * Get the current nonce key.
    * 
    * @return string

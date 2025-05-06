@@ -1,13 +1,13 @@
-class TextConditionsHandler implements ConditionsHandlerInterface {
+class BasicConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
-	private parent: TextInterface|null = null;
+	private parent: BasicInterface|null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
 	constructor(private unstructuredConditions: any) {
 	}
 
-	public init(parent: TextInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(parent: BasicInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 		this.setValueChangeListener();
@@ -38,8 +38,8 @@ class TextConditionsHandler implements ConditionsHandlerInterface {
 	}
 
 	public dispatchUpdateEvent(): void {
-		if (this.parent?.getField()) {
-			this.parent.getField().dispatchEvent(new Event('input'));
+		if (this.parent?.getInput()) {
+			this.parent.getInput().dispatchEvent(new Event('input'));
 		}
 	}
 
@@ -56,7 +56,7 @@ class TextConditionsHandler implements ConditionsHandlerInterface {
     }
 
 	private setValueChangeListener(): void {
-        this.parent?.getField().addEventListener('input', () => {
+        this.parent?.getInput().addEventListener('input', () => {
             for (const fieldName in this.fieldsObject) {
                 this.fieldsObject[fieldName].getConditionsHandler().validate();
             }
@@ -64,4 +64,4 @@ class TextConditionsHandler implements ConditionsHandlerInterface {
 	}
 }
 
-export default TextConditionsHandler;
+export default BasicConditionsHandler;

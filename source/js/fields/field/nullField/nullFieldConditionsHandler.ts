@@ -1,5 +1,5 @@
 class NullFieldConditionsHandler implements ConditionsHandlerInterface {
-    constructor(private field: any, private conditions: ConditionInterface[]) {}
+    constructor(private conditions: ConditionInterface[]) {}
 
     public init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void {
         // No implementation needed for NullField

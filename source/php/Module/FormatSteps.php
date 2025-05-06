@@ -77,8 +77,11 @@ class FormatSteps {
                 return $this->mapNumber($field);
             case 'image':
                 return $this->mapImage($field);
+            case 'file':
+                return $this->mapFile($field);
             
         }
+
     }
 
     private function mapBasic(array $field, string $type)
@@ -127,6 +130,16 @@ class FormatSteps {
         $mapped = $this->mapBasic($field, 'image');
 
         $mapped['accept'] = $field['mime_types'] ? str_replace(' ', ',', $field['mime_types']) : 'image/*';
+
+        return $mapped;
+    }
+    
+    private function mapFile(array $field): array
+    {
+        // TODO: What should default values be for fileinput?
+        $mapped = $this->mapBasic($field, 'file');
+
+        $mapped['accept'] = $field['mime_types'] ? str_replace(' ', ',', $field['mime_types']) : 'audio/*,video/*,image/*';
 
         return $mapped;
     }

@@ -1,4 +1,4 @@
-class Text implements TextInterface {
+class Basic implements BasicInterface {
     constructor(
         private field: HTMLElement,
         private input: HTMLInputElement,
@@ -34,4 +34,4 @@ class Text implements TextInterface {
     }
 }
 
-export default Text;
+export default Basic;

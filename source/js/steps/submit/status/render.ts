@@ -2,7 +2,7 @@ import SubmitStatus from './enum';
 import SubmitStatusRendererInterface from './renderInterface';
 
 class SubmitStatusRenderer implements SubmitStatusRendererInterface {
-  private messageQueue: Array<{ status: string; message: string; delay: number }> = [];
+  private messageQueue: Array<{ status: string; message: string; progress: number; delay: number }> = [];
   private isProcessing: boolean = false;
 
   constructor(private formContainer: HTMLElement) {}
@@ -12,9 +12,9 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
    */
   public setup(): void {
     this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
-      const { status, message, delay = 800 } = (event as CustomEvent).detail;
+      const { status, message, progress, delay = 800 } = (event as CustomEvent).detail;
 
-      this.messageQueue.push({ status, message, delay });
+      this.messageQueue.push({ status, message, progress, delay });
 
       if (!this.isProcessing) {
         this.processQueue();
@@ -33,7 +33,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
 
     this.isProcessing = true;
 
-    const { status, message, delay } = this.messageQueue.shift()!;
+    const { status, message, progress, delay } = this.messageQueue.shift()!;
 
     // Remove existing status classes
     this.formContainer.classList.remove(
@@ -55,7 +55,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
       messageEl.className = 'status-message';
       this.formContainer.appendChild(messageEl);
     }
-    messageEl.textContent = message;
+    messageEl.textContent = (progress > 0 ? `${message} (${progress}%)` : message);
 
     // Wait for the delay before processing the next message
     setTimeout(() => {

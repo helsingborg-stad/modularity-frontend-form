@@ -150,15 +150,15 @@ class FrontendForm extends \Modularity\Module
             'noResultsFound'    => $this->wpService->__('No results found', 'modularity-frontend-form'),
             'searchPlaceholder' => $this->wpService->__('Search location...', 'modularity-frontend-form'),
 
-            'submitInit' => $this->wpService->__('Preparing to submit', 'modularity-frontend-form'),
+            'submitInit' => $this->wpService->__('Preparing', 'modularity-frontend-form'),
             'submitSuccess' => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
             'submitUrlError' => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
             'submitError' => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
 
-            'nonceRequest' => $this->wpService->__('Checking your permission to submit...', 'modularity-frontend-form'),
-            'nonceUrlMissing' => $this->wpService->__('We couldn’t verify your permission – technical link missing.', 'modularity-frontend-form'),
-            'nonceRequestSuccess' => $this->wpService->__('Permission check successful.', 'modularity-frontend-form'),
-            'nonceRequestFailed' => $this->wpService->__('Couldn’t confirm your permission – please try again.', 'modularity-frontend-form'),
+            'nonceRequest' => $this->wpService->__('Securing', 'modularity-frontend-form'),
+            'nonceUrlMissing' => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
+            'nonceRequestSuccess' => $this->wpService->__('Securing', 'modularity-frontend-form'),
+            'nonceRequestFailed' => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
         ];
     }
 

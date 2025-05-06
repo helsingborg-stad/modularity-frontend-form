@@ -6,28 +6,26 @@ class FileConditionValidator implements ConditionValidatorInterface {
     }
 
     public validate(condition: any): boolean {
-        const value = this.parent?.getInput().value ?? '';
+        console.log(condition)
+        if (!this.parent?.getInput().files) {
+            console.error('No files found in input element');
+            return false;
+        }
+
+        const value = this.parent.getInput().files!.length > 0;
 
         switch (condition.operator) {
             case '==':
             case '=':
             case '===':
-                return value === condition.value;
+            case '!=empty':
+            case '==contains':
+                return value === true;
             case '!=':
             case '!==':
-                return value !== condition.value;
             case '==empty':
-                return value.length === 0;
-            case '!=empty':
-                return value.length > 0;
-            case '==contains':
-                return value.includes(condition.value);
             case '!=contains':
-                return !value.includes(condition.value);
-            case '>':
-                return Number(value) > Number(condition.value);
-            case '<':
-                return Number(value) < Number(condition.value);
+                return value === false;
             default:
                 console.error('Invalid operator:', condition.operator);
                 return false;

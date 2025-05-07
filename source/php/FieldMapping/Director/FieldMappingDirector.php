@@ -21,9 +21,13 @@ use ModularityFrontendForm\FieldMapping\Mapper\RepeaterFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\TimePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\DatePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\ButtonGroupFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\GoogleMapFieldMapper;
 
 class FieldMappingDirector implements FieldMappingDirectorInterface
 {
+    /**
+     * @var array
+     */
     protected array $mapperMap = [
         'text'          => TextFieldMapper::class,
         'email'         => EmailFieldMapper::class,
@@ -38,12 +42,19 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
         'image'         => ImageFieldMapper::class,
         'radio'         => RadioFieldMapper::class,
         'repeater'      => RepeaterFieldMapper::class,
-        'time_picker'   => TextFieldMapper::class,
-        'date_picker'   => TextFieldMapper::class,
-        'button_group'  => ButtonGroupFieldMapper::class
+        'time_picker'   => TimePickerFieldMapper::class,
+        'date_picker'   => DatePickerFieldMapper::class,
+        'button_group'  => ButtonGroupFieldMapper::class,
+        'google_maps'   => GoogleMapFieldMapper::class,
     ];
 
-
+    /**
+     * Resolves the appropriate field mapper based on the field type.
+     *
+     * @param array $field The field configuration.
+     * @return FieldMapperInterface The resolved field mapper instance.
+     * @throws \RuntimeException If the mapper class is not valid.
+     */
     public function resolveMapper(array $field): FieldMapperInterface
     {
         $type = $field['type'] ?? 'text';

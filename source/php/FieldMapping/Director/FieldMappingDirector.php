@@ -3,7 +3,7 @@
 namespace ModularityFrontendForm\FieldMapping\Director;
 
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
-use ModularityFrontendForm\FieldMapping\Mapper\FieldMapperInterface;
+use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
 use ModularityFrontendForm\FieldMapping\Mapper\TextFieldMapper;
 

@@ -14,13 +14,11 @@ class ConditionalLogicMapper
     /**
      * Map the conditional logic for a field.
      *
-     * @return string|null The mapped conditional logic as a JSON string, or null if not applicable.
-     * 
-     * @throws \JsonException If the conditional logic cannot be encoded as JSON.
+     * @return string|null The mapped conditional logic as a JSON string, or null if not applicable
      */
     public function map(): ?string
     {
-        $conditionalLogic = $this->field[$this->subkey]['conditionalLogic'] ?? null;
+        $conditionalLogic = $this->field[$this->subkey] ?? null;
 
         if (empty($conditionalLogic)) {
             return null;
@@ -34,6 +32,6 @@ class ConditionalLogicMapper
             $conditionalLogic = json_encode($conditionalLogic, JSON_THROW_ON_ERROR);
         }
 
-        throw new \JsonException('Invalid conditional logic format');
+        return null;
     }
 }

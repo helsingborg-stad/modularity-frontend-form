@@ -114,7 +114,7 @@ class FormatSteps {
             case 'true_false':
                 return $this->mapTrueFalse($field);
             case 'text':
-                return $this->mapText($field);  
+                return (new Mapper($field))->map();
             case 'email':
                 return $this->mapEmail($field);
             case 'taxonomy':

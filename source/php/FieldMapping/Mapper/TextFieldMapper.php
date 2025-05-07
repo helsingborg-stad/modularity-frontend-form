@@ -3,9 +3,13 @@
 namespace ModularityFrontendForm\FieldMapping\Mapper;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
-use ModularityFrontendForm\FieldMapping\Mapper\BasicFieldMapper;
-class TextFieldMapper extends AbstractFieldMapper implements FieldMapperInterface
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
+class TextFieldMapper implements FieldMapperInterface
 {
+    use FieldMapperConstruct;
+    use FieldMapperGetInstance;
+
     public function map(): ?array
     {
         $mapped = (new BasicFieldMapper($this->field, $this->field['type']))->map();

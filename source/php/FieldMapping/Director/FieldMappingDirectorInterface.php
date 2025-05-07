@@ -1,7 +1,7 @@
 <?php
 
 namespace ModularityFrontendForm\FieldMapping\Director;
-use ModularityFrontendForm\FieldMapping\Mapper\FieldMapperInterface;
+use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
 interface FieldMappingDirectorInterface
 {

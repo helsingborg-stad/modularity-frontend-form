@@ -3,11 +3,16 @@
 namespace ModularityFrontendForm\FieldMapping\Mapper;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\BasicFieldMapperInterface;
-use ModularityFrontendForm\FieldMapping\Mapper\ConditionalLogicMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
 
-class BasicFieldMapper extends AbstractFieldMapper implements BasicFieldMapperInterface 
+class BasicFieldMapper implements BasicFieldMapperInterface
 {
     public function __construct(protected array $field, private ?string $type = null){}
+
+    public static function getInstance(array $field, ?string $type = null): self
+    {
+        return new static($field, $type);
+    }
 
     public function map(): ?array
     {

@@ -11,7 +11,7 @@ class BasicFieldMapper extends AbstractFieldMapper implements BasicFieldMapperIn
 
     public function map(): mixed
     {
-      $mappedConditionalLogic = new ConditionalLogicMapper(
+      $conditionalLogicMapper = new ConditionalLogicMapper(
         $this->field,'conditional_logic'
       );
 
@@ -23,7 +23,7 @@ class BasicFieldMapper extends AbstractFieldMapper implements BasicFieldMapperIn
           'required'    => $this->field['required'] ?? false,
           'description' => $this->field['instructions'] ?? '',
           'attributeList' => [
-              'data-js-conditional-logic' => $mappedConditionalLogic->map(),
+              'data-js-conditional-logic' => $conditionalLogicMapper->map(),
               'data-js-field' => $this->type,
               'data-js-field-name' => $this->field['key'],
           ]

@@ -110,6 +110,7 @@ class FormatSteps {
             case 'text':
             case 'email':
             case 'url':
+            case 'textarea':
                 return (new Mapper($field))->map();
             
             //TODO: Migrate these to mappers
@@ -131,8 +132,6 @@ class FormatSteps {
                 return $this->mapButtonGroup($field);
             case 'google_map':
                 return $this->mapGoogleMap($field);
-            case 'textarea':
-                return $this->mapTextarea($field);
             case 'message':
                 return $this->mapMessage($field);
             case 'radio':

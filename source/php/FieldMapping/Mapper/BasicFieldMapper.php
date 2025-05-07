@@ -9,7 +9,7 @@ class BasicFieldMapper extends AbstractFieldMapper implements BasicFieldMapperIn
 {
     public function __construct(protected array $field, private ?string $type = null){}
 
-    public function map(): mixed
+    public function map(): ?array
     {
       $conditionalLogicMapper = new ConditionalLogicMapper(
         $this->field, 'conditional_logic'

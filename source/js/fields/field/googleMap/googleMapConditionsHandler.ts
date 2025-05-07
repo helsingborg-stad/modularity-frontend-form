@@ -56,9 +56,9 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 
 	private setValueChangeListener(): void {
         this.parent?.getField().addEventListener('modularityFrontendFormOpenstreetmapMarkerAdded', () => {
-            for (const fieldName in this.fieldsObject) {
-                this.fieldsObject[fieldName].getConditionsHandler().validate();
-            }
+			for (const fieldName in this.fieldsObject) {
+				this.fieldsObject[fieldName].getConditionsHandler().validate();
+			}
         });
 	}
 }

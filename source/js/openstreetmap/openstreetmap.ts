@@ -5,6 +5,9 @@ class Openstreetmap implements OpenstreetmapInterface {
     private marker: MarkerInterface|null = null;
     private map!: MapInterface;
     private createMarker!: CreateMarkerInterface;
+    private markerMovedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerMoved';
+    private markerAddedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerAdded';
+
     constructor(
         private modularityFrontendFormData: ModularityFrontendFormData,
         private modularityFrontendFormLang: ModularityFrontendFormLang,
@@ -27,7 +30,7 @@ class Openstreetmap implements OpenstreetmapInterface {
         }).create();
     
         this.createMarker = new CreateMarker();
-
+        console.log(this.modularityFrontendFormData.placeSearchApiUrl)
         const tiles = new TilesHelper().getDefaultTiles('default');
         new CreateAttribution()
             .create()
@@ -52,6 +55,10 @@ class Openstreetmap implements OpenstreetmapInterface {
 
     public hasMarker(): boolean {
         return this.marker !== null;
+    }
+
+    public getMarker(): MarkerInterface|null {
+        return this.marker ?? null;
     }
 
     private handleClick(e: EventData): void {
@@ -87,8 +94,10 @@ class Openstreetmap implements OpenstreetmapInterface {
             });
 
             this.marker.addTo(this.map);
-            this.parent.dispatchEvent(new CustomEvent('modularityFrontendFormOpenstreetmapMarkerAdded', {}));
+            this.parent.dispatchEvent(new CustomEvent(this.markerAddedEvent, {}));
         }
+        
+        this.parent.dispatchEvent(new CustomEvent(this.markerMovedEvent, {}));
     }
 
     private getIconHtml(): string {

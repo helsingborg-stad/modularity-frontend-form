@@ -4,6 +4,12 @@
     ],
     'attributeList' => $field['attributeList'] ?? [],
 ])
+    @field([
+        'type' => 'hidden',
+        'name' => $field['name'],
+        'required' => $field['required'] ?? false,
+    ])
+    @endfield
     @element([
         'id' => $field['name'],
         'classList' => ['mod-frontend-form__openstreetmap'],

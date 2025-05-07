@@ -1,4 +1,6 @@
 class GoogleMap implements GoogleMapInterface {
+    private markerMovedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerMoved';
+
     constructor(
         private field: HTMLElement,
         private openstreetmapInstance: OpenstreetmapInterface,
@@ -12,6 +14,7 @@ class GoogleMap implements GoogleMapInterface {
         this.conditionsHandler.init(this, conditionBuilder);
         this.googleMapValidator.init(this);
         this.openstreetmapInstance.init();
+        this.listenForMarkerEvents();
     }
 
     public getName(): string {
@@ -32,6 +35,12 @@ class GoogleMap implements GoogleMapInterface {
 
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    private listenForMarkerEvents(): void {
+        this.getField().addEventListener(this.markerMovedEvent, () => {
+            
+        });
     }
 }
 

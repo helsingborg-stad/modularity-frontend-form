@@ -22,6 +22,7 @@ use ModularityFrontendForm\FieldMapping\Mapper\TimePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\DatePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\ButtonGroupFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\GoogleMapFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\TaxonomyFieldMapper;
 
 class FieldMappingDirector implements FieldMappingDirectorInterface
 {
@@ -46,6 +47,7 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
         'date_picker'   => DatePickerFieldMapper::class,
         'button_group'  => ButtonGroupFieldMapper::class,
         'google_maps'   => GoogleMapFieldMapper::class,
+        'taxonomy'      => TaxonomyFieldMapper::class,
     ];
 
     /**

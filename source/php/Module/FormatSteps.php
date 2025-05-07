@@ -48,10 +48,7 @@ class FormatSteps {
         foreach ($fieldGroups as $fieldGroup) {
             $fields = $this->acfService->acfGetFields($fieldGroup);
             foreach ($fields as $field) {
-                //TODO: REPLACE WITH MAPPER
-                //$formattedStep[] = (new Mapper($field))->map();
-
-                $formattedStep[] = $this->fieldMapper($field);
+                $formattedStep[] = (new Mapper($field))->map();
             }
 
             $formattedStep = $this->namespaceFieldName($formattedStep);
@@ -92,79 +89,5 @@ class FormatSteps {
             $name   = str_replace('[]', '', $name);
         }
         return sprintf("mod-frontedform['%s']%s", $name, $suffix ?? '');
-    }
-
-    /**
-     * Maps the field to a format that can be used in the frontend.
-     *
-     * @param array $field The field to map.
-     * 
-     * @return array The mapped field.
-     * 
-     * 
-     * TODO: REMOVE THIS FUNCTION AND REPLACE WITH MAPPER
-     */
-    private function fieldMapper(array $field)
-    {
-        switch ($field['type']) {
-            case 'text':
-            case 'email':
-            case 'url':
-            case 'textarea':
-            case 'true_false':
-            case 'select':
-            case 'checkbox':
-            case 'message':
-            case 'file':
-            case 'number':
-            case 'image':
-            case 'radio':
-            case 'repeater':
-            case 'date_picker':
-            case 'time_picker':
-            case 'button_group':
-            case 'google_map':
-                return (new Mapper($field))->map();
-            
-            //TODO: Migrate these to mappers
-            case 'taxonomy':
-                return $this->mapTaxonomy($field);
-        }
-
-    }
-    
-    private function mapTaxonomy(array $field): array
-    {
-        $field['choices'] = $this->structureTerms($this->getTermsFromTaxonomy($field));
-        return (new Mapper($field))->map();
-    }
-
-    private function structureTerms(array $terms): array
-    {
-        $structured = [];
-
-        foreach ($terms as $term) {
-            $structured[$term->term_id] = $term->name ?? $term->term_id;
-        }
-
-        return $structured;
-    }
-
-    private function getTermsFromTaxonomy(array $field): array
-    {
-        if (empty($field['taxonomy'])) {
-            return [];
-        }
-
-        $terms = get_terms([
-            'taxonomy'   => $field['taxonomy'],
-            'hide_empty' => false,
-        ]);
-
-        if (is_wp_error($terms)) {
-            return [];
-        }
-
-        return $terms;
     }
 }

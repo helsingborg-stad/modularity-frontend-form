@@ -6,12 +6,37 @@ use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
 use ModularityFrontendForm\FieldMapping\Mapper\TextFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\EmailFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\UrlFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\TextareaFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\TrueFalseFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\SelectFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\CheckboxFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\MessageFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\FileFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\NumberFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\ImageFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\RadioFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\RepeaterFieldMapper;
 
 class FieldMappingDirector implements FieldMappingDirectorInterface
 {
     protected array $mapperMap = [
-        'text' => TextFieldMapper::class,
+        'text'       => TextFieldMapper::class,
+        'email'      => EmailFieldMapper::class,
+        'url'        => UrlFieldMapper::class,
+        'textarea'   => TextareaFieldMapper::class,
+        'true_false' => TrueFalseFieldMapper::class,
+        'select'     => SelectFieldMapper::class,
+        'checkbox'   => CheckboxFieldMapper::class,
+        'message'    => MessageFieldMapper::class,
+        'file'       => FileFieldMapper::class,
+        'number'     => NumberFieldMapper::class,
+        'image'      => ImageFieldMapper::class,
+        'radio'      => RadioFieldMapper::class,
+        'repeater'   => RepeaterFieldMapper::class,
     ];
+
 
     public function resolveMapper(array $field): FieldMapperInterface
     {

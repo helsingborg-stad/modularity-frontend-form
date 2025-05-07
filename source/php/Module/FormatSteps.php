@@ -118,13 +118,13 @@ class FormatSteps {
             case 'file':
             case 'number':
             case 'image':
+            case 'radio':
+            case 'repeater':
                 return (new Mapper($field))->map();
             
             //TODO: Migrate these to mappers
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
-            case 'repeater':
-                return $this->mapRepeater($field);
             case 'date_picker':
                 return $this->mapDatePicker($field);
             case 'time_picker':
@@ -133,8 +133,6 @@ class FormatSteps {
                 return $this->mapButtonGroup($field);
             case 'google_map':
                 return $this->mapGoogleMap($field);
-            case 'radio':
-                return $this->mapRadio($field);
         }
 
     }

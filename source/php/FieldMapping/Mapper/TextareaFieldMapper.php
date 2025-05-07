@@ -19,9 +19,6 @@ class TextareaFieldMapper implements FieldMapperInterface
             $mapped['placeholder']        = $this->field['placeholder'] ?? '';
             $mapped['value']              = $this->field['default_value'] ?? '';
             $mapped['rows']               = $this->field['rows'] ?? 5;
-            $mapped['fieldAttributeList'] = [
-                'data-js-conditional-logic' => $this->structureConditionalLogic($this->field['conditional_logic'] ?? null),
-            ];
         }
 
         return $mapped ?? null;

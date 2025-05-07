@@ -2,6 +2,7 @@
 
 namespace ModularityFrontendForm;
 
+use AcfService\AcfService;
 use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
@@ -17,7 +18,7 @@ use \Modularity\HooksRegistrar\Hookable;
  */
 class App implements \Modularity\HooksRegistrar\Hookable {
 
-    public function __construct(private WpService $wpService, private Config $config){}
+    public function __construct(private WpService $wpService, private AcfService $acfService, private Config $config){}
 
     /**
      * Add hooks to WordPress
@@ -62,7 +63,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
     public function registerApi()
     {
         $restEndpoints = [
-            new Api\Submit\Post($this->wpService, $this->config),
+            new Api\Submit\Post($this->wpService, $this->acfService, $this->config),
             new Api\Nonce\Get($this->wpService, $this->config),
         ];
 

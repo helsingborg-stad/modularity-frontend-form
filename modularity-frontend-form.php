@@ -13,6 +13,7 @@
  * Domain Path:       /languages
  */
 
+use AcfService\Implementations\NativeAcfService;
 use WpService\Implementations\NativeWpService;
 
  // Protect agains direct file access
@@ -25,6 +26,7 @@ define('MODULARITYFRONTENDFORM_URL', plugins_url('', __FILE__));
 define('MODULARITYFRONTENDFORM_MODULE_VIEW_PATH', MODULARITYFRONTENDFORM_PATH . 'source/php/Module/views');
 
 $wpService = new NativeWpService();
+$acfService = new NativeAcfService();
 
 // Register the autoloader
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
@@ -55,6 +57,7 @@ $wpService->addAction('acf/init', function () {
 // Start application
 $app = new ModularityFrontendForm\App(
     $wpService, 
+    $acfService,
     new ModularityFrontendForm\Config\Config($wpService, 'Modularity/FrontendForm')
 );
 $app->addHooks();

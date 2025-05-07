@@ -49,9 +49,26 @@ class Submit implements SubmitInterface {
       await this.asyncNonce.setup(this.form, this.submitStatusHandler);
     
       try {
-        const response = await fetch(url, {
+
+        //Get data-js-frontend-form-id 
+        const formId = this.form.getAttribute("data-js-frontend-form-id");
+        if (!formId) {
+          this.submitStatusHandler.setStatus(
+            SubmitStatus.Error,
+            this.modularityFrontendFormLang?.submitError ?? "Could not find the form ID. Please check your configuration.",
+            'link_off',
+            0
+          );
+          return;
+        }
+        
+        const urlWithParams = new URL(url);
+        urlWithParams.searchParams.append("module-id", formId);
+        const finalUrl = urlWithParams.toString();
+
+        const response = await fetch(finalUrl, {
           method: "POST",
-          body: new FormData(this.form),
+          body: new FormData(this.form)
         });
     
         if (!response.ok) {

@@ -2,6 +2,7 @@
 
 namespace ModularityFrontendForm\Api\Submit;
 
+use AcfService\AcfService;
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use \ModularityFrontendForm\Config\ConfigInterface;
 use WP;
@@ -20,6 +21,7 @@ class Post extends RestApiEndpoint
 
     public function __construct(
         private WpService $wpService,
+        private AcfService $acfService,
         private ConfigInterface $config
     ) {}
 

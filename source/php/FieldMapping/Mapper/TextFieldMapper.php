@@ -2,28 +2,20 @@
 
 namespace ModularityFrontendForm\FieldMapping\Mapper;
 
-use ModularityFrontendForm\FieldMapping\Mapper\FieldMapperInterface;
-
-class TextFieldMapper implements FieldMapperInterface
+use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
+use ModularityFrontendForm\FieldMapping\Mapper\BasicFieldMapper;
+class TextFieldMapper extends AbstractFieldMapper implements FieldMapperInterface
 {
-    protected array $field;
-
-    protected function __construct(array $field)
+    public function map(): ?array
     {
-        $this->field = $field;
-    }
+        $mapped = (new BasicFieldMapper($this->field, $this->field['type']))->map();
 
-    public static function getInstance(array $field): self
-    {
-        static $instance = null;
-        if (!$instance) {
-            $instance = new self($field);
+        if(is_array($mapped)) {
+            $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
+            $mapped['value']                               = $this->field['default_value'] ?? '';
+            $mapped['moveAttributesListToFieldAttributes'] = false;
         }
-        return $instance;
-    }
 
-    public function map(): mixed
-    {
-        return $this->field['value'] ?? null;
+        return $mapped ?? null;
     }
 }

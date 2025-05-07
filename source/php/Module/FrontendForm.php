@@ -39,7 +39,7 @@ use WpService\Contracts\WpLocalizeScript;
  */
 class FrontendForm extends \Modularity\Module
 {
-    public $slug     = 'frontend-form'; //Note: Update config if slug is changed.
+    public $slug     = 'frontend-form'; //Note: Update config if 
     public $supports = [];
     public $hidden   = false;
     public $cacheTtl = 0;

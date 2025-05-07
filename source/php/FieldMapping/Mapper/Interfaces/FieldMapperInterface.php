@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Interfaces;
 
 interface FieldMapperInterface
 {

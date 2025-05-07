@@ -4,16 +4,17 @@ namespace ModularityFrontendForm\FieldMapping;
 
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirector;
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
+use WpService\WpService;
 
 class Mapper
 {
     protected array $field;
     protected FieldMappingDirectorInterface $director;
 
-    public function __construct(array $field, ?FieldMappingDirectorInterface $director = null)
+    public function __construct(array $field, WpService $wpService, ?FieldMappingDirectorInterface $director = null)
     {
         $this->field = $field;
-        $this->director = $director ?? new FieldMappingDirector();
+        $this->director = $director ?? new FieldMappingDirector($wpService);
     }
 
     public function map(): mixed

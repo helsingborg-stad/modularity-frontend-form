@@ -60,7 +60,7 @@ class FrontendForm extends \Modularity\Module
     {
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService   = new NativeAcfService();
-        $this->formatSteps  = new FormatSteps($this->acfService);
+        $this->formatSteps  = new FormatSteps($this->wpService, $this->acfService);
 
         $this->cacheBust    = new CacheBust();
 

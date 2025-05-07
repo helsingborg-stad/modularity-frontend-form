@@ -3,13 +3,16 @@
 namespace ModularityFrontendForm\Module;
 
 use AcfService\AcfService;
-use WpService\Contracts\__;
+use WpService\WpService;
 
 use ModularityFrontendForm\FieldMapping\Mapper;
+
 class FormatSteps {
-    public function __construct(private AcfService $acfService)
-    {
-    }
+
+    public function __construct(
+        private WpService $wpService, 
+        private AcfService $acfService
+    ){}
 
     /**
      * Formats the steps to be used in the frontend.
@@ -48,7 +51,7 @@ class FormatSteps {
         foreach ($fieldGroups as $fieldGroup) {
             $fields = $this->acfService->acfGetFields($fieldGroup);
             foreach ($fields as $field) {
-                $formattedStep[] = (new Mapper($field))->map();
+                $formattedStep[] = (new Mapper($field, $this->wpService))->map();
             }
 
             $formattedStep = $this->namespaceFieldName($formattedStep);

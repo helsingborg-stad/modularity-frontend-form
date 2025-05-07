@@ -2,12 +2,9 @@
 
 namespace ModularityFrontendForm\FieldMapping\Mapper\Traits;
 
+use WpService\WpService;
+
 trait FieldMapperConstruct
 {
-    protected array $field;
-
-    public function __construct(array $field)
-    {
-        $this->field = $field;
-    }
+    public function __construct(protected array $field, protected WpService $wpService){}
 }

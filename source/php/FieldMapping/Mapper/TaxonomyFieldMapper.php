@@ -20,7 +20,7 @@ class TaxonomyFieldMapper implements FieldMapperInterface
 
         $this->field['field_type'] = $this->field['field_type'] ?? 'checkbox';
 
-        return (new Mapper($this->field))->map();
+        return (new Mapper($this->field, $this->wpService))->map();
     }
 
     /**
@@ -52,11 +52,11 @@ class TaxonomyFieldMapper implements FieldMapperInterface
             return [];
         }
 
-        $terms = get_terms([
+        $terms = $this->wpService->getTerms([
             'taxonomy'   => $field['taxonomy'],
             'hide_empty' => false,
         ]);
 
-        return is_wp_error($terms) ? [] : $terms;
+        return $this->wpService->isWpError($terms) ? [] : $terms;
     }
 }

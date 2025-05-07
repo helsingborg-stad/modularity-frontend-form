@@ -14,11 +14,11 @@ class TrueFalseFieldMapper implements FieldMapperInterface
     public function map(): ?array
     {
         $this->field['choices'] = [
-            0 => __('No', 'modularity-frontend-form'),
-            1 => __('Yes', 'modularity-frontend-form'),
+            0 => $this->wpService->__('No', 'modularity-frontend-form'),
+            1 => $this->wpService->__('Yes', 'modularity-frontend-form'),
         ];
 
-        $mapped = (new RadioFieldMapper($this->field))->map();
+        $mapped = (new RadioFieldMapper($this->field, $this->wpService))->map();
 
         if (is_array($mapped)) {
             $mapped['attributeList']['style'] = 'display: flex;';

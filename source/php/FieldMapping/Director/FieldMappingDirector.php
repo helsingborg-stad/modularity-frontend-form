@@ -2,6 +2,8 @@
 
 namespace ModularityFrontendForm\FieldMapping\Director;
 
+use WpService\WpService;
+
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
@@ -26,6 +28,15 @@ use ModularityFrontendForm\FieldMapping\Mapper\TaxonomyFieldMapper;
 
 class FieldMappingDirector implements FieldMappingDirectorInterface
 {
+
+    /**
+     * @var WpService
+     */
+    public function __construct(
+        protected WpService $wpService
+    ) {
+    }
+
     /**
      * @var array
      */
@@ -66,6 +77,6 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
             throw new \RuntimeException("Invalid mapper class: {$mapperClass}");
         }
 
-        return $mapperClass::getInstance($field);
+        return $mapperClass::getInstance($field, $this->wpService);
     }
 }

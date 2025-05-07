@@ -13,6 +13,6 @@ class ButtonGroupFieldMapper implements FieldMapperInterface
 
     public function map(): ?array
     {
-        return (new RadioFieldMapper($this->field))->map();
+        return (new RadioFieldMapper($this->field, $this->wpService))->map();
     }
 }

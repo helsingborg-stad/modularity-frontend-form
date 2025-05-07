@@ -111,15 +111,16 @@ class FormatSteps {
             case 'email':
             case 'url':
             case 'textarea':
+            case 'true_false':
+            case 'select':
+            case 'checkbox':
+            case 'message':
+            case 'file':
+            case 'number':
+            case 'image':
                 return (new Mapper($field))->map();
             
             //TODO: Migrate these to mappers
-            case 'select':
-                return $this->mapSelect($field);
-            case 'checkbox':
-                return $this->mapCheckbox($field);
-            case 'true_false':
-                return $this->mapTrueFalse($field);
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
             case 'repeater':
@@ -132,17 +133,8 @@ class FormatSteps {
                 return $this->mapButtonGroup($field);
             case 'google_map':
                 return $this->mapGoogleMap($field);
-            case 'message':
-                return $this->mapMessage($field);
             case 'radio':
                 return $this->mapRadio($field);
-            case 'number':
-                return $this->mapNumber($field);
-            case 'image':
-                return $this->mapImage($field);
-            case 'file':
-                return $this->mapFile($field);
-            
         }
 
     }

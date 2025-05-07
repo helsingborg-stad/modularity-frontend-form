@@ -12,7 +12,7 @@ class BasicFieldMapper extends AbstractFieldMapper implements BasicFieldMapperIn
     public function map(): mixed
     {
       $conditionalLogicMapper = new ConditionalLogicMapper(
-        $this->field,'conditional_logic'
+        $this->field, 'conditional_logic'
       );
 
       return [

@@ -1,4 +1,5 @@
 import { MarkerInterface, CreateMarker, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, CreateSearch, PlaceObject, SearchInterface, EventData, LatLngObject } from '@helsingborg-stad/openstreetmap';
+import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
 
 class Openstreetmap implements OpenstreetmapInterface {
     private search!: SearchInterface;
@@ -7,8 +8,11 @@ class Openstreetmap implements OpenstreetmapInterface {
     private createMarker!: CreateMarkerInterface;
     private markerMovedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerMoved';
     private markerAddedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerAdded';
+    private markerMovedListeners: ((event: PlaceObject) => void)[] = [];
+    private fetching: boolean = false;
 
     constructor(
+        private fetchPlaceFromLatLng: FetchPlaceFromLatLng,
         private modularityFrontendFormData: ModularityFrontendFormData,
         private modularityFrontendFormLang: ModularityFrontendFormLang,
         private parent: HTMLElement,
@@ -28,9 +32,9 @@ class Openstreetmap implements OpenstreetmapInterface {
             },
             zoom: this.zoom,
         }).create();
-    
+
         this.createMarker = new CreateMarker();
-        console.log(this.modularityFrontendFormData.placeSearchApiUrl)
+
         const tiles = new TilesHelper().getDefaultTiles('default');
         new CreateAttribution()
             .create()
@@ -61,6 +65,14 @@ class Openstreetmap implements OpenstreetmapInterface {
         return this.marker ?? null;
     }
 
+    public isFetchingPlace(): boolean {
+        return this.fetching;
+    }
+
+    public addMarkerMovedListener(callback: (event: PlaceObject) => void): void {
+        this.markerMovedListeners.push(callback);
+    }
+
     private handleClick(e: EventData): void {
         if (!e.latLng) {
             console.error('No latLng found in event data');
@@ -80,11 +92,11 @@ class Openstreetmap implements OpenstreetmapInterface {
     private handleListItemClick(item: PlaceObject): void {
         const latLng = {lat: (item.latitude as number) ?? 0, lng: (item.longitude as number) ?? 0};
 
-        this.addOrMoveMarker(latLng);
+        this.addOrMoveMarker(latLng, item);
         this.map.flyTo(latLng, 15);
     }
 
-    private addOrMoveMarker(latLng: LatLngObject): void {
+    private addOrMoveMarker(latLng: LatLngObject, placeObject: PlaceObject|null = null): void {
         if (this.marker) {
             this.marker.setPosition(latLng);
         } else {
@@ -96,8 +108,33 @@ class Openstreetmap implements OpenstreetmapInterface {
             this.marker.addTo(this.map);
             this.parent.dispatchEvent(new CustomEvent(this.markerAddedEvent, {}));
         }
-        
-        this.parent.dispatchEvent(new CustomEvent(this.markerMovedEvent, {}));
+
+        // TODO: Maybe we shouldn't fetch all the time, instead fetch when user does something like saving? or when the user targets focuses on a different field?
+        this.maybeFetchPlace(latLng, placeObject);
+    }
+
+    private callMarkerMovedListeners(placeObject: PlaceObject): void {
+        this.markerMovedListeners.forEach((callback) => {
+            callback(placeObject);
+        });
+    }
+
+    private async maybeFetchPlace(latLng: LatLngObject, placeObject?: PlaceObject): Promise<void> {
+        if (placeObject) {
+            this.callMarkerMovedListeners(placeObject);
+            return;
+        }
+    
+        this.fetching = true;
+    
+        try {
+            const place = await this.fetchPlaceFromLatLng.fetch(latLng.lat, latLng.lng);
+            if (place) this.callMarkerMovedListeners(place);
+        } catch (error) {
+            console.error('Failed to fetch place:', error);
+        } finally {
+            this.fetching = false;
+        }
     }
 
     private getIconHtml(): string {

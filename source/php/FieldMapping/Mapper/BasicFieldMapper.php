@@ -7,8 +7,6 @@ use ModularityFrontendForm\FieldMapping\Mapper\ConditionalLogicMapper;
 
 class BasicFieldMapper extends AbstractFieldMapper implements BasicFieldMapperInterface 
 {
-    public function __construct(protected array $field, private ?string $type = null){}
-
     public function map(): mixed
     {
       $conditionalLogicMapper = new ConditionalLogicMapper(

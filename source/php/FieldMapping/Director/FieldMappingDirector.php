@@ -18,23 +18,29 @@ use ModularityFrontendForm\FieldMapping\Mapper\NumberFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\ImageFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\RadioFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\RepeaterFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\TimePickerFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\DatePickerFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\ButtonGroupFieldMapper;
 
 class FieldMappingDirector implements FieldMappingDirectorInterface
 {
     protected array $mapperMap = [
-        'text'       => TextFieldMapper::class,
-        'email'      => EmailFieldMapper::class,
-        'url'        => UrlFieldMapper::class,
-        'textarea'   => TextareaFieldMapper::class,
-        'true_false' => TrueFalseFieldMapper::class,
-        'select'     => SelectFieldMapper::class,
-        'checkbox'   => CheckboxFieldMapper::class,
-        'message'    => MessageFieldMapper::class,
-        'file'       => FileFieldMapper::class,
-        'number'     => NumberFieldMapper::class,
-        'image'      => ImageFieldMapper::class,
-        'radio'      => RadioFieldMapper::class,
-        'repeater'   => RepeaterFieldMapper::class,
+        'text'          => TextFieldMapper::class,
+        'email'         => EmailFieldMapper::class,
+        'url'           => UrlFieldMapper::class,
+        'textarea'      => TextareaFieldMapper::class,
+        'true_false'    => TrueFalseFieldMapper::class,
+        'select'        => SelectFieldMapper::class,
+        'checkbox'      => CheckboxFieldMapper::class,
+        'message'       => MessageFieldMapper::class,
+        'file'          => FileFieldMapper::class,
+        'number'        => NumberFieldMapper::class,
+        'image'         => ImageFieldMapper::class,
+        'radio'         => RadioFieldMapper::class,
+        'repeater'      => RepeaterFieldMapper::class,
+        'time_picker'   => TextFieldMapper::class,
+        'date_picker'   => TextFieldMapper::class,
+        'button_group'  => ButtonGroupFieldMapper::class
     ];
 
 

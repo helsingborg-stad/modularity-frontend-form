@@ -120,17 +120,14 @@ class FormatSteps {
             case 'image':
             case 'radio':
             case 'repeater':
+            case 'date_picker':
+            case 'time_picker':
+            case 'button_group':
                 return (new Mapper($field))->map();
             
             //TODO: Migrate these to mappers
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
-            case 'date_picker':
-                return $this->mapDatePicker($field);
-            case 'time_picker':
-                return $this->mapTimePicker($field);
-            case 'button_group':
-                return $this->mapButtonGroup($field);
             case 'google_map':
                 return $this->mapGoogleMap($field);
         }

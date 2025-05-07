@@ -107,15 +107,18 @@ class FormatSteps {
     private function fieldMapper(array $field)
     {
         switch ($field['type']) {
+            case 'text':
+            case 'email':
+            case 'url':
+                return (new Mapper($field))->map();
+            
+            //TODO: Migrate these to mappers
             case 'select':
                 return $this->mapSelect($field);
             case 'checkbox':
                 return $this->mapCheckbox($field);
             case 'true_false':
                 return $this->mapTrueFalse($field);
-            case 'text':
-            case 'email':
-                return (new Mapper($field))->map();
             case 'taxonomy':
                 return $this->mapTaxonomy($field);
             case 'repeater':
@@ -128,8 +131,6 @@ class FormatSteps {
                 return $this->mapButtonGroup($field);
             case 'google_map':
                 return $this->mapGoogleMap($field);
-            case 'url':
-                return $this->mapUrl($field);
             case 'textarea':
                 return $this->mapTextarea($field);
             case 'message':

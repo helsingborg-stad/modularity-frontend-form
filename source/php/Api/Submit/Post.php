@@ -189,11 +189,11 @@ class Post extends RestApiEndpoint
      *
      * @param array $fields The fields to check
      * @param string $postType The post type to check against
-     * @param array $defualtKeys The default keys to include, if any.
+     * @param array $defaultKeys The default keys to include, if any.
      * 
      * @return array The filtered fields
      */
-    private function filterUnmappedFieldKeysForPostType(array $fieldKeys, string $postType, array $defualtKeys = []): array
+    private function filterUnmappedFieldKeysForPostType(array $fieldKeys, string $postType, array $defaultKeys = []): array
     {
         $fieldGroups = $this->acfService->getFieldGroups($postType);
 
@@ -207,7 +207,7 @@ class Post extends RestApiEndpoint
             }
         }
 
-        return array_merge($validKeys, $defualtKeys);
+        return array_merge($validKeys, $defaultKeys);
     }
 
     /**

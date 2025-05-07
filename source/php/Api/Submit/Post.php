@@ -41,7 +41,7 @@ class Post extends RestApiEndpoint
                     'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
                     'type'        => 'integer',
                     'format'      => 'uri',
-                    'required'    => false,
+                    'required'    => true,
                     'validate_callback' => function ($param, $request, $key) {
                         return is_numeric($param) && $this->isFormModuleID($param);
                     },
@@ -80,25 +80,23 @@ class Post extends RestApiEndpoint
      *
      * @return WP_REST_Response|WP_Error The response object or an error
      */
-    public function handleRequest(WP_REST_Request $request): WP_REST_Response
+    public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
         $params          = $request->get_params();
-        $moduleID        = $params['module-id'] ?? null;
-        $fieldMeta       = $params['frontedForm'] ?? null;
-        $a               = $params['url'] ?? null;
 
-        //Get post data
-        $fieldMeta        = $params['mod-frontedform'] ?? null;
+        $moduleID        = $params['module-id'] ?? null;
+        $fieldMeta       = $params['mod-frontedform'] ?? null;
 
         // Check if the request is valid
-       /* if(!$this->validateNonce($params['nonce'] ?? '')) {
-            return rest_ensure_response(new WP_Error(
-                'invalid_nonce',
-                __('Invalid nonce', 'modularity-frontend-form'),
-                array('status' => WP_Http::UNAUTHORIZED)
-            ));
+        if (!$this->validateNonce($params['nonce'] ?? '')) {
+            return rest_ensure_response(
+                new WP_Error(
+                    'invalid_nonce',
+                    __('Invalid nonce', 'modularity-frontend-form'),
+                    array('status' => WP_Http::UNAUTHORIZED)
+                )
+            );
         }
-        '*/ 
 
         return $this->formatInsertResponse(
             $this->insertPost($moduleID, $fieldMeta)
@@ -112,12 +110,15 @@ class Post extends RestApiEndpoint
      *
      * @return WP_REST_Response The formatted response
      */
-    private function formatInsertResponse(WP_Error|int $result): WP_REST_Response {
+    private function formatInsertResponse(WP_Error|int $result): WP_REST_Response|WP_Error {
         if (is_wp_error($result) || $result === 0) {
             return rest_ensure_response(new WP_Error(
                 $result instanceof WP_Error ? $result->get_error_code() : 'post_not_created',
                 $result instanceof WP_Error ? $result->get_error_message() : __('Post not created', 'modularity-frontend-form'),
-                ['status' => WP_Http::BAD_REQUEST]
+                [
+                    'status' => WP_Http::BAD_REQUEST,
+                    'details' => $result instanceof WP_Error ? $result->get_error_data() : null
+                ]
             ));
         }
     
@@ -137,6 +138,16 @@ class Post extends RestApiEndpoint
      * @return WP_Error|int The result of the post insertion
      */
     public function insertPost(int $moduleID, array|null $fieldMeta): WP_Error|int {
+
+        // Check if all fields exists on the target post type
+        if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, 'post')) {
+            return new WP_Error(
+                'invalid_field',
+                __('Invalid field keys sent.', 'modularity-frontend-form'),
+                ['invalid_fields' => array_values($invalidFields)],
+            );
+        }
+
         
         $result = $this->wpService->wpInsertPost([
             'post_title'    => 'Test post',
@@ -164,9 +175,9 @@ class Post extends RestApiEndpoint
      * Stores the fields in the database
      *
      * @param array $fields The fields to store
-     * @param int $postID The ID of the post to store the fields for
+     * @param int $postId The ID of the post to store the fields for
      */
-    public function storeFields($fields, $postID)
+    public function storeFields($fields, $postId)
     {
         $sanitizedFieldMetaKeys = $this->filterUnmappedFieldKeysForPostType(
             array_keys($fields),
@@ -178,10 +189,30 @@ class Post extends RestApiEndpoint
                 $this->acfService->updateField(
                     $key, 
                     $this->santitileFieldValue($fields[$key], $key), 
-                    $postID
+                    $postId
                 );
             }
         }
+    }
+
+    /**
+     * Checks if the request includes fields that are not present on the target post type
+     *
+     * @param array $fieldMeta The field meta data
+     * @param string $postType The post type to check against
+     *
+     * @return array The invalid field keys
+     */
+    public function requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, $postType)
+    {
+        $fieldKeys = array_keys($fieldMeta);
+
+        $validKeys = $this->filterUnmappedFieldKeysForPostType(
+            $fieldKeys,
+            $postType
+        );
+
+        return array_diff($fieldKeys, $validKeys);
     }
 
     /**
@@ -195,10 +226,20 @@ class Post extends RestApiEndpoint
      */
     private function filterUnmappedFieldKeysForPostType(array $fieldKeys, string $postType, array $defaultKeys = []): array
     {
-        $fieldGroups = $this->acfService->getFieldGroups($postType);
+        $validKeys = $defaultKeys;
+
+        $fieldGroups = $this->acfService->getFieldGroups(['post_type' => $postType]);
 
         foreach ($fieldGroups as $group) {
-            $fields = $this->acfService->getFields($group['key']);
+            if(!isset($group['key'])) {
+                continue;
+            }
+
+            $fields = $this->acfService->acfGetFields($group['key']);
+
+            if(!is_array($fields)) {
+                continue;
+            }
 
             foreach ($fields as $field) {
                 if (isset($field['key']) && in_array($field['key'], $fieldKeys, true)) {
@@ -207,7 +248,7 @@ class Post extends RestApiEndpoint
             }
         }
 
-        return array_merge($validKeys, $defaultKeys);
+        return array_unique($validKeys);
     }
 
     /**
@@ -248,6 +289,9 @@ class Post extends RestApiEndpoint
      */
     public function validateNonce($nonce): bool
     {
-        return $this->wpService->wpVerifyNonce($nonce, $this->config->getNonceKey());
+        return (bool) $this->wpService->wpVerifyNonce(
+            $nonce, 
+            $this->config->getNonceKey()
+        );
     }
 }

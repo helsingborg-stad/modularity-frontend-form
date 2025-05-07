@@ -39,7 +39,7 @@ use WpService\Contracts\WpLocalizeScript;
  */
 class FrontendForm extends \Modularity\Module
 {
-    public $slug     = 'frontend-form'; //Note: Update config if slug is changed.
+    public $slug     = 'frontend-form'; //Note: Update config if 
     public $supports = [];
     public $hidden   = false;
     public $cacheTtl = 0;
@@ -60,7 +60,7 @@ class FrontendForm extends \Modularity\Module
     {
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService   = new NativeAcfService();
-        $this->formatSteps  = new FormatSteps($this->acfService);
+        $this->formatSteps  = new FormatSteps($this->wpService, $this->acfService);
 
         $this->cacheBust    = new CacheBust();
 

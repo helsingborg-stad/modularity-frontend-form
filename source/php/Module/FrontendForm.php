@@ -139,18 +139,6 @@ class FrontendForm extends \Modularity\Module
         );
 
         return (object) [
-<<<<<<< Updated upstream
-            'disclaimer'            => $disclaimer,
-            'edit'                  => $this->wpService->__('Edit', 'modularity-frontend-form'),
-            'submit'                => $this->wpService->__('Submit', 'modularity-frontend-form'),
-            'previous'              => $this->wpService->__('Previous', 'modularity-frontend-form'),
-            'next'                  => $this->wpService->__('Next', 'modularity-frontend-form'),
-            'of'                    => $this->wpService->__('of', 'modularity-frontend-form'),
-            'step'                  => $this->wpService->__('Step', 'modularity-frontend-form'),
-            'completed'             => $this->wpService->__('Completed', 'modularity-frontend-form'),
-            'noResultsFound'        => $this->wpService->__('No results found', 'modularity-frontend-form'),
-            'searchPlaceholder'     => $this->wpService->__('Search location...', 'modularity-frontend-form'),
-=======
             'disclaimer'        => $disclaimer,
             'edit'              => $this->wpService->__('Edit', 'modularity-frontend-form'),
             'submit'            => $this->wpService->__('Submit', 'modularity-frontend-form'),
@@ -162,7 +150,6 @@ class FrontendForm extends \Modularity\Module
             'noResultsFound'    => $this->wpService->__('No results found', 'modularity-frontend-form'),
             'searchPlaceholder' => $this->wpService->__('Search location...', 'modularity-frontend-form'),
             'nameOfTheLocation' => $this->wpService->__('Name of the location', 'modularity-frontend-form'),
->>>>>>> Stashed changes
 
             'statusTitleError'      => $this->wpService->__('Error', 'modularity-frontend-form'),
             'statusTitleSuccess'    => $this->wpService->__('Success', 'modularity-frontend-form'),

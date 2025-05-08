@@ -87,10 +87,8 @@ class FormatSteps {
      */
     private function namespaceFieldNameString(string $name): string
     {
-        if (substr($name, -2) === '[]') {
-            $suffix = substr($name, 0, -2);
-            $name   = str_replace('[]', '', $name);
-        }
-        return sprintf("mod-frontedform[%s]%s", $name, $suffix ?? '');
+        $isArray    = str_ends_with($name, '[]');
+        $baseName   = $isArray ? substr($name, 0, -2) : $name;
+        return sprintf('mod-frontedform[%s]%s', $baseName, $isArray ? '[]' : '');
     }
 }

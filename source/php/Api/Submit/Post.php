@@ -234,8 +234,8 @@ class Post extends RestApiEndpoint
     {
         $invalidFields = [];
         foreach ( $fieldMeta as $key => $value ) {
-            if($field = acf_get_field($key)) {
-                $isValid = acf_validate_value($value, $field, "");
+            if($field = acf_get_field($key)) { //TODO: Add to wp service
+                $isValid = acf_validate_value($value, $field, ""); //TODO: Add to wp service
                 if(!$isValid) {
                     $invalidFields[] = [
                         'key' => $key,

@@ -28,10 +28,10 @@
         'element' => 'div',
         'variant' => 'body',
         'classList' => [
-            'mod-frontend-form-working__description_title'
+            'mod-frontend-form-working__title'
         ],
         'attributeList' => [
-            'data-js-frontend-form-working__description_title' => 'true'
+            'data-js-frontend-form-working__title' => 'true'
         ],
     ])
       @if($lang->submitting)

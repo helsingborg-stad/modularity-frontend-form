@@ -150,6 +150,10 @@ class FrontendForm extends \Modularity\Module
             'noResultsFound'        => $this->wpService->__('No results found', 'modularity-frontend-form'),
             'searchPlaceholder'     => $this->wpService->__('Search location...', 'modularity-frontend-form'),
 
+            'statusTitleError'      => $this->wpService->__('Error', 'modularity-frontend-form'),
+            'statusTitleSuccess'    => $this->wpService->__('Success', 'modularity-frontend-form'),
+            'statusTitleSubmitting' => $this->wpService->__('Submitting', 'modularity-frontend-form'),
+
             'submitting'            => $this->wpService->__('Submitting', 'modularity-frontend-form'),
             'submitInit'            => $this->wpService->__('Preparing', 'modularity-frontend-form'),
             'submitSuccess'         => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),

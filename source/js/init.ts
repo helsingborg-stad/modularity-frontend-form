@@ -64,7 +64,7 @@ class Form {
                     modularityFrontendFormLang,
                     new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
                     new SubmitStatusHandler(this.formContainer),
-                    new SubmitStatusRenderer(this.formContainer)
+                    new SubmitStatusRenderer(this.formContainer, modularityFrontendFormLang),
                 ),
             ),
             new StepUIManager(

@@ -20,4 +20,8 @@ type ModularityFrontendFormLang = {
     nonceUrlMissing?: string;
     nonceRequestFailed?: string;
     nonceRequestSuccess?: string;
+
+    statusTitleSucess?: string;
+    statusTitleError?: string;
+    statusTitleSubmitting?: string;
 };

@@ -6,7 +6,6 @@ class FileConditionValidator implements ConditionValidatorInterface {
     }
 
     public validate(condition: any): boolean {
-        console.log(condition)
         if (!this.parent?.getInput().files) {
             console.error('No files found in input element');
             return false;

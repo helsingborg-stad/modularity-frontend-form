@@ -71,25 +71,37 @@ class Submit implements SubmitInterface {
           body: new FormData(this.form)
         });
     
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
-        }
-    
         const json = await response.json();
 
-        // Set the status to success
-        this.submitStatusHandler.setStatus(
-          SubmitStatus.Success,
-          this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
-          'celebration',
-          100
-        );
+        // Failed
+        if (!response.ok) {
+          this.submitStatusHandler.setStatus(
+            SubmitStatus.Error,
+            json?.message ?? this.modularityFrontendFormLang?.submitError,
+            'error',
+            0,
+            4000
+          );
+        }
+    
+        // Success
+        if(response.ok) {
+          this.submitStatusHandler.setStatus(
+            SubmitStatus.Success,
+            this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
+            'celebration',
+            100,
+            4000
+          );
+        }
+
       } catch (error: any) {
         this.submitStatusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.submitError ?? "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : ""),
           'error',
-          0
+          0,
+          4000
         );
       }
     }

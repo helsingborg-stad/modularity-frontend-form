@@ -17,7 +17,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
    */
   public setup(): void {
     this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
-      const { status, message, icon, progress, delay = 400 } = (event as CustomEvent).detail;
+      const { status, message, icon, progress, delay = 200 } = (event as CustomEvent).detail;
 
       this.messageQueue.push({ status, message, icon, progress, delay});
 

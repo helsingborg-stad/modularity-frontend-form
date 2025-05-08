@@ -6,7 +6,7 @@ interface SubmitStatusHandlerInterface {
    * @param status A value from SubmitStatus enum.
    * @param message The status message to display.
    */
-  setStatus(status: SubmitStatus, message: string, icon: string, progress: number): void;
+  setStatus(status: SubmitStatus, message: string, icon: string, progress: number, delay?: number): void;
 }
 
 export default SubmitStatusHandlerInterface;

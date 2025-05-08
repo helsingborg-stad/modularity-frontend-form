@@ -22,18 +22,37 @@
     'value' => 25,
   ])
   @endprogressBar
-  
-  @typography([
-      'element' => 'span',
-      'variant' => 'meta',
-      'classList' => [
-          'mod-frontend-form-working__description'
-      ],
-      'attributeList' => [
-          'data-js-frontend-form-working__description' => 'true'
-      ],
-  ])
-    Here we wörking on your request. Please wait a moment.
-  @endtypography
+
+  @element(['classList' => ['u-display--flex', 'u-flex--column', 'u-align-items--center', 'u-justify-content--center', 'u-flex-direction--column', 'u-gap--1']])
+    @typography([
+        'element' => 'div',
+        'variant' => 'body',
+        'classList' => [
+            'mod-frontend-form-working__description_title'
+        ],
+        'attributeList' => [
+            'data-js-frontend-form-working__description_title' => 'true'
+        ],
+    ])
+      @if($lang->submitting)
+          {{ $lang->submitting }}
+      @endif
+    @endtypography
+    
+    @typography([
+        'element' => 'div',
+        'variant' => 'meta',
+        'classList' => [
+            'mod-frontend-form-working__description'
+        ],
+        'attributeList' => [
+            'data-js-frontend-form-working__description' => 'true'
+        ],
+    ])
+      @if($lang->working)
+          {{ $lang->submitInit }}
+      @endif
+    @endtypography
+  @endelement
 
 @endelement

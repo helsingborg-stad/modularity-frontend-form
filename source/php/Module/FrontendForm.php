@@ -139,26 +139,27 @@ class FrontendForm extends \Modularity\Module
         );
 
         return (object) [
-            'disclaimer'        => $disclaimer,
-            'edit'              => $this->wpService->__('Edit', 'modularity-frontend-form'),
-            'submit'            => $this->wpService->__('Submit', 'modularity-frontend-form'),
-            'previous'          => $this->wpService->__('Previous', 'modularity-frontend-form'),
-            'next'              => $this->wpService->__('Next', 'modularity-frontend-form'),
-            'of'                => $this->wpService->__('of', 'modularity-frontend-form'),
-            'step'              => $this->wpService->__('Step', 'modularity-frontend-form'),
-            'completed'         => $this->wpService->__('Completed', 'modularity-frontend-form'),
-            'noResultsFound'    => $this->wpService->__('No results found', 'modularity-frontend-form'),
-            'searchPlaceholder' => $this->wpService->__('Search location...', 'modularity-frontend-form'),
+            'disclaimer'            => $disclaimer,
+            'edit'                  => $this->wpService->__('Edit', 'modularity-frontend-form'),
+            'submit'                => $this->wpService->__('Submit', 'modularity-frontend-form'),
+            'previous'              => $this->wpService->__('Previous', 'modularity-frontend-form'),
+            'next'                  => $this->wpService->__('Next', 'modularity-frontend-form'),
+            'of'                    => $this->wpService->__('of', 'modularity-frontend-form'),
+            'step'                  => $this->wpService->__('Step', 'modularity-frontend-form'),
+            'completed'             => $this->wpService->__('Completed', 'modularity-frontend-form'),
+            'noResultsFound'        => $this->wpService->__('No results found', 'modularity-frontend-form'),
+            'searchPlaceholder'     => $this->wpService->__('Search location...', 'modularity-frontend-form'),
 
-            'submitInit' => $this->wpService->__('Preparing', 'modularity-frontend-form'),
-            'submitSuccess' => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
-            'submitUrlError' => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
-            'submitError' => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
+            'submitting'            => $this->wpService->__('Submitting', 'modularity-frontend-form'),
+            'submitInit'            => $this->wpService->__('Preparing', 'modularity-frontend-form'),
+            'submitSuccess'         => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
+            'submitUrlError'        => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
+            'submitError'           => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
 
-            'nonceRequest' => $this->wpService->__('Securing', 'modularity-frontend-form'),
-            'nonceUrlMissing' => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
-            'nonceRequestSuccess' => $this->wpService->__('Securing', 'modularity-frontend-form'),
-            'nonceRequestFailed' => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
+            'nonceRequest'          => $this->wpService->__('Securing', 'modularity-frontend-form'),
+            'nonceUrlMissing'       => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
+            'nonceRequestSuccess'   => $this->wpService->__('Securing', 'modularity-frontend-form'),
+            'nonceRequestFailed'    => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
         ];
     }
 

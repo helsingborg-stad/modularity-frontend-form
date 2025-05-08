@@ -142,7 +142,7 @@ class Post extends RestApiEndpoint
         if($invalidFields = $this->validateRequestInputValuesToFieldSpecifications($fieldMeta)) {
             return new WP_Error(
                 'invalid_field_values',
-                __('Invalid field values.', 'modularity-frontend-form'),
+                __('Some fields contained invalid data.', 'modularity-frontend-form'),
                 ['invalid_fields' => array_values($invalidFields)],
             );
         }
@@ -151,7 +151,7 @@ class Post extends RestApiEndpoint
         if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, 'post')) {
             return new WP_Error(
                 'invalid_field',
-                __('Invalid field keys sent.', 'modularity-frontend-form'),
+                __('Some fields do not belong to this form.', 'modularity-frontend-form'),
                 ['invalid_fields' => array_values($invalidFields)],
             );
         }
@@ -233,7 +233,7 @@ class Post extends RestApiEndpoint
     public function validateRequestInputValuesToFieldSpecifications($fieldMeta): ?array
     {
         $invalidFields = [];
-        foreach ( $fieldMeta as $key => $value ) {
+        foreach ($fieldMeta as $key => $value ) {
             if($field = acf_get_field($key)) { //TODO: Add to wp service
                 $isValid = acf_validate_value($value, $field, ""); //TODO: Add to wp service
                 if(!$isValid) {

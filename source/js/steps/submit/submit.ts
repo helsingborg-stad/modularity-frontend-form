@@ -75,12 +75,24 @@ class Submit implements SubmitInterface {
 
         // Failed
         if (!response.ok) {
+          if(json.code == "invalid_field_values") {
+            this.submitStatusHandler.setStatus(
+              SubmitStatus.Error,
+              json?.message ?? this.modularityFrontendFormLang?.submitError,
+              'data_alert',
+              0,
+              2000
+            );
+            return;
+          }
+
+
           this.submitStatusHandler.setStatus(
             SubmitStatus.Error,
             json?.message ?? this.modularityFrontendFormLang?.submitError,
             'error',
             0,
-            4000
+            3000
           );
         }
     

@@ -142,6 +142,7 @@ class Openstreetmap implements OpenstreetmapInterface {
     private updateSearchInput(placeObject: PlaceObject): void {
         const searchInput = this.search.getInput();
         if (searchInput) {
+            this.search.setSearchListItems(null);
             this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(placeObject);
         }
     }

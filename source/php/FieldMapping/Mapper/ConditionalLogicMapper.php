@@ -29,7 +29,7 @@ class ConditionalLogicMapper
         }
 
         if (is_array($conditionalLogic)) {
-            $conditionalLogic = json_encode($conditionalLogic, JSON_THROW_ON_ERROR);
+            return json_encode($conditionalLogic, JSON_THROW_ON_ERROR);
         }
 
         return null;

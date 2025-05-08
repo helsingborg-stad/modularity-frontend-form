@@ -1,4 +1,5 @@
-import { MarkerInterface, CreateMarker, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, CreateSearch, PlaceObject, SearchInterface, EventData, LatLngObject } from '@helsingborg-stad/openstreetmap';
+import { MarkerInterface, CreateMarker, CreateSearch, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, PlaceObject, SearchInterface, EventData, LatLngObject } from '@helsingborg-stad/openstreetmap';
+
 import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
 
 class Openstreetmap implements OpenstreetmapInterface {
@@ -6,7 +7,6 @@ class Openstreetmap implements OpenstreetmapInterface {
     private marker: MarkerInterface|null = null;
     private map!: MapInterface;
     private createMarker!: CreateMarkerInterface;
-    private markerMovedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerMoved';
     private markerAddedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerAdded';
     private markerMovedListeners: ((event: PlaceObject) => void)[] = [];
     private fetching: boolean = false;
@@ -119,7 +119,7 @@ class Openstreetmap implements OpenstreetmapInterface {
         });
     }
 
-    private async maybeFetchPlace(latLng: LatLngObject, placeObject?: PlaceObject): Promise<void> {
+    private async maybeFetchPlace(latLng: LatLngObject, placeObject: PlaceObject|null = null): Promise<void> {
         if (placeObject) {
             this.callMarkerMovedListeners(placeObject);
             return;
@@ -130,10 +130,19 @@ class Openstreetmap implements OpenstreetmapInterface {
         try {
             const place = await this.fetchPlaceFromLatLng.fetch(latLng.lat, latLng.lng);
             if (place) this.callMarkerMovedListeners(place);
+            this.updateSearchInput(place);
         } catch (error) {
             console.error('Failed to fetch place:', error);
         } finally {
             this.fetching = false;
+        }
+    }
+
+    // Updates the search input to show the fetched place
+    private updateSearchInput(placeObject: PlaceObject): void {
+        const searchInput = this.search.getInput();
+        if (searchInput) {
+            this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(placeObject);
         }
     }
 

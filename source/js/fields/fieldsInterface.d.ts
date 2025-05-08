@@ -30,6 +30,7 @@ interface FileInterface extends FieldInterface {
 
 interface GoogleMapInterface extends FieldInterface {
     getOpenstreetmap(): OpenstreetmapInterface;
+    getHiddenField(): HTMLInputElement;
 }
 
 interface SelectInterface extends FieldInterface {

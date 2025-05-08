@@ -1,13 +1,13 @@
 class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
-	private parent: FieldInterface|null = null;
+	private parent: GoogleMapInterface|null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
 	constructor(private unstructuredConditions: any) {
 	}
 
-	public init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(parent: GoogleMapInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 		this.setValueChangeListener();
@@ -18,6 +18,7 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 			this.isDisabled = disabled;
 
             this.parent.getField().classList.toggle('u-display--none', disabled);
+			this.parent.getHiddenField().disabled = disabled;
 
 			this.dispatchUpdateEvent();
 		}

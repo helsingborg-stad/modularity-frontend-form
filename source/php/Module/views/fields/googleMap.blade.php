@@ -6,12 +6,14 @@
 ])
     @field([
         'type' => 'hidden',
-        'name' => $field['name'],
+        'attributeList' => [
+            'data-js-google-map-hidden-field' => true
+        ],
         'required' => $field['required'] ?? false,
     ])
     @endfield
     @element([
-        'id' => $field['name'],
+        'id' => $field['name'] . '_map',
         'classList' => ['mod-frontend-form__openstreetmap'],
         'attributeList' => [
             'data-js-openstreetmap' => 'true',

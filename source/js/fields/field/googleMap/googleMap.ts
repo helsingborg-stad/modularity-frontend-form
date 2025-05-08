@@ -1,8 +1,9 @@
-class GoogleMap implements GoogleMapInterface {
-    private markerMovedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerMoved';
+import { PlaceObject } from "@helsingborg-stad/openstreetmap";
 
+class GoogleMap implements GoogleMapInterface {
     constructor(
         private field: HTMLElement,
+        private hiddenField: HTMLInputElement,
         private openstreetmapInstance: OpenstreetmapInterface,
         private name: string,
         private googleMapValidator: ConditionValidatorInterface,
@@ -37,9 +38,13 @@ class GoogleMap implements GoogleMapInterface {
         return this.field;
     }
 
+    public getHiddenField(): HTMLInputElement {
+        return this.hiddenField;
+    }
+
     private listenForMarkerEvents(): void {
-        this.getField().addEventListener(this.markerMovedEvent, () => {
-            
+        this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject) => {
+            this.hiddenField.value = JSON.stringify(placeObject);
         });
     }
 }

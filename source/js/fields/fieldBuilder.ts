@@ -97,14 +97,22 @@ class FieldBuilder implements FieldBuilderInterface {
             this.modularityFrontendFormData, 
             this.modularityFrontendFormLang
         );
+
+        const hiddenField = field.querySelector('[data-js-google-map-hidden-field]') as HTMLInputElement;
         
         if (!openstreetmapInstance) {
             console.error('Failed to create map instance');
             return this.buildNullField(field, 'googleMap');
         }
 
+        if (!hiddenField) {
+            console.error('Failed to find hidden input field needed for Google map field.')
+            return this.buildNullField(field, 'googleMap');
+        }
+
         return new GoogleMap(
             field,
+            hiddenField,
             openstreetmapInstance,
             this.getFieldName(field),
             new GoogleMapConditionValidator(),

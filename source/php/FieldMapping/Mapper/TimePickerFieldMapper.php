@@ -15,10 +15,10 @@ class TimePickerFieldMapper implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, 'time'))->map();
 
-        $mapped['placeholder']                         = $this->field['placeholder'] ?? null;
-        $mapped['value']                               = $this->field['default_value'] ?? null;
-        $mapped['minTime']                             = $this->field['min_time'] ?? null;
-        $mapped['maxTime']                             = $this->field['max_time'] ?? null;
+        $mapped['placeholder']                         = ($this->field['placeholder'] ?? null) ?: null;
+        $mapped['value']                               = ($this->field['default_value'] ?? null) ?: null;
+        $mapped['minTime']                             = ($this->field['min_time'] ?? null) ?: null;
+        $mapped['maxTime']                             = ($this->field['max_time'] ?? null) ?: null;
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;

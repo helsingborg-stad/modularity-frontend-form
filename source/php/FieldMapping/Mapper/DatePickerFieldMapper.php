@@ -15,10 +15,10 @@ class DatePickerFieldMapper implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, 'date'))->map();
 
-        $mapped['placeholder']                         = $this->field['placeholder'] ?? null;
-        $mapped['value']                               = $this->field['default_value'] ?? null;
-        $mapped['minDate']                             = $this->field['min_date'] ?? null;
-        $mapped['maxDate']                             = $this->field['max_date'] ?? null;
+        $mapped['placeholder']                         = ($this->field['placeholder'] ?? null) ?: null;
+        $mapped['value']                               = ($this->field['default_value'] && null) ?: null;
+        $mapped['minDate']                             = ($this->field['min_date'] ?? null) ?: null;
+        $mapped['maxDate']                             = ($this->field['max_date'] ?? null) ?: null;
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;

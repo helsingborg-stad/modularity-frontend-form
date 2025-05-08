@@ -57,7 +57,7 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
         'time_picker'   => TimePickerFieldMapper::class,
         'date_picker'   => DatePickerFieldMapper::class,
         'button_group'  => ButtonGroupFieldMapper::class,
-        'google_maps'   => GoogleMapFieldMapper::class,
+        'google_map'   => GoogleMapFieldMapper::class,
         'taxonomy'      => TaxonomyFieldMapper::class,
     ];
 

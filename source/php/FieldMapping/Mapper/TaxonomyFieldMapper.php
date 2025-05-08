@@ -18,7 +18,7 @@ class TaxonomyFieldMapper implements FieldMapperInterface
             $this->getTermsFromTaxonomy($this->field)
         );
 
-        $this->field['field_type'] = $this->field['field_type'] ?? 'checkbox';
+        $this->field['type'] = $this->field['field_type'] ?? 'checkbox';
 
         return (new Mapper($this->field, $this->wpService))->map();
     }

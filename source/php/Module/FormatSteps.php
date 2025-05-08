@@ -91,6 +91,6 @@ class FormatSteps {
             $suffix = substr($name, 0, -2);
             $name   = str_replace('[]', '', $name);
         }
-        return sprintf("mod-frontedform['%s']%s", $name, $suffix ?? '');
+        return sprintf("mod-frontedform[%s]%s", $name, $suffix ?? '');
     }
 }

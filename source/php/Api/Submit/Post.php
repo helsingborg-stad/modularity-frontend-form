@@ -139,6 +139,14 @@ class Post extends RestApiEndpoint
      */
     public function insertPost(int $moduleID, array|null $fieldMeta): WP_Error|int {
 
+        if($invalidFields = $this->validateRequestInputValuesToFieldSpecifications($fieldMeta)) {
+            return new WP_Error(
+                'invalid_field_values',
+                __('Invalid field values.', 'modularity-frontend-form'),
+                ['invalid_fields' => array_values($invalidFields)],
+            );
+        }
+
         // Check if all fields exists on the target post type
         if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, 'post')) {
             return new WP_Error(
@@ -213,6 +221,30 @@ class Post extends RestApiEndpoint
         );
 
         return array_diff($fieldKeys, $validKeys);
+    }
+
+    /**
+     * Validates the request input values against the field specifications
+     *
+     * @param array $fieldMeta The field meta data
+     *
+     * @return array The invalid fields
+     */
+    public function validateRequestInputValuesToFieldSpecifications($fieldMeta): ?array
+    {
+        $invalidFields = [];
+        foreach ( $fieldMeta as $key => $value ) {
+            if($field = acf_get_field($key)) {
+                $isValid = acf_validate_value($value, $field, "");
+                if(!$isValid) {
+                    $invalidFields[] = [
+                        'key' => $key,
+                        'label' => $field['label'] ?? $key
+                    ];
+                }
+            }
+        }
+        return $invalidFields ?: null;
     }
 
     /**

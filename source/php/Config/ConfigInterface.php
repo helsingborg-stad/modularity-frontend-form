@@ -13,7 +13,6 @@ interface ConfigInterface
     );
 
     public function getModuleSlug(): string;
-    public function getNonceKey(): string;
     public function getFilterPrefix(): string;
     public function createFilterKey(string $filter = ""): string;
 }

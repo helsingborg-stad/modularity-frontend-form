@@ -5,6 +5,7 @@ use WpService\WpService;
 use AcfService\AcfService;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\Config\GetModuleInstanceTrait;
 
 enum PostStatus: string
 {
@@ -14,6 +15,8 @@ enum PostStatus: string
 
 class ModuleConfig implements ModuleConfigInterface
 {
+  use GetModuleInstanceTrait;
+
   public function __construct(
     private WpService $wpService,
     private AcfService $acfService,
@@ -80,5 +83,13 @@ class ModuleConfig implements ModuleConfigInterface
   public function getTargetPostStatus(): string
   {
     return $this->acfService->getField('saveToPostTypeStatus', $this->getModuleId());
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getNonceKey(): string
+  {
+    return md5($this->acfService->getFields($this->getModuleId()));
   }
 }

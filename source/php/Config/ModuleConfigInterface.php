@@ -19,4 +19,5 @@ interface ModuleConfigInterface
     public function getModuleIsSubmittable(): bool;
     public function getTargetPostType(): string;
     public function getTargetPostStatus(): string;
+    public function getNonceKey(): string;
 }

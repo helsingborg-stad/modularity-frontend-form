@@ -4,6 +4,8 @@ namespace ModularityFrontendForm\Api\Nonce;
 
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
+use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -12,13 +14,16 @@ use WpService\WpService;
 
 class Get extends RestApiEndpoint
 {
+    use GetModuleConfigInstanceTrait;
+
     public const NAMESPACE = 'modularity-frontend-form/v1';
     public const ROUTE     = 'nonce/get';
     public const KEY       = 'nonceGet';
 
     public function __construct(
         private WpService $wpService,
-        private ConfigInterface $config
+        private ConfigInterface $config,
+        private ModuleConfigFactoryInterface $moduleConfigFactory
     ) {}
 
     /**
@@ -31,10 +36,17 @@ class Get extends RestApiEndpoint
       return register_rest_route(self::NAMESPACE, self::ROUTE, array(
           'methods'             => WP_REST_Server::READABLE,
           'callback'            => array($this, 'handleRequest'),
-          'permission_callback' => array($this, 'permissionCallback')
+          'permission_callback' => '__return_true',
+          'args'                => [
+                'module-id' => [
+                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
+                    'type'        => 'integer',
+                    'format'      => 'uri',
+                    'required'    => true
+                ]
+            ]
       ));
     }
-
 
     /**
      * Handles a REST request and sideloads an image
@@ -45,18 +57,14 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response
     {
-        return new WP_REST_Response([
-            'nonce' => $this->wpService->wpCreateNonce($this->config->getNonceKey()),
-        ]);
-    }
+        $moduleId = $request->get_params()['module-id'] ?? null;
 
-    /**
-     * Callback function for checking if the current user has permission to get a nonce
-     *
-     * @return bool Whether the user has permission to get a nonce
-     */
-    public function permissionCallback(): bool
-    {
-        return true;
+        $nonceKey = $this->getModuleConfigInstance(
+            $moduleId
+        )->getModuleIsSubmittable();
+
+        return new WP_REST_Response([
+            'nonce' => $this->wpService->wpCreateNonce($nonceKey),
+        ]);
     }
 }

@@ -28,19 +28,6 @@ class Config implements ConfigInterface
   }
 
   /**
-   * Get the current nonce key.
-   * 
-   * @return string
-   */
-  public function getNonceKey(): string
-  {
-    return $this->wpService->applyFilters(
-      $this->createFilterKey(__FUNCTION__), 
-      'modulariyFontendFormNonce'
-    );
-  }
-
-  /**
    * Get the filter prefix.
    * 
    * @return string

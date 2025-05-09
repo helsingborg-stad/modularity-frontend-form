@@ -5,8 +5,8 @@ namespace ModularityFrontendForm\Api\Submit;
 use AcfService\AcfService;
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use \ModularityFrontendForm\Config\ConfigInterface;
-use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
+use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use WP;
 use WP_Error;
 use WP_Http;
@@ -17,6 +17,8 @@ use WpService\WpService;
 
 class Post extends RestApiEndpoint
 {
+    use GetModuleConfigInstanceTrait;
+
     public const NAMESPACE = 'modularity-frontend-form/v1';
     public const ROUTE     = 'submit/post';
     public const KEY       = 'submitForm';
@@ -56,22 +58,6 @@ class Post extends RestApiEndpoint
     }
 
     /**
-     * Returns the module config instance
-     *
-     * @param int $moduleId The module ID
-     *
-     * @return ModuleConfigInterface The module config instance
-     */
-    public function getModuleConfigInstance(int $moduleId): ModuleConfigInterface
-    {
-        static $moduleConfigCache = [];
-        if (!isset($moduleConfigCache[$moduleId])) {
-            $moduleConfigCache[$moduleId] = $this->moduleConfigFactory->create($moduleId);
-        }
-        return $moduleConfigCache[$moduleId];
-    }
-
-    /**
      * Handles a REST request to submit a form
      *
      * @param WP_REST_Request $request The REST request object
@@ -80,13 +66,11 @@ class Post extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        $params          = $request->get_params();
-
-        $moduleID        = $params['module-id'] ?? null;
-        $fieldMeta       = $params['mod-frontedform'] ?? null;
+        $moduleId        = $request->get_params()['module-id']         ?? null;
+        $fieldMeta       = $request->get_params()['mod-frontedform']   ?? null;
 
         // Check if the request is valid
-        if (!$this->validateNonce($params['nonce'] ?? '')) {
+        if (!$this->validateNonce($params['nonce'] ?? '', $moduleId)) {
             return rest_ensure_response(
                 new WP_Error(
                     'invalid_nonce',
@@ -97,7 +81,7 @@ class Post extends RestApiEndpoint
         }
 
         return $this->formatInsertResponse(
-            $this->insertPost($moduleID, $fieldMeta)
+            $this->insertPost($moduleId, $fieldMeta)
         );
     }
 
@@ -161,7 +145,7 @@ class Post extends RestApiEndpoint
         
         $result = $this->wpService->wpInsertPost([
             'post_title'    => 'Test post',
-            'post_type'     => 'testposttype',
+            'post_type'     => $targetPostType,
             'post_status'   => 'publish',
             'meta_input'   => [
                 'module_id' => $moduleID,
@@ -299,14 +283,17 @@ class Post extends RestApiEndpoint
      * Validates the nonce for the request
      *
      * @param string $nonce The nonce to validate
+     * @param int $moduleId The module ID
      *
      * @return bool Whether the nonce is valid
      */
-    public function validateNonce($nonce): bool
+    public function validateNonce(string $nonce, int $moduleId): bool
     {
         return (bool) $this->wpService->wpVerifyNonce(
             $nonce, 
-            $this->config->getNonceKey()
+            $this->getModuleConfigInstance(
+                $moduleId
+            )->getNonceKey()
         );
     }
 }

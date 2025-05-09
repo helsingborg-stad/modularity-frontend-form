@@ -34,8 +34,8 @@ class RepeaterFieldMapper implements FieldMapperInterface
 
         if (is_array($mapped)) {
             $mapped['fields'] = $subfields;
-            $mapped['min']    = ($this->field['min'] ?? 0) ?: 0;
-            $mapped['max']    = ($this->field['max'] ?? 100) ?: 100;
+            $mapped['min']    = $this->field['min'] ?: 0;
+            $mapped['max']    = $this->field['max'] ?: 100;
         }
 
         return $mapped ?? null;

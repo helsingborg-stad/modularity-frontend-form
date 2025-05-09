@@ -22,7 +22,7 @@ class CheckboxFieldMapper implements FieldMapperInterface
                 $mapped['choices'][$key] = [
                     'type'     => $mapped['type'],
                     'label'    => $value,
-                    'required' => ($mapped['required'] ?? false) ?: false,
+                    'required' => $mapped['required'] ?: false,
                     'name'     => $this->field['key'],
                     'value'    => $key,
                     'checked'  => in_array($key, $this->field['default_value'] ?? [], true),

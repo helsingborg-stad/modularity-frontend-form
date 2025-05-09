@@ -16,7 +16,7 @@ class MessageFieldMapper implements FieldMapperInterface
         $mapped = (new BasicFieldMapper($this->field, 'message'))->map();
 
         if (is_array($mapped)) {
-            $mapped['message'] = ($this->field['message'] ?? '') ?: '';
+            $mapped['message'] = $this->field['message'] ?: '';
         }
 
         return $mapped ?? null;

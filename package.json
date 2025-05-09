@@ -27,7 +27,7 @@
         "not dead"
     ],
     "devDependencies": {
-        "@helsingborg-stad/openstreetmap": "^0.50.3",
+        "@helsingborg-stad/openstreetmap": "^0.51.0",
         "@types/jest": "^29.5.14",
         "autoprefixer": "^10.4.2",
         "clean-webpack-plugin": "^4.0.0",

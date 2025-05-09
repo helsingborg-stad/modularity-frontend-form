@@ -43,7 +43,7 @@ class GoogleMap implements GoogleMapInterface {
     }
 
     private listenForMarkerEvents(): void {
-        this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject) => {
+        this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject|null) => {
             this.hiddenField.value = JSON.stringify(placeObject);
         });
     }

@@ -16,8 +16,8 @@ class EmailFieldMapper implements FieldMapperInterface
         $mapped = (new BasicFieldMapper($this->field, 'email'))->map();
 
         if (is_array($mapped)) {
-            $mapped['placeholder']                         = ($this->field['placeholder'] ?? '') ?: '';
-            $mapped['value']                               = ($this->field['default_value'] ?? '') ?: '';
+            $mapped['placeholder']                         = $this->field['placeholder'] ?: '';
+            $mapped['value']                               = $this->field['default_value'] ?: '';
             $mapped['moveAttributesListToFieldAttributes'] = false;
         }
 

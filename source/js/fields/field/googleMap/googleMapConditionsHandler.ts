@@ -1,3 +1,5 @@
+import { PlaceObject } from '@helsingborg-stad/openstreetmap';
+
 class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
 	private parent: GoogleMapInterface|null = null;
@@ -38,9 +40,7 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 	}
 
 	public dispatchUpdateEvent(): void {
-		if (this.parent?.getField()) {
-			this.parent.getField().dispatchEvent(new Event('modularityFrontendFormOpenstreetmapMarkerAdded'));
-		}
+		this.checkConditions();
 	}
 
 	public getIsDisabled(): boolean {
@@ -56,11 +56,15 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
     }
 
 	private setValueChangeListener(): void {
-        this.parent?.getField().addEventListener('modularityFrontendFormOpenstreetmapMarkerAdded', () => {
-			for (const fieldName in this.fieldsObject) {
-				this.fieldsObject[fieldName].getConditionsHandler().validate();
-			}
-        });
+		this.parent?.getOpenstreetmap().addMarkerMovedListener((placeObject: PlaceObject|null) => {
+			this.checkConditions();
+		});
+	}
+
+	private checkConditions(): void {
+		for (const fieldName in this.fieldsObject) {
+			this.fieldsObject[fieldName].getConditionsHandler().validate();
+		}
 	}
 }
 

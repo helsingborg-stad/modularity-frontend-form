@@ -155,6 +155,7 @@ class Openstreetmap implements OpenstreetmapInterface {
     }
 
     // Updates the search input to show the fetched place
+    // TODO: Make showOrHideSpinner to two methods, same with reset
     private updateSearchInput(): void {
         const searchInput = this.search.getInput();
         if (searchInput && this.currentPlace) {

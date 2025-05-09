@@ -1,4 +1,4 @@
-import { MarkerInterface, CreateMarker, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, PlaceObject, EventData, LatLngObject, CreateSearch, CreateMap, SearchInterface } from '@helsingborg-stad/openstreetmap';
+import { MarkerInterface, CreateMarker, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, PlaceObject, EventData, LatLngObject, CreateMap, CreateSearch, SearchInterface } from '@helsingborg-stad/openstreetmap';
 
 import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
 
@@ -139,7 +139,7 @@ class Openstreetmap implements OpenstreetmapInterface {
         this.fetching = true;
         if (this.search.getInput()) {
             this.search.setValue('Loading...');
-            this.search.showOrHideSpinner(true);
+            this.search.showSpinner();
         }
 
         try {
@@ -161,8 +161,8 @@ class Openstreetmap implements OpenstreetmapInterface {
         if (searchInput && this.currentPlace) {
             this.search.setSearchListItems(null);
             this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(this.currentPlace);
-            this.search.showOrHideReset();
-            this.search.showOrHideSpinner(false);
+            this.search.showResetButton();
+            this.search.hideSpinner();
             this.search.getInput()!.focus();
         }
     }

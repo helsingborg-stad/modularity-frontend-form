@@ -16,8 +16,8 @@ class AsyncNonce implements AsyncNonceInterface {
    * Fetch the nonce from the server.
    * @returns The nonce string or null if not found.
    */
-  public async get(submitStatusHandler: SubmitStatusHandler): Promise<string | null> {
-    const url = this.modularityFrontendFormData?.apiRoutes?.nonceGet;
+  public async get(submitStatusHandler: SubmitStatusHandler, moduleId: number): Promise<string | null> {
+    let url = this.modularityFrontendFormData?.apiRoutes?.nonceGet;
 
     if (!url) {
       submitStatusHandler.setStatus(
@@ -28,6 +28,12 @@ class AsyncNonce implements AsyncNonceInterface {
       );
       return null;
     }
+
+    url = moduleId ? (() => { 
+      const urlBuilder = new URL(url); 
+      urlBuilder.searchParams.append("module-id", moduleId.toString()); 
+      return urlBuilder.toString(); 
+    })() : url;
 
     try {
       submitStatusHandler.setStatus(
@@ -132,7 +138,8 @@ class AsyncNonce implements AsyncNonceInterface {
     form: HTMLFormElement,
     submitStatusHandler: SubmitStatusHandler,
   ): Promise<void> {
-    const nonce = await this.get(submitStatusHandler);
+    const moduleId  = parseInt(form.getAttribute("data-js-frontend-form-id") || "");
+    const nonce     = await this.get(submitStatusHandler, moduleId);
     if (nonce) {
       this.inject(form, nonce, "async-nonce-element");
     }

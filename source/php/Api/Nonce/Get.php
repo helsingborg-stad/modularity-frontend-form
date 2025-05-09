@@ -61,8 +61,8 @@ class Get extends RestApiEndpoint
 
         $nonceKey = $this->getModuleConfigInstance(
             $moduleId
-        )->getModuleIsSubmittable();
-
+        )->getNonceKey();
+        
         return new WP_REST_Response([
             'nonce' => $this->wpService->wpCreateNonce($nonceKey),
         ]);

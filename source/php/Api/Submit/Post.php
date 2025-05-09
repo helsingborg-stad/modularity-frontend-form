@@ -68,9 +68,10 @@ class Post extends RestApiEndpoint
     {
         $moduleId        = $request->get_params()['module-id']         ?? null;
         $fieldMeta       = $request->get_params()['mod-frontedform']   ?? null;
+        $nonce           = $request->get_params()['nonce']              ?? '';
 
         // Check if the request is valid
-        if (!$this->validateNonce($params['nonce'] ?? '', $moduleId)) {
+        if (!$this->validateNonce($nonce, $moduleId)) {
             return rest_ensure_response(
                 new WP_Error(
                     'invalid_nonce',
@@ -289,11 +290,11 @@ class Post extends RestApiEndpoint
      */
     public function validateNonce(string $nonce, int $moduleId): bool
     {
-        return (bool) $this->wpService->wpVerifyNonce(
-            $nonce, 
+        $nonceKey = $this->wpService->wpCreateNonce(
             $this->getModuleConfigInstance(
                 $moduleId
             )->getNonceKey()
         );
+        return $nonceKey === $nonce;
     }
 }

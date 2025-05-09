@@ -6,8 +6,7 @@ class GoogleMapConditionValidator implements ConditionValidatorInterface {
     }
 
     public validate(condition: any): boolean {
-        const value = this.parent?.getOpenstreetmap().hasMarker() ? true : false;
-
+        const value = this.parent?.getOpenstreetmap().hasPlaceData() ? true : false;
         switch (condition.operator) {
             case '==':
             case '=':

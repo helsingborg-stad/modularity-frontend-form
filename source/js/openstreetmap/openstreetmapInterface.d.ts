@@ -1,5 +1,6 @@
+type MarkerChangedCallback = (event: PlaceObject | null) => void;
 interface OpenstreetmapInterface {
     init(): void;
-    hasMarker(): boolean;
-    addMarkerMovedListener(listener: (event: PlaceObject) => void): void;
+    hasPlaceData(): boolean;
+    addMarkerMovedListener(listener: (event: PlaceObject|null) => void): void;
 }

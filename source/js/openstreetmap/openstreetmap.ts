@@ -1,4 +1,4 @@
-import { MarkerInterface, CreateMarker, CreateSearch, CreateMap, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, PlaceObject, SearchInterface, EventData, LatLngObject } from '@helsingborg-stad/openstreetmap';
+import { MarkerInterface, CreateMarker, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, PlaceObject, EventData, LatLngObject, CreateSearch, CreateMap, SearchInterface } from '@helsingborg-stad/openstreetmap';
 
 import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
 
@@ -7,9 +7,9 @@ class Openstreetmap implements OpenstreetmapInterface {
     private marker: MarkerInterface|null = null;
     private map!: MapInterface;
     private createMarker!: CreateMarkerInterface;
-    private markerAddedEvent: string = 'modularityFrontendFormOpenstreetmapMarkerAdded';
-    private markerMovedListeners: ((event: PlaceObject) => void)[] = [];
+    private markerMovedListeners: MarkerChangedCallback[] = [];
     private fetching: boolean = false;
+    private currentPlace: PlaceObject|null = null;
 
     constructor(
         private fetchPlaceFromLatLng: FetchPlaceFromLatLng,
@@ -55,10 +55,11 @@ class Openstreetmap implements OpenstreetmapInterface {
             .addListItemListener((e) => this.handleListItemClick(e));
 
         this.map.addListener('click', (e) => this.handleClick(e));
+        this.setResetButtonClickListener();
     }
 
-    public hasMarker(): boolean {
-        return this.marker !== null;
+    public hasPlaceData(): boolean {
+        return this.currentPlace !== null;
     }
 
     public getMarker(): MarkerInterface|null {
@@ -69,7 +70,7 @@ class Openstreetmap implements OpenstreetmapInterface {
         return this.fetching;
     }
 
-    public addMarkerMovedListener(callback: (event: PlaceObject) => void): void {
+    public addMarkerMovedListener(callback: (event: PlaceObject|null) => void): void {
         this.markerMovedListeners.push(callback);
     }
 
@@ -89,6 +90,15 @@ class Openstreetmap implements OpenstreetmapInterface {
         }
     }
 
+    private setResetButtonClickListener(): void {
+        this.search.getResetButton()?.addEventListener('click', () => {
+            this.marker?.removeMarker();
+            this.marker = null;
+            this.currentPlace = null;
+            this.callMarkerMovedListeners();
+        });
+    }
+
     private handleListItemClick(item: PlaceObject): void {
         const latLng = {lat: (item.latitude as number) ?? 0, lng: (item.longitude as number) ?? 0};
 
@@ -106,32 +116,38 @@ class Openstreetmap implements OpenstreetmapInterface {
             });
 
             this.marker.addTo(this.map);
-            this.parent.dispatchEvent(new CustomEvent(this.markerAddedEvent, {}));
         }
 
         // TODO: Maybe we shouldn't fetch all the time, instead fetch when user does something like saving? or when the user targets focuses on a different field?
         this.maybeFetchPlace(latLng, placeObject);
     }
 
-    private callMarkerMovedListeners(placeObject: PlaceObject): void {
+    private callMarkerMovedListeners(): void {
         this.markerMovedListeners.forEach((callback) => {
-            callback(placeObject);
+            callback(this.currentPlace);
         });
     }
 
     private async maybeFetchPlace(latLng: LatLngObject, placeObject: PlaceObject|null = null): Promise<void> {
         if (placeObject) {
-            this.callMarkerMovedListeners(placeObject);
+            this.currentPlace = placeObject;
+            this.callMarkerMovedListeners();
             return;
         }
     
+        // TODO: Translate loading text
         this.fetching = true;
-    
+        if (this.search.getInput()) {
+            this.search.setValue('Loading...');
+            this.search.showOrHideSpinner(true);
+        }
+
         try {
-            const place = await this.fetchPlaceFromLatLng.fetch(latLng.lat, latLng.lng);
-            if (place) this.callMarkerMovedListeners(place);
-            this.updateSearchInput(place);
+            this.currentPlace = await this.fetchPlaceFromLatLng.fetch(latLng.lat, latLng.lng);
+            if (this.currentPlace) this.callMarkerMovedListeners();
+            this.updateSearchInput();
         } catch (error) {
+            this.currentPlace = null;
             console.error('Failed to fetch place:', error);
         } finally {
             this.fetching = false;
@@ -139,11 +155,14 @@ class Openstreetmap implements OpenstreetmapInterface {
     }
 
     // Updates the search input to show the fetched place
-    private updateSearchInput(placeObject: PlaceObject): void {
+    private updateSearchInput(): void {
         const searchInput = this.search.getInput();
-        if (searchInput) {
+        if (searchInput && this.currentPlace) {
             this.search.setSearchListItems(null);
-            this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(placeObject);
+            this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(this.currentPlace);
+            this.search.showOrHideReset();
+            this.search.showOrHideSpinner(false);
+            this.search.getInput()!.focus();
         }
     }
 

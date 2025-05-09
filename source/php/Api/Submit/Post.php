@@ -139,16 +139,8 @@ class Post extends RestApiEndpoint
      */
     public function insertPost(int $moduleID, array|null $fieldMeta): WP_Error|int {
 
-        if($invalidFields = $this->validateRequestInputValuesToFieldSpecifications($fieldMeta)) {
-            return new WP_Error(
-                'invalid_field_values',
-                __('Some fields contained invalid data.', 'modularity-frontend-form'),
-                ['invalid_fields' => array_values($invalidFields)],
-            );
-        }
-
         // Check if all fields exists on the target post type
-        if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, 'post')) {
+        if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, 'testposttype')) {
             return new WP_Error(
                 'invalid_field',
                 __('Some fields do not belong to this form.', 'modularity-frontend-form'),
@@ -156,10 +148,17 @@ class Post extends RestApiEndpoint
             );
         }
 
+        if($invalidFields = $this->validateRequestInputValuesToFieldSpecifications($fieldMeta)) {
+            return new WP_Error(
+                'invalid_field_values',
+                __('Some fields contained invalid data.', 'modularity-frontend-form'),
+                ['invalid_fields' => array_values($invalidFields)],
+            );
+        }
         
         $result = $this->wpService->wpInsertPost([
             'post_title'    => 'Test post',
-            'post_type'     => 'post',
+            'post_type'     => 'testposttype',
             'post_status'   => 'publish',
             'meta_input'   => [
                 'module_id' => $moduleID,
@@ -169,10 +168,6 @@ class Post extends RestApiEndpoint
 
         // Post Successfully created, store the fields
         if (!$this->wpService->isWpError($result) && !is_null($fieldMeta)) {
-            $sanitizedFieldMetaKeys = $this->filterUnmappedFieldKeysForPostType(
-                array_keys($fieldMeta),
-                'post'
-            );
             $this->storeFields($fieldMeta, $result);
         }
 
@@ -185,20 +180,22 @@ class Post extends RestApiEndpoint
      * @param array $fields The fields to store
      * @param int $postId The ID of the post to store the fields for
      */
-    public function storeFields($fields, $postId)
+    public function storeFields(array $fields, int $postId)
     {
-        $sanitizedFieldMetaKeys = $this->filterUnmappedFieldKeysForPostType(
-            array_keys($fields),
-            'post'
-        );
-
-        foreach ($sanitizedFieldMetaKeys as $key) {
+        foreach ($fields as $key => $value) {
             if (isset($fields[$key])) {
-                $this->acfService->updateField(
+                $result = $this->acfService->updateField(
                     $key, 
-                    $this->santitileFieldValue($fields[$key], $key), 
+                    $this->santitileFieldValue($value, $key), 
                     $postId
                 );
+
+                if($result === false) {
+                    throw new WP_Error(
+                        'store_field_failed',
+                        __('Could not save form metadata.', 'modularity-frontend-form')
+                    );
+                }
             }
         }
     }
@@ -291,24 +288,7 @@ class Post extends RestApiEndpoint
      *
      * @return mixed The sanitized value
      */
-    private function santitileFieldValue($value, $fieldKey) {
-        $field = $this->acfService->getField($fieldKey);
-
-        if (isset($field['type'])) {
-            switch ($field['type']) {
-                case 'text':
-                    return sanitize_text_field($value);
-                case 'email':
-                    return sanitize_email($value);
-                case 'url':
-                    return esc_url_raw($value);
-                case 'number':
-                    return intval($value);
-                default:
-                    return $value;
-            }
-        }
-
+    private function santitileFieldValue($value, $fieldKey = '') {
         return $value;
     }
 

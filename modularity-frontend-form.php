@@ -54,10 +54,15 @@ $wpService->addAction('acf/init', function () {
     $acfExportManager->import();
 });
 
+//Config 
+$config                 = new ModularityFrontendForm\Config\Config($wpService, 'Modularity/FrontendForm'); 
+$moduleConfigFactory    = new ModularityFrontendForm\Config\ModuleConfigFactory($wpService, $acfService, $config);
+
 // Start application
 $app = new ModularityFrontendForm\App(
     $wpService, 
     $acfService,
-    new ModularityFrontendForm\Config\Config($wpService, 'Modularity/FrontendForm')
+    $config,
+    $moduleConfigFactory
 );
 $app->addHooks();

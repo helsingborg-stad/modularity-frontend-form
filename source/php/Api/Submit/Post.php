@@ -5,6 +5,8 @@ namespace ModularityFrontendForm\Api\Submit;
 use AcfService\AcfService;
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use \ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use WP;
 use WP_Error;
 use WP_Http;
@@ -22,7 +24,8 @@ class Post extends RestApiEndpoint
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
-        private ConfigInterface $config
+        private ConfigInterface $config,
+        private ModuleConfigFactoryInterface $moduleConfigFactory
     ) {}
 
     /**
@@ -42,8 +45,10 @@ class Post extends RestApiEndpoint
                     'type'        => 'integer',
                     'format'      => 'uri',
                     'required'    => true,
-                    'validate_callback' => function ($param, $request, $key) {
-                        return is_numeric($param) && $this->isFormModuleID($param);
+                    'validate_callback' => function ($moduleId) {
+                        return $this->getModuleConfigInstance(
+                            $moduleId
+                        )->getModuleIsSubmittable();
                     },
                 ]
             ]
@@ -51,27 +56,20 @@ class Post extends RestApiEndpoint
     }
 
     /**
-     * Checks if the module ID is a form module
+     * Returns the module config instance
      *
-     * @param int $moduleID The module ID to check
+     * @param int $moduleId The module ID
      *
-     * @return bool Whether the module ID is a form module
+     * @return ModuleConfigInterface The module config instance
      */
-    private function isFormModuleID(int $moduleID): bool
+    public function getModuleConfigInstance(int $moduleId): ModuleConfigInterface
     {
-        // Form submissions can only originate from the form module
-        if ($this->wpService->getPostType($moduleID) !== $this->config->getModuleSlug()) {
-            return false;
+        static $moduleConfigCache = [];
+        if (!isset($moduleConfigCache[$moduleId])) {
+            $moduleConfigCache[$moduleId] = $this->moduleConfigFactory->create($moduleId);
         }
-
-        // Form submissions can only be submitted from published and private modules
-        if (!in_array($this->wpService->getPostStatus($moduleID), ['publish', 'private'])) {
-            return false;
-        }
-
-        return true;
+        return $moduleConfigCache[$moduleId];
     }
-
 
     /**
      * Handles a REST request to submit a form
@@ -139,8 +137,13 @@ class Post extends RestApiEndpoint
      */
     public function insertPost(int $moduleID, array|null $fieldMeta): WP_Error|int {
 
+        // Get the post type to submit to
+        $targetPostType = $this->getModuleConfigInstance(
+            $moduleID
+        )->getTargetPostType();
+
         // Check if all fields exists on the target post type
-        if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, 'testposttype')) {
+        if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, $targetPostType)) {
             return new WP_Error(
                 'invalid_field',
                 __('Some fields do not belong to this form.', 'modularity-frontend-form'),

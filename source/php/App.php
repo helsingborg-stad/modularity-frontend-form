@@ -11,6 +11,8 @@ use ModularityFrontendForm\Api\Submit\Post;
 use ModularityFrontendForm\Config\Config;
 
 use \Modularity\HooksRegistrar\Hookable;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 
 /**
  * Class App
@@ -18,7 +20,12 @@ use \Modularity\HooksRegistrar\Hookable;
  */
 class App implements \Modularity\HooksRegistrar\Hookable {
 
-    public function __construct(private WpService $wpService, private AcfService $acfService, private Config $config){}
+    public function __construct(
+        private WpService $wpService, 
+        private AcfService $acfService, 
+        private ConfigInterface $config, 
+        private ModuleConfigFactoryInterface $moduleConfigFactory
+    ){}
 
     /**
      * Add hooks to WordPress
@@ -63,7 +70,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
     public function registerApi()
     {
         $restEndpoints = [
-            new Api\Submit\Post($this->wpService, $this->acfService, $this->config),
+            new Api\Submit\Post($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Nonce\Get($this->wpService, $this->config),
         ];
 

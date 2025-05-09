@@ -15,10 +15,10 @@ class GoogleMapFieldMapper implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, 'googleMap'))->map();
 
-        $mapped['height'] = ($this->field['height'] ?? '400') ?: '400';
-        $mapped['lat'] = ($this->field['center_lat'] ?? '59.32932') ?: '59.32932';
-        $mapped['lng'] = ($this->field['center_lng'] ?? '18.06858') ?: '18.06858';
-        $mapped['zoom'] = ($this->field['zoom'] ?? '14') ?: '14';
+        $mapped['height'] = $this->field['height'] ?: '400';
+        $mapped['lat'] = $this->field['center_lat'] ?: '59.32932';
+        $mapped['lng'] = $this->field['center_lng'] ?: '18.06858';
+        $mapped['zoom'] = $this->field['zoom'] ?: '14';
 
         $mapped['attributeList']['style'] = sprintf(
             'height: %spx; position: relative',

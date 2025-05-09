@@ -25,8 +25,8 @@ class BasicFieldMapper implements BasicFieldMapperInterface
           'view'        => $this->type,
           'label'       => $this->field['label'],
           'name'        => $this->field['key'],
-          'required'    => ($this->field['required'] ?? false) ?: false,
-          'description' => ($this->field['instructions'] ?? null) ?: '',
+          'required'    => $this->field['required'] ?: false,
+          'description' => $this->field['instructions'] ?: '',
           'attributeList' => [
               'data-js-conditional-logic' => $conditionalLogicMapper->map() ?? "{}",
               'data-js-field' => $this->type,

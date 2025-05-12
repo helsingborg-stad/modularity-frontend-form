@@ -1,4 +1,4 @@
-class RowBuilder {
+class RowBuilder implements RowBuilderInterface {
     private replacement: string = 'repeater_id';
 
     constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}

@@ -15,18 +15,21 @@ import RadioConditionValidator from "./field/radio/radioConditionValidator";
 import RadioConditionsHandler from "./field/radio/radioConditionsHandler";
 import Message from "./field/message/message";
 import MessageConditionsHandler from "./field/message/messageConditionHandler";
-import OpenstreetmapFactory from "../openstreetmap/openstreetmapFactory";
+import OpenstreetmapFactory from "./field/googleMap/openstreetmap/openstreetmapFactory";
 import GoogleMap from "./field/googleMap/googleMap";
 import GoogleMapConditionsHandler from "./field/googleMap/googleMapConditionsHandler";
 import GoogleMapConditionValidator from "./field/googleMap/googleMapConditionValidator";
 import FileConditionValidator from "./field/file/fileConditionValidator";
 import FileConditionsHandler from "./field/file/fileConditionsHandler";
+import RepeaterFactory from "./field/repeater/UI/repeaterFactory";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
     private condition: string = 'data-js-conditional-logic';
+    private fieldsObject: FieldsObject = {};
 
     constructor(
+        private fieldsInitiator: FieldsInitiatorInterface,
         private modularityFrontendFormData: ModularityFrontendFormData,
         private modularityFrontendFormLang: ModularityFrontendFormLang
     ) {}
@@ -37,31 +40,50 @@ class FieldBuilder implements FieldBuilderInterface {
             return this.buildNullField(field, type);
         }
 
+        let fieldInstance: FieldInterface;
+
         switch (type) {
             case 'file':
             case 'image':
-                return this.buildFile(field);
+                fieldInstance = this.buildFile(field);
+                break;
             case 'checkbox':
-                return this.buildCheckbox(field);
+                fieldInstance = this.buildCheckbox(field);
+                break;
             case 'text':
             case 'email':
             case 'url':
             case 'date':
             case 'time':
             case 'number':
-                return this.buildBasic(field);
+                fieldInstance = this.buildBasic(field);
+                break;
             case 'select':
-                return this.buildSelect(field);
+                fieldInstance = this.buildSelect(field);
+                break;
             case 'radio':
             case 'trueFalse':
-                return this.buildRadio(field);
+                fieldInstance = this.buildRadio(field);
+                break;
             case 'message':
-                return this.buildMessage(field);
+                fieldInstance = this.buildMessage(field);
+                break;
             case 'googleMap':
-                return this.buildGoogleMap(field);
+                fieldInstance = this.buildGoogleMap(field);
+                break;
+            case 'repeater':
+                fieldInstance = this.buildRepeater(field);
+                break;
+            default:
+                fieldInstance = this.buildNullField(field, type);
         }
 
-        return this.buildNullField(field, type);
+        this.fieldsObject[fieldInstance.getName()] = fieldInstance;
+        return fieldInstance;
+    }
+
+    public getFieldsObject(): FieldsObject {
+        return this.fieldsObject;
     }
 
     private buildNullField(field: HTMLElement, type: string): FieldInterface {
@@ -89,6 +111,26 @@ class FieldBuilder implements FieldBuilderInterface {
             new FileConditionValidator(),
             new FileConditionsHandler(this.getFieldCondition(field))
         );
+    }
+
+    private buildRepeater(field: HTMLElement): FieldInterface {
+        const addRowButton = field.querySelector('[data-js-repeater-add-row]') as HTMLButtonElement;
+        if (!addRowButton) {
+            console.error('Failed to find add row button for repeater');
+            return this.buildNullField(field, 'repeater');
+        }
+
+        const repeater = RepeaterFactory.createRepeater(this, this.fieldsInitiator, field, addRowButton);
+        
+        if (!repeater) {
+            console.error('Failed to create repeater UI instance');
+            return this.buildNullField(field, 'repeater');
+        }
+
+
+        repeater?.init();
+        console.log(repeater);
+        return this.buildNullField(field, 'repeater');
     }
 
     private buildGoogleMap(field: HTMLElement): FieldInterface {

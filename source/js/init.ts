@@ -1,16 +1,14 @@
-import OpenstreetmapFactory from "./openstreetmap/openstreetmapFactory";
-import RepeaterFactory from "./repeater/repeaterFactory";
 import { getSteps } from "./steps/helper/getSteps";
 import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
 import StepUIManager from "./steps/StepUIManager";
 import Submit from "./steps/submit/submit";
 import FieldBuilder from "./fields/fieldBuilder";
-import Fields from "./fields/fields";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
 import SubmitStatusHandler from "./steps/submit/status/handler";
 import SubmitStatusRenderer from "./steps/submit/status/render";
+import FieldsInitiator from "./fields/fieldsInitiator";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -26,21 +24,21 @@ class Form {
     }
 
     private setupFields() {
-        const builder = new FieldBuilder(modularityFrontendFormData, modularityFrontendFormLang);
-        let fieldsObject: FieldsObject = {};
+        const fieldsInitiatorInstance = new FieldsInitiator();
+        const builder = new FieldBuilder(fieldsInitiatorInstance, modularityFrontendFormData, modularityFrontendFormLang);
+        fieldsInitiatorInstance.init(builder);
 
         this.form.querySelectorAll('[data-js-field]').forEach(element => {
-            const field = builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '');
-            fieldsObject[field.getName()] = field;
+            builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '');
         });
 
-        const conditionBuilder = new ConditionBuilder(fieldsObject);
+        const conditionBuilder = new ConditionBuilder(builder);
 
-        for (const fieldName in fieldsObject) {
-            fieldsObject[fieldName].init(conditionBuilder);
+        for (const fieldName in builder.getFieldsObject()) {
+            builder.getFieldsObject()[fieldName].init(conditionBuilder);
         }
 
-        new Fields(this.form, fieldsObject).init();
+        fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
     }
 
     private setupSteps() {
@@ -78,9 +76,9 @@ class Form {
     }
 
     private setupRepeaters() {
-        this.formContainer.querySelectorAll('[data-js-form-repeater]').forEach((repeaterContainer) => {
-            RepeaterFactory.createRepeater(repeaterContainer as HTMLElement)?.init();
-        });
+        // this.formContainer.querySelectorAll('[data-js-form-repeater]').forEach((repeaterContainer) => {
+        //     RepeaterFactory.createRepeater(repeaterContainer as HTMLElement)?.init();
+        // });
     }
 }
 

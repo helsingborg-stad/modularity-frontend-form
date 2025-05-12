@@ -13,12 +13,12 @@ class FileConditionsHandler implements ConditionsHandlerInterface {
 		this.setValueChangeListener();
 	}
 
-	private updateDisabled(disabled: boolean): void {
-		if (this.parent && this.isDisabled !== disabled) {
-			this.isDisabled = disabled;
+	private updateDisabled(disable: boolean): void {
+		if (this.parent && this.isDisabled !== disable) {
+			this.isDisabled = disable;
 
-            this.parent.getField().classList.toggle('u-display--none', disabled);
-            this.parent.getInput().disabled = disabled;
+            this.parent.getField().classList.toggle('u-display--none', disable);
+            this.parent.getInput().disabled = disable;
 
 			this.dispatchUpdateEvent();
 		}

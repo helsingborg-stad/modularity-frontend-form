@@ -3,7 +3,7 @@ import NullCondition from "./condition/nullCondition";
 import OrCondition from "./condition/orCondition";
 
 class ConditionBuilder implements ConditionBuilderInterface {
-    constructor(private fields: FieldsObject) {}
+    constructor(private fieldBuilder: FieldBuilderInterface) {}
 
     public build(conditions: any): ConditionInterface[] {
         if (!Array.isArray(conditions) || conditions.length === 0) {
@@ -19,7 +19,7 @@ class ConditionBuilder implements ConditionBuilderInterface {
 
             if (conditionSet.length === 1) {
                 if (this.checkConditionValidity(conditionSet[0])) {
-                    conditionSet[0].class = this.fields[conditionSet[0].field];
+                    conditionSet[0].class = this.fieldBuilder.getFieldsObject()[conditionSet[0].field];
                     conditionsList.push(new OrCondition(conditionSet[0]));
                 }
             } else {
@@ -27,7 +27,7 @@ class ConditionBuilder implements ConditionBuilderInterface {
                     .filter((condition: Condition) => this.checkConditionValidity(condition))
                     .map((condition: Condition) => ({
                         ...condition,
-                        class: this.fields[condition.field]
+                        class: this.fieldBuilder.getFieldsObject()[condition.field]
                     }));
 
                 if (validConditions.length > 0) {
@@ -48,7 +48,7 @@ class ConditionBuilder implements ConditionBuilderInterface {
             return false;
         }
 
-        if (!('field' in condition) || !('operator' in condition) || !this.fields[condition.field]) {
+        if (!('field' in condition) || !('operator' in condition) || !this.fieldBuilder.getFieldsObject()[condition.field]) {
             return false;
         }
 

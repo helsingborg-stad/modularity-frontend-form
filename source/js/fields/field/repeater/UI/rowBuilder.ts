@@ -3,14 +3,14 @@ class RowBuilder {
 
     constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}
 
-    public createRow(id: string = 'row') {
+    public createRow(id: string = 'row'): HTMLElement {
         let rowHtml = this.template.innerHTML;
         rowHtml = rowHtml.replaceAll(this.replacement, id);
 
-        this.appendRow(rowHtml);
+        return this.appendRow(rowHtml);
     }
 
-    private appendRow(rowHtml: string): void {
+    private appendRow(rowHtml: string): HTMLElement {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = rowHtml;
         const row = tempDiv.firstElementChild as HTMLElement;
@@ -27,6 +27,8 @@ class RowBuilder {
 
             this.removeRowListener(row);
         }
+
+        return row;
     }
 
     private removeRowListener(row: HTMLElement): void {

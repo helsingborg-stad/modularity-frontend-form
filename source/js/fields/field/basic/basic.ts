@@ -3,14 +3,14 @@ class Basic implements BasicInterface {
         private field: HTMLElement,
         private input: HTMLInputElement,
         private name: string,
-        private textValidator: ConditionValidatorInterface,
+        private conditionValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface
     ) {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
-        this.textValidator.init(this);
+        this.conditionValidator.init(this);
     }
 
     public getName(): string {
@@ -22,7 +22,7 @@ class Basic implements BasicInterface {
     }
 
     public getConditionValidator(): ConditionValidatorInterface {
-        return this.textValidator;
+        return this.conditionValidator;
     }
 
     public getField(): HTMLElement {

@@ -11,6 +11,7 @@ class BasicConditionsHandler implements ConditionsHandlerInterface {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 		this.setValueChangeListener();
+		console.log(this.parent.getName());
 	}
 
 	private updateDisabled(disabled: boolean): void {

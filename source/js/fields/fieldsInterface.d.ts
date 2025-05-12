@@ -1,5 +1,5 @@
-interface FieldsInterface {
-    init(): void;
+interface FieldsInitiatorInterface {
+    initializeConditionals(fields: FieldsObject): void;
 }
 
 interface FieldInterface {
@@ -41,6 +41,7 @@ interface SelectInterface extends FieldInterface {
 
 interface FieldBuilderInterface {
     build(field: HTMLElement, type: string): FieldInterface;
+    getFieldsObject(): FieldsObject;
 }
 
 interface ConditionsHandlerInterface {

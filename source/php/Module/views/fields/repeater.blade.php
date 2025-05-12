@@ -1,11 +1,10 @@
 @if (!empty($field['fields']))
+@dump($field)
     @element([
         'classList' => [
             'mod-frontend-form__repeater'
         ],
-        'attributeList' => [
-            'data-js-form-repeater' => 'true'
-        ]
+        'attributeList' => $field['attributeList'] ?? [],
     ])
         @typography([
             'element' => 'h2',

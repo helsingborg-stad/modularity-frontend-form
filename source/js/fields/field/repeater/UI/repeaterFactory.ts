@@ -1,9 +1,14 @@
-import AddRow from "./addRow";
 import Repeater from "./repeater";
 import RowBuilder from "./rowBuilder";
 
 class RepeaterFactory {
-    public static createRepeater(repeaterContainer: HTMLElement): Repeater|null {
+    public static createRepeater(
+        fieldBuilder: FieldBuilderInterface,
+        fieldsInitiator: FieldsInitiatorInterface,
+        repeaterContainer: HTMLElement,
+        addRowButton: HTMLButtonElement,
+
+    ): Repeater|null {
         const template = repeaterContainer.querySelector('[data-js-repeater-row-template]') as HTMLTemplateElement;
         const templateContainer = repeaterContainer.querySelector('[data-js-repeater-row-container]') as HTMLElement;
 
@@ -13,8 +18,11 @@ class RepeaterFactory {
         }
 
         return new Repeater(
+            fieldBuilder,
+            fieldsInitiator,
             repeaterContainer,
-            new AddRow(repeaterContainer,  new RowBuilder(template, templateContainer)),
+            addRowButton,
+            new RowBuilder(template, templateContainer),
         );
     }
 }

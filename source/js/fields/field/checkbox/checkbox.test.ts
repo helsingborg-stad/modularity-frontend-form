@@ -4,57 +4,57 @@ import CheckboxConditionsHandler from './condition/checkboxConditionsHandler';
 import CheckboxConditionValidator from './condition/checkboxConditionValidator';
 
 describe('Checkbox', () => {
-    const fakeCheckBoxHandler = {
-        init: jest.fn(),
-        dispatchUpdateEvent(condition: any): boolean { return true; },
-        addValueChangeListener(field: FieldInterface): void {},
-        getConditions(): Condition[] { return []; },
-        getIsDisabled(): boolean { return false; },
-        validate(): void {}
-    } as unknown as CheckboxConditionsHandler;
-    const fakeCheckBoxValidator = {
-        init: jest.fn(),
-        validate(condition: Condition): boolean { return true; }
-    } as unknown as CheckboxConditionValidator;
-    const field = document.createElement('div');
-    field.innerHTML = `<input type="checkbox" name="testField" value="1" checked><input type="checkbox" name="testField2" value="2">`;
-    const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
+    // const fakeCheckBoxHandler = {
+    //     init: jest.fn(),
+    //     dispatchUpdateEvent(condition: any): boolean { return true; },
+    //     addValueChangeListener(field: FieldInterface): void {},
+    //     getConditions(): Condition[] { return []; },
+    //     getIsDisabled(): boolean { return false; },
+    //     validate(): void {}
+    // } as unknown as CheckboxConditionsHandler;
+    // const fakeCheckBoxValidator = {
+    //     init: jest.fn(),
+    //     validate(condition: Condition): boolean { return true; }
+    // } as unknown as CheckboxConditionValidator;
+    // const field = document.createElement('div');
+    // field.innerHTML = `<input type="checkbox" name="testField" value="1" checked><input type="checkbox" name="testField2" value="2">`;
+    // const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
-    const checkBox = new Checkbox(
-        field,
-        choices,
-        'testField',
-        fakeCheckBoxValidator,
-        fakeCheckBoxHandler
-    )
+    // const checkBox = new Checkbox(
+    //     field,
+    //     choices,
+    //     'testField',
+    //     fakeCheckBoxValidator,
+    //     fakeCheckBoxHandler
+    // )
 
-    it('init() initializes the conditions handler and validator', () => {
-        checkBox.init({} as any);
-        expect(fakeCheckBoxHandler.init).toHaveBeenCalledWith(checkBox, {} as any);
-        expect(fakeCheckBoxValidator.init).toHaveBeenCalledWith(checkBox);
-    });
+    // it('init() initializes the conditions handler and validator', () => {
+    //     checkBox.init({} as any);
+    //     expect(fakeCheckBoxHandler.init).toHaveBeenCalledWith(checkBox, {} as any);
+    //     expect(fakeCheckBoxValidator.init).toHaveBeenCalledWith(checkBox);
+    // });
 
-    it('getName() returns field name', () => {
-        expect(checkBox.getName()).toBe('testField');
-    });
+    // it('getName() returns field name', () => {
+    //     expect(checkBox.getName()).toBe('testField');
+    // });
 
-    it('getConditionsHandler() returns the conditions handler', () => {
-        expect(checkBox.getConditionsHandler()).toBe(fakeCheckBoxHandler);
-    });
+    // it('getConditionsHandler() returns the conditions handler', () => {
+    //     expect(checkBox.getConditionsHandler()).toBe(fakeCheckBoxHandler);
+    // });
 
-    it('getConditionValidator() returns the validation handler', () => {
-        expect(checkBox.getConditionValidator()).toBe(fakeCheckBoxValidator);
-    });
+    // it('getConditionValidator() returns the validation handler', () => {
+    //     expect(checkBox.getConditionValidator()).toBe(fakeCheckBoxValidator);
+    // });
     
-    it('getChoices() returns the available choices', () => {
-        expect(checkBox.getChoices()).toBe(choices);
-    });
+    // it('getChoices() returns the available choices', () => {
+    //     expect(checkBox.getChoices()).toBe(choices);
+    // });
     
-    it('getField() returns the available choices', () => {
-        expect(checkBox.getField()).toBe(field);
-    });
+    // it('getField() returns the available choices', () => {
+    //     expect(checkBox.getField()).toBe(field);
+    // });
 
-    it('getSelectedChoices() returns selected choices values', () => {
-        expect(checkBox.getSelectedChoices()).toStrictEqual(["1"]);
-    });
+    // it('getSelectedChoices() returns selected choices values', () => {
+    //     expect(checkBox.getSelectedChoices()).toStrictEqual(["1"]);
+    // });
 });

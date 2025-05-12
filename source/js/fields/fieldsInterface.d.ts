@@ -48,6 +48,11 @@ interface FieldBuilderInterface {
     getFieldsObject(): FieldsObject;
 }
 
+interface FieldValidatorInterface {
+    init(parent: FieldInterface): void;
+    validate(): boolean;
+}
+
 interface ConditionsHandlerInterface {
     init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void;
     getConditions(): ConditionInterface[];

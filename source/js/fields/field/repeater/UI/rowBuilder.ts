@@ -34,6 +34,7 @@ class RowBuilder implements RowBuilderInterface {
     private removeRowListener(row: HTMLElement): void {
         row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
             e.preventDefault();
+            row.style.maxHeight = row.scrollHeight + 'px';
 
             requestAnimationFrame(() => {
                 row.classList.add('animate-remove');

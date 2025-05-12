@@ -232,41 +232,7 @@ class Post extends RestApiEndpoint
         return $invalidFields ?: null;
     }
 
-    /**
-     * Removes fields that are not registered in any of the field groups mapped to the post type
-     *
-     * @param array $fields The fields to check
-     * @param string $postType The post type to check against
-     * @param array $defaultKeys The default keys to include, if any.
-     * 
-     * @return array The filtered fields
-     */
-    private function filterUnmappedFieldKeysForPostType(array $fieldKeys, string $postType, array $defaultKeys = []): array
-    {
-        $validKeys = $defaultKeys;
-
-        $fieldGroups = $this->acfService->getFieldGroups(['post_type' => $postType]);
-
-        foreach ($fieldGroups as $group) {
-            if(!isset($group['key'])) {
-                continue;
-            }
-
-            $fields = $this->acfService->acfGetFields($group['key']);
-
-            if(!is_array($fields)) {
-                continue;
-            }
-
-            foreach ($fields as $field) {
-                if (isset($field['key']) && in_array($field['key'], $fieldKeys, true)) {
-                    $validKeys[] = $field['key'];
-                }
-            }
-        }
-
-        return array_unique($validKeys);
-    }
+    
 
     /**
      * Sanitizes the field value based on its type

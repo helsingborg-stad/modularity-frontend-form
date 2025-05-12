@@ -1,6 +1,6 @@
 import RowBuilder from "./rowBuilder";
 
-class Repeater {
+class RepeaterUI {
     private rowCount: number = 0;
 
     constructor(
@@ -41,4 +41,4 @@ class Repeater {
     }
 }
 
-export default Repeater;
+export default RepeaterUI;

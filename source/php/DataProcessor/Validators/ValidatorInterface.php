@@ -1,8 +1,8 @@
 <?php
 
-namespace ModularityFrontendForm\Handlers;
+namespace ModularityFrontendForm\DataProcessor\Validators;
 
-use ModularityFrontendForm\Validators\Result\ValidationResultInterface;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
 
 interface ValidatorInterface {
   public function validate(array $data): ?ValidationResultInterface;

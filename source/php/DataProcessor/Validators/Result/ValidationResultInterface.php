@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\Validators\Result;
+namespace ModularityFrontendForm\DataProcessor\Validators\Result;
 
 use WP_Error;
 

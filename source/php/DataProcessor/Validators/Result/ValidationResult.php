@@ -1,8 +1,8 @@
 <?php
 
-namespace ModularityFrontendForm\Validators\Result;
+namespace ModularityFrontendForm\DataProcessor\Validators\Result;
 
-use ModularityFrontendForm\Validators\Result\ValidationResultInterface;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
 use WP_Error;
 
 class ValidationResult implements ValidationResultInterface

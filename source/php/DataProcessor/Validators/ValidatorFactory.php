@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\Validators;
+namespace ModularityFrontendForm\DataProcessor\Validators;
 
 class ValidatorFactory {
   public function createValidators(): array {

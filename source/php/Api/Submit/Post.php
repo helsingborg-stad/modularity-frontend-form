@@ -188,25 +188,7 @@ class Post extends RestApiEndpoint
         }
     }
 
-    /**
-     * Checks if the request includes fields that are not present on the target post type
-     *
-     * @param array $fieldMeta The field meta data
-     * @param string $postType The post type to check against
-     *
-     * @return array The invalid field keys
-     */
-    public function requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, $postType)
-    {
-        $fieldKeys = array_keys($fieldMeta);
-
-        $validKeys = $this->filterUnmappedFieldKeysForPostType(
-            $fieldKeys,
-            $postType
-        );
-
-        return array_diff($fieldKeys, $validKeys);
-    }
+    
 
     /**
      * Validates the request input values against the field specifications

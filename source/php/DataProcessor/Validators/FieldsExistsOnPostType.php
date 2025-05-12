@@ -1,20 +1,25 @@
 <?php
 
-namespace ModularityFrontendForm\Handlers;
+namespace ModularityFrontendForm\DataProcessor\Validators;
 
 use AcfService\AcfService;
-use ModularityFrontendForm\Validators\Result\ValidationResult;
-use ModularityFrontendForm\Validators\Result\ValidationResultInterface;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResult;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
 use WP_Error;
 use WpService\WpService;
+use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 
 class FieldsExistsOnPostType implements ValidatorInterface
 {
+    use GetModuleConfigInstanceTrait;
+
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
-        private string $postType,
-        private array $fields
+        private ConfigInterface $config,
+        private ModuleConfigInterface $moduleConfigInstance
     ) {
     }
 
@@ -26,25 +31,27 @@ class FieldsExistsOnPostType implements ValidatorInterface
      *
      * @return array The invalid field keys
      */
-    public function validate(): ?ValidationResultInterface
+    public function validate($data): ?ValidationResultInterface
     {
       //All submitted keys
-      $fieldKeys = array_keys($this->fields);
+      $fieldKeys = array_keys($data);
 
       // Check for field keys that are present on the post type
       $validKeys = $this->filterUnmappedFieldKeysForPostType(
           $fieldKeys,
-          $this->postType
+          $this->moduleConfigInstance->getTargetPostType(),
       );
-
+  
       // If there are any stray keys, set an error
       if($strayKeys = array_diff($fieldKeys, $validKeys)) {
         $validationResult = (new ValidationResult())->setError(
           new WP_Error(
             "validation_error", 
-            "There was an error", 
+            $this->wpService->__(
+              'Some fields are not registered in the taget store location',
+            ), 
             [
-              'keys' => $strayKeys
+              'fields' => $strayKeys
             ]
           )
         );

@@ -47,6 +47,7 @@ class RepeaterUI {
 
         for (const fieldName in newFieldsObject) {
             newFieldsObject[fieldName].init(this.conditionBuilder);
+            newFieldsObject[fieldName].getConditionsHandler().validate();
         }
 
         this.fieldsInitiator.initializeConditionals(newFieldsObject);

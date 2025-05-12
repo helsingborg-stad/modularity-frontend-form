@@ -1,5 +1,4 @@
 @if (!empty($field['fields']))
-@dump($field)
     @element([
         'classList' => [
             'mod-frontend-form__repeater'

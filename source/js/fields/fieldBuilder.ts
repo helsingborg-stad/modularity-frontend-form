@@ -21,7 +21,7 @@ import GoogleMapConditionsHandler from "./field/googleMap/googleMapConditionsHan
 import GoogleMapConditionValidator from "./field/googleMap/googleMapConditionValidator";
 import FileConditionValidator from "./field/file/fileConditionValidator";
 import FileConditionsHandler from "./field/file/fileConditionsHandler";
-import RepeaterFactory from "./field/repeater/UI/repeaterFactory";
+import RepeaterUIFactory from "./field/repeater/UI/repeaterUIFactory";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -120,7 +120,7 @@ class FieldBuilder implements FieldBuilderInterface {
             return this.buildNullField(field, 'repeater');
         }
 
-        const repeater = RepeaterFactory.createRepeater(this, this.fieldsInitiator, field, addRowButton);
+        const repeater = RepeaterUIFactory.createRepeater(this, this.fieldsInitiator, field, addRowButton);
         
         if (!repeater) {
             console.error('Failed to create repeater UI instance');

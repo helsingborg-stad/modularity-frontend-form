@@ -10,6 +10,10 @@ interface FieldInterface {
     getConditionValidator(): ConditionValidatorInterface;
 }
 
+interface RepeaterInterface extends FieldInterface {
+    getRowCount(): number;
+}
+
 interface CheckboxInterface extends FieldInterface {
     getChoices(): NodeListOf<HTMLInputElement>;
     getSelectedChoices(): string[];

@@ -19,7 +19,6 @@ class Form {
         private form: HTMLFormElement
     ) {
         this.setupFields();
-        this.setupRepeaters();
         this.setupSteps();
     }
 
@@ -73,12 +72,6 @@ class Form {
             ),
             nextButton as HTMLButtonElement,
             previousButton as HTMLButtonElement).init();
-    }
-
-    private setupRepeaters() {
-        // this.formContainer.querySelectorAll('[data-js-form-repeater]').forEach((repeaterContainer) => {
-        //     RepeaterFactory.createRepeater(repeaterContainer as HTMLElement)?.init();
-        // });
     }
 }
 

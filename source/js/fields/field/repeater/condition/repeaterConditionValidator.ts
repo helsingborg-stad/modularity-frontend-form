@@ -1,5 +1,3 @@
-import RepeaterUI from "./UI/repeaterUI";
-
 class RepeaterConditionValidator implements ConditionValidatorInterface {
     private parent: RepeaterInterface|null = null;
 

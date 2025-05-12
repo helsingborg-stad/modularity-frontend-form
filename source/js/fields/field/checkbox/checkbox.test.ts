@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import Checkbox from './checkbox';
-import CheckboxConditionsHandler from './checkboxConditionsHandler';
-import CheckboxConditionValidator from './checkboxConditionValidator';
+import CheckboxConditionsHandler from './condition/checkboxConditionsHandler';
+import CheckboxConditionValidator from './condition/checkboxConditionValidator';
 
 describe('Checkbox', () => {
     const fakeCheckBoxHandler = {

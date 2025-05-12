@@ -20,7 +20,7 @@ class NullField implements FieldInterface {
     }
 
     public getName(): string {
-        return '';
+        return this.name;
     }
 
     public getConditionsHandler(): ConditionsHandlerInterface {

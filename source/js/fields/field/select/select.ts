@@ -4,14 +4,14 @@ class Select implements SelectInterface {
         private select: HTMLSelectElement,
         private options: NodeListOf<HTMLOptionElement>,
         private name: string,
-        private textValidator: ConditionValidatorInterface,
+        private selectValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface
     ) {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
-        this.textValidator.init(this);
+        this.selectValidator.init(this);
     }
 
     public getName(): string {
@@ -23,7 +23,7 @@ class Select implements SelectInterface {
     }
 
     public getConditionValidator(): ConditionValidatorInterface {
-        return this.textValidator;
+        return this.selectValidator;
     }
 
     public getField(): HTMLElement {

@@ -1,5 +1,3 @@
-import RepeaterUI from "./UI/repeaterUI";
-
 class Repeater implements RepeaterInterface {
     constructor(
         private field: HTMLElement,

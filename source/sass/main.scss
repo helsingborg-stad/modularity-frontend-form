@@ -110,6 +110,12 @@ $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
     position: relative;
 }
 
+.mod-frontend-form__steps {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--base, 8px) * 4);
+}
+
 .mod-frontend-form-working {
     transition: all 0.2s ease-in-out;
     position: absolute !important;

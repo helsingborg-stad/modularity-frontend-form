@@ -22,7 +22,7 @@
                     @typography([
                         'classList' => ['u-margin__top--1']
                     ])
-                        Beskrivning av steg
+                        {!! $step['description'] !!}
                     @endtypography
                 @endif
             @endelement

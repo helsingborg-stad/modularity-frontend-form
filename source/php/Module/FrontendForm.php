@@ -26,6 +26,7 @@ use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use AcfService\Contracts\AcfGetFields;
 use ModularityFrontendForm\Module\FormatSteps;
+use ModularityFrontendForm\Config\Config;
 
 use ModularityFrontendForm\Helper\CacheBust;
 use WpService\Contracts\GetRestUrl;
@@ -60,7 +61,11 @@ class FrontendForm extends \Modularity\Module
     {
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService   = new NativeAcfService();
-        $this->formatSteps  = new FormatSteps($this->wpService, $this->acfService);
+        $this->formatSteps  = new FormatSteps(
+            $this->wpService, 
+            $this->acfService,
+            new Config($this->wpService, 'modularity-frontend-form') //TODO: Use a config factory
+        );
 
         $this->cacheBust    = new CacheBust();
 

@@ -2,7 +2,6 @@
 
 namespace ModularityFrontendForm\Config;
 
-use AcfService\AcfService;
 use WpService\WpService;
 
 interface ConfigInterface
@@ -13,6 +12,7 @@ interface ConfigInterface
     );
 
     public function getModuleSlug(): string;
+    public function getFieldNamespace(): string;
     public function getFilterPrefix(): string;
     public function createFilterKey(string $filter = ""): string;
 }

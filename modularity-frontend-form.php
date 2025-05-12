@@ -55,7 +55,7 @@ $wpService->addAction('acf/init', function () {
 });
 
 //Config 
-$config                 = new ModularityFrontendForm\Config\Config($wpService, 'Modularity/FrontendForm'); 
+$config                 = ModularityFrontendForm\Config\ConfigFactory::create($wpService); 
 $moduleConfigFactory    = new ModularityFrontendForm\Config\ModuleConfigFactory($wpService, $acfService, $config);
 
 // Start application

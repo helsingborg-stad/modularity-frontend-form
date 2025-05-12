@@ -28,6 +28,19 @@ class Config implements ConfigInterface
   }
 
   /**
+   * The field namespace.
+   * 
+   * @return string
+   */
+  public function getFieldNamespace(): string
+  {
+    return $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      'mod-frontend-form'
+    );
+  }
+
+  /**
    * Get the filter prefix.
    * 
    * @return string

@@ -66,9 +66,9 @@ class Post extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        $moduleId        = $request->get_params()['module-id']         ?? null;
-        $fieldMeta       = $request->get_params()['mod-frontedform']   ?? null;
-        $nonce           = $request->get_params()['nonce']              ?? '';
+        $moduleId        = $request->get_params()['module-id']                          ?? null;
+        $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
+        $nonce           = $request->get_params()['nonce']                              ?? '';
 
         // Check if the request is valid
         if (!$this->validateNonce($nonce, $moduleId)) {

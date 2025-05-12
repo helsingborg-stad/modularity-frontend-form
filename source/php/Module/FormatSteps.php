@@ -6,12 +6,14 @@ use AcfService\AcfService;
 use WpService\WpService;
 
 use ModularityFrontendForm\FieldMapping\Mapper;
+use ModularityFrontendForm\Config\ConfigInterface;
 
 class FormatSteps {
 
     public function __construct(
         private WpService $wpService, 
-        private AcfService $acfService
+        private AcfService $acfService,
+        private ConfigInterface $config,
     ){}
 
     /**
@@ -28,8 +30,7 @@ class FormatSteps {
             $formattedSteps[$key]['title'] = !empty($step['formStepIncludesPostTitle']) ?
                 ($step['formStepTitle'] ?? null) :
                 null;
-
-            $formattedSteps[$key]['description'] = $step['formStepIncludesPostTitle'] ?? null;
+            $formattedSteps[$key]['description'] = $step['formStepContent'] ?? null;
             $formattedSteps[$key]['fields'] = $this->formatStep($step);
         }
 
@@ -89,6 +90,11 @@ class FormatSteps {
     {
         $isArray    = str_ends_with($name, '[]');
         $baseName   = $isArray ? substr($name, 0, -2) : $name;
-        return sprintf('mod-frontedform[%s]%s', $baseName, $isArray ? '[]' : '');
+        return sprintf(
+            '%s[%s]%s', 
+            $this->config->getFieldNamespace(),
+            $baseName, 
+            $isArray ? '[]' : ''
+        );
     }
 }

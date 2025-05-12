@@ -1,4 +1,5 @@
 <?php
+
 namespace ModularityFrontendForm\Config;
 
 interface ModuleConfigFactoryInterface

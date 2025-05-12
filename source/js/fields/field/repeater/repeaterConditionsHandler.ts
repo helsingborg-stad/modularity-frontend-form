@@ -10,8 +10,6 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 	public init(parent: RepeaterInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
-		this.setValueChangeListener();
-		console.log(this.parent.getName());
 	}
 
 	private updateDisabled(disabled: boolean): void {

@@ -2,6 +2,8 @@ import RowBuilder from "./rowBuilder";
 
 class RepeaterUI {
     private rowCount: number = 0;
+    private repeaterField!: RepeaterInterface;
+    private conditionBuilder!: ConditionBuilderInterface;
 
     constructor(
         private fieldBuilder: FieldBuilderInterface,
@@ -11,7 +13,15 @@ class RepeaterUI {
         private rowBuilder: RowBuilder
     ) {}
 
-    public init(): void {
+    public init(repeaterField: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void {
+        this.repeaterField = repeaterField;
+        this.conditionBuilder = conditionBuilder;
+
+        if (!this.repeaterField || !this.conditionBuilder) {
+            console.error("Repeater field or condition builder is not set");
+            return;
+        }
+
         this.setupListener();
     }
 
@@ -22,8 +32,8 @@ class RepeaterUI {
     private setupListener() {
         this.addRowButton?.addEventListener('click', (e) => {
             e.preventDefault();
-            this.rowCount++;
             this.buildAddedFields(this.rowBuilder.createRow(this.rowCount.toString()));
+            this.rowCount++;
         });
     }
 
@@ -35,9 +45,11 @@ class RepeaterUI {
             newFieldsObject[builtField.getName()] = builtField;
         });
 
-        this.fieldsInitiator.initializeConditionals(newFieldsObject);
-        console.log(newFieldsObject);
+        for (const fieldName in newFieldsObject) {
+            newFieldsObject[fieldName].init(this.conditionBuilder);
+        }
 
+        this.fieldsInitiator.initializeConditionals(newFieldsObject);
     }
 }
 

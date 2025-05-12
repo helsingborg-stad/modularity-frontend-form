@@ -9,6 +9,7 @@ class Repeater implements RepeaterInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.repeaterUI.init(this, conditionBuilder);
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
     }

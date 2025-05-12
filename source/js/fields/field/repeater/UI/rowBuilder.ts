@@ -23,6 +23,7 @@ class RowBuilder implements RowBuilderInterface {
 
             row.addEventListener('transitionend', () => {
                 row.classList.add('animate-show');
+                row.style.maxHeight = 'unset';
             }, { once: true });
 
             this.removeRowListener(row);

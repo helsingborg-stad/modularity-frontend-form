@@ -1,5 +1,5 @@
 interface RepeaterUIInterface {
-    init(): void;
+    init(repeater: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void;
     getRowCount(): number;
 }
 

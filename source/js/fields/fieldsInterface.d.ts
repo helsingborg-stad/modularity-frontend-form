@@ -10,13 +10,13 @@ interface FieldInterface {
     getConditionValidator(): ConditionValidatorInterface;
 }
 
-interface RepeaterInterface extends FieldInterface {
-    getRowCount(): number;
-}
-
 interface CheckboxInterface extends FieldInterface {
     getChoices(): NodeListOf<HTMLInputElement>;
     getSelectedChoices(): string[];
+}
+
+interface RepeaterInterface extends FieldInterface {
+    getRowCount(): number;
 }
 
 interface RadioInterface extends FieldInterface {
@@ -49,8 +49,17 @@ interface FieldBuilderInterface {
 }
 
 interface FieldValidatorInterface {
-    init(parent: FieldInterface): void;
+    init(field: FieldInterface): void;
     validate(): boolean;
+}
+
+interface FieldValidatorUIHandlerInterface {
+    init(field: FieldInterface): void;
+}
+
+interface ValidationControlInterface {
+    init(field: FieldInterface): void;
+    isInvalid(field: FieldInterface): false|string;
 }
 
 interface ConditionsHandlerInterface {

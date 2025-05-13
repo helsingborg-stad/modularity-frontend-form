@@ -7,7 +7,8 @@ class NullFieldFactory {
         field: HTMLElement,
         type: string,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
 
         return new NullField(

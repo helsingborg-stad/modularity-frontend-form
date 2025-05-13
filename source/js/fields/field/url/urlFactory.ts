@@ -7,13 +7,14 @@ class UrlFactory {
     public static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const input = field.querySelector(`input[type="url"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Url field is missing input element.');
-            return NullFieldFactory.create(field, 'url', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'url', name, unstructuredConditions, notices);
         }
 
         return new Basic(

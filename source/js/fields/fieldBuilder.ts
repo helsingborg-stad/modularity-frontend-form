@@ -22,6 +22,7 @@ class FieldBuilder implements FieldBuilderInterface {
 
     constructor(
         private fieldsInitiator: FieldsInitiatorInterface,
+        private notices: NoticeInterface,
         private modularityFrontendFormData: ModularityFrontendFormData,
         private modularityFrontendFormLang: ModularityFrontendFormLang
     ) {}
@@ -29,7 +30,7 @@ class FieldBuilder implements FieldBuilderInterface {
     public build(field: HTMLElement, type: string): FieldInterface {
         if (!this.validateRequiredAttributes(field)) {
             console.error('Field name and/or conditional logic are required');
-            return NullFieldFactory.create(field, type, this.getFieldName(field), '0');
+            return NullFieldFactory.create(field, type, this.getFieldName(field), '0', this.notices);
         }
 
         let fieldInstance: FieldInterface;
@@ -39,84 +40,96 @@ class FieldBuilder implements FieldBuilderInterface {
                 fieldInstance = ImageFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'file':
                 fieldInstance = FileFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'checkbox':
                 fieldInstance = CheckboxFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'text':
                 fieldInstance = TextFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'email':
                 fieldInstance = EmailFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'url':
                 fieldInstance = UrlFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'date':
                 fieldInstance = DateFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'time':
                 fieldInstance = TimeFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'number':
                 fieldInstance = NumberFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'select':
                 fieldInstance = SelectFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'trueFalse':
                 fieldInstance = TrueFalseFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'radio':
                 fieldInstance = RadioFactory.create(
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 )
                 break;
             case 'message':
@@ -124,6 +137,7 @@ class FieldBuilder implements FieldBuilderInterface {
                     field,
                     this.getFieldName(field),
                     this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             case 'googleMap':
@@ -132,7 +146,8 @@ class FieldBuilder implements FieldBuilderInterface {
                     this.getFieldName(field),
                     this.getFieldCondition(field),
                     this.modularityFrontendFormData,
-                    this.modularityFrontendFormLang
+                    this.modularityFrontendFormLang,
+                    this.notices
                 );
                 break;
             case 'repeater':
@@ -141,7 +156,8 @@ class FieldBuilder implements FieldBuilderInterface {
                     this.fieldsInitiator,
                     field,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
             default:
@@ -149,7 +165,8 @@ class FieldBuilder implements FieldBuilderInterface {
                     field,
                     type,
                     this.getFieldName(field),
-                    this.getFieldCondition(field)
+                    this.getFieldCondition(field),
+                    this.notices
                 );
                 break;
         }

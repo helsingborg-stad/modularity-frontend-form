@@ -7,13 +7,14 @@ class DateFactory {
     public static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const input = field.querySelector(`input[type="date"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Date field is missing input element.');
-            return NullFieldFactory.create(field, 'date', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'date', name, unstructuredConditions, notices);
         }
 
         return new Basic(

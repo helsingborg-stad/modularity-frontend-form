@@ -7,13 +7,14 @@ class TimeFactory {
     public static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const input = field.querySelector(`input[type="time"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Time field is missing input element.');
-            return NullFieldFactory.create(field, 'time', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'time', name, unstructuredConditions, notices);
         }
 
         return new Basic(

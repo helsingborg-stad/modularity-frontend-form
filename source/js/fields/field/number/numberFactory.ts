@@ -7,13 +7,14 @@ class NumberFactory {
     public static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const input = field.querySelector(`input[type="number"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Number field is missing input element.');
-            return NullFieldFactory.create(field, 'number', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'number', name, unstructuredConditions, notices);
         }
 
         return new Basic(

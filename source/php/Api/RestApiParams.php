@@ -4,12 +4,7 @@ namespace ModularityFrontendForm\Api;
 
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use WpService\WpService;
-
-enum RestApiParamEnums: string {
-  case PostId = 'post-id';
-  case ModuleId = 'module-id';
-  case Token = 'token';
-}
+use ModularityFrontendForm\Api\RestApiParamEnums;
 
 class RestApiParams 
 {
@@ -31,11 +26,11 @@ class RestApiParams
       $specifications = [];
 
       foreach ($enums as $enum) {
-          $specifications[$enum->value] = match ($enum) {
-            RestApiParamEnums::PostId   => self::getPostIdSpecification(),
-            RestApiParamEnums::ModuleId => self::getModuleIdSpecification(),
-            RestApiParamEnums::Token    => self::getTokenSpecification(),
-          };
+        $specifications[$enum->value] = match ($enum) {
+          RestApiParamEnums::PostId   => self::getPostIdSpecification(),
+          RestApiParamEnums::ModuleId => self::getModuleIdSpecification(),
+          RestApiParamEnums::Token    => self::getTokenSpecification(),
+        };
       }
 
       return $specifications;

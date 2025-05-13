@@ -9,6 +9,7 @@ import AsyncNonce from "./asyncNonce/asyncNonce";
 import SubmitStatusHandler from "./steps/submit/status/handler";
 import SubmitStatusRenderer from "./steps/submit/status/render";
 import FieldsInitiator from "./fields/fieldsInitiator";
+import Notice from "./fields/notice/notice";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -24,7 +25,13 @@ class Form {
 
     private setupFields() {
         const fieldsInitiatorInstance = new FieldsInitiator();
-        const builder = new FieldBuilder(fieldsInitiatorInstance, modularityFrontendFormData, modularityFrontendFormLang);
+        const builder = new FieldBuilder(
+            fieldsInitiatorInstance,
+            new Notice(this.formContainer),
+            modularityFrontendFormData,
+            modularityFrontendFormLang
+        );
+
         fieldsInitiatorInstance.init(builder);
 
         this.form.querySelectorAll('[data-js-field]').forEach(element => {

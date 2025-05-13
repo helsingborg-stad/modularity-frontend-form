@@ -7,13 +7,14 @@ class EmailFactory {
     static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const input = field.querySelector(`input[type="email"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Email field is missing input element.');
-            return NullFieldFactory.create(field, 'email', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'email', name, unstructuredConditions, notices);
         }
 
         return new Basic(

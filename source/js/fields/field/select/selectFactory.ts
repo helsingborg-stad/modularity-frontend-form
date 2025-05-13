@@ -7,14 +7,15 @@ class SelectFactory {
     public static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const select = field.querySelector('select') as HTMLSelectElement;
         const options = select?.querySelectorAll('option') as NodeListOf<HTMLOptionElement>;
 
         if (!options || options.length === 0) {
             console.error('Select field is missing select element or options');
-            return NullFieldFactory.create(field, 'select', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'select', name, unstructuredConditions, notices);
         }
 
         return new Select(

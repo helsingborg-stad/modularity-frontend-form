@@ -7,13 +7,14 @@ class TextFactory {
     static create(
         field: HTMLElement,
         name: string,
-        unstructuredConditions: any
+        unstructuredConditions: any,
+        notices: NoticeInterface
     ): FieldInterface {
         const input = field.querySelector(`input[type="text"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Text field is missing input element.');
-            return NullFieldFactory.create(field, 'text', name, unstructuredConditions);
+            return NullFieldFactory.create(field, 'text', name, unstructuredConditions, notices);
         }
 
         return new Basic(

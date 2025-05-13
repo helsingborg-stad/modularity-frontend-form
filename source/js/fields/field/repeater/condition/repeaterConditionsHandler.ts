@@ -17,7 +17,7 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 			this.isDisabled = disabled;
 
             this.parent.getField().classList.toggle('u-display--none', disabled);
-			this.dispatchUpdateEvent();
+			this.checkConditions();
 		}
 	}
 
@@ -34,10 +34,6 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 		this.updateDisabled(!isValid);
 	}
 
-	public dispatchUpdateEvent(): void {
-		this.triggerParentConditionValidation();
-	}
-
 	public getIsDisabled(): boolean {
 		return this.isDisabled;
 	}
@@ -50,7 +46,7 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 		this.fieldsObject[field.getName()] = field;
     }
 
-	private triggerParentConditionValidation(): void {
+	public checkConditions(): void {
 		for (const fieldName in this.fieldsObject) {
 			this.fieldsObject[fieldName].getConditionsHandler().validate();
 		}

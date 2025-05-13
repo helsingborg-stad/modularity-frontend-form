@@ -11,6 +11,7 @@ class Basic implements BasicInterface {
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
+        this.listenForChanges();
     }
 
     public getName(): string {
@@ -31,6 +32,12 @@ class Basic implements BasicInterface {
 
     public getInput(): HTMLInputElement {
         return this.input;
+    }
+
+    private listenForChanges(): void {
+        this.getInput().addEventListener('input', () => {
+            this.conditionsHandler.checkConditions();
+        });
     }
 }
 

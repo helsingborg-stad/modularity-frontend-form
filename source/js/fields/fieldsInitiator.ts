@@ -37,7 +37,7 @@ class FieldsInitiator implements FieldsInitiatorInterface {
         }
 
         for (const fieldName in fields) {
-            this.fieldBuilder.getFieldsObject()[fieldName].getConditionsHandler().dispatchUpdateEvent();
+            this.fieldBuilder.getFieldsObject()[fieldName].getConditionsHandler().checkConditions();
         }
     }
 }

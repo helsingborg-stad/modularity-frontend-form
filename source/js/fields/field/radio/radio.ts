@@ -11,6 +11,7 @@ class Radio implements RadioInterface {
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
         this.radioValidator.init(this);
+        this.listenForChanges();
     }
 
     public getName(): string {
@@ -36,6 +37,14 @@ class Radio implements RadioInterface {
 
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    private listenForChanges(): void {
+        this.choices.forEach(choice => {
+            choice.addEventListener('change', () => {
+                this.conditionsHandler.checkConditions();
+            });
+        });
     }
 }
 

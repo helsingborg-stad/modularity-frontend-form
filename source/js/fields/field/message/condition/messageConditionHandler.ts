@@ -31,10 +31,6 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 		this.updateDisabled(!isValid);
 	}
 
-	public dispatchUpdateEvent(): void {
-		return;
-	}
-
 	public getIsDisabled(): boolean {
 		return this.isDisabled;
 	}
@@ -47,8 +43,8 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 		return;
     }
 
-	private setValueChangeListener(): void {
-        return;
+	public checkConditions(): void {
+		return;
 	}
 }
 

@@ -12,6 +12,7 @@ class Checkbox implements CheckboxInterface {
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
+        this.listenForChanges();
     }
 
     public getName(): string {
@@ -40,6 +41,15 @@ class Checkbox implements CheckboxInterface {
 
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    private listenForChanges(): void {
+        this.choices.forEach(choice => {
+            choice.addEventListener('change', () => {
+                this.conditionsHandler.checkConditions();
+                // this.validator.validate();
+            });
+        });
     }
 }
 

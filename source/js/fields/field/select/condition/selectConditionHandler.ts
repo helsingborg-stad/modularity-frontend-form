@@ -10,7 +10,6 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 	public init(parent: SelectInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
-		this.setValueChangeListener();
 	}
 
 	private updateDisabled(disabled: boolean): void {
@@ -20,7 +19,7 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
             this.parent.getField().classList.toggle('u-display--none', disabled);
             this.parent.getSelect().disabled = disabled;
 
-			this.dispatchUpdateEvent();
+			this.checkConditions();
 		}
 	}
 
@@ -37,12 +36,6 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 		this.updateDisabled(!isValid);
 	}
 
-	public dispatchUpdateEvent(): void {
-        if (this.parent?.getSelect()) {
-			this.parent.getSelect().dispatchEvent(new Event('change'));
-		}
-	}
-
 	public getIsDisabled(): boolean {
 		return this.isDisabled;
 	}
@@ -55,12 +48,10 @@ class SelectConditionHandler implements ConditionsHandlerInterface {
 		this.fieldsObject[field.getName()] = field;
     }
 
-	private setValueChangeListener(): void {
-        this.parent?.getSelect().addEventListener('change', () => {
-            for (const fieldName in this.fieldsObject) {
-                this.fieldsObject[fieldName].getConditionsHandler().validate();
-            }
-        });
+	public checkConditions(): void {
+		for (const fieldName in this.fieldsObject) {
+			this.fieldsObject[fieldName].getConditionsHandler().validate();
+		}
 	}
 }
 

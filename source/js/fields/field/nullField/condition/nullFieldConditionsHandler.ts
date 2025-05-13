@@ -13,10 +13,6 @@ class NullFieldConditionsHandler implements ConditionsHandlerInterface {
         return true;
     }
 
-    public dispatchUpdateEvent(): void {
-        return;
-    }
-
     public getIsDisabled(): boolean {
         return false;
     }
@@ -24,6 +20,10 @@ class NullFieldConditionsHandler implements ConditionsHandlerInterface {
     public addValueChangeListener(field: FieldInterface): void {
         return;
     }
-  }
+
+    public checkConditions(): void {
+        return;
+    }
+}
   
   export default NullFieldConditionsHandler;

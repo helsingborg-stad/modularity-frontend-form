@@ -69,7 +69,7 @@ interface ConditionsHandlerInterface {
     getIsDisabled(): boolean;
     validate(): void;
     addValueChangeListener(field: FieldInterface): void;
-    dispatchUpdateEvent(): void;
+    checkConditions(): void;
 }
 
 interface ConditionValidatorInterface {

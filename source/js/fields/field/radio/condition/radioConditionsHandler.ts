@@ -10,7 +10,6 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 	public init(parent: RadioInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
-		this.setValueChangeListener();
 	}
 
 	private updateDisabled(disabled: boolean): void {
@@ -25,7 +24,7 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 				checkbox.disabled = disabled;
 			});
 
-			this.dispatchUpdateEvent();
+			this.checkConditions();
 		}
 	}
 
@@ -41,14 +40,6 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 		this.updateDisabled(!isValid);
 	}
 
-	public dispatchUpdateEvent(): void {
-		const choice = this.parent?.getChoices()[0];
-
-		if (choice) {
-			choice.dispatchEvent(new Event('change'));
-		}
-	}
-
 	public getIsDisabled(): boolean {
 		return this.isDisabled;
 	}
@@ -61,14 +52,10 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 		this.fieldsObject[field.getName()] = field;
     }
 
-	private setValueChangeListener(): void {
-		this.parent?.getChoices().forEach((radio) => {
-			radio.addEventListener('change', () => {
-				for (const fieldName in this.fieldsObject) {
-					this.fieldsObject[fieldName].getConditionsHandler().validate();
-				}
-			});
-		});
+	public checkConditions(): void {
+		for (const fieldName in this.fieldsObject) {
+			this.fieldsObject[fieldName].getConditionsHandler().validate();
+		}
 	}
 }
 

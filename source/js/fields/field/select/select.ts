@@ -12,6 +12,7 @@ class Select implements SelectInterface {
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
         this.selectValidator.init(this);
+        this.listenForChanges();
     }
 
     public getName(): string {
@@ -40,6 +41,12 @@ class Select implements SelectInterface {
 
     public getSelectedOptions(): string[] {
         return [...this.getOptions()].filter(option => option.selected).map(option => option.value);
+    }
+
+    public listenForChanges(): void {
+        this.getSelect().addEventListener('change', () => {
+            this.conditionsHandler.checkConditions();
+        });
     }
 }
 

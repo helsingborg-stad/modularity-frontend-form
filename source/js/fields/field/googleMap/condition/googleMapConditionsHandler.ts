@@ -1,5 +1,3 @@
-import { PlaceObject } from '@helsingborg-stad/openstreetmap';
-
 class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
 	private parent: GoogleMapInterface|null = null;
@@ -12,7 +10,6 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 	public init(parent: GoogleMapInterface, conditionsBuilder: ConditionBuilderInterface): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
-		this.setValueChangeListener();
 	}
 
 	private updateDisabled(disabled: boolean): void {
@@ -22,7 +19,7 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
             this.parent.getField().classList.toggle('u-display--none', disabled);
 			this.parent.getHiddenField().disabled = disabled;
 
-			this.dispatchUpdateEvent();
+			this.checkConditions();
 		}
 	}
 
@@ -39,10 +36,6 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 		this.updateDisabled(!isValid);
 	}
 
-	public dispatchUpdateEvent(): void {
-		this.checkConditions();
-	}
-
 	public getIsDisabled(): boolean {
 		return this.isDisabled;
 	}
@@ -55,13 +48,7 @@ class GoogleMapConditionsHandler implements ConditionsHandlerInterface {
 		this.fieldsObject[field.getName()] = field;
     }
 
-	private setValueChangeListener(): void {
-		this.parent?.getOpenstreetmap().addMarkerMovedListener((placeObject: PlaceObject|null) => {
-			this.checkConditions();
-		});
-	}
-
-	private checkConditions(): void {
+	public checkConditions(): void {
 		for (const fieldName in this.fieldsObject) {
 			this.fieldsObject[fieldName].getConditionsHandler().validate();
 		}

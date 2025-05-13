@@ -19,7 +19,7 @@ use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiResponseStatus;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 
-class Post extends RestApiEndpoint
+class Update extends RestApiEndpoint
 {
     use GetModuleConfigInstanceTrait;
 

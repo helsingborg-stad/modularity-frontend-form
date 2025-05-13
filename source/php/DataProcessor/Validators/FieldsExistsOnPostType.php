@@ -13,8 +13,6 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 
 class FieldsExistsOnPostType implements ValidatorInterface
 {
-    use GetModuleConfigInstanceTrait;
-
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
@@ -24,15 +22,13 @@ class FieldsExistsOnPostType implements ValidatorInterface
     }
 
     /**
-     * Checks if the request includes fields that are not present on the target post type
-     *
-     * @param array $fieldMeta The field meta data
-     * @param string $postType The post type to check against
-     *
-     * @return array The invalid field keys
+     * @inheritDoc
      */
     public function validate($data): ?ValidationResultInterface
     {
+      // Init validation result handler
+      $validationResult = new ValidationResult();
+
       //All submitted keys
       $fieldKeys = array_keys($data);
 
@@ -44,7 +40,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
   
       // If there are any stray keys, set an error
       if($strayKeys = array_diff($fieldKeys, $validKeys)) {
-        $validationResult = (new ValidationResult())->setError(
+        $validationResult->setError(
           new WP_Error(
             "validation_error", 
             $this->wpService->__(
@@ -57,7 +53,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
         );
       }
 
-      return $validationResult ?? null;
+      return $validationResult;
     }
 
     /**

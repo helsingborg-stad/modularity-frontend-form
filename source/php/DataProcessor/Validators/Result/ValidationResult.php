@@ -10,9 +10,7 @@ class ValidationResult implements ValidationResultInterface
   private array $errors = [];
 
   /**
-   * Check if the validation result is valid.
-   *
-   * @return bool True if valid, false otherwise.
+   * @inheritDoc
    */
   public function getIsValid(): bool
   {
@@ -20,19 +18,15 @@ class ValidationResult implements ValidationResultInterface
   }
 
   /**
-   * Get the validation errors.
-   *
-   * @return array An array of WP_Error objects.
+   * @inheritDoc
    */
-  public function getErrors(): array
+  public function getErrors(): ?array
   {
-    return $this->errors;
+    return $this->errors ?: null;
   }
 
   /**
-   * Add an error to the validation result.
-   *
-   * @param WP_Error $error The error to add.
+   * @inheritDoc
    */
   public function setError(WP_Error $error): void
   {

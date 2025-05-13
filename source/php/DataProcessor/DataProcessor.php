@@ -1,9 +1,12 @@
 <?php 
 
+/**
+ * This class will validate and process the data.
+ * Input must fully validate before it is passed to the handlers.
+ * Handlers are responsible inserting or sending the data somewhere.
+ */
+
 namespace ModularityFrontendForm\DataProcessor;
-use ModularityFrontendForm\Validator\ValidatorInterface;
-use ModularityFrontendForm\Handler\HandlerInterface;
-use RuntimeException;
 
 class DataProcessor {
     public function __construct(
@@ -11,15 +14,33 @@ class DataProcessor {
         private array $handlers
     ) {}
 
-    public function process(array $data): void {
+    /**
+     * Process the data.
+     *
+     * @param array $data The data to process.
+     * @return true|array True if the submission succeded, otherwise an array of errors.
+     */
+    public function process(array $data): true|array {
+        $allErrors = [];
+
         foreach ($this->validators as $validator) {
-            if (!$validator->validate($data)) {
-                throw new RuntimeException('Validation failed');
+            $validationResult = $validator->validate($data);
+
+            if($validationResult->getIsValid()) {
+                continue;
+            }
+
+            foreach($validationResult->getErrors() as $error) {
+                $allErrors[] = $error;
             }
         }
 
-        foreach ($this->handlers as $handler) {
-            $handler->handle($data);
+        if(empty($allErrors)) {
+            foreach ($this->handlers as $handler) {
+                $handler->handle($data);
+            }
+            return true;
         }
+        return $allErrors;
     }
 }

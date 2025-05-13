@@ -24,8 +24,8 @@ class Post extends RestApiEndpoint
     use GetModuleConfigInstanceTrait;
 
     public const NAMESPACE = 'modularity-frontend-form/v1';
-    public const ROUTE     = 'submit/post';
-    public const KEY       = 'submitForm';
+    public const ROUTE     = 'submit/update';
+    public const KEY       = 'updateForm';
 
     public function __construct(
         private WpService $wpService,
@@ -42,7 +42,7 @@ class Post extends RestApiEndpoint
     public function handleRegisterRestRoute(): bool
     {
         return register_rest_route(self::NAMESPACE, self::ROUTE, array(
-            'methods'             => WP_REST_Server::CREATABLE,
+            'methods'             => WP_REST_Server::EDITABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
             'args'                => [
@@ -58,14 +58,26 @@ class Post extends RestApiEndpoint
                     },
                 ],
                 'post-id' => [
-                    'description' => __('The post id that the request originates from', 'modularity-frontend-form'),
+                    'description' => __('The post id that we want to edit.', 'modularity-frontend-form'),
                     'type'        => 'integer',
                     'format'      => 'uri',
                     'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
+                    'validate_callback' => function ($postId) {
+                        return $this->wpService->getPost($postId) !== null;
+                    },
+                ],
+                'token' => [
+                    'description' => __('The post token (password) that is required to edit a post.', 'modularity-frontend-form'),
+                    'type'        => 'string',
+                    'format'      => 'uri',
+                    'required'    => true,
+                    'validate_callback' => function ($token, $request) {
+                        $postId = $request->get_params()['post-id'] ?? null;
+                        $post = $this->wpService->getPost($postId);
+                        if ($post === null) {
+                            return false;
+                        }
+                        return (bool) $token === $post->post_password;
                     },
                 ],
             ]
@@ -89,7 +101,7 @@ class Post extends RestApiEndpoint
         //Get validators
         $validators = (function () use ($moduleId) {
             $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config);
-            return $validatorFactory->createInsertValidators($moduleId) ?? [];
+            return $validatorFactory->createUpdateValidators($moduleId) ?? [];
         })();
 
         // Get handlers
@@ -111,14 +123,14 @@ class Post extends RestApiEndpoint
         if($result !== true) {
             return rest_ensure_response([
                 'status' => RestApiResponseStatus::Error,
-                'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
+                'message' => __('Something went wrong when updating the form.', 'modularity-frontend-form'),
                 'errors' => $result,
             ]);
         }
 
         return rest_ensure_response([
             'status' => RestApiResponseStatus::Success,
-            'message' => __('Form submitted successfully', 'modularity-frontend-form')
+            'message' => __('Form updated successfully', 'modularity-frontend-form')
         ]);
     }
 }

@@ -11,7 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 
-class FieldsExistsOnPostType implements ValidatorInterface
+class FieldValidationWithAcf implements ValidatorInterface
 {
     use GetModuleConfigInstanceTrait;
 

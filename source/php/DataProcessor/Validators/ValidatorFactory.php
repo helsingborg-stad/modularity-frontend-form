@@ -7,6 +7,8 @@ use AcfService\AcfService;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\Validators\FieldsExistsOnPostType;
+use ModularityFrontendForm\DataProcessor\Validators\FieldValidationWithAcf;
+use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 class ValidatorFactory {
 
   use GetModuleConfigInstanceTrait;
@@ -14,7 +16,8 @@ class ValidatorFactory {
   public function __construct(
     private WpService $wpService,
     private AcfService $acfService,
-    private ConfigInterface $config
+    private ConfigInterface $config,
+    private ModuleConfigFactoryInterface $moduleConfigFactory
   ) {}
 
   /**
@@ -25,8 +28,14 @@ class ValidatorFactory {
    * @return ValidatorInterface[] An array of validators
    */
   public function createUpdateValidators(int $moduleId): array {
-      $args = $this->createArgs($moduleId);
-      return array_unique(array_merge($this->createInsertValidators($moduleId),[]));
+      $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
+      
+      return array_unique(
+        array_merge(
+          $this->createInsertValidators($moduleId), 
+          []
+        )
+      );
   }
 
   /**
@@ -37,18 +46,18 @@ class ValidatorFactory {
    * @return ValidatorInterface[] An array of validators
    */
   public function createInsertValidators(int $moduleId): array {
-      $args = $this->createArgs($moduleId);
+      $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
       return  [
           //new NonceValidator(...$args),
           new FieldsExistsOnPostType(...$args),
-          //new FieldValidator(...$args),
+          new FieldValidationWithAcf(...$args),
       ];
   }
 
   /**
    * Creates a array representing the arguments for the validator
    */
-  private function createArgs(int $moduleId): array {
+  private function createValidatorInterfaceRequiredArguments(int $moduleId): array {
     return [
       $this->wpService,
       $this->acfService,

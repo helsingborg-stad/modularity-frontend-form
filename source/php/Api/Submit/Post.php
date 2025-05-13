@@ -77,7 +77,7 @@ class Post extends RestApiEndpoint
 
         //Get validators
         $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config);
+            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
             return $validatorFactory->createInsertValidators($moduleId) ?? [];
         })();
 
@@ -88,14 +88,17 @@ class Post extends RestApiEndpoint
         })();*/ 
         $handlers = [];
 
-        // Validate & insert
-        $result = new DataProcessor(
+        // Creates the data processor
+        $dataProcessor = new DataProcessor(
             $validators,
             $handlers,
             $this->config,
             $this->getModuleConfigInstance($moduleId),
             $moduleId
         );
+
+        // Process data (validate with validators and handle with handlers)
+        $result = $dataProcessor->process($fieldMeta);
 
         if($result !== true) {
             return rest_ensure_response([

@@ -22,7 +22,8 @@ class FieldsExistsOnPostType implements ValidatorInterface
         private WpService $wpService,
         private AcfService $acfService,
         private ConfigInterface $config,
-        private ModuleConfigInterface $moduleConfigInstance
+        private ModuleConfigInterface $moduleConfigInstance,
+        private ValidationResultInterface $validationResult = new ValidationResult()
     ) {
     }
 
@@ -31,9 +32,6 @@ class FieldsExistsOnPostType implements ValidatorInterface
      */
     public function validate($data): ?ValidationResultInterface
     {
-      // Init validation result handler
-      $validationResult = new ValidationResult();
-
       //All submitted keys
       $fieldKeys = array_keys($data);
 
@@ -46,7 +44,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
   
       // If there are any stray keys, set an error
       if($strayKeys = array_diff($fieldKeys, $validKeys)) {
-        $validationResult->setError(
+        $this->validationResult->setError(
           new WP_Error(
             "validation_error", 
             $this->wpService->__(
@@ -59,7 +57,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
         );
       }
 
-      return $validationResult;
+      return $this->validationResult;
     }
 
     /**

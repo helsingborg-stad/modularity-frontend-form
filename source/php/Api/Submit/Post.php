@@ -73,7 +73,9 @@ class Post extends RestApiEndpoint
         $moduleId        = $request->get_params()['module-id']                          ?? null;
         $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
         $nonce           = $request->get_params()['nonce']                              ?? '';
-        $postId          = $request->get_params()['post-id']                            ?? null;
+
+        //Consolidated data
+        $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
 
         //Get validators
         $validators = (function () use ($moduleId) {
@@ -98,7 +100,7 @@ class Post extends RestApiEndpoint
         );
 
         // Process data (validate with validators and handle with handlers)
-        $result = $dataProcessor->process($fieldMeta);
+        $result = $dataProcessor->process($data);
 
         if($result !== true) {
             return rest_ensure_response([

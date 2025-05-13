@@ -8,6 +8,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\Validators\FieldsExistsOnPostType;
 use ModularityFrontendForm\DataProcessor\Validators\FieldValidationWithAcf;
+use ModularityFrontendForm\DataProcessor\Validators\NonceValidator;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 class ValidatorFactory {
 
@@ -33,7 +34,9 @@ class ValidatorFactory {
       return array_unique(
         array_merge(
           $this->createInsertValidators($moduleId), 
-          []
+          [
+            //Additional validators for update process
+          ]
         )
       );
   }
@@ -48,7 +51,7 @@ class ValidatorFactory {
   public function createInsertValidators(int $moduleId): array {
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
       return  [
-          //new NonceValidator(...$args),
+          new NonceValidator(...$args),
           new FieldsExistsOnPostType(...$args),
           new FieldValidationWithAcf(...$args),
       ];

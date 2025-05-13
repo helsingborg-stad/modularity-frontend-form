@@ -41,6 +41,7 @@ class DataProcessor {
             }
             return true;
         }
+        
         return $allErrors;
     }
 }

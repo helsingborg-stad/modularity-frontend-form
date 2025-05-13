@@ -15,11 +15,17 @@ class FieldValidationWithAcf implements ValidatorInterface
 {
     use GetModuleConfigInstanceTrait;
 
+    //Data keys that should be ignored during validation of this validator
+    private array $bypassValidationForKeys = [
+      'nonce'
+    ];
+
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
         private ConfigInterface $config,
-        private ModuleConfigInterface $moduleConfigInstance
+        private ModuleConfigInterface $moduleConfigInstance,
+        private ValidationResultInterface $validationResult = new ValidationResult()
     ) {
     }
 
@@ -28,12 +34,17 @@ class FieldValidationWithAcf implements ValidatorInterface
      */
     public function validate($data): ?ValidationResultInterface
     {
-      $validationResult = new ValidationResult();
       foreach ($data as $key => $value) {
+
+          // Check if the field key is in the bypass list
+          if(in_array($key, $this->bypassValidationForKeys)) {
+            continue;
+          }
+
           if($field = acf_get_field($key)) { //TODO: Add to wp service
               $isValid = acf_validate_value($value, $field, ""); //TODO: Add to wp service
               if(!$isValid) {
-                $validationResult->setError(
+                $this->validationResult->setError(
                   new WP_Error(
                     "validation_error", 
                     $this->wpService->__(
@@ -51,7 +62,7 @@ class FieldValidationWithAcf implements ValidatorInterface
           }
         }
         
-        return $validationResult;
+        return $this->validationResult;
     }
 
 }

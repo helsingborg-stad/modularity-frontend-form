@@ -29,9 +29,16 @@ class FieldValidator implements FieldValidatorInterface {
             }
         }
 
+        if (isValid) {
+            this.uiHandler.removeInvalidNotice();
+        }
+
         return isValid;
     }
 
+    // TODO: Is this needed?
+    // How should this work? Do we only listen after we run validate (trying to send the form)?
+    // Or should we always use validate? since it will run only after having a value and 
     public valueChangeListener(): void {
         if (this.invalidValidator) {
             this.invalidValidator = this.invalidValidator.isInvalid();

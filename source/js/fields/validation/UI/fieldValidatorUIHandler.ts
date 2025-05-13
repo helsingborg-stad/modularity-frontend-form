@@ -14,7 +14,8 @@ class FieldValidatorUIHandler implements FieldValidatorUIHandlerInterface {
         }
 
         const notice = this.notices.getErrorNotice(message)
-        console.log(notice);
+        this.field.getField().prepend(notice);
+        this.activeNotice = notice;
     }
 
     public removeInvalidNotice(): void {

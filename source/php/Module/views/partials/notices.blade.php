@@ -1,25 +1,30 @@
 @element([
-    'componentElement' => 'template'
+    'componentElement' => 'template',
+    'attributeList' => [
+        'data-js-frontend-form-error-notice' => 'true',
+    ]
 ])
     @notice([
         'type' => 'danger',
         'icon' => ['icon' => 'error'],
-        'attributeList' => [
-            'data-js-frontend-form-error-notice' => 'true',
-        ],
         'message' => [
-            'text' => '{TEXT_PLACEHOLDER}'
+            'text' => '{MESSAGE_PLACEHOLDER}'
         ]
     ])
     @endnotice
+@endelement
+
+@element([
+    'componentElement' => 'template',
+    'attributeList' => [
+        'data-js-frontend-form-success-notice' => 'true',
+    ]
+])
     @notice([
         'type' => 'success',
         'icon' => ['icon' => 'check_circle'],
-        'attributeList' => [
-            'data-js-frontend-form-error-notice' => 'true',
-        ],
         'message' => [
-            'text' => '{TEXT_PLACEHOLDER}'
+            'text' => '{MESSAGE_PLACEHOLDER}'
         ]
     ])
     @endnotice

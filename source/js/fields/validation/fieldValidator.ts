@@ -7,7 +7,7 @@ class FieldValidator implements FieldValidatorInterface {
     }
 
     public init(parent: FieldInterface) {
-        this.parent;
+        this.parent = parent;
         this.uiHandler.init(this.parent);
         this.validators.forEach(validator => {
             validator.init(this.parent);
@@ -18,9 +18,10 @@ class FieldValidator implements FieldValidatorInterface {
         let isValid = true;
 
         for (const validator of this.validators) {
-            const isInvalid = validator.isInvalid(this.parent);
+            const isInvalid = validator.isInvalid();
             if (isInvalid) {
                 isValid = false;
+                this.uiHandler.handleInvalid(isInvalid)
                 break;
             }
         }

@@ -55,11 +55,12 @@ interface FieldValidatorInterface {
 
 interface FieldValidatorUIHandlerInterface {
     init(field: FieldInterface): void;
+    handleInvalid(validator: ValidationControlInterface): void;
 }
 
 interface ValidationControlInterface {
     init(field: FieldInterface): void;
-    isInvalid(field: FieldInterface): false|string;
+    isInvalid(): false|ValidationControlInterface;
 }
 
 interface ConditionsHandlerInterface {

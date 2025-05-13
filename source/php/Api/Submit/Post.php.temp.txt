@@ -1,75 +1,3 @@
-<?php
-
-namespace ModularityFrontendForm\Api\Submit;
-
-use AcfService\AcfService;
-use ModularityFrontendForm\Api\RestApiEndpoint;
-use \ModularityFrontendForm\Config\ConfigInterface;
-use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
-use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
-use ModularityFrontendForm\DataProcessor\DataProcessor;
-use WP;
-use WP_Error;
-use WP_Http;
-use WP_REST_Request;
-use WP_REST_Response;
-use WP_REST_Server;
-use WpService\WpService;
-
-use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-
-class Post extends RestApiEndpoint
-{
-    use GetModuleConfigInstanceTrait;
-
-    public const NAMESPACE = 'modularity-frontend-form/v1';
-    public const ROUTE     = 'submit/post';
-    public const KEY       = 'submitForm';
-
-    public function __construct(
-        private WpService $wpService,
-        private AcfService $acfService,
-        private ConfigInterface $config,
-        private ModuleConfigFactoryInterface $moduleConfigFactory
-    ) {}
-
-    /**
-     * Registers a REST route
-     *
-     * @return bool Whether the route was registered successfully
-     */
-    public function handleRegisterRestRoute(): bool
-    {
-        return register_rest_route(self::NAMESPACE, self::ROUTE, array(
-            'methods'             => WP_REST_Server::CREATABLE,
-            'callback'            => array($this, 'handleRequest'),
-            'permission_callback' => '__return_true',
-            'args'                => [
-                'module-id' => [
-                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
-                    },
-                ],
-                'post-id' => [
-                    'description' => __('The post id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
-                    },
-                ],
-            ]
-        ));
-    }
 
     /**
      * Handles a REST request to submit a form
@@ -80,44 +8,6 @@ class Post extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        $moduleId        = $request->get_params()['module-id']                          ?? null;
-        $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
-        $nonce           = $request->get_params()['nonce']                              ?? '';
-        $postId          = $request->get_params()['post-id']                            ?? null;
-
-        //Get validators
-        $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config);
-            return $validatorFactory->createInsertValidators($moduleId) ?? [];
-        })();
-
-        // Get handlers
-        /*$handlers = (function () use ($moduleId) {
-            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config);
-            return $handlerFactory->createHandlers($moduleId) ?? [];
-        })();*/ 
-        $handlers = [];
-
-
-        // Validate & insert
-        $result = new DataProcessor(
-            $validators,
-            $handlers,
-            $this->config,
-            $this->getModuleConfigInstance($moduleId),
-            $moduleId
-        );
-
-
-
-
-
-
-
-
-
-
-
 
         // Check if the request is valid
         if (!$this->validateNonce($nonce, $moduleId)) {
@@ -175,23 +65,6 @@ class Post extends RestApiEndpoint
         $targetPostType = $this->getModuleConfigInstance(
             $moduleID
         )->getTargetPostType();
-
-        // Check if all fields exists on the target post type
-        if($invalidFields = $this->requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, $targetPostType)) {
-            return new WP_Error(
-                'invalid_field',
-                __('Some fields do not belong to this form.', 'modularity-frontend-form'),
-                ['invalid_fields' => array_values($invalidFields)],
-            );
-        }
-
-        if($invalidFields = $this->validateRequestInputValuesToFieldSpecifications($fieldMeta)) {
-            return new WP_Error(
-                'invalid_field_values',
-                __('Some fields contained invalid data.', 'modularity-frontend-form'),
-                ['invalid_fields' => array_values($invalidFields)],
-            );
-        }
         
         $result = $this->wpService->wpInsertPost([
             'post_title'    => 'Test post',
@@ -237,67 +110,3 @@ class Post extends RestApiEndpoint
         }
     }
 
-    /**
-     * Checks if the request includes fields that are not present on the target post type
-     *
-     * @param array $fieldMeta The field meta data
-     * @param string $postType The post type to check against
-     *
-     * @return array The invalid field keys
-     */
-    public function requestIncludesFiledNotPresentOnTargetPostType($fieldMeta, $postType)
-    {
-        $fieldKeys = array_keys($fieldMeta);
-
-        $validKeys = $this->filterUnmappedFieldKeysForPostType(
-            $fieldKeys,
-            $postType
-        );
-
-        return array_diff($fieldKeys, $validKeys);
-    }
-
-    /**
-     * Validates the request input values against the field specifications
-     *
-     * @param array $fieldMeta The field meta data
-     *
-     * @return array The invalid fields
-     */
-    public function validateRequestInputValuesToFieldSpecifications($fieldMeta): ?array
-    {
-        
-    }
-
-    
-
-    /**
-     * Sanitizes the field value based on its type
-     *
-     * @param mixed $value The value to sanitize
-     * @param string $fieldKey The key of the field
-     *
-     * @return mixed The sanitized value
-     */
-    private function santitileFieldValue($value, $fieldKey = '') {
-        return $value;
-    }
-
-    /**
-     * Validates the nonce for the request
-     *
-     * @param string $nonce The nonce to validate
-     * @param int $moduleId The module ID
-     *
-     * @return bool Whether the nonce is valid
-     */
-    public function validateNonce(string $nonce, int $moduleId): bool
-    {
-        $nonceKey = $this->wpService->wpCreateNonce(
-            $this->getModuleConfigInstance(
-                $moduleId
-            )->getNonceKey()
-        );
-        return $nonceKey === $nonce;
-    }
-}

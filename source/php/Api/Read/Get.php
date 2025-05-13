@@ -19,13 +19,13 @@ use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiResponseStatus;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 
-class Update extends RestApiEndpoint
+class Post extends RestApiEndpoint
 {
     use GetModuleConfigInstanceTrait;
 
     public const NAMESPACE = 'modularity-frontend-form/v1';
-    public const ROUTE     = 'submit/update';
-    public const KEY       = 'updateForm';
+    public const ROUTE     = 'submit/post';
+    public const KEY       = 'submitForm';
 
     public function __construct(
         private WpService $wpService,
@@ -42,7 +42,7 @@ class Update extends RestApiEndpoint
     public function handleRegisterRestRoute(): bool
     {
         return register_rest_route(self::NAMESPACE, self::ROUTE, array(
-            'methods'             => WP_REST_Server::EDITABLE,
+            'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
             'args'                => [
@@ -56,30 +56,22 @@ class Update extends RestApiEndpoint
                             $moduleId
                         )->getModuleIsSubmittable();
                     },
-                ],
-                'post-id' => [
-                    'description' => __('The post id that we want to edit.', 'modularity-frontend-form'),
+                  ],
+                  'post-id' => [
+                    'description' => __('The post id that stores the form data.', 'modularity-frontend-form'),
                     'type'        => 'integer',
                     'format'      => 'uri',
                     'required'    => true,
-                    'validate_callback' => function ($postId, $request) {
-                        $postId   = $request->get_params()['post-id']   ?? null;
-                        $moduleId = $request->get_params()['module-id'] ?? null;
-
-                        $postTypeByPostId   = $this->wpService->getPost($postId) !== null;
-                        $postTypeConfigured = $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getTargetPostType();
-
-                        return $postTypeByPostId === $postTypeConfigured;
+                    'validate_callback' => function ($postId) {
+                        return $this->wpService->getPostType($postId) === WP::POST_TYPE_POST;
                     },
-                ],
-                'token' => [
-                    'description' => __('The post token (password) that is required to edit a post.', 'modularity-frontend-form'),
+                  ],
+                  'token' => [
+                    'description' => __('The token that is used to authenticate the request.', 'modularity-frontend-form'),
                     'type'        => 'string',
                     'format'      => 'uri',
                     'required'    => true,
-                    'validate_callback' => function ($token, $request) {
+                    'validate_callback' => function ($token) {
                         $postId = $request->get_params()['post-id'] ?? null;
                         $post = $this->wpService->getPost($postId);
                         if ($post === null) {
@@ -87,7 +79,7 @@ class Update extends RestApiEndpoint
                         }
                         return (bool) $token === $post->post_password;
                     },
-                ],
+                  ],
             ]
         ));
     }
@@ -104,12 +96,14 @@ class Update extends RestApiEndpoint
         $moduleId        = $request->get_params()['module-id']                          ?? null;
         $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
         $nonce           = $request->get_params()['nonce']                              ?? '';
-        $postId          = $request->get_params()['post-id']                            ?? null;
+
+        //Consolidated data
+        $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
 
         //Get validators
         $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config);
-            return $validatorFactory->createUpdateValidators($moduleId) ?? [];
+            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+            return $validatorFactory->createInsertValidators($moduleId) ?? [];
         })();
 
         // Get handlers
@@ -119,8 +113,8 @@ class Update extends RestApiEndpoint
         })();*/ 
         $handlers = [];
 
-        // Validate & insert
-        $result = new DataProcessor(
+        // Creates the data processor
+        $dataProcessor = new DataProcessor(
             $validators,
             $handlers,
             $this->config,
@@ -128,17 +122,20 @@ class Update extends RestApiEndpoint
             $moduleId
         );
 
+        // Process data (validate with validators and handle with handlers)
+        $result = $dataProcessor->process($data);
+
         if($result !== true) {
             return rest_ensure_response([
                 'status' => RestApiResponseStatus::Error,
-                'message' => __('Something went wrong when updating the form.', 'modularity-frontend-form'),
+                'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
                 'errors' => $result,
             ]);
         }
 
         return rest_ensure_response([
             'status' => RestApiResponseStatus::Success,
-            'message' => __('Form updated successfully', 'modularity-frontend-form')
+            'message' => __('Form submitted successfully', 'modularity-frontend-form')
         ]);
     }
 }

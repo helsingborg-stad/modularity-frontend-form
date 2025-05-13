@@ -4,6 +4,8 @@ namespace ModularityFrontendForm\Api\Submit;
 
 use AcfService\AcfService;
 use ModularityFrontendForm\Api\RestApiEndpoint;
+use ModularityFrontendForm\Api\RestApiParams;
+use ModularityFrontendForm\Api\RestApiParamEnums;
 use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
@@ -45,19 +47,7 @@ class Post extends RestApiEndpoint
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
-            'args'                => [
-                'module-id' => [
-                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
-                    },
-                ]
-            ]
+            'args' => (new RestApiParams($this->wpService))->getParamSpecification(RestApiParamEnums::ModuleId)
         ));
     }
 

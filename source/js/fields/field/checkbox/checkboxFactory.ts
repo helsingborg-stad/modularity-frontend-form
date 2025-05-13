@@ -2,6 +2,7 @@ import NullFieldFactory from "../nullField/nullFieldFactory";
 import Checkbox from "./checkbox";
 import CheckboxConditionsHandler from "./condition/checkboxConditionsHandler";
 import CheckboxConditionValidator from "./condition/checkboxConditionValidator";
+import CheckboxValidator from "./validation/checkboxValidator";
 
 class CheckboxFactory {
     public static create(
@@ -21,7 +22,8 @@ class CheckboxFactory {
             choices,
             name,
             new CheckboxConditionValidator(),
-            new CheckboxConditionsHandler(unstructuredConditions)
+            new CheckboxConditionsHandler(unstructuredConditions),
+            new CheckboxValidator()
         );
     }
 }

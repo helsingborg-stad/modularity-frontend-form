@@ -3,18 +3,23 @@ class Checkbox implements CheckboxInterface {
         private field: HTMLElement,
         private choices: NodeListOf<HTMLInputElement>,
         private name: string,
-        private checkboxValidator: ConditionValidatorInterface,
-        private conditionsHandler: ConditionsHandlerInterface
+        private conditionValidator: ConditionValidatorInterface,
+        private conditionsHandler: ConditionsHandlerInterface,
+        private validator: FieldValidatorInterface
     ) {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
-        this.checkboxValidator.init(this);
+        this.conditionValidator.init(this);
     }
 
     public getName(): string {
         return this.name;
+    }
+
+    public getValidator(): FieldValidatorInterface {
+        return this.validator;
     }
 
     public getConditionsHandler(): ConditionsHandlerInterface {
@@ -22,7 +27,7 @@ class Checkbox implements CheckboxInterface {
     }
 
     public getConditionValidator(): ConditionValidatorInterface {
-        return this.checkboxValidator;
+        return this.conditionValidator;
     }
 
     public getChoices(): NodeListOf<HTMLInputElement> {

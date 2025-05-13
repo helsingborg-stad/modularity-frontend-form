@@ -8,6 +8,8 @@ use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
+use ModularityFrontendForm\Api\RestApiParams;
+use ModularityFrontendForm\Api\RestApiParamEnums;
 use WP;
 use WP_Error;
 use WP_Http;
@@ -45,42 +47,11 @@ class Post extends RestApiEndpoint
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
-            'args'                => [
-                'module-id' => [
-                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
-                    },
-                  ],
-                  'post-id' => [
-                    'description' => __('The post id that stores the form data.', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($postId) {
-                        return $this->wpService->getPostType($postId) === WP::POST_TYPE_POST;
-                    },
-                  ],
-                  'token' => [
-                    'description' => __('The token that is used to authenticate the request.', 'modularity-frontend-form'),
-                    'type'        => 'string',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($token) {
-                        $postId = $request->get_params()['post-id'] ?? null;
-                        $post = $this->wpService->getPost($postId);
-                        if ($post === null) {
-                            return false;
-                        }
-                        return (bool) $token === $post->post_password;
-                    },
-                  ],
-            ]
+            'args' => (new RestApiParams($this->wpService))->getParamSpecification(
+              RestApiParamEnums::ModuleId,
+              RestApiParamEnums::PostId,
+              RestApiParamEnums::Token
+            )
         ));
     }
 

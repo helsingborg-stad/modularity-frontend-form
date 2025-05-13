@@ -8,6 +8,8 @@ use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
+use ModularityFrontendForm\Api\RestApiParams;
+use ModularityFrontendForm\Api\RestApiParamEnums;
 use WP;
 use WP_Error;
 use WP_Http;
@@ -45,50 +47,11 @@ class Update extends RestApiEndpoint
             'methods'             => WP_REST_Server::EDITABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
-            'args'                => [
-                'module-id' => [
-                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
-                    },
-                ],
-                'post-id' => [
-                    'description' => __('The post id that we want to edit.', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($postId, $request) {
-                        $postId   = $request->get_params()['post-id']   ?? null;
-                        $moduleId = $request->get_params()['module-id'] ?? null;
-
-                        $postTypeByPostId   = $this->wpService->getPost($postId) !== null;
-                        $postTypeConfigured = $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getTargetPostType();
-
-                        return $postTypeByPostId === $postTypeConfigured;
-                    },
-                ],
-                'token' => [
-                    'description' => __('The post token (password) that is required to edit a post.', 'modularity-frontend-form'),
-                    'type'        => 'string',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($token, $request) {
-                        $postId = $request->get_params()['post-id'] ?? null;
-                        $post = $this->wpService->getPost($postId);
-                        if ($post === null) {
-                            return false;
-                        }
-                        return (bool) $token === $post->post_password;
-                    },
-                ],
-            ]
+            'args' => (new RestApiParams($this->wpService))->getParamSpecification(
+              RestApiParamEnums::ModuleId,
+              RestApiParamEnums::PostId,
+              RestApiParamEnums::Token
+            )
         ));
     }
 

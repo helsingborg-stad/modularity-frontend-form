@@ -51,16 +51,19 @@ interface FieldBuilderInterface {
 interface FieldValidatorInterface {
     init(field: FieldInterface): void;
     validate(): boolean;
+    valueChangeListener(): void;
 }
 
 interface FieldValidatorUIHandlerInterface {
     init(field: FieldInterface): void;
-    handleInvalid(validator: ValidationControlInterface): void;
+    addInvalidNotice(message: string): void;
+    removeInvalidNotice(): void;
 }
 
 interface ValidationControlInterface {
     init(field: FieldInterface): void;
     isInvalid(): false|ValidationControlInterface;
+    getFailedValidationMessage(): string;
 }
 
 interface ConditionsHandlerInterface {

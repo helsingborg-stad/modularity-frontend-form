@@ -1,5 +1,7 @@
 class FieldValidator implements FieldValidatorInterface {
     private parent!: FieldInterface;
+    private invalidValidator: ValidationControlInterface|false = false;
+
     constructor(
         private uiHandler: FieldValidatorUIHandlerInterface, 
         private validators: ValidationControlInterface[] = []
@@ -21,12 +23,23 @@ class FieldValidator implements FieldValidatorInterface {
             const isInvalid = validator.isInvalid();
             if (isInvalid) {
                 isValid = false;
-                this.uiHandler.handleInvalid(isInvalid)
+                this.uiHandler.addInvalidNotice(isInvalid.getFailedValidationMessage())
+                this.invalidValidator = isInvalid;
                 break;
             }
         }
 
         return isValid;
+    }
+
+    public valueChangeListener(): void {
+        if (this.invalidValidator) {
+            this.invalidValidator = this.invalidValidator.isInvalid();
+        }
+
+        if (!this.invalidValidator) {
+            this.uiHandler.removeInvalidNotice();
+        }
     }
 }
 

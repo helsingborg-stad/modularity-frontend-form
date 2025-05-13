@@ -13,8 +13,8 @@ class Required implements ValidationControlInterface {
         return this.checkbox.getSelectedChoices().length > 0 ? false : this;
     }
 
-    private getFailedValidationMessage() {
-
+    public getFailedValidationMessage(): string {
+        return 'this is faulty';
     }
 }
 

@@ -1,15 +1,27 @@
 class FieldValidatorUIHandler implements FieldValidatorUIHandlerInterface {
     private field!: FieldInterface;
-    private invalidValidator: ValidationControlInterface|null = null;
+    private activeNotice: HTMLElement|null = null;
 
-    constructor(notices: NoticeInterface) {}
+    constructor(private notices: NoticeInterface) {}
 
     public init(field: FieldInterface) {
         this.field = field;
     }
 
-    public handleInvalid(invalidValidator: ValidationControlInterface) {
-        
+    public addInvalidNotice(message: string): void {
+        if (this.activeNotice) {
+            return;
+        }
+
+        const notice = this.notices.getErrorNotice(message)
+        console.log(notice);
+    }
+
+    public removeInvalidNotice(): void {
+        if (this.activeNotice) {
+            this.activeNotice.remove();
+            this.activeNotice = null;
+        }
     }
 }
 

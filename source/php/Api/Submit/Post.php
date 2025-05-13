@@ -56,18 +56,7 @@ class Post extends RestApiEndpoint
                             $moduleId
                         )->getModuleIsSubmittable();
                     },
-                ],
-                'post-id' => [
-                    'description' => __('The post id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true,
-                    'validate_callback' => function ($moduleId) {
-                        return $this->getModuleConfigInstance(
-                            $moduleId
-                        )->getModuleIsSubmittable();
-                    },
-                ],
+                ]
             ]
         ));
     }

@@ -71,7 +71,7 @@ class Update extends RestApiEndpoint
 
         //Get validators
         $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config);
+            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
             return $validatorFactory->createUpdateValidators($moduleId) ?? [];
         })();
 
@@ -92,14 +92,14 @@ class Update extends RestApiEndpoint
         );
 
         if($result !== true) {
-            return rest_ensure_response([
+            return $this->wpService->restEnsureResponse([
                 'status' => RestApiResponseStatus::Error,
                 'message' => __('Something went wrong when updating the form.', 'modularity-frontend-form'),
                 'errors' => $result,
             ]);
         }
 
-        return rest_ensure_response([
+        return $this->wpService->restEnsureResponse([
             'status' => RestApiResponseStatus::Success,
             'message' => __('Form updated successfully', 'modularity-frontend-form')
         ]);

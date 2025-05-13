@@ -74,11 +74,10 @@ class Post extends RestApiEndpoint
         })();
 
         // Get handlers
-        /*$handlers = (function () use ($moduleId) {
+        $handlers = (function () use ($moduleId) {
             $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config);
             return $handlerFactory->createHandlers($moduleId) ?? [];
-        })();*/ 
-        $handlers = [];
+        })();
 
         // Creates the data processor
         $dataProcessor = new DataProcessor(
@@ -93,14 +92,14 @@ class Post extends RestApiEndpoint
         $result = $dataProcessor->process($data);
 
         if($result !== true) {
-            return rest_ensure_response([
+            return $this->wpService->restEnsureResponse([
                 'status' => RestApiResponseStatus::Error,
                 'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
                 'errors' => $result,
             ]);
         }
 
-        return rest_ensure_response([
+        return $this->wpService->restEnsureResponse([
             'status' => RestApiResponseStatus::Success,
             'message' => __('Form submitted successfully', 'modularity-frontend-form')
         ]);

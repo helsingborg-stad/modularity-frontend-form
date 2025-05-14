@@ -1,6 +1,9 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import Basic from "../basic/basic";
 import BasicConditionsHandler from "../basic/condition/basicConditionHandler";
 import BasicConditionValidator from "../basic/condition/basicConditionValidator";
+import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 
 class UrlFactory {
@@ -22,7 +25,13 @@ class UrlFactory {
             input,
             name,
             new BasicConditionValidator(),
-            new BasicConditionsHandler(unstructuredConditions)
+            new BasicConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                [
+                    new HtmlValidator(),
+                ]
+            )
         );
     }
 }

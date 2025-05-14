@@ -1,4 +1,7 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import Basic from "../basic/basic";
+import HtmlValidator from "../basic/validation/htmlValidator";
 import FileConditionsHandler from "../file/condition/fileConditionsHandler";
 import FileConditionValidator from "../file/condition/fileConditionValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
@@ -22,7 +25,13 @@ class ImageFactory {
             input,
             name,
             new FileConditionValidator(),
-            new FileConditionsHandler(unstructuredConditions)
+            new FileConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                [
+                    new HtmlValidator(),
+                ]
+            )
         );
     }
 }

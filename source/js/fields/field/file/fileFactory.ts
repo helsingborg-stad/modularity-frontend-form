@@ -1,4 +1,7 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import Basic from "../basic/basic";
+import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import FileConditionsHandler from "./condition/fileConditionsHandler";
 import FileConditionValidator from "./condition/fileConditionValidator";
@@ -22,7 +25,13 @@ class FileFactory {
             input,
             name,
             new FileConditionValidator(),
-            new FileConditionsHandler(unstructuredConditions)
+            new FileConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                [
+                    new HtmlValidator(),
+                ]
+            )
         );
     }
 }

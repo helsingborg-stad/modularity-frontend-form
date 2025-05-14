@@ -20,10 +20,6 @@ class CheckboxFactory {
             return NullFieldFactory.create(field, 'checkbox', name, unstructuredConditions, notices);
         }
 
-        const validators = [
-
-        ]
-
         return new Checkbox(
             field,
             choices,

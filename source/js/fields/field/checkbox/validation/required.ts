@@ -13,8 +13,9 @@ class Required implements ValidationControlInterface {
         return this.checkbox.getSelectedChoices().length > 0 ? false : this;
     }
 
+    // TODO: Translate
     public getFailedValidationMessage(): string {
-        return 'this is faulty';
+        return 'A value is required';
     }
 }
 

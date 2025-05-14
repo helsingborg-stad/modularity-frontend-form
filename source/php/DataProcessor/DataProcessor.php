@@ -8,21 +8,22 @@
 
 namespace ModularityFrontendForm\DataProcessor;
 
-class DataProcessor {
+use ModularityFrontendForm\DataProcessor\DataProcessorInterface;
+use WP_Error;
+
+class DataProcessor implements DataProcessorInterface {
+
+    private array $errors = [];
+
     public function __construct(
         private array $validators,
         private array $handlers
     ) {}
 
     /**
-     * Process the data.
-     *
-     * @param array $data The data to process.
-     * @return true|array True if the submission succeded, otherwise an array of errors.
+     * @inheritDoc
      */
-    public function process(array $data): true|array {
-        $allErrors = [];
-
+    public function process(array $data): bool {
         foreach ($this->validators as $validator) {
             $validationResult = $validator->validate($data);
 
@@ -31,17 +32,66 @@ class DataProcessor {
             }
 
             foreach($validationResult->getErrors() as $error) {
-                $allErrors[] = $error;
+                $this->errors[] = $error;
             }
         }
 
-        if(empty($allErrors)) {
+        if(empty($this->errors)) {
             foreach ($this->handlers as $handler) {
-                $handler->handle($data);
+                $handlerResult = $handler->handle($data);
+
+                if($handlerResult->isOk()) {
+                    continue;
+                }
+    
+                foreach($handlerResult->getErrors() as $error) {
+                    $this->errors[] = $error;
+                }
             }
-            return true;
         }
         
-        return $allErrors;
+        return $this->errors ? false : true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFirstError(): ?WP_Error {
+        
+        if(empty($this->errors)) {
+            return null;
+        }
+
+        $wpError = $this->errors[0];
+
+        $remainingErrors = $this->getRemainingErrors();
+        if(empty($remainingErrors)) {
+            foreach($remainingErrors as $error) {
+                $wpError->add($error->get_error_code(), $error->get_error_message(), $error->get_error_data());
+            }
+        }
+        return $wpError;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getErrors(): ?array {
+        return $this->errors ?: null;
+    }
+
+    /**
+     * Get the remaining errors (not the primary/first error).
+     * 
+     * @return array|null An array of errors or null if no errors.
+     */
+    private function getRemainingErrors(): ?array {
+        if(empty($this->errors)) {
+            return null;
+        }
+        $remainingErrors = $this->errors;
+        array_shift($remainingErrors);
+
+        return $remainingErrors ?: null;
     }
 }

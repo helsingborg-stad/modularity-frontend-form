@@ -91,15 +91,18 @@ class Post extends RestApiEndpoint
             $moduleId
         );
 
-        // Process data (validate with validators and handle with handlers)
-        $result = $dataProcessor->process($data);
+        $dataProcessorResult = $dataProcessor->process($data);
 
-        if($result !== true) {
-            return $this->wpService->restEnsureResponse([
-                'status' => RestApiResponseStatus::Error,
-                'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
-                'errors' => $result,
-            ]);
+        if($dataProcessorResult !== true) {
+            return $this->wpService->restEnsureResponse(
+                $dataProcessor->getFirstError() ?? new WP_Error(
+                    RestApiResponseStatus::Error,
+                    __('An error occurred while processing the form', 'modularity-frontend-form'),
+                    [
+                        'status' => WP_Http::BAD_REQUEST
+                    ]
+                )
+            );
         }
 
         return $this->wpService->restEnsureResponse([

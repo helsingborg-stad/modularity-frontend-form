@@ -16,7 +16,10 @@
             }
         }
     },
-    "postCreateCommand": {
-        "setup-npm-token": "echo -e \"//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}\" >> ~/.npmrc"
-    }
+    "postStartCommand": {
+        "setup-npmrc": "echo \"//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}\" >> ~/.npmrc",
+        "npm-install": "npm install",
+        "composer-install": "composer install"
+    },
+    "waitFor": "postStartCommand"
 }

@@ -17,6 +17,9 @@ function createMockCheckbox(selectedValues: string[]): CheckboxInterface {
         getName() {
             return 'mock';
         },
+        getValidator() {
+            return {} as any;
+        },
         getConditionsHandler() {
             return {} as any;
         },

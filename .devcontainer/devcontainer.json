@@ -4,5 +4,19 @@
         "ghcr.io/devcontainers/features/node:1": {
             "version": "16"
         }
+    },
+    "customizations": {
+        "codespaces": {
+            "repositories": {
+                "github.com/helsingborg-stad/openstreetmap": {
+                    "permissions": {
+                        "packages": "read"
+                    }
+                }
+            }
+        }
+    },
+    "postCreateCommand": {
+        "setup-npm-token": "echo -e \"//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}\" >> ~/.npmrc"
     }
 }

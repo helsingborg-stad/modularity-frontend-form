@@ -33,7 +33,9 @@ class HandlerFactory {
     }
 
     public function createNullHandler(int $moduleId): HandlerInterface {
-        return new NullHandler(...$this->createHandlerInterfaceRequiredArguments($moduleId));
+        return new NullHandler(...$this->createHandlerInterfaceRequiredArguments(
+            $moduleId
+        ));
     }
 
     /**

@@ -20,4 +20,5 @@ interface ModuleConfigInterface
     public function getTargetPostType(): string;
     public function getTargetPostStatus(): string;
     public function getNonceKey(): string;
+    public function getActivatedHandlers(): array;
 }

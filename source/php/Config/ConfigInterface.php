@@ -14,5 +14,6 @@ interface ConfigInterface
     public function getModuleSlug(): string;
     public function getFieldNamespace(): string;
     public function getFilterPrefix(): string;
+    public function getUnprintableKeys(): array;
     public function createFilterKey(string $filter = ""): string;
 }

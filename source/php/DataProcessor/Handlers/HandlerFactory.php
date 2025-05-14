@@ -25,11 +25,23 @@ class HandlerFactory {
     }
 
     public function createHandlers(int $moduleId): array {
+        $handlers       = [];
+        $moduleConfig   = $this->getModuleConfigInstance($moduleId);
+        $activeHandlers = $moduleConfig->getActivatedHandlers();
+
         $args = $this->createHandlerInterfaceRequiredArguments($moduleId);
-        return [
-            new WpDbHandler(...$args),
-            new MailHandler(...$args),
+        $avabileHandlers = [
+            'WpDbHandler' => new WpDbHandler(...$args),
+            'MailHandler' => new MailHandler(...$args),
         ];
+        
+        foreach ($activeHandlers as $handler) {
+            if (array_key_exists($handler, $avabileHandlers)) {
+                $handlers[] = $avabileHandlers[$handler];
+            }
+        }
+
+        return $handlers;
     }
 
     public function createNullHandler(int $moduleId): HandlerInterface {

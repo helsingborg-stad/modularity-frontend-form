@@ -86,6 +86,19 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
+  public function getActivatedHandlers(): array
+  {
+    //return $this->acfService->getField('activatedHandlers', $this->getModuleId());
+    return [
+      'WpDbHandler',
+      'MailHandler',
+      //'WebhookHandler',
+    ];
+  }
+
+  /**
+   * @inheritdoc
+   */
   public function getNonceKey(): string
   {
     $moduleData = $this->wpService->getPost($this->getModuleId());

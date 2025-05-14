@@ -9,6 +9,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
+use ModularityFrontendForm\DataProcessor\Handlers\WpDbHandler;
 
 class HandlerFactory {
 
@@ -25,8 +26,12 @@ class HandlerFactory {
     public function createHandlers(int $moduleId): array {
         $args = $this->createHandlerInterfaceRequiredArguments($moduleId);
         return [
-            new NullHandler(...$args),
+            new WpDbHandler(...$args),
         ];
+    }
+
+    public function createNullHandler(int $moduleId): HandlerInterface {
+        return new NullHandler(...$this->createHandlerInterfaceRequiredArguments($moduleId));
     }
 
     /**

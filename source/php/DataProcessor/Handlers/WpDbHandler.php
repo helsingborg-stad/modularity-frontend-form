@@ -1,0 +1,120 @@
+<?php
+
+namespace ModularityFrontendForm\DataProcessor\Handlers;
+
+use WpService\WpService; 
+use AcfService\AcfService; 
+use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
+use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use WP_Error;
+
+class WpDbHandler implements HandlerInterface {
+
+  use GetModuleConfigInstanceTrait;
+
+  public function __construct(
+      private WpService $wpService,
+      private AcfService $acfService,
+      private ConfigInterface $config,
+      private ModuleConfigInterface $moduleConfigInstance,
+      private HandlerResultInterface $handlerResult = new HandlerResult()
+  ) {
+  }
+
+  /**
+   * Handles the request to insert a post in WordPress 
+   * database. 
+   * 
+   * @param array $data The data to insert
+   * 
+   * @return HandlerResultInterface|null The result of the handler
+   */
+  public function handle(array $data): ?HandlerResultInterface
+  {
+    $this->insertPost(
+      $this->moduleConfigInstance->getModuleId(),
+      $data
+    );
+
+    return $this->handlerResult;
+  }
+
+  /**
+   * Handles the request to insert a post
+   *
+   * @param int|null $moduleID The module ID
+   * @param array|null $fieldMeta The field meta data
+   *
+   * @return WP_Error|int The result of the post insertion
+   */
+  private function insertPost(int $moduleID, array|null $fieldMeta): false|int {
+
+    // Get the post type to submit to
+    $targetPostType = $this->moduleConfigInstance->getTargetPostType();
+    
+    $result = $this->wpService->wpInsertPost([
+        'post_title'    => 'Test post',
+        'post_type'     => $targetPostType,
+        'post_status'   => 'publish',
+        'meta_input'    => [
+            'module_id' => $moduleID,
+            'nonce'     => $fieldMeta['nonce'] ?? '',
+        ],
+    ]);
+
+    // Set error 
+    if ($this->wpService->isWpError($result)) {
+      $this->handlerResult->setError(
+        new WP_Error(
+          'insert_post_failed',
+          $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
+          [
+            'post_type' => $targetPostType,
+            'post_id'   => $result->get_error_data(),
+          ]
+        )
+      );
+      return false;
+    } else {
+      $this->storeFields($fieldMeta, $result);
+    }
+
+    return true;
+  }
+
+  /**
+   * Stores the fields in the database
+   *
+   * @param array $fields The fields to store
+   * @param int $postId The ID of the post to store the fields for
+   */
+  public function storeFields(array $fields, int $postId): bool
+  {
+    foreach ($fields as $key => $value) {
+      if (isset($fields[$key])) {
+        $result = $this->acfService->updateField(
+            $key, 
+            $value, 
+            $postId
+        );
+        if($this->wpService->isWpError($result)) {
+          $this->handlerResult->setError(
+            new WP_Error(
+              'update_field_failed',
+              $this->wpService->__('Could not update field.', 'modularity-frontend-form'),
+              [
+                'field' => $key,
+                'post_id' => $postId,
+              ]
+            )
+          );
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+}

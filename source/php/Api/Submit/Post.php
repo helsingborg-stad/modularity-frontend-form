@@ -21,6 +21,7 @@ use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiResponseStatus;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
+use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
 
 class Post extends RestApiEndpoint
 {
@@ -70,15 +71,17 @@ class Post extends RestApiEndpoint
         //Consolidated data
         $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
 
+        // Handler factories
+        $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+        $handlerFactory     = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+
         //Get validators
-        $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+        $validators = (function () use ($moduleId, $validatorFactory) {
             return $validatorFactory->createInsertValidators($moduleId) ?? [];
         })();
 
         // Get handlers
-        $handlers = (function () use ($moduleId) {
-            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+        $handlers = (function () use ($moduleId, $handlerFactory) {
             return $handlerFactory->createHandlers($moduleId) ?? [];
         })(); 
 
@@ -86,9 +89,7 @@ class Post extends RestApiEndpoint
         $dataProcessor = new DataProcessor(
             $validators,
             $handlers,
-            $this->config,
-            $this->getModuleConfigInstance($moduleId),
-            $moduleId
+            $handlerFactory->createNullHandler($moduleId),
         );
 
         $dataProcessorResult = $dataProcessor->process($data);

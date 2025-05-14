@@ -14,10 +14,12 @@ use WP_Error;
 class DataProcessor implements DataProcessorInterface {
 
     private array $errors = [];
+    private bool $useNullHandler = true;
 
     public function __construct(
         private array $validators,
-        private array $handlers
+        private array $handlers,
+        private $nullHandler
     ) {}
 
     /**
@@ -47,6 +49,17 @@ class DataProcessor implements DataProcessorInterface {
                 foreach($handlerResult->getErrors() as $error) {
                     $this->errors[] = $error;
                 }
+
+                $this->useNullHandler = false;
+            }
+
+            if($this->useNullHandler) {
+                $nullHandlerResult = $this->nullHandler->handle($data);
+                if(!$nullHandlerResult->isOk()) {
+                    foreach($nullHandlerResult->getErrors() as $error) {
+                        $this->errors[] = $error;
+                    }
+                }
             }
         }
         
@@ -65,7 +78,7 @@ class DataProcessor implements DataProcessorInterface {
         $wpError = $this->errors[0];
 
         $remainingErrors = $this->getRemainingErrors();
-        if(empty($remainingErrors)) {
+        if($remainingErrors) {
             foreach($remainingErrors as $error) {
                 $wpError->add($error->get_error_code(), $error->get_error_message(), $error->get_error_data());
             }

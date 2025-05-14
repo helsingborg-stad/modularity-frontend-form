@@ -4,12 +4,12 @@ namespace ModularityFrontendForm\Api\Submit;
 
 use AcfService\AcfService;
 use ModularityFrontendForm\Api\RestApiEndpoint;
-use ModularityFrontendForm\Api\RestApiParams;
-use ModularityFrontendForm\Api\RestApiParamEnums;
 use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
+use ModularityFrontendForm\Api\RestApiParams;
+use ModularityFrontendForm\Api\RestApiParamEnums;
 use WP;
 use WP_Error;
 use WP_Http;
@@ -21,7 +21,6 @@ use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiResponseStatus;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
-use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
 
 class Post extends RestApiEndpoint
 {
@@ -49,9 +48,11 @@ class Post extends RestApiEndpoint
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
-            'args' => (
-                new RestApiParams($this->wpService, $this->moduleConfigFactory)
-            )->getParamSpecification(RestApiParamEnums::ModuleId)
+            'args' => (new RestApiParams($this->wpService, $this->moduleConfigFactory))->getParamSpecification(
+              RestApiParamEnums::ModuleId,
+              RestApiParamEnums::PostId,
+              RestApiParamEnums::Token
+            )
         ));
     }
 
@@ -71,17 +72,15 @@ class Post extends RestApiEndpoint
         //Consolidated data
         $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
 
-        // Handler factories
-        $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
-        $handlerFactory     = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
-
         //Get validators
-        $validators = (function () use ($moduleId, $validatorFactory) {
+        $validators = (function () use ($moduleId) {
+            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
             return $validatorFactory->createInsertValidators($moduleId) ?? [];
         })();
 
         // Get handlers
-        $handlers = (function () use ($moduleId, $handlerFactory) {
+        $handlers = (function () use ($moduleId) {
+            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
             return $handlerFactory->createHandlers($moduleId) ?? [];
         })(); 
 
@@ -89,24 +88,23 @@ class Post extends RestApiEndpoint
         $dataProcessor = new DataProcessor(
             $validators,
             $handlers,
-            $handlerFactory->createNullHandler($moduleId),
+            $this->config,
+            $this->getModuleConfigInstance($moduleId),
+            $moduleId
         );
 
-        $dataProcessorResult = $dataProcessor->process($data);
+        // Process data (validate with validators and handle with handlers)
+        $result = $dataProcessor->process($data);
 
-        if($dataProcessorResult !== true) {
-            return $this->wpService->restEnsureResponse(
-                $dataProcessor->getFirstError() ?? new WP_Error(
-                    RestApiResponseStatus::Error,
-                    __('An error occurred while processing the form', 'modularity-frontend-form'),
-                    [
-                        'status' => WP_Http::BAD_REQUEST
-                    ]
-                )
-            );
+        if($result !== true) {
+            return rest_ensure_response([
+                'status' => RestApiResponseStatus::Error,
+                'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
+                'errors' => $result,
+            ]);
         }
 
-        return $this->wpService->restEnsureResponse([
+        return rest_ensure_response([
             'status' => RestApiResponseStatus::Success,
             'message' => __('Form submitted successfully', 'modularity-frontend-form')
         ]);

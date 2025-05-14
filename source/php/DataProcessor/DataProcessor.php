@@ -26,6 +26,8 @@ class DataProcessor implements DataProcessorInterface {
      * @inheritDoc
      */
     public function process(array $data): bool {
+
+        //1. Validate the data
         foreach ($this->validators as $validator) {
             $validationResult = $validator->validate($data);
 
@@ -38,22 +40,23 @@ class DataProcessor implements DataProcessorInterface {
             }
         }
 
+        //2. If there are no errors, process the data
         if(empty($this->errors)) {
+
+            $this->useNullHandler = empty($this->handlers) ? true : false;
+
             foreach ($this->handlers as $handler) {
+
                 $handlerResult = $handler->handle($data);
 
-                if($handlerResult->isOk()) {
-                    continue;
-                }
-    
+                if($handlerResult->isOk()) {continue;}
+
                 foreach($handlerResult->getErrors() as $error) {
                     $this->errors[] = $error;
                 }
-
-                $this->useNullHandler = false;
             }
 
-            if($this->useNullHandler) {
+            if($this->useNullHandler === true) {
                 $nullHandlerResult = $this->nullHandler->handle($data);
                 if(!$nullHandlerResult->isOk()) {
                     foreach($nullHandlerResult->getErrors() as $error) {

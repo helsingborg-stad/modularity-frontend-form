@@ -1,3 +1,5 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import RepeaterConditionsHandler from "./condition/repeaterConditionsHandler";
 import RepeaterConditionValidator from "./condition/repeaterConditionValidator";
@@ -26,12 +28,18 @@ class RepeaterFactory {
             return NullFieldFactory.create(field, 'repeater', name, unstructuredConditions, notices);
         }
 
+        // TODO: Need to add validators to check if repeater is empty/required
         return new Repeater(
             field,
             name,
             repeaterUI,
             new RepeaterConditionValidator(),
-            new RepeaterConditionsHandler(unstructuredConditions)
+            new RepeaterConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                [
+                ]
+            )
         );
     }
 }

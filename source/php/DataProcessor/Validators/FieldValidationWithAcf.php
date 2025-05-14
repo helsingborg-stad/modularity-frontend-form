@@ -41,8 +41,8 @@ class FieldValidationWithAcf implements ValidatorInterface
             continue;
           }
 
-          if($field = acf_get_field($key)) { //TODO: Add to wp service
-              $isValid = acf_validate_value($value, $field, ""); //TODO: Add to wp service
+          if($field = acf_get_field($key)) { //TODO: Add to acf service
+              $isValid = acf_validate_value($value, $field, ""); //TODO: Add to acf service
               if(!$isValid) {
                 $this->validationResult->setError(
                   new WP_Error(

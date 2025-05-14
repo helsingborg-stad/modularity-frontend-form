@@ -8,6 +8,7 @@ interface FieldInterface {
     getField(): HTMLElement;
     getConditionsHandler(): ConditionsHandlerInterface;
     getConditionValidator(): ConditionValidatorInterface;
+    getValidator(): FieldValidatorInterface;
 }
 
 interface CheckboxInterface extends FieldInterface {

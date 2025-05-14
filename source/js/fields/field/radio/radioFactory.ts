@@ -1,3 +1,6 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
+import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import RadioConditionsHandler from "./condition/radioConditionsHandler";
 import RadioConditionValidator from "./condition/radioConditionValidator";
@@ -22,7 +25,13 @@ class RadioFactory {
             choices,
             name,
             new RadioConditionValidator(),
-            new RadioConditionsHandler(unstructuredConditions)
+            new RadioConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                [
+                    new HtmlValidator(),
+                ]
+            )
         );
     }
 }

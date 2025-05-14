@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\WpDbHandler;
+use ModularityFrontendForm\DataProcessor\Handlers\MailHandler;
 
 class HandlerFactory {
 
@@ -27,6 +28,7 @@ class HandlerFactory {
         $args = $this->createHandlerInterfaceRequiredArguments($moduleId);
         return [
             new WpDbHandler(...$args),
+            new MailHandler(...$args),
         ];
     }
 

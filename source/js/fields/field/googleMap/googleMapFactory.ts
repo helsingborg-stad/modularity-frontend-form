@@ -1,3 +1,5 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import GoogleMapConditionsHandler from "./condition/googleMapConditionsHandler";
 import GoogleMapConditionValidator from "./condition/googleMapConditionValidator";
@@ -37,7 +39,11 @@ class GoogleMapFactory {
             openstreetmapInstance,
             name,
             new GoogleMapConditionValidator(),
-            new GoogleMapConditionsHandler(unstructuredConditions)
+            new GoogleMapConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                []
+            )
         );
     }
 }

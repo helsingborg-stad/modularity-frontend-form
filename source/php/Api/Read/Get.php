@@ -20,6 +20,7 @@ use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiResponseStatus;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
+use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
 class Post extends RestApiEndpoint
 {
@@ -47,7 +48,7 @@ class Post extends RestApiEndpoint
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
-            'args' => (new RestApiParams($this->wpService))->getParamSpecification(
+            'args' => (new RestApiParams($this->wpService, $this->moduleConfigFactory))->getParamSpecification(
               RestApiParamEnums::ModuleId,
               RestApiParamEnums::PostId,
               RestApiParamEnums::Token
@@ -78,11 +79,10 @@ class Post extends RestApiEndpoint
         })();
 
         // Get handlers
-        /*$handlers = (function () use ($moduleId) {
-            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config);
+        $handlers = (function () use ($moduleId) {
+            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
             return $handlerFactory->createHandlers($moduleId) ?? [];
-        })();*/ 
-        $handlers = [];
+        })(); 
 
         // Creates the data processor
         $dataProcessor = new DataProcessor(

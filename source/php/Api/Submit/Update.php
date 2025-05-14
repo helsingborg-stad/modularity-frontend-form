@@ -47,7 +47,9 @@ class Update extends RestApiEndpoint
             'methods'             => WP_REST_Server::EDITABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
-            'args' => (new RestApiParams($this->wpService))->getParamSpecification(
+            'args' => (
+              new RestApiParams($this->wpService, $this->moduleConfigFactory)
+            )->getParamSpecification(
               RestApiParamEnums::ModuleId,
               RestApiParamEnums::PostId,
               RestApiParamEnums::Token

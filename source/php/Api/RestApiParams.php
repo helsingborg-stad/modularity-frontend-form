@@ -5,13 +5,15 @@ namespace ModularityFrontendForm\Api;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiParamEnums;
+use ModularityFrontendForm\Config\ModuleConfigFactory;
 
 class RestApiParams 
 {
   use GetModuleConfigInstanceTrait;
 
   public function __construct(
-    private WpService $wpService
+    private WpService $wpService,
+    private ModuleConfigFactory $moduleConfigFactory,
   ) {}
 
   /**

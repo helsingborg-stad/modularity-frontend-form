@@ -1,22 +1,43 @@
 <?php 
 
-namespace ModularityFrontendForm\Handlers;
+namespace ModularityFrontendForm\DataProcessor\Handlers;
+
+
+use WpService\WpService;
+use AcfService\AcfService;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
+use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 
 class HandlerFactory {
-  private array $availableHandlers = [
-      'email' => SendEmailHandler::class,
-      'db' => StoreToDbHandler::class,
-  ];
 
-  public function createHandlers(array $params): array {
-      $handlers = [];
+    use GetModuleConfigInstanceTrait;
 
-      foreach ($this->availableHandlers as $key => $handlerClass) {
-          if (!empty($params[$key]) && class_exists($handlerClass)) {
-              $handlers[] = new $handlerClass();
-          }
-      }
+    public function __construct(
+        private WpService $wpService,
+        private AcfService $acfService,
+        private ConfigInterface $config,
+        private ModuleConfigFactoryInterface $moduleConfigFactory
+    ) {
+    }
 
-      return $handlers;
-  }
+    public function createHandlers(int $moduleId): array {
+        $args = $this->createHandlerInterfaceRequiredArguments($moduleId);
+        return [
+            new NullHandler(...$args),
+        ];
+    }
+
+    /**
+     * Creates a array representing the arguments for the validator
+     */
+    private function createHandlerInterfaceRequiredArguments(int $moduleId): array {
+        return [
+            $this->wpService,
+            $this->acfService,
+            $this->config,
+            $this->getModuleConfigInstance($moduleId),
+        ];
+    }
 }

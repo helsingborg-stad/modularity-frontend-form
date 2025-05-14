@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\Handlers;
+namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 

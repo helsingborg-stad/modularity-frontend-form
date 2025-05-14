@@ -5,6 +5,7 @@ class NullField implements FieldInterface {
         private name: string,
         private nullFieldConditionValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface,
+        private validator: FieldValidatorInterface
 
     ) {
         console.error(`Field type "${type}" is not implemented.`);
@@ -13,6 +14,7 @@ class NullField implements FieldInterface {
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
         this.nullFieldConditionValidator.init(this);
+        this.validator.init(this);
     }
 
     public getField(): HTMLElement {
@@ -29,6 +31,10 @@ class NullField implements FieldInterface {
 
     public getConditionValidator(): ConditionValidatorInterface {
         return this.nullFieldConditionValidator;
+    }
+
+    public getValidator(): FieldValidatorInterface {
+        return this.validator;
     }
 }
 

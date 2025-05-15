@@ -12,7 +12,8 @@ class CheckboxFactory {
         name: string,
         unstructuredConditions: any,
         notices: NoticeInterface,
-        stepId: string
+        stepId: string,
+        modularityFrontendFormLang: ModularityFrontendFormLang
     ): FieldInterface {
         const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
@@ -30,7 +31,7 @@ class CheckboxFactory {
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
                 [
-                    new Required(),
+                    new Required(modularityFrontendFormLang),
                 ]
             )
         );

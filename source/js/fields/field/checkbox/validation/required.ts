@@ -1,6 +1,8 @@
 class Required implements ValidationControlInterface {
     private checkbox!: CheckboxInterface;
 
+    constructor(private modularityFrontendFormLang: ModularityFrontendFormLang) {}
+
     public init(checkbox: CheckboxInterface) {
         this.checkbox = checkbox;
     }
@@ -13,9 +15,8 @@ class Required implements ValidationControlInterface {
         return this.checkbox.getSelectedChoices().length > 0 ? false : this;
     }
 
-    // TODO: Translate
     public getFailedValidationMessage(): string {
-        return 'A value is required';
+        return this.modularityFrontendFormLang.atLeastOneValueIsRequired ?? 'At least one value is required.';
     }
 }
 

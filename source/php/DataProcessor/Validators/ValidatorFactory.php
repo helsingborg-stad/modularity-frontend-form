@@ -49,12 +49,30 @@ class ValidatorFactory {
    * @return ValidatorInterface[] An array of validators
    */
   public function createInsertValidators(int $moduleId): array {
+
+      $config = $this->getModuleConfigInstance($moduleId);
+
+      $useNonceValidator          = true;
+      $useFieldValidationWithAcf  = true;
+
+      //Check if the module is configured to use the WPDB handler
+      //This configuration allows us to validate that the fields
+      //exist on the post type.
+      //This will gracefully degrade to a simple field existence check
+      //if the WPDB handler is not configured.
+      $useFieldsExistsOnPostType = (
+        $config->getWpDbHandlerConfig() !== null
+      ) ? true : false;
+      $useFieldsExists = !$useFieldsExistsOnPostType;
+
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
-      return  [
-          new NonceValidator(...$args),
-          new FieldsExistsOnPostType(...$args),
-          new FieldValidationWithAcf(...$args),
-      ];
+
+      return  array_filter([
+          $useNonceValidator          ? new NonceValidator(...$args) : null,
+          $useFieldsExistsOnPostType  ? new FieldsExistsOnPostType(...$args) : null,
+          $useFieldsExists            ? new FieldsExists(...$args) : null,
+          $useFieldValidationWithAcf  ? new FieldValidationWithAcf(...$args) : null,
+      ]);
   }
 
   /**

@@ -94,27 +94,35 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getWpDbHandlerConfig(): object
+  public function getWpDbHandlerConfig(): ?object
   {
+    if(in_array('WpDbHandler', $this->getActivatedHandlers()) === false) {
+      return null;
+    }
     return (object) $this->acfService->getField('WpDbHandlerConfig', $this->getModuleId());
   }
 
   /**
    * @inheritdoc
    */
-  public function getMailHandlerConfig(): object
+  public function getMailHandlerConfig(): ?object
   {
+    if(in_array('MailHandler', $this->getActivatedHandlers()) === false) {
+      return null;
+    }
     return (object) $this->acfService->getField('MailHandlerConfig', $this->getModuleId());
   }
 
   /**
    * @inheritdoc
    */
-  public function getWebHookHandlerConfig(): object
+  public function getWebHookHandlerConfig(): ?object
   {
+    if(in_array('WebHookHandler', $this->getActivatedHandlers()) === false) {
+      return null;
+    }
     return (object) $this->acfService->getField('WebHookHandlerConfig', $this->getModuleId());
   }
-  
 
   /**
    * @inheritdoc

@@ -22,7 +22,7 @@ interface ModuleConfigInterface
     public function getNonceKey(): string;
 
     public function getActivatedHandlers(): array;
-    public function getWpDbHandlerConfig(): object;
-    public function getMailHandlerConfig(): object;
-    public function getWebHookHandlerConfig(): object;
+    public function getWpDbHandlerConfig(): ?object;
+    public function getMailHandlerConfig(): ?object;
+    public function getWebHookHandlerConfig(): ?object;
 }

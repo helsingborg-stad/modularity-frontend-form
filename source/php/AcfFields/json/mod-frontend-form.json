@@ -203,7 +203,7 @@
         },
         {
             "key": "field_664cac4d3a132",
-            "label": "Reviewed Post Status!!', !!'api-event-manager!!')!!",
+            "label": "Reviewed Post Status",
             "name": "reviewedPostTypeStatus",
             "aria-label": "",
             "type": "select",
@@ -230,6 +230,33 @@
             "placeholder": "",
             "allow_custom": 0,
             "search_placeholder": ""
+        },
+        {
+            "key": "field_68258f85a4ad6",
+            "label": "Submit to",
+            "name": "submitTo",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "Select where you want the submissions to be stored or sent to.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "WpDbHandler": "Database",
+                "MailHandler": "E-Mail",
+                "WebHookHandler": "Webhook"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "layout": "vertical",
+            "toggle": 0,
+            "save_custom": 0,
+            "custom_choice_button_text": "Add new choice"
         },
         {
             "key": "field_662a5230a59a0",

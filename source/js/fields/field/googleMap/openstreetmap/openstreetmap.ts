@@ -118,7 +118,6 @@ class Openstreetmap implements OpenstreetmapInterface {
             this.marker.addTo(this.map);
         }
 
-        // TODO: Maybe we shouldn't fetch all the time, instead fetch when user does something like saving? or when the user targets focuses on a different field?
         this.maybeFetchPlace(latLng, placeObject);
     }
 

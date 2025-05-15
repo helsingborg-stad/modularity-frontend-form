@@ -1,36 +1,33 @@
 class ValidateForm {
-    private forms: NodeListOf<HTMLFormElement>;
+    private attributePrefix: string = 'data-js-validation-message-';
+    private attributePrefixCamelCased: string = 'jsValidationMessage';
+
     constructor(
     ) {
-        this.forms = document.querySelectorAll('form:not([data-js-no-validate]):not([no-validate]');
+        const inputsWithCustomValidationMessage = Array.from(document.querySelectorAll('input,select')).filter((input) => {
+            return Array.from(input.attributes).some((attr) => {
+                return attr.name.startsWith(this.attributePrefix);
+            }
+            );
+        })
 
-        this.forms.forEach(form => {
-            const inputs = form.querySelectorAll('input');
+        inputsWithCustomValidationMessage.forEach((input) => {
 
-            inputs.forEach((input: HTMLInputElement) => {
-                input.addEventListener('invalid', () => {
-                    const validity = input.validity;
+            input.addEventListener('invalid', (event) => {
+                const target = event.target as HTMLInputElement | HTMLSelectElement;
 
-                    if (validity.valueMissing) {
-                        const customMessage = input.getAttribute('data-js-value-missing');
+                for (const key of Object.getOwnPropertyNames(Object.getPrototypeOf(target.validity))) {
+                    const propertyState = target.validity[key as keyof ValidityState];
+                    const keyWithFirstUpperCase = key.charAt(0).toUpperCase() + key.slice(1);
 
-                        if (customMessage) {
-                            input.validationMessage = customMessage;
-                        }
+                    if (propertyState === false) {
+                        continue;
                     }
 
-                    if (validity.typeMismatch) {
-                        const customMessage = input.getAttribute('data-js-type-mismatch');
-
-                        if (customMessage) {
-                            input.validationMessage = customMessage;
-                        }
+                    if (target.dataset.hasOwnProperty(this.attributePrefixCamelCased + keyWithFirstUpperCase)) {
+                        target.setCustomValidity(target.dataset[this.attributePrefixCamelCased + keyWithFirstUpperCase] ?? target.validationMessage);
                     }
-
-                    input.dispatchEvent(new CustomEvent('invalid-validation', {
-                        detail: { message: input.validationMessage },
-                    }));
-                });
+                }
             });
         });
     }

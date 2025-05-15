@@ -28,6 +28,7 @@
     ],
     "devDependencies": {
         "@helsingborg-stad/openstreetmap": "^0.51.4",
+        "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^29.5.14",
         "autoprefixer": "^10.4.2",
         "clean-webpack-plugin": "^4.0.0",

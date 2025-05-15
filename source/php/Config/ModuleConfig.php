@@ -70,17 +70,9 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getTargetPostType(): string
+  public function getModuleTitle(): string
   {
-    return $this->acfService->getField('saveToPostType', $this->getModuleId());
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function getTargetPostStatus(): string
-  {
-    return $this->acfService->getField('saveToPostTypeStatus', $this->getModuleId());
+    return $this->wpService->getPost($this->getModuleId())->post_title ?? '';
   }
 
   /**

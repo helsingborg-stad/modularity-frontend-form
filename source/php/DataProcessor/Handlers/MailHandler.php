@@ -170,9 +170,12 @@ class MailHandler implements HandlerInterface {
    */
   private function createEmailSubject(array $data): string
   {
-    return __(
-      'New form submission',
-      'modularity-frontend-form'
+    return sprintf(
+      $this->wpService->__(
+        'New submission: %s', 
+        'modularity-frontend-form'
+      ), 
+      $this->moduleConfigInstance->getModuleTitle()
     ); 
   }
 

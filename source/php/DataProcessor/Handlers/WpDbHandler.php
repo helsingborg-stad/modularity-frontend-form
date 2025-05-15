@@ -55,7 +55,7 @@ class WpDbHandler implements HandlerInterface {
     $config = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpInsertPost([
-        'post_title'    => 'Test post',
+        'post_title'    => $this->moduleConfigInstance->getModuleTitle(),
         'post_type'     => $config->saveToPostType,
         'post_status'   => $config->saveToPostTypeStatus,
         'meta_input'    => [

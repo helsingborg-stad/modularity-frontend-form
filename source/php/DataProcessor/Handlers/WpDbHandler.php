@@ -78,10 +78,8 @@ class WpDbHandler implements HandlerInterface {
         )
       );
       return false;
-    } else {
-      $this->storeFields($fieldMeta, $result);
     }
-
+    $this->storeFields($fieldMeta, $result);
     return true;
   }
 

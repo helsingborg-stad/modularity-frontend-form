@@ -193,8 +193,8 @@ class FieldBuilder implements FieldBuilderInterface {
         return fieldInstance;
     }
 
-    public removeField(field: FieldInterface): void {
-        delete this.fieldsObject[field.getName()];
+    public removeField(name: string): void {
+        delete this.fieldsObject[name];
     }
 
     public getFieldsObject(): FieldsObject {

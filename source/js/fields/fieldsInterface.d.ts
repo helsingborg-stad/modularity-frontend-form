@@ -47,6 +47,7 @@ interface SelectInterface extends FieldInterface {
 interface FieldBuilderInterface {
     build(field: HTMLElement, type: string, step: string): FieldInterface;
     getFieldsObject(): FieldsObject;
+    removeField(name: string): void;
 }
 
 interface FieldValidatorInterface {

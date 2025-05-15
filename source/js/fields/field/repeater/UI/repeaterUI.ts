@@ -41,7 +41,8 @@ class RepeaterUI {
             
             row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.removeRow(rowId)
+                this.rowBuilder.deleteRow(row);
+                this.removeRow(rowId);
             });
 
             this.rowCount++;
@@ -49,7 +50,9 @@ class RepeaterUI {
     }
 
     private removeRow(rowId: string): void {
-        // TODO: remove the row from the global fields object
+        for (const fieldName in this.rowFieldsObject[rowId]) {
+            this.fieldBuilder.removeField(fieldName);
+        }
     }
 
     private buildAddedFields(row: HTMLElement): FieldsObject {

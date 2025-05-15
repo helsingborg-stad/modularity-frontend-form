@@ -1,5 +1,5 @@
 [{
-    "key": "group_6627a5e16d84f",
+    "key": "group_6627a5e16d74c",
     "title": "Configure Multistep Form",
     "fields": [
         {
@@ -25,7 +25,7 @@
             "name": "formSteps",
             "aria-label": "",
             "type": "repeater",
-            "instructions": "Add the steps that should be displayed in this form.!!', !!'api-event-manager!!')!!",
+            "instructions": "Add the steps that should be displayed in this form.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -39,7 +39,7 @@
             "min": 0,
             "max": 0,
             "collapsed": "field_6627a6b312423",
-            "button_label": "Add Step!!', !!'api-event-manager!!')!!",
+            "button_label": "Add Step",
             "rows_per_page": 20,
             "sub_fields": [
                 {
@@ -48,7 +48,7 @@
                     "name": "formStepTitle",
                     "aria-label": "",
                     "type": "text",
-                    "instructions": "By leaving this blank, the configuration of the fieldgroup will be used.!!', !!'api-event-manager!!')!!",
+                    "instructions": "By leaving this blank, the configuration of the fieldgroup will be used.",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -69,7 +69,7 @@
                     "name": "formStepContent",
                     "aria-label": "",
                     "type": "wysiwyg",
-                    "instructions": "By leaving this blank, the configuration of the fieldgroup will be used.!!', !!'api-event-manager!!')!!",
+                    "instructions": "By leaving this blank, the configuration of the fieldgroup will be used.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -98,7 +98,13 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": [],
+                    "choices": {
+                        "group_57bb00ff522ad": "Incident list",
+                        "group_6627a5e16d74c": "Frontend Form: Configure Multistep Form",
+                        "group_570770ab8f064": "Image: Image",
+                        "group_681dbb34adb91": "TestPostType: Example Frontend Form",
+                        "group_5ad73d947a069": "Utm\u00e4rkelser: Ordning utm\u00e4rkelser"
+                    },
                     "default_value": [],
                     "return_format": "value",
                     "multiple": 1,
@@ -156,7 +162,7 @@
             "name": "saveToPostType",
             "aria-label": "",
             "type": "posttype_select",
-            "instructions": "The post type that the user should be able to add to or modify.!!', !!'api-event-manager!!')!!",
+            "instructions": "The post type that the user should be able to add to or modify.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -177,7 +183,7 @@
             "name": "saveToPostTypeStatus",
             "aria-label": "",
             "type": "select",
-            "instructions": "The post status to use when a form hasen't been reviewed by the user.!!', !!'api-event-manager!!')!!",
+            "instructions": "The post status to use when a form hasen't been reviewed by the user.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -207,7 +213,7 @@
             "name": "reviewedPostTypeStatus",
             "aria-label": "",
             "type": "select",
-            "instructions": "The post status to use when a form have been reviewed by the user.!!', !!'api-event-manager!!')!!",
+            "instructions": "The post status to use when a form have been reviewed by the user.",
             "required": 1,
             "conditional_logic": 0,
             "wrapper": {

@@ -1,10 +1,8 @@
 <?php 
 
-
-if (function_exists('acf_add_local_field_group')) {
-
-    acf_add_local_field_group(array(
-    'key' => 'group_6627a5e16d84f',
+if (function_exists('acf_add_local_field_group')) {
+    acf_add_local_field_group(array(
+    'key' => 'group_6627a5e16d74c',
     'title' => __('Configure Multistep Form', 'modularity-frontend-form'),
     'fields' => array(
         0 => array(
@@ -104,6 +102,11 @@ if (function_exists('acf_add_local_field_group')) {
                         'id' => '',
                     ),
                     'choices' => array(
+                        'group_57bb00ff522ad' => __('Incident list', 'modularity-frontend-form'),
+                        'group_6627a5e16d74c' => __('Frontend Form: !!__('Configure Multistep Form', 'modularity-frontend-form'), 'modularity-frontend-form'),
+                        'group_570770ab8f064' => __('Image: !!__('Image', 'modularity-frontend-form'), 'modularity-frontend-form'),
+                        'group_681dbb34adb91' => __('TestPostType: !!__('Example Frontend Form', 'modularity-frontend-form'), 'modularity-frontend-form'),
+                        'group_5ad73d947a069' => __('Utmärkelser: !!__('Ordning utmärkelser', 'modularity-frontend-form'), 'modularity-frontend-form'),
                     ),
                     'default_value' => array(
                     ),
@@ -239,6 +242,34 @@ if (function_exists('acf_add_local_field_group')) {
             'search_placeholder' => '',
         ),
         6 => array(
+            'key' => 'field_68258f85a4ad6',
+            'label' => __('Submit to', 'modularity-frontend-form'),
+            'name' => 'submitTo',
+            'aria-label' => '',
+            'type' => 'checkbox',
+            'instructions' => __('Select where you want the submissions to be stored or sent to.', 'modularity-frontend-form'),
+            'required' => 1,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ),
+            'choices' => array(
+                'WpDbHandler' => __('Database', 'modularity-frontend-form'),
+                'MailHandler' => __('E-Mail', 'modularity-frontend-form'),
+                'WebHookHandler' => __('Webhook', 'modularity-frontend-form'),
+            ),
+            'default_value' => array(
+            ),
+            'return_format' => 'value',
+            'allow_custom' => 0,
+            'layout' => 'vertical',
+            'toggle' => 0,
+            'save_custom' => 0,
+            'custom_choice_button_text' => 'Add new choice',
+        ),
+        7 => array(
             'key' => 'field_662a5230a59a0',
             'label' => __('Form Completion', 'modularity-frontend-form'),
             'name' => '',
@@ -255,7 +286,7 @@ if (function_exists('acf_add_local_field_group')) {
             'placement' => 'top',
             'endpoint' => 0,
         ),
-        7 => array(
+        8 => array(
             'key' => 'field_664de6eb4fffd',
             'label' => __('Enable summary', 'modularity-frontend-form'),
             'name' => 'hasSummaryStep',
@@ -275,7 +306,7 @@ if (function_exists('acf_add_local_field_group')) {
             'ui_on_text' => '',
             'ui_off_text' => '',
         ),
-        8 => array(
+        9 => array(
             'key' => 'field_664de74a4fffe',
             'label' => __('Summary Title', 'modularity-frontend-form'),
             'name' => 'summaryTitle',
@@ -303,7 +334,7 @@ if (function_exists('acf_add_local_field_group')) {
             'prepend' => '',
             'append' => '',
         ),
-        9 => array(
+        10 => array(
             'key' => 'field_664de76b4ffff',
             'label' => __('Summary Lead', 'modularity-frontend-form'),
             'name' => 'summaryLead',
@@ -331,7 +362,7 @@ if (function_exists('acf_add_local_field_group')) {
             'media_upload' => 1,
             'delay' => 0,
         ),
-        10 => array(
+        11 => array(
             'key' => 'field_662a6546a687a',
             'label' => __('Security', 'modularity-frontend-form'),
             'name' => '',
@@ -348,7 +379,7 @@ if (function_exists('acf_add_local_field_group')) {
             'placement' => 'top',
             'endpoint' => 0,
         ),
-        11 => array(
+        12 => array(
             'key' => 'field_662a6557a687b',
             'label' => __('Public Access', 'modularity-frontend-form'),
             'name' => 'isPublicForm',
@@ -400,5 +431,4 @@ if (function_exists('acf_add_local_field_group')) {
     'acfe_meta' => '',
     'acfe_note' => '',
 ));
-
-}
+}

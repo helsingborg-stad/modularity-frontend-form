@@ -352,7 +352,7 @@
             'name' => 'WebHookHandlerConfig',
             'aria-label' => '',
             'type' => 'group',
-            'instructions' => __('Configure the email adresses that should recive the form submission automatically.', 'modularity-frontend-form'),
+            'instructions' => __('Configure a web adress that can recive post data.', 'modularity-frontend-form'),
             'required' => 0,
             'conditional_logic' => array(
                 0 => array(
@@ -378,7 +378,7 @@
                     'name' => 'callbackUrl',
                     'aria-label' => '',
                     'type' => 'url',
-                    'instructions' => '',
+                    'instructions' => __('Note: This URL will receive all data submitted through the form, including any sensitive information. Please ensure that the callback URL complies with all relevant data protection regulations, such as the GDPR and Schrems II.', 'modularity-frontend-form'),
                     'required' => 1,
                     'conditional_logic' => 0,
                     'wrapper' => array(

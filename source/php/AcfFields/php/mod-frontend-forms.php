@@ -217,7 +217,7 @@
                 'class' => '',
                 'id' => '',
             ),
-            'message' => __('Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.', 'modularity-frontend-form'),
+            'message' => __('<mark>Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.</mark>', 'modularity-frontend-form'),
             'new_lines' => 'wpautop',
             'esc_html' => 0,
         ),

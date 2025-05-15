@@ -212,7 +212,7 @@
                 "class": "",
                 "id": ""
             },
-            "message": "Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.",
+            "message": "<mark>Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.<\/mark>",
             "new_lines": "wpautop",
             "esc_html": 0
         },

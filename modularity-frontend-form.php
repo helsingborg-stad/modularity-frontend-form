@@ -48,7 +48,7 @@ $wpService->addAction('acf/init', function () {
     $acfExportManager->setTextdomain('modularity-frontend-form');
     $acfExportManager->setExportFolder(MODULARITYFRONTENDFORM_PATH . 'source/php/AcfFields/');
     $acfExportManager->autoExport(array(
-        'mod-frontend-form' => 'group_6627a5e16d84f'
+        'mod-frontend-forms' => 'group_6627a5e16d74c'
     ));
 
     $acfExportManager->import();

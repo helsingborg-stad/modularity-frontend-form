@@ -27,6 +27,11 @@ class Config implements ConfigInterface
     );
   }
 
+  /**
+   * Returns a list of keys that is irellevant to the end user.
+   * 
+   * @return array
+   */
   public function getUnprintableKeys(): array
   {
     return $this->wpService->applyFilters(

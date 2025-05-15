@@ -52,13 +52,12 @@ class WpDbHandler implements HandlerInterface {
    */
   private function insertPost(int $moduleID, array|null $fieldMeta): false|int {
 
-    // Get the post type to submit to
-    $targetPostType = $this->moduleConfigInstance->getTargetPostType();
-    
+    $config = $this->moduleConfigInstance->getWpDbHandlerConfig();
+
     $result = $this->wpService->wpInsertPost([
         'post_title'    => 'Test post',
-        'post_type'     => $targetPostType,
-        'post_status'   => 'publish',
+        'post_type'     => $config->saveToPostType,
+        'post_status'   => $config->saveToPostTypeStatus,
         'meta_input'    => [
             'module_id' => $moduleID,
             'nonce'     => $fieldMeta['nonce'] ?? '',
@@ -69,19 +68,18 @@ class WpDbHandler implements HandlerInterface {
     if ($this->wpService->isWpError($result)) {
       $this->handlerResult->setError(
         new WP_Error(
-          'insert_post_failed',
+          'handler_error',
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
           [
-            'post_type' => $targetPostType,
+            'post_type' => $config->saveToPostType,
+            'post_status' => $config->saveToPostTypeStatus,
             'post_id'   => $result->get_error_data(),
           ]
         )
       );
       return false;
-    } else {
-      $this->storeFields($fieldMeta, $result);
     }
-
+    $this->storeFields($fieldMeta, $result);
     return true;
   }
 
@@ -103,8 +101,8 @@ class WpDbHandler implements HandlerInterface {
         if($this->wpService->isWpError($result)) {
           $this->handlerResult->setError(
             new WP_Error(
-              'update_field_failed',
-              $this->wpService->__('Could not update field.', 'modularity-frontend-form'),
+              'handler_error',
+              $this->wpService->__('Could not update field with metadata.', 'modularity-frontend-form'),
               [
                 'field' => $key,
                 'post_id' => $postId,

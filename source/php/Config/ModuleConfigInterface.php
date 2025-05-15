@@ -20,4 +20,9 @@ interface ModuleConfigInterface
     public function getTargetPostType(): string;
     public function getTargetPostStatus(): string;
     public function getNonceKey(): string;
+
+    public function getActivatedHandlers(): array;
+    public function getWpDbHandlerConfig(): object;
+    public function getMailHandlerConfig(): object;
+    public function getWebHookHandlerConfig(): object;
 }

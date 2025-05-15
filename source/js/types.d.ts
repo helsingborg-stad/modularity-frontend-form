@@ -9,6 +9,8 @@ type ModularityFrontendFormLang = {
     next?: string;
     previous?: string;
     submit?: string;
+    atLeastOneValueIsRequired?: string;
+    loading?: string;
 
     submitInit?: string;
     submitUrlError?: string;

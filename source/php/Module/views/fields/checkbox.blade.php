@@ -1,4 +1,3 @@
-{{-- TODO: How should we use checkbox? --}}
 @element([
     'attributeList' => $field['attributeList'] ?? [],
 ])

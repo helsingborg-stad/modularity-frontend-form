@@ -61,7 +61,8 @@ class FieldBuilder implements FieldBuilderInterface {
                     this.getFieldName(field),
                     this.getFieldCondition(field),
                     this.notices,
-                    stepId
+                    stepId,
+                    this.modularityFrontendFormLang
                 );
                 break;
             case 'text':

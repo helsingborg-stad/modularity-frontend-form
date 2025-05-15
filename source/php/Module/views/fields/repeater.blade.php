@@ -64,7 +64,7 @@
             @endelement
         @endelement
         @button([
-            'text' => 'New row [+]', // TODO: Translation
+            'text' => $lang->newRow . ' [+]',
             'color' => 'primary',
             'style' => 'filled',
             'attributeList' => [

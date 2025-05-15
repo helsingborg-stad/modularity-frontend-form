@@ -6,6 +6,12 @@
         }
     },
     "customizations": {
+        "vscode": {
+            "extensions": [
+                "orta.vscode-jest",
+                "recca0120.vscode-phpunit"
+            ]
+        },
         "codespaces": {
             "repositories": {
                 "github.com/helsingborg-stad/openstreetmap": {

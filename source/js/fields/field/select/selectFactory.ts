@@ -1,6 +1,5 @@
 import FieldValidator from "../../validation/fieldValidator";
 import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
-import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import SelectConditionHandler from "./condition/selectConditionHandler";
 import SelectConditionValidator from "./condition/selectConditionValidator";
@@ -31,9 +30,7 @@ class SelectFactory {
             new SelectConditionHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
-                [
-                    new HtmlValidator(),
-                ]
+                []
             )
         )
     }

@@ -1,6 +1,5 @@
 import FieldValidator from "../../validation/fieldValidator";
 import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
-import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import RadioConditionsHandler from "./condition/radioConditionsHandler";
 import RadioConditionValidator from "./condition/radioConditionValidator";
@@ -20,7 +19,7 @@ class RadioFactory {
             console.error('Radio field is missing input elements');
             return NullFieldFactory.create(field, 'radio', name, unstructuredConditions, notices, stepId);
         }
-
+        // TODO: Validator
         return new Radio(
             field,
             choices,
@@ -29,9 +28,7 @@ class RadioFactory {
             new RadioConditionsHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
-                [
-                    new HtmlValidator(),
-                ]
+                []
             )
         );
     }

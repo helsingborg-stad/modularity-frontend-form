@@ -19,7 +19,6 @@ class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
     private condition: string = 'data-js-conditional-logic';
     private fieldsObject: FieldsObject = {};
-    private validationFieldsObject: ValidationFieldsObject = {};
 
     constructor(
         private fieldsInitiator: FieldsInitiatorInterface,

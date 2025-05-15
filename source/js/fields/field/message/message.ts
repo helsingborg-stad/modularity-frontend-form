@@ -30,6 +30,14 @@ class Message implements FieldInterface {
         return this.validator;
     }
 
+    public hasValue(): boolean {
+        return true;
+    }
+
+    public isRequired(): boolean {
+        return false;
+    }
+
     public getField(): HTMLElement {
         return this.field;
     }

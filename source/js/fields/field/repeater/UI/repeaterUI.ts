@@ -1,6 +1,7 @@
 import RowBuilder from "./rowBuilder";
 
-class RepeaterUI {
+class RepeaterUI implements RepeaterUIInterface {
+    private rowIndex: number = 0;
     private rowCount: number = 0;
     private repeaterField!: RepeaterInterface;
     private conditionBuilder!: ConditionBuilderInterface;
@@ -27,6 +28,10 @@ class RepeaterUI {
         this.setupListener();
     }
 
+    public getRowIndex(): number {
+        return this.rowIndex;
+    }
+
     public getRowCount(): number {
         return this.rowCount;
     }
@@ -34,7 +39,7 @@ class RepeaterUI {
     private setupListener() {
         this.addRowButton?.addEventListener('click', (e) => {
             e.preventDefault();
-            const rowId = this.rowCount.toString();
+            const rowId = this.rowIndex.toString();
             const row = this.rowBuilder.createRow(rowId);
             const builtRow = this.buildAddedFields(row);
             this.rowFieldsObject[rowId] = builtRow;
@@ -43,9 +48,10 @@ class RepeaterUI {
                 e.preventDefault();
                 this.rowBuilder.deleteRow(row);
                 this.removeRow(rowId);
+                this.rowCount--;
             });
-
             this.rowCount++;
+            this.rowIndex++;
         });
     }
 

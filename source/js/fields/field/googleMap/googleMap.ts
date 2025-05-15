@@ -1,6 +1,7 @@
 import { PlaceObject } from "@helsingborg-stad/openstreetmap";
 
 class GoogleMap implements GoogleMapInterface {
+    private required: boolean = false;
     constructor(
         private field: HTMLElement,
         private hiddenField: HTMLInputElement,
@@ -13,6 +14,7 @@ class GoogleMap implements GoogleMapInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.getField().hasAttribute('data-js-required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.googleMapValidator.init(this);
         this.openstreetmapInstance.init();
@@ -42,6 +44,14 @@ class GoogleMap implements GoogleMapInterface {
 
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    public isRequired(): boolean {
+        return this.required;
+    }
+
+    public hasValue(): boolean {
+        return this.getHiddenField().value.length > 0;
     }
 
     public getHiddenField(): HTMLInputElement {

@@ -155,6 +155,7 @@ class FrontendForm extends \Modularity\Module
             'noResultsFound'    => $this->wpService->__('No results found', 'modularity-frontend-form'),
             'searchPlaceholder' => $this->wpService->__('Search location...', 'modularity-frontend-form'),
             'nameOfTheLocation' => $this->wpService->__('Name of the location', 'modularity-frontend-form'),
+            'removeRow'         => $this->wpService->__('Remove row', 'modularity-frontend-form'),
 
             'statusTitleError'      => $this->wpService->__('Error', 'modularity-frontend-form'),
             'statusTitleSuccess'    => $this->wpService->__('Success', 'modularity-frontend-form'),

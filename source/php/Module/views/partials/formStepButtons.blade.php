@@ -6,6 +6,8 @@
     @button([
         'style' => 'filled',
         'color' => 'default',
+        'icon' => 'arrow_back_ios',
+        'reversePositions' => true,
         'attributeList' => [
             'data-js-frontend-form-previous-step' => 'true'
         ],
@@ -18,6 +20,7 @@
     @button([
         'style' => 'filled',
         'color' => 'primary',
+        'icon' => 'arrow_forward_ios',
         'attributeList' => [
             'data-js-frontend-form-next-step' => 'true'
         ],

@@ -36,15 +36,6 @@ $color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
     gap: 2rem;
 }
 
-.mod-frontend-form__step-header-edit {
-    cursor: pointer;
-    transition: .25s ease-in-out;
-
-    &:hover {
-        transform: scale(1.1);
-    }
-}
-
 .mod-frontend-form__step-buttons {
     display: flex;
     justify-content: space-between;

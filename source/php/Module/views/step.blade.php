@@ -28,8 +28,10 @@
             @endelement
             @button([
                 'icon' => 'edit',
-                'size' => 'md',
+                'text' => $lang->edit,
+                'size' => 'sm',
                 'style' => 'basic',
+                'reversePositions' => true,
                 'classList' => [
                     'mod-frontend-form__step-header-edit',
                     $index === 0 ? 'u-visibility--hidden' : ''

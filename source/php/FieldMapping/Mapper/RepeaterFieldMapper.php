@@ -16,18 +16,14 @@ class RepeaterFieldMapper implements FieldMapperInterface
     public function map(): ?array
     {
         $subfields = [];
-        $id = 'row_repeater_id_' . $this->field['key'];
 
         foreach ($this->field['sub_fields'] as $index => $subfield) {
-          $mappedSubfield = (new Mapper($subfield, $this->wpService))->map();
-          
-          if(!is_null($mappedSubfield)) {
-              $mappedSubfield['id']   = $id . '_' . $index;
-              $mappedSubfield['name'] = $mappedSubfield['name'] . '[]';
-              $mappedSubfield['id']   = $id . '_' . $index;
+            $subfield['key'] = $this->field['key'] . '_INDEX_REPLACE_' . $subfield['key'];
+            $mappedSubfield = (new Mapper($subfield, $this->wpService))->map();
 
-              $subfields[] = $mappedSubfield;
-          }
+            if(!is_null($mappedSubfield)) {
+                $subfields[] = $mappedSubfield;
+            }
         }
 
         $mapped = (new BasicFieldMapper($this->field, 'repeater'))->map();

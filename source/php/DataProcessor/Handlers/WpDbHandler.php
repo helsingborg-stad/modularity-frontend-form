@@ -68,7 +68,7 @@ class WpDbHandler implements HandlerInterface {
     if ($this->wpService->isWpError($result)) {
       $this->handlerResult->setError(
         new WP_Error(
-          'insert_post_failed',
+          'handler_error',
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
           [
             'post_type' => $config->saveToPostType,
@@ -103,8 +103,8 @@ class WpDbHandler implements HandlerInterface {
         if($this->wpService->isWpError($result)) {
           $this->handlerResult->setError(
             new WP_Error(
-              'update_field_failed',
-              $this->wpService->__('Could not update field.', 'modularity-frontend-form'),
+              'handler_error',
+              $this->wpService->__('Could not update field with metadata.', 'modularity-frontend-form'),
               [
                 'field' => $key,
                 'post_id' => $postId,

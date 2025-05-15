@@ -4,13 +4,15 @@ class RepeaterUI {
     private rowCount: number = 0;
     private repeaterField!: RepeaterInterface;
     private conditionBuilder!: ConditionBuilderInterface;
+    private rowFieldsObject: RowFieldsObject = {};
 
     constructor(
         private fieldBuilder: FieldBuilderInterface,
         private fieldsInitiator: FieldsInitiatorInterface,
         private repeaterContainer: HTMLElement,
         private addRowButton: HTMLButtonElement,
-        private rowBuilder: RowBuilder
+        private rowBuilder: RowBuilder,
+        private stepId: string
     ) {}
 
     public init(repeaterField: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void {
@@ -32,16 +34,32 @@ class RepeaterUI {
     private setupListener() {
         this.addRowButton?.addEventListener('click', (e) => {
             e.preventDefault();
-            this.buildAddedFields(this.rowBuilder.createRow(this.rowCount.toString()));
+            const rowId = this.rowCount.toString();
+            const row = this.rowBuilder.createRow(rowId);
+            const builtRow = this.buildAddedFields(row);
+            this.rowFieldsObject[rowId] = builtRow;
+            
+            row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.rowBuilder.deleteRow(row);
+                this.removeRow(rowId);
+            });
+
             this.rowCount++;
         });
     }
 
-    private buildAddedFields(row: HTMLElement): void {
+    private removeRow(rowId: string): void {
+        for (const fieldName in this.rowFieldsObject[rowId]) {
+            this.fieldBuilder.removeField(fieldName);
+        }
+    }
+
+    private buildAddedFields(row: HTMLElement): FieldsObject {
         const newFieldsObject: FieldsObject = {};
 
         [...row.querySelectorAll<HTMLElement>('[data-js-field]')].forEach(field => {
-            const builtField = this.fieldBuilder.build(field, field.dataset.jsField!);
+            const builtField = this.fieldBuilder.build(field, field.dataset.jsField!, this.stepId);
             newFieldsObject[builtField.getName()] = builtField;
         });
 
@@ -51,6 +69,8 @@ class RepeaterUI {
         }
 
         this.fieldsInitiator.initializeConditionals(newFieldsObject);
+        
+        return newFieldsObject;
     }
 }
 

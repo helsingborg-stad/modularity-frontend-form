@@ -19,12 +19,18 @@ class Form {
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
-        this.setupFields();
-        this.setupSteps();
+        const stepsObject = this.setupSteps();
+        this.setupFields(stepsObject);
     }
 
-    private setupFields() {
+    private setupFields(stepsObject: StepsObject|null): void {
+        if (!stepsObject) {
+            console.error("No steps were found");
+            return;
+        }
+
         const fieldsInitiatorInstance = new FieldsInitiator();
+
         const builder = new FieldBuilder(
             fieldsInitiatorInstance,
             new Notice(this.formContainer),
@@ -34,9 +40,12 @@ class Form {
 
         fieldsInitiatorInstance.init(builder);
 
-        this.form.querySelectorAll('[data-js-field]').forEach(element => {
-            builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '');
-        });
+        for (const stepId in stepsObject) {
+            const step = stepsObject[stepId];
+            step.getStepContainer().querySelectorAll('[data-js-field]').forEach(element => {
+                builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '', stepId);
+            });
+        }
 
         const conditionBuilder = new ConditionBuilder(builder);
 
@@ -47,13 +56,13 @@ class Form {
         fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
     }
 
-    private setupSteps() {
+    private setupSteps(): StepsObject|null {
         const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
         const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
         if (!nextButton || !previousButton) {
             console.error("Missing next or previous button");
-            return;
+            return null;
         }
 
         const steps = getSteps(this.formContainer);
@@ -78,7 +87,10 @@ class Form {
                 previousButton as HTMLButtonElement
             ),
             nextButton as HTMLButtonElement,
-            previousButton as HTMLButtonElement).init();
+            previousButton as HTMLButtonElement
+        ).init();
+
+        return steps;
     }
 }
 

@@ -55,7 +55,7 @@
                                 'mod-frontend-form__repeater-row-remove',
                             ],
                             'attributeList' => [
-                                'aria-label' => 'Remove row', // TODO: Translation
+                                'aria-label' => $lang->removeRow ?? 'Remove row',
                                 'data-js-repeater-remove-row' => 'true'
                             ]
                         ])
@@ -64,7 +64,7 @@
             @endelement
         @endelement
         @button([
-            'text' => 'New row [+]', // TODO: Translation
+            'text' => $lang->newRow . ' [+]',
             'color' => 'primary',
             'style' => 'filled',
             'attributeList' => [

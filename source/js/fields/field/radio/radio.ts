@@ -4,13 +4,15 @@ class Radio implements RadioInterface {
         private choices: NodeListOf<HTMLInputElement>,
         private name: string,
         private radioValidator: ConditionValidatorInterface,
-        private conditionsHandler: ConditionsHandlerInterface
+        private conditionsHandler: ConditionsHandlerInterface,
+        private validator: FieldValidatorInterface
     ) {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.conditionsHandler.init(this, conditionBuilder);
         this.radioValidator.init(this);
+        this.validator.init(this);
         this.listenForChanges();
     }
 
@@ -24,6 +26,10 @@ class Radio implements RadioInterface {
 
     public getConditionValidator(): ConditionValidatorInterface {
         return this.radioValidator;
+    }
+
+    public getValidator(): FieldValidatorInterface {
+        return this.validator;
     }
 
     public getChoices(): NodeListOf<HTMLInputElement> {

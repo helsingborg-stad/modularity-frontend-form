@@ -71,6 +71,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
     {
         $restEndpoints = [
             new Api\Submit\Post($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
+            new Api\Submit\Update($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Nonce\Get($this->wpService, $this->config, $this->moduleConfigFactory),
         ];
 

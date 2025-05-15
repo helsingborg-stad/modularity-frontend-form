@@ -27,6 +27,16 @@ class Config implements ConfigInterface
     );
   }
 
+  public function getUnprintableKeys(): array
+  {
+    return $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      [
+        'nonce'
+      ]
+    );
+  }
+
   /**
    * The field namespace.
    * 

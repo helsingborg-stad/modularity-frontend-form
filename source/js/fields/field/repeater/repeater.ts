@@ -4,7 +4,8 @@ class Repeater implements RepeaterInterface {
         private name: string,
         private repeaterUI: RepeaterUIInterface,
         private conditionValidator: ConditionValidatorInterface,
-        private conditionsHandler: ConditionsHandlerInterface
+        private conditionsHandler: ConditionsHandlerInterface,
+        private validator: FieldValidatorInterface
     ) {
     }
 
@@ -12,6 +13,7 @@ class Repeater implements RepeaterInterface {
         this.repeaterUI.init(this, conditionBuilder);
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
+        this.validator.init(this);
     }
 
     public getName(): string {
@@ -24,6 +26,10 @@ class Repeater implements RepeaterInterface {
 
     public getConditionValidator(): ConditionValidatorInterface {
         return this.conditionValidator;
+    }
+
+    public getValidator(): FieldValidatorInterface {
+        return this.validator;
     }
 
     public getRowCount(): number {

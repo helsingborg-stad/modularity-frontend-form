@@ -8,6 +8,7 @@ interface FieldInterface {
     getField(): HTMLElement;
     getConditionsHandler(): ConditionsHandlerInterface;
     getConditionValidator(): ConditionValidatorInterface;
+    getValidator(): FieldValidatorInterface;
 }
 
 interface CheckboxInterface extends FieldInterface {
@@ -44,8 +45,9 @@ interface SelectInterface extends FieldInterface {
 }
 
 interface FieldBuilderInterface {
-    build(field: HTMLElement, type: string): FieldInterface;
+    build(field: HTMLElement, type: string, step: string): FieldInterface;
     getFieldsObject(): FieldsObject;
+    removeField(name: string): void;
 }
 
 interface FieldValidatorInterface {
@@ -82,4 +84,10 @@ interface ConditionValidatorInterface {
 
 type FieldsObject = {
     [key: string]: FieldInterface;
+}
+
+type ValidationFieldsObject = {
+    [key: string]: {
+        [key: string]: FieldValidatorInterface;
+    }
 }

@@ -36,9 +36,7 @@ class FieldValidator implements FieldValidatorInterface {
         return isValid;
     }
 
-    // TODO: Is this needed?
-    // How should this work? Do we only listen after we run validate (trying to send the form)?
-    // Or should we always use validate? since it will run only after having a value and 
+    // TODO: Listen when leaving the field if its faulty. Continue to listen until corrected.
     public valueChangeListener(): void {
         if (this.invalidValidator) {
             this.invalidValidator = this.invalidValidator.isInvalid();

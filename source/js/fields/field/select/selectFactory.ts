@@ -1,3 +1,5 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import SelectConditionHandler from "./condition/selectConditionHandler";
 import SelectConditionValidator from "./condition/selectConditionValidator";
@@ -8,14 +10,15 @@ class SelectFactory {
         field: HTMLElement,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
         const select = field.querySelector('select') as HTMLSelectElement;
         const options = select?.querySelectorAll('option') as NodeListOf<HTMLOptionElement>;
 
         if (!options || options.length === 0) {
             console.error('Select field is missing select element or options');
-            return NullFieldFactory.create(field, 'select', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'select', name, unstructuredConditions, notices, stepId);
         }
 
         return new Select(
@@ -24,7 +27,11 @@ class SelectFactory {
             options,
             name,
             new SelectConditionValidator(),
-            new SelectConditionHandler(unstructuredConditions)
+            new SelectConditionHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                []
+            )
         )
     }
 }

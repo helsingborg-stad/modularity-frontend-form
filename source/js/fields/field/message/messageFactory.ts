@@ -1,3 +1,5 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import NullFieldConditionValidator from "../nullField/condition/nullFieldConditionValidator";
 import MessageConditionsHandler from "./condition/messageConditionHandler";
 import Message from "./message";
@@ -7,13 +9,18 @@ class MessageFactory {
         field: HTMLElement,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
         return new Message(
             field,
             name,
             new NullFieldConditionValidator(),
-            new MessageConditionsHandler(unstructuredConditions)
+            new MessageConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                []
+            )
         );
     }
 }

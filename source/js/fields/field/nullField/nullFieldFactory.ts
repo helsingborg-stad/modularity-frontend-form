@@ -1,3 +1,5 @@
+import FieldValidator from "../../validation/fieldValidator";
+import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import NullFieldConditionsHandler from "./condition/nullFieldConditionsHandler";
 import NullFieldConditionValidator from "./condition/nullFieldConditionValidator";
 import NullField from "./nullField";
@@ -8,7 +10,8 @@ class NullFieldFactory {
         type: string,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
 
         return new NullField(
@@ -16,7 +19,12 @@ class NullFieldFactory {
             type,
             name,
             new NullFieldConditionValidator(),
-            new NullFieldConditionsHandler(unstructuredConditions)
+            new NullFieldConditionsHandler(unstructuredConditions),
+            new FieldValidator(
+                new FieldValidatorUIHandler(notices),
+                [
+                ]
+            )
         );
     }
 }

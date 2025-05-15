@@ -34,9 +34,7 @@
             'data-js-frontend-form-working__title' => 'true'
         ],
     ])
-      @if($lang->submitting)
-          {{ $lang->submitting }}
-      @endif
+          {{ $lang->submitting ?? 'Submitting'}}
     @endtypography
     
     @typography([
@@ -49,9 +47,7 @@
             'data-js-frontend-form-working__description' => 'true'
         ],
     ])
-      @if($lang->working)
-          {{ $lang->submitInit }}
-      @endif
+        {{ $lang->submitInit ?? 'Preparing' }}
     @endtypography
   @endelement
 

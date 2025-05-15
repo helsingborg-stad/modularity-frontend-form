@@ -1,16 +1,21 @@
 class Basic implements BasicInterface {
+    private required: boolean = false;
     constructor(
         private field: HTMLElement,
         private input: HTMLInputElement,
         private name: string,
         private conditionValidator: ConditionValidatorInterface,
-        private conditionsHandler: ConditionsHandlerInterface
+        private conditionsHandler: ConditionsHandlerInterface,
+        private validator: FieldValidatorInterface
     ) {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.getInput().hasAttribute('required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
+        this.validator.init(this);
+
         this.listenForChanges();
     }
 
@@ -26,8 +31,20 @@ class Basic implements BasicInterface {
         return this.conditionValidator;
     }
 
+    public getValidator(): FieldValidatorInterface {
+        return this.validator;
+    }
+
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    public hasValue(): boolean {
+        return this.getInput().value.length > 0;
+    }
+
+    public isRequired(): boolean {
+        return this.required;
     }
 
     public getInput(): HTMLInputElement {
@@ -37,6 +54,11 @@ class Basic implements BasicInterface {
     private listenForChanges(): void {
         this.getInput().addEventListener('input', () => {
             this.conditionsHandler.checkConditions();
+            this.getValidator().valueChangeListener();
+        });
+
+        this.getInput().addEventListener('blur', () => {
+            this.getValidator().validate();
         });
     }
 }

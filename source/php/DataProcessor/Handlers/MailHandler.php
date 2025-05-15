@@ -1,0 +1,182 @@
+<?php
+
+namespace ModularityFrontendForm\DataProcessor\Handlers;
+
+use WpService\WpService; 
+use AcfService\AcfService; 
+use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
+use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use WP_Error;
+
+class MailHandler implements HandlerInterface {
+
+  use GetModuleConfigInstanceTrait;
+
+  public function __construct(
+      private WpService $wpService,
+      private AcfService $acfService,
+      private ConfigInterface $config,
+      private ModuleConfigInterface $moduleConfigInstance,
+      private HandlerResultInterface $handlerResult = new HandlerResult()
+  ) {
+  }
+
+  public function handle(array $data): ?HandlerResultInterface
+  {
+    //Get Module config instance
+    $emailTo = $this->moduleConfigInstance->getModuleId();
+    $emailTo = ""; //TODO: Get email from module 
+
+    //Check that the reciver email adress is a valid email
+    if(!$this->validateToEmail($emailTo)) {
+      return $this->handlerResult;
+    }
+
+    //Send mail
+    if(!$this->sendEmail($emailTo,$this->createEmailSubject($data),$this->createEmailBody($data))) {
+      return $this->handlerResult;
+    }
+
+    return $this->handlerResult;
+  }
+
+  /**
+   * Send the email
+   *
+   * @param string $emailTo The email address to send to
+   * @param string $subject The subject of the email
+   * @param string $body The body of the email
+   * @param array $headers The headers for the email
+   * @param array $attachments The attachments for the email
+   * @return bool True if the email was sent successfully, false otherwise
+   */
+  private function sendEmail(string $emailTo, string $subject, string $body, array $headers = [], array $attachments = []): bool
+  {
+    // Send the email
+    if (!$this->wpService->wpMail($emailTo, $subject, $body, $headers, $attachments)) {
+      $this->handlerResult->setError(
+        new WP_Error(
+          "handler_error", 
+          $this->wpService->__('Failed to send email.', 'modularity-frontend-form')
+        )
+      );
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Validate the email address
+   *
+   * @param string $emailTo The email address to validate
+   * @return bool True if the email address is valid, false otherwise
+   */
+  private function validateToEmail($emailTo): bool
+  {
+    $result = true;
+
+    if(!is_array($emailTo)) {
+      $emailTo = [$emailTo];
+    }
+
+    foreach ($emailTo as $email) {
+      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->handlerResult->setError(
+          new WP_Error(
+            "handler_error", 
+            $this->wpService->__('Invalid email address.', 'modularity-frontend-form')
+          )
+        );
+        $result = false;
+      }
+    }
+
+    return $result;
+  }
+
+  /**
+   * Create the email body
+   *
+   * @param array $data The data to include in the email body
+   * @return string The email body
+   */
+  private function createEmailBody(array $data): string
+  {
+      $rows = [];
+      foreach ($data as $acfKey => $value) {
+          if (in_array($acfKey, $this->config->getUnprintableKeys())) {
+              continue;
+          }
+          $rows[] = [
+            'key' => $this->getFieldLabel($acfKey), 
+            'value' => $this->sanitizeFieldValue($value)
+          ];
+      }
+
+      return $this->renderEmailBodyTable($rows);
+  }
+
+  /**
+   * Render the email body table
+   *
+   * @param array $rows Array of ['key' => string, 'value' => mixed]
+   * @return string HTML table as string
+   */
+  private function renderEmailBodyTable(array $rows): string
+  {
+      $html = '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse;">';
+      foreach ($rows as $row) {
+          $html .= '<tr>';
+          $html .= '<th align="left" style="background:#f5f5f5;">' . esc_html($row['key']) . '</th>';
+          $html .= '<td>' . esc_html(is_array($row['value']) ? implode(', ', $row['value']) : $row['value']) . '</td>';
+          $html .= '</tr>';
+      }
+      $html .= '</table>';
+
+      return $html;
+  }
+
+  /**
+   * Create the email subject
+   *
+   * @param array $data The data to include in the email subject
+   * @return string The email subject
+   */
+  private function createEmailSubject(array $data): string
+  {
+    return __(
+      'New form submission from {site_name}',
+      'modularity-frontend-form'
+    ); 
+  }
+
+  /**
+   * Sanitize the field value
+   *
+   * @param mixed $value The value to sanitize
+   * @return string The sanitized value
+   */
+  public function sanitizeFieldValue($value): string
+  {
+    return $this->wpService->sanitizeTextField($value);
+  }
+
+  /**
+   * Get the field label for a given field key
+   *
+   * @param string $fieldKey The field key to get the label for
+   * @return string The field label
+   */
+  private function getFieldLabel(string $fieldKey): string
+  {
+    $field = acf_get_field($fieldKey); //TODO: Implement in acf service
+    if($field) {
+      return $field['label'];
+    }
+    return $fieldKey;
+  }
+
+}

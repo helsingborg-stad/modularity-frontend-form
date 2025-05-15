@@ -1,9 +1,9 @@
 class RowBuilder implements RowBuilderInterface {
-    private replacement: string = 'repeater_id';
+    private replacement: string = 'INDEX_REPLACE';
 
     constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}
 
-    public createRow(id: string = 'row'): HTMLElement {
+    public createRow(id: string): HTMLElement {
         let rowHtml = this.template.innerHTML;
         rowHtml = rowHtml.replaceAll(this.replacement, id);
 
@@ -15,37 +15,30 @@ class RowBuilder implements RowBuilderInterface {
         tempDiv.innerHTML = rowHtml;
         const row = tempDiv.firstElementChild as HTMLElement;
       
-        if (row) {
-            this.templateContainer.appendChild(row);
-            requestAnimationFrame(() => {
-                row.style.maxHeight = row.scrollHeight + 'px';
-            });
+        this.templateContainer.appendChild(row);
+        requestAnimationFrame(() => {
+            row.style.maxHeight = row.scrollHeight + 'px';
+        });
 
-            row.addEventListener('transitionend', () => {
-                row.classList.add('animate-show');
-                row.style.maxHeight = 'unset';
-            }, { once: true });
-
-            this.removeRowListener(row);
-        }
+        row.addEventListener('transitionend', () => {
+            row.classList.add('animate-show');
+            row.style.maxHeight = 'unset';
+        }, { once: true });
 
         return row;
     }
 
-    private removeRowListener(row: HTMLElement): void {
-        row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            row.style.maxHeight = row.scrollHeight + 'px';
+    public deleteRow(row: HTMLElement): void {
+        row.style.maxHeight = row.scrollHeight + 'px';
 
-            requestAnimationFrame(() => {
-                row.classList.add('animate-remove');
-                row.style.maxHeight = '0px';
-            });
-    
-            row.addEventListener('transitionend', () => {
-                row.remove();
-            }, { once: true });
+        requestAnimationFrame(() => {
+            row.classList.add('animate-remove');
+            row.style.maxHeight = '0px';
         });
+
+        row.addEventListener('transitionend', () => {
+            row.remove();
+        }, { once: true });
     }
 }
 

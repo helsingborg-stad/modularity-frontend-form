@@ -10,7 +10,8 @@ class NullFieldFactory {
         type: string,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
 
         return new NullField(

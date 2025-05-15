@@ -13,7 +13,8 @@ class GoogleMapFactory {
         unstructuredConditions: any,
         modularityFrontendFormData: ModularityFrontendFormData,
         modularityFrontendFormLang: ModularityFrontendFormLang,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
         const openstreetmapInstance = OpenstreetmapFactory.createOpenstreetmap(
             field,
@@ -25,12 +26,12 @@ class GoogleMapFactory {
         
         if (!openstreetmapInstance) {
             console.error('Failed to create map instance');
-            return NullFieldFactory.create(field, 'googleMap', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'googleMap', name, unstructuredConditions, notices, stepId);
         }
 
         if (!hiddenField) {
             console.error('Failed to find hidden input field needed for Google map field.')
-            return NullFieldFactory.create(field, 'googleMap', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'googleMap', name, unstructuredConditions, notices, stepId);
         }
 
         return new GoogleMap(

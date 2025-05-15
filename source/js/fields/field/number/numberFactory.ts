@@ -11,13 +11,14 @@ class NumberFactory {
         field: HTMLElement,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
         const input = field.querySelector(`input[type="number"]`) as HTMLInputElement;
 
         if (!input) {
             console.error('Number field is missing input element.');
-            return NullFieldFactory.create(field, 'number', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'number', name, unstructuredConditions, notices, stepId);
         }
 
         return new Basic(

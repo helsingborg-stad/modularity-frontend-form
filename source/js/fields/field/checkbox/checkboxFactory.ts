@@ -11,15 +11,16 @@ class CheckboxFactory {
         field: HTMLElement,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
         const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
         if (choices.length === 0) {
             console.error('Checkbox field is missing input elements');
-            return NullFieldFactory.create(field, 'checkbox', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'checkbox', name, unstructuredConditions, notices, stepId);
         }
-
+        
         return new Checkbox(
             field,
             choices,

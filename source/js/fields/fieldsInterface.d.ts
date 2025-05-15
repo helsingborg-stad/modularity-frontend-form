@@ -45,7 +45,7 @@ interface SelectInterface extends FieldInterface {
 }
 
 interface FieldBuilderInterface {
-    build(field: HTMLElement, type: string): FieldInterface;
+    build(field: HTMLElement, type: string, step: string): FieldInterface;
     getFieldsObject(): FieldsObject;
 }
 
@@ -83,4 +83,10 @@ interface ConditionValidatorInterface {
 
 type FieldsObject = {
     [key: string]: FieldInterface;
+}
+
+type ValidationFieldsObject = {
+    [key: string]: {
+        [key: string]: FieldValidatorInterface;
+    }
 }

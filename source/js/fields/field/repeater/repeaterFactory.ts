@@ -13,19 +13,20 @@ class RepeaterFactory {
         field: HTMLElement,
         name: string,
         unstructuredConditions: any,
-        notices: NoticeInterface
+        notices: NoticeInterface,
+        stepId: string
     ): FieldInterface {
         const addRowButton = field.querySelector('[data-js-repeater-add-row]') as HTMLButtonElement;
         if (!addRowButton) {
             console.error('Failed to find add row button for repeater');
-            return NullFieldFactory.create(field, 'repeater', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'repeater', name, unstructuredConditions, notices, stepId);
         }
 
-        const repeaterUI = RepeaterUIFactory.createRepeater(fieldBuilder, fieldsInitiator, field, addRowButton);
+        const repeaterUI = RepeaterUIFactory.createRepeater(fieldBuilder, fieldsInitiator, field, addRowButton, stepId);
         
         if (!repeaterUI) {
             console.error('Failed to create repeater UI instance');
-            return NullFieldFactory.create(field, 'repeater', name, unstructuredConditions, notices);
+            return NullFieldFactory.create(field, 'repeater', name, unstructuredConditions, notices, stepId);
         }
 
         // TODO: Need to add validators to check if repeater is empty/required

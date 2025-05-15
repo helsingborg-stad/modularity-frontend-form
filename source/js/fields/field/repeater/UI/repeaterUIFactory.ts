@@ -7,6 +7,7 @@ class RepeaterUIFactory {
         fieldsInitiator: FieldsInitiatorInterface,
         repeaterContainer: HTMLElement,
         addRowButton: HTMLButtonElement,
+        stepId: string
 
     ): RepeaterUIInterface|null {
         const template = repeaterContainer.querySelector('[data-js-repeater-row-template]') as HTMLTemplateElement;
@@ -23,6 +24,7 @@ class RepeaterUIFactory {
             repeaterContainer,
             addRowButton,
             new RowBuilder(template, templateContainer),
+            stepId
         );
     }
 }

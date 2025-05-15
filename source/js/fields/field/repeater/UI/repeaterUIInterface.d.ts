@@ -6,3 +6,9 @@ interface RepeaterUIInterface {
 interface RowBuilderInterface {
     createRow(id?: string): HTMLElement;
 }
+
+type RemoveRepeaterRowListeners = (id: string) => void;
+
+type RowFieldsObject = {
+    [key: string]: FieldsObject;
+}

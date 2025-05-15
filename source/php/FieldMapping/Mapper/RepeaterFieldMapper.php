@@ -28,6 +28,11 @@ class RepeaterFieldMapper implements FieldMapperInterface
 
         $mapped = (new BasicFieldMapper($this->field, 'repeater'))->map();
 
+        if ($mapped['required']) {
+            $mapped['attributeList']['data-js-required'] = 'true';
+            unset($mapped['required']);
+        }
+
         if (is_array($mapped)) {
             $mapped['fields'] = $subfields;
             $mapped['min']    = $this->field['min'] ?: 0;

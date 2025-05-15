@@ -15,6 +15,11 @@ class GoogleMapFieldMapper implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, 'googleMap'))->map();
 
+        if ($mapped['required']) {
+            $mapped['attributeList']['data-js-required'] = 'true';
+            unset($mapped['required']);
+        }
+
         $mapped['height'] = $this->field['height'] ?: '400';
         $mapped['lat'] = $this->field['center_lat'] ?: '59.32932';
         $mapped['lng'] = $this->field['center_lng'] ?: '18.06858';

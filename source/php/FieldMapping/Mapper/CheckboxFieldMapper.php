@@ -18,7 +18,7 @@ class CheckboxFieldMapper implements FieldMapperInterface
         if (is_array($mapped)) {
             $mapped['choices'] = [];
             if ($mapped['required']) {
-                $mapped['attributeList']['data-js-field-required'] = 'true';
+                $mapped['attributeList']['data-js-required'] = 'true';
             }
 
             foreach ($this->field['choices'] as $key => $value) {

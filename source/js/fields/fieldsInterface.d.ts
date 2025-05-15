@@ -9,6 +9,8 @@ interface FieldInterface {
     getConditionsHandler(): ConditionsHandlerInterface;
     getConditionValidator(): ConditionValidatorInterface;
     getValidator(): FieldValidatorInterface;
+    isRequired(): boolean;
+    hasValue(): boolean;
 }
 
 interface CheckboxInterface extends FieldInterface {

@@ -29,6 +29,14 @@ class NullField implements FieldInterface {
         return this.conditionsHandler;
     }
 
+    public isRequired(): boolean {
+        return false;
+    }
+
+    public hasValue(): boolean {
+        return true;
+    }
+
     public getConditionValidator(): ConditionValidatorInterface {
         return this.nullFieldConditionValidator;
     }

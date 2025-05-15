@@ -1,4 +1,5 @@
 class Radio implements RadioInterface {
+    private required: boolean = false;
     constructor(
         private field: HTMLElement,
         private choices: NodeListOf<HTMLInputElement>,
@@ -10,6 +11,7 @@ class Radio implements RadioInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.getChoices()[0].required;
         this.conditionsHandler.init(this, conditionBuilder);
         this.radioValidator.init(this);
         this.validator.init(this);
@@ -34,6 +36,14 @@ class Radio implements RadioInterface {
 
     public getChoices(): NodeListOf<HTMLInputElement> {
         return this.choices;
+    }
+
+    public hasValue(): boolean {
+        return this.getSelectedChoice().length > 0;
+    }
+
+    public isRequired(): boolean {
+        return this.required;
     }
 
     public getSelectedChoice(): string {

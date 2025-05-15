@@ -1,4 +1,5 @@
 class Checkbox implements CheckboxInterface {
+    private required: boolean = false;
     constructor(
         private field: HTMLElement,
         private choices: NodeListOf<HTMLInputElement>,
@@ -10,6 +11,7 @@ class Checkbox implements CheckboxInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.getField().hasAttribute('data-js-required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
         this.validator.init(this);
@@ -34,6 +36,14 @@ class Checkbox implements CheckboxInterface {
 
     public getChoices(): NodeListOf<HTMLInputElement> {
         return this.choices;
+    }
+
+    public isRequired(): boolean {
+        return this.required;
+    }
+
+    public hasValue(): boolean {
+        return this.getSelectedChoices().length > 0;
     }
 
     public getSelectedChoices(): string[] {

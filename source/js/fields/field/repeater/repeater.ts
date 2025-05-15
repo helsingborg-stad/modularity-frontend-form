@@ -1,4 +1,5 @@
 class Repeater implements RepeaterInterface {
+    private required: boolean = false;
     constructor(
         private field: HTMLElement,
         private name: string,
@@ -10,6 +11,7 @@ class Repeater implements RepeaterInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.field.hasAttribute('data-js-required');
         this.repeaterUI.init(this, conditionBuilder);
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
@@ -32,10 +34,18 @@ class Repeater implements RepeaterInterface {
         return this.validator;
     }
 
+    public hasValue(): boolean {
+        return this.repeaterUI.getRowCount() > 0;
+    }
+
     public getRowCount(): number {
         return this.repeaterUI.getRowCount();
     }
 
+    public isRequired(): boolean {
+        return this.required;
+    }
+    
     public getField(): HTMLElement {
         return this.field;
     }

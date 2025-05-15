@@ -1,4 +1,5 @@
 class Select implements SelectInterface {
+    private required: boolean = false;
     constructor(
         private field: HTMLElement,
         private select: HTMLSelectElement,
@@ -11,6 +12,7 @@ class Select implements SelectInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.getSelect().required;
         this.conditionsHandler.init(this, conditionBuilder);
         this.selectValidator.init(this);
         this.validator.init(this);
@@ -43,6 +45,14 @@ class Select implements SelectInterface {
 
     public getOptions(): NodeListOf<HTMLOptionElement> {
         return this.options;
+    }
+
+    public hasValue(): boolean {
+        return this.getSelectedOptions().length > 0;
+    }
+
+    public isRequired(): boolean {
+        return this.required;
     }
 
     public getSelectedOptions(): string[] {

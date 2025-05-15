@@ -30,7 +30,7 @@ class Form {
         }
 
         const fieldsInitiatorInstance = new FieldsInitiator();
-        console.log(stepsObject);
+
         const builder = new FieldBuilder(
             fieldsInitiatorInstance,
             new Notice(this.formContainer),
@@ -41,16 +41,11 @@ class Form {
         fieldsInitiatorInstance.init(builder);
 
         for (const stepId in stepsObject) {
-            console.log(stepId);
             const step = stepsObject[stepId];
             step.getStepContainer().querySelectorAll('[data-js-field]').forEach(element => {
                 builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '', stepId);
             });
         }
-
-        // this.form.querySelectorAll('[data-js-field]').forEach(element => {
-        //     builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '');
-        // });
 
         const conditionBuilder = new ConditionBuilder(builder);
 

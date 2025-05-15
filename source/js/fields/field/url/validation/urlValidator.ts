@@ -1,3 +1,5 @@
+// TODO: Do we need this validator?
+
 class UrlValidator implements ValidationControlInterface {
     private basic!: BasicInterface;
 
@@ -11,7 +13,6 @@ class UrlValidator implements ValidationControlInterface {
         return valid ? false : this;
     }
 
-    // TODO: Translate
     public getFailedValidationMessage(): string {
         return 'HTML validation failed';
     }

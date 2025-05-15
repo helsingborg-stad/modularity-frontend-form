@@ -11,7 +11,7 @@ class HtmlValidator implements ValidationControlInterface {
         return valid ? false : this;
     }
 
-    // TODO: Translate
+    // TODO: For today
     public getFailedValidationMessage(): string {
         return 'HTML validation failed';
     }

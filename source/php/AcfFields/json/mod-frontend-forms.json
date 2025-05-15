@@ -157,90 +157,9 @@
             "endpoint": 0
         },
         {
-            "key": "field_6627a79912426",
-            "label": "Select Post Type",
-            "name": "saveToPostType",
-            "aria-label": "",
-            "type": "posttype_select",
-            "instructions": "The post type that the user should be able to add to or modify.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "allow_null": 0,
-            "multiple": 0,
-            "placeholder": "",
-            "disabled": 0,
-            "readonly": 0
-        },
-        {
-            "key": "field_662a4f4d25fe6",
-            "label": "In Progress Post Status",
-            "name": "saveToPostTypeStatus",
-            "aria-label": "",
-            "type": "select",
-            "instructions": "The post status to use when a form hasen't been reviewed by the user.",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "draft": "Draft",
-                "pending": "Pending Review",
-                "private": "Private",
-                "publish": "Published"
-            },
-            "default_value": "draft",
-            "return_format": "value",
-            "multiple": 0,
-            "allow_null": 0,
-            "ui": 0,
-            "ajax": 0,
-            "placeholder": "",
-            "allow_custom": 0,
-            "search_placeholder": ""
-        },
-        {
-            "key": "field_664cac4d3a132",
-            "label": "Reviewed Post Status",
-            "name": "reviewedPostTypeStatus",
-            "aria-label": "",
-            "type": "select",
-            "instructions": "The post status to use when a form have been reviewed by the user.",
-            "required": 1,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "50",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "draft": "Draft",
-                "pending": "Pending Review",
-                "private": "Private",
-                "publish": "Published"
-            },
-            "default_value": false,
-            "return_format": "value",
-            "multiple": 0,
-            "allow_null": 0,
-            "ui": 0,
-            "ajax": 0,
-            "placeholder": "",
-            "allow_custom": 0,
-            "search_placeholder": ""
-        },
-        {
             "key": "field_68258f85a4ad6",
             "label": "Submit to",
-            "name": "submitTo",
+            "name": "activeHandlers",
             "aria-label": "",
             "type": "checkbox",
             "instructions": "Select where you want the submissions to be stored or sent to.",
@@ -259,10 +178,216 @@
             "default_value": [],
             "return_format": "value",
             "allow_custom": 0,
-            "layout": "vertical",
+            "layout": "horizontal",
             "toggle": 0,
             "save_custom": 0,
             "custom_choice_button_text": "Add new choice"
+        },
+        {
+            "key": "field_6825a840a064b",
+            "label": "Database",
+            "name": "WpDbHandlerConfig",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Select where we should store the answers on this form, and with what default status.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==contains",
+                        "value": "WpDbHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "sub_fields": [
+                {
+                    "key": "field_6627a79912426",
+                    "label": "Select Post Type",
+                    "name": "saveToPostType",
+                    "aria-label": "",
+                    "type": "posttype_select",
+                    "instructions": "The post type that the user should be able to add to or modify.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "allow_null": 0,
+                    "multiple": 0,
+                    "placeholder": "",
+                    "disabled": 0,
+                    "readonly": 0
+                },
+                {
+                    "key": "field_662a4f4d25fe6",
+                    "label": "Save as Post Status",
+                    "name": "saveToPostTypeStatus",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "The post status to use when a form hasen't been reviewed by the user.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "draft": "Draft",
+                        "pending": "Pending Review",
+                        "private": "Private",
+                        "publish": "Published"
+                    },
+                    "default_value": "draft",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "allow_custom": 0,
+                    "search_placeholder": ""
+                }
+            ],
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
+        },
+        {
+            "key": "field_6825aeb2d29fb",
+            "label": "Email",
+            "name": "MailHandlerConfig",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Configure the email adresses that should recive the form submission automatically.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==contains",
+                        "value": "MailHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "sub_fields": [
+                {
+                    "key": "field_6825aed6d29fe",
+                    "label": "Add Reciver",
+                    "name": "Recivers",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "acfe_repeater_stylised_button": 0,
+                    "layout": "row",
+                    "pagination": 0,
+                    "min": 1,
+                    "max": 15,
+                    "collapsed": "field_6825af0bd29ff",
+                    "button_label": "Add Reciver",
+                    "rows_per_page": 20,
+                    "sub_fields": [
+                        {
+                            "key": "field_6825af0bd29ff",
+                            "label": "Email",
+                            "name": "Email",
+                            "aria-label": "",
+                            "type": "email",
+                            "instructions": "",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_6825aed6d29fe"
+                        }
+                    ]
+                }
+            ],
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
+        },
+        {
+            "key": "field_6825c6bf45c50",
+            "label": "Webhook",
+            "name": "WebHookHandlerConfig",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Configure the email adresses that should recive the form submission automatically.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==contains",
+                        "value": "WebHookHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "sub_fields": [
+                {
+                    "key": "field_6825c72345c53",
+                    "label": "Callback URL",
+                    "name": "callbackUrl",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ],
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large"
         },
         {
             "key": "field_662a5230a59a0",

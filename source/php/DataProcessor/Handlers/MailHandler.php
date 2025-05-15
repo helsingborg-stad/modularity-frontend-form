@@ -26,19 +26,22 @@ class MailHandler implements HandlerInterface {
 
   public function handle(array $data): ?HandlerResultInterface
   {
-    //Get Module config instance
-    $emailTo = $this->moduleConfigInstance->getModuleId();
-    $emailTo = ""; //TODO: Get email from module 
+    $config = $this->moduleConfigInstance->getMailHandlerConfig();
 
-    //Check that the reciver email adress is a valid email
-    if(!$this->validateToEmail($emailTo)) {
+    $reducedReciversToArray = array_reduce($config->Recivers ?? [], function($carry, $item) {
+      $carry[] = trim($item['Email']);
+      return $carry;
+    }, []);
+
+    if(!$this->toEmailIsSet($reducedReciversToArray ?? []) || !$this->validateToEmail($reducedReciversToArray ?? [])) {
       return $this->handlerResult;
     }
 
-    //Send mail
-    if(!$this->sendEmail($emailTo,$this->createEmailSubject($data),$this->createEmailBody($data))) {
-      return $this->handlerResult;
-    }
+    $this->sendEmail(
+      $reducedReciversToArray ?? [],
+      $this->createEmailSubject($data),
+      $this->createEmailBody($data)
+    );
 
     return $this->handlerResult;
   }
@@ -53,7 +56,7 @@ class MailHandler implements HandlerInterface {
    * @param array $attachments The attachments for the email
    * @return bool True if the email was sent successfully, false otherwise
    */
-  private function sendEmail(string $emailTo, string $subject, string $body, array $headers = [], array $attachments = []): bool
+  private function sendEmail(array $emailTo, string $subject, string $body, array $headers = [], array $attachments = []): bool
   {
     // Send the email
     if (!$this->wpService->wpMail($emailTo, $subject, $body, $headers, $attachments)) {
@@ -87,7 +90,7 @@ class MailHandler implements HandlerInterface {
         $this->handlerResult->setError(
           new WP_Error(
             "handler_error", 
-            $this->wpService->__('Invalid email address.', 'modularity-frontend-form')
+            $this->wpService->__('Invalid email address in recivers list.', 'modularity-frontend-form')
           )
         );
         $result = false;
@@ -95,6 +98,26 @@ class MailHandler implements HandlerInterface {
     }
 
     return $result;
+  }
+
+  /**
+   * Check if the email address is set
+   *
+   * @param array $emailTo The email address to check
+   * @return bool True if the email address is set, false otherwise
+   */
+  private function toEmailIsSet(array $emailTo): bool
+  {
+    if(empty($emailTo)) {
+      $this->handlerResult->setError(
+        new WP_Error(
+          "handler_error",
+          $this->wpService->__('No email address set in recivers list.', 'modularity-frontend-form')
+        )
+      );
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -111,7 +134,7 @@ class MailHandler implements HandlerInterface {
               continue;
           }
           $rows[] = [
-            'key' => $this->getFieldLabel($acfKey), 
+            'key'   => $this->getFieldLabel($acfKey), 
             'value' => $this->sanitizeFieldValue($value)
           ];
       }
@@ -148,7 +171,7 @@ class MailHandler implements HandlerInterface {
   private function createEmailSubject(array $data): string
   {
     return __(
-      'New form submission from {site_name}',
+      'New form submission',
       'modularity-frontend-form'
     ); 
   }

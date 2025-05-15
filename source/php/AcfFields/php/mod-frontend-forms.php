@@ -189,6 +189,39 @@
             'custom_choice_button_text' => 'Add new choice',
         ),
         4 => array(
+            'key' => 'field_6825e3a7d04ee',
+            'label' => __('Data Protection Information', 'modularity-frontend-form'),
+            'name' => '',
+            'aria-label' => '',
+            'type' => 'message',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => array(
+                0 => array(
+                    0 => array(
+                        'field' => 'field_68258f85a4ad6',
+                        'operator' => '==',
+                        'value' => 'MailHandler',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'field' => 'field_68258f85a4ad6',
+                        'operator' => '==',
+                        'value' => 'WebHookHandler',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ),
+            'message' => __('Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.', 'modularity-frontend-form'),
+            'new_lines' => 'wpautop',
+            'esc_html' => 0,
+        ),
+        5 => array(
             'key' => 'field_6825a840a064b',
             'label' => __('Database', 'modularity-frontend-form'),
             'name' => 'WpDbHandlerConfig',
@@ -270,7 +303,7 @@
             'acfe_group_modal_button' => '',
             'acfe_group_modal_size' => 'large',
         ),
-        5 => array(
+        6 => array(
             'key' => 'field_6825aeb2d29fb',
             'label' => __('Email', 'modularity-frontend-form'),
             'name' => 'MailHandlerConfig',
@@ -346,7 +379,7 @@
             'acfe_group_modal_button' => '',
             'acfe_group_modal_size' => 'large',
         ),
-        6 => array(
+        7 => array(
             'key' => 'field_6825c6bf45c50',
             'label' => __('Webhook', 'modularity-frontend-form'),
             'name' => 'WebHookHandlerConfig',
@@ -378,7 +411,7 @@
                     'name' => 'callbackUrl',
                     'aria-label' => '',
                     'type' => 'url',
-                    'instructions' => __('Note: This URL will receive all data submitted through the form, including any sensitive information. Please ensure that the callback URL complies with all relevant data protection regulations, such as the GDPR and Schrems II.', 'modularity-frontend-form'),
+                    'instructions' => '',
                     'required' => 1,
                     'conditional_logic' => 0,
                     'wrapper' => array(
@@ -394,7 +427,7 @@
             'acfe_group_modal_button' => '',
             'acfe_group_modal_size' => 'large',
         ),
-        7 => array(
+        8 => array(
             'key' => 'field_662a5230a59a0',
             'label' => __('Form Completion', 'modularity-frontend-form'),
             'name' => '',
@@ -411,7 +444,7 @@
             'placement' => 'top',
             'endpoint' => 0,
         ),
-        8 => array(
+        9 => array(
             'key' => 'field_664de6eb4fffd',
             'label' => __('Enable summary', 'modularity-frontend-form'),
             'name' => 'hasSummaryStep',
@@ -431,7 +464,7 @@
             'ui_on_text' => '',
             'ui_off_text' => '',
         ),
-        9 => array(
+        10 => array(
             'key' => 'field_664de74a4fffe',
             'label' => __('Summary Title', 'modularity-frontend-form'),
             'name' => 'summaryTitle',
@@ -459,7 +492,7 @@
             'prepend' => '',
             'append' => '',
         ),
-        10 => array(
+        11 => array(
             'key' => 'field_664de76b4ffff',
             'label' => __('Summary Lead', 'modularity-frontend-form'),
             'name' => 'summaryLead',
@@ -487,7 +520,7 @@
             'media_upload' => 1,
             'delay' => 0,
         ),
-        11 => array(
+        12 => array(
             'key' => 'field_662a6546a687a',
             'label' => __('Security', 'modularity-frontend-form'),
             'name' => '',
@@ -504,7 +537,7 @@
             'placement' => 'top',
             'endpoint' => 0,
         ),
-        12 => array(
+        13 => array(
             'key' => 'field_662a6557a687b',
             'label' => __('Public Access', 'modularity-frontend-form'),
             'name' => 'isPublicForm',

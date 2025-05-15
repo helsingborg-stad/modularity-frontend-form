@@ -184,6 +184,39 @@
             "custom_choice_button_text": "Add new choice"
         },
         {
+            "key": "field_6825e3a7d04ee",
+            "label": "Data Protection Information",
+            "name": "",
+            "aria-label": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "MailHandler"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "WebHookHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
             "key": "field_6825a840a064b",
             "label": "Database",
             "name": "WpDbHandlerConfig",
@@ -373,7 +406,7 @@
                     "name": "callbackUrl",
                     "aria-label": "",
                     "type": "url",
-                    "instructions": "Note: This URL will receive all data submitted through the form, including any sensitive information. Please ensure that the callback URL complies with all relevant data protection regulations, such as the GDPR and Schrems II.",
+                    "instructions": "",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {

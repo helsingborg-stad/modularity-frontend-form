@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInter
 use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class FieldValidationWithAcf implements ValidatorInterface
 {
@@ -46,7 +47,7 @@ class FieldValidationWithAcf implements ValidatorInterface
               if(!$isValid) {
                 $this->validationResult->setError(
                   new WP_Error(
-                    "validation_error", 
+                    RestApiResponseStatusEnums::ValidationError->value, 
                     $this->wpService->__(
                       'Field validation failed',
                     ), 

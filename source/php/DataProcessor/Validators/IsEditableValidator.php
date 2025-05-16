@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInter
 use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class IsEditableValidator implements ValidatorInterface
 {
@@ -57,7 +58,7 @@ class IsEditableValidator implements ValidatorInterface
 
         $this->validationResult->setError(
             new WP_Error(
-                "validation_error", 
+                RestApiResponseStatusEnums::ValidationError->value, 
                 $this->wpService->__(
                     'This form has the editing feature disabled.', 'modularity-frontend-form'
                 )
@@ -80,7 +81,7 @@ class IsEditableValidator implements ValidatorInterface
 
         $this->validationResult->setError(
             new WP_Error(
-                "validation_error", 
+                RestApiResponseStatusEnums::ValidationError->value, 
                 $this->wpService->__(
                     'The post does not have a registered security token.', 'modularity-frontend-form'
                 )

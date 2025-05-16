@@ -9,6 +9,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_Error;
 
 class MailHandler implements HandlerInterface {
@@ -62,7 +63,7 @@ class MailHandler implements HandlerInterface {
     if (!$this->wpService->wpMail($emailTo, $subject, $body, $headers, $attachments)) {
       $this->handlerResult->setError(
         new WP_Error(
-          "handler_error", 
+          RestApiResponseStatusEnums::HandlerError->value, 
           $this->wpService->__('Failed to send email.', 'modularity-frontend-form')
         )
       );
@@ -89,7 +90,7 @@ class MailHandler implements HandlerInterface {
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $this->handlerResult->setError(
           new WP_Error(
-            "handler_error", 
+            RestApiResponseStatusEnums::HandlerError->value, 
             $this->wpService->__('Invalid email address in recivers list.', 'modularity-frontend-form')
           )
         );
@@ -111,7 +112,7 @@ class MailHandler implements HandlerInterface {
     if(empty($emailTo)) {
       $this->handlerResult->setError(
         new WP_Error(
-          "handler_error",
+          RestApiResponseStatusEnums::HandlerError->value, 
           $this->wpService->__('No email address set in recivers list.', 'modularity-frontend-form')
         )
       );

@@ -3,6 +3,7 @@
 namespace ModularityFrontendForm\DataProcessor\Validators\Result;
 
 use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_Error;
 
 class ValidationResult implements ValidationResultInterface
@@ -30,6 +31,8 @@ class ValidationResult implements ValidationResultInterface
    */
   public function setError(WP_Error $error): void
   {
-    $this->errors[] = $error;
+    if(RestApiResponseStatusEnums::from($error->get_error_code())) {
+      $this->errors[] = $error;
+    }
   }
 }

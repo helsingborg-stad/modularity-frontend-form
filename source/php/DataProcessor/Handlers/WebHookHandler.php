@@ -9,6 +9,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_Error;
 
 class WebHookHandler implements HandlerInterface {
@@ -57,7 +58,7 @@ class WebHookHandler implements HandlerInterface {
     if (!filter_var($url, FILTER_VALIDATE_URL)) {
       $this->handlerResult->setError(
         new WP_Error(
-          "handler_error", 
+          RestApiResponseStatusEnums::HandlerError->value, 
           $this->wpService->__('Invalid callback url format.', 'modularity-frontend-form')
         )
       );
@@ -69,7 +70,7 @@ class WebHookHandler implements HandlerInterface {
     if ($headers === false) {
       $this->handlerResult->setError(
       new WP_Error(
-        "handler_error", 
+        RestApiResponseStatusEnums::HandlerError->value, 
         $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
       )
       );
@@ -99,7 +100,7 @@ class WebHookHandler implements HandlerInterface {
     if($this->wpService->isWpError($response)) {
       $this->handlerResult->setError(
         new WP_Error(
-          "handler_error", 
+          RestApiResponseStatusEnums::HandlerError->value, 
           $this->wpService->__('Failed to send data to webhook.', 'modularity-frontend-form')
         )
       );

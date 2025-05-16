@@ -9,6 +9,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_Error;
 
 class WpDbHandler implements HandlerInterface {
@@ -68,7 +69,7 @@ class WpDbHandler implements HandlerInterface {
     if ($this->wpService->isWpError($result)) {
       $this->handlerResult->setError(
         new WP_Error(
-          'handler_error',
+          RestApiResponseStatusEnums::HandlerError->value,
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
           [
             'post_type' => $moduleConfig->saveToPostType,
@@ -101,7 +102,7 @@ class WpDbHandler implements HandlerInterface {
         if($this->wpService->isWpError($result)) {
           $this->handlerResult->setError(
             new WP_Error(
-              'handler_error',
+              RestApiResponseStatusEnums::HandlerError->value,
               $this->wpService->__('Could not update field with metadata.', 'modularity-frontend-form'),
               [
                 'field' => $key,

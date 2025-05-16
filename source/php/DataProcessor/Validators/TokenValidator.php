@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInter
 use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class TokenValidator implements ValidatorInterface
 {
@@ -34,7 +35,7 @@ class TokenValidator implements ValidatorInterface
         if(!$token) {
             $this->validationResult->setError(
                 new WP_Error(
-                    "validation_error", 
+                    RestApiResponseStatusEnums::ValidationError->value, 
                     $this->wpService->__(
                         'Token is missing in request.',
                     ), 
@@ -54,7 +55,7 @@ class TokenValidator implements ValidatorInterface
         if($tokenField !== $token) {
             $this->validationResult->setError(
                 new WP_Error(
-                    "validation_error", 
+                    RestApiResponseStatusEnums::ValidationError->value, 
                     $this->wpService->__(
                         'Token provided does not match the one registered for this post.',
                     )

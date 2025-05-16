@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInter
 use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class FieldsExistsOnPostType implements ValidatorInterface
 {
@@ -38,7 +39,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
       // Check for field keys that are present on the post type
       $validKeys = $this->filterUnmappedFieldKeysForPostType(
           $fieldKeys,
-          $this->moduleConfigInstance->getTargetPostType(),
+          $this->moduleConfigInstance->getWpDbHandlerConfig()->saveToPostType,
           $this->bypassValidationForKeys
       );
   
@@ -46,7 +47,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
       if($strayKeys = array_diff($fieldKeys, $validKeys)) {
         $this->validationResult->setError(
           new WP_Error(
-            "validation_error", 
+            RestApiResponseStatusEnums::ValidationError->value, 
             $this->wpService->__(
               'Some fields are not registered in the taget store location',
             ), 

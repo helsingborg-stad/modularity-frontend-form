@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInter
 use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class NonceValidator implements ValidatorInterface
 {
@@ -51,7 +52,7 @@ class NonceValidator implements ValidatorInterface
         if (!isset($data['nonce'])) {
             $this->validationResult->setError(
                 new WP_Error(
-                    "validation_error_nonce", 
+                    RestApiResponseStatusEnums::ValidationError->value, 
                     $this->wpService->__('Nonce missing.', 'modularity-frontend-form')
                 )
             );
@@ -74,7 +75,7 @@ class NonceValidator implements ValidatorInterface
         if ($nonceKey !== $data['nonce']) {
             $this->validationResult->setError(
                 new WP_Error(
-                    "validation_error_nonce", 
+                    RestApiResponseStatusEnums::ValidationError->value, 
                     $this->wpService->__('Nonce is invalid.', 'modularity-frontend-form')
                 )
             );

@@ -1,0 +1,8 @@
+<?php 
+
+namespace ModularityFrontendForm\Api;
+
+enum RestApiResponseStatusEnums: string {
+  case HandlerError = 'handler_error';
+  case ValidationError = 'validation_error';
+}

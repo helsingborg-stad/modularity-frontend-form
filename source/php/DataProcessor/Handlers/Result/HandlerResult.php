@@ -3,6 +3,7 @@
 namespace ModularityFrontendForm\DataProcessor\Handlers\Result;
 
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_Error;
 
 class HandlerResult implements HandlerResultInterface
@@ -30,6 +31,8 @@ class HandlerResult implements HandlerResultInterface
    */
   public function setError(WP_Error $error): void
   {
-    $this->errors[] = $error;
+    if(RestApiResponseStatusEnums::from($error->get_error_code())) {
+      $this->errors[] = $error;
+    }
   }
 }

@@ -9,6 +9,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_Error;
 
 class NullHandler implements HandlerInterface {
@@ -32,7 +33,7 @@ class NullHandler implements HandlerInterface {
   {
     $this->handlerResult->setError(
       new WP_Error(
-        "handler_error", 
+        RestApiResponseStatusEnums::HandlerError->value, 
         $this->wpService->__('No handler found.', 'modularity-frontend-form')
       )
     );

@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInter
 use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class FieldsExists implements ValidatorInterface
 {
@@ -44,7 +45,7 @@ class FieldsExists implements ValidatorInterface
           if(acf_get_field($key) === false) { //TODO: Add to acf service
             $this->validationResult->setError(
               new WP_Error(
-                "validation_error", 
+                RestApiResponseStatusEnums::ValidationError->value, 
                 $this->wpService->__(
                   'Form contains fields that do not exist',
                 ), 

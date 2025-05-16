@@ -1,5 +1,6 @@
-class CustomValidationItem {
+class CustomInvalidValidationMessageItem {
     private cachedCustomValidityMessages: { [key: string]: string } = {};
+    private previousFirstInvalid: keyof ValidityState|null = null;
 
     constructor(
         private item: HTMLInputElement|HTMLSelectElement,
@@ -38,8 +39,17 @@ class CustomValidationItem {
     private getFirstInvalidReason(input: HTMLInputElement | HTMLSelectElement): keyof ValidityState | null {
         const validity = input.validity;
 
+        if (validity.valid) {
+            return null;
+        }
+
+        if (this.previousFirstInvalid !== null && validity[this.previousFirstInvalid]) {
+            return this.previousFirstInvalid;
+        }
+
         for (const key of this.validationKeys as (keyof ValidityState)[]) {
             if (validity[key]) {
+                this.previousFirstInvalid = key;
                 return key;
             }
         }
@@ -48,4 +58,4 @@ class CustomValidationItem {
     }
 }
 
-export default CustomValidationItem;
+export default CustomInvalidValidationMessageItem;

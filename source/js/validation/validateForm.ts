@@ -1,4 +1,4 @@
-import CustomValidationItem from "./CustomValidationItem";
+import CustomInvalidValidationMessageItem from './customInvalidValidationMessageItem';
 
 class ValidateForm {
     private attributePrefix: string = 'data-js-validation-message-';
@@ -17,7 +17,7 @@ class ValidateForm {
         this.target = this.getTarget();
 
         document.querySelectorAll(this.target).forEach(item => {
-            new CustomValidationItem(
+            new CustomInvalidValidationMessageItem(
                 item as HTMLInputElement|HTMLSelectElement,
                 this.validationKeys,
                 this.attributePrefixCamelCased

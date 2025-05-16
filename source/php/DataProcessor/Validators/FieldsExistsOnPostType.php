@@ -14,11 +14,6 @@ use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class FieldsExistsOnPostType implements ValidatorInterface
 {
-    //Data keys that should be ignored during validation of this validator
-    private array $bypassValidationForKeys = [
-      'nonce'
-    ];
-
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
@@ -40,7 +35,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
       $validKeys = $this->filterUnmappedFieldKeysForPostType(
           $fieldKeys,
           $this->moduleConfigInstance->getWpDbHandlerConfig()->saveToPostType,
-          $this->bypassValidationForKeys
+          $this->config->getKeysToBypass()
       );
   
       // If there are any stray keys, set an error

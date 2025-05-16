@@ -38,7 +38,7 @@ class FieldValidationWithAcf implements ValidatorInterface
       foreach ($data as $key => $value) {
 
           // Check if the field key is in the bypass list
-          if(in_array($key, $this->bypassValidationForKeys)) {
+          if(in_array($key, $this->config->getKeysToBypass())) {
             continue;
           }
 

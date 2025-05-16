@@ -16,5 +16,6 @@ interface ConfigInterface
     public function getMetaDataNamespace(?string $key = null): string;
     public function getFilterPrefix(): string;
     public function getUnprintableKeys(): array;
+    public function getKeysToBypass(): array;
     public function createFilterKey(string $filter = ""): string;
 }

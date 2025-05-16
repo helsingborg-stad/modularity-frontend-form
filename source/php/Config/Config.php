@@ -69,6 +69,21 @@ class Config implements ConfigInterface
   }
 
   /**
+   * A list of keys that should be bypassed in the validation towards acf functions.
+   * These keys are manually secured by other validation methods.
+   */
+  public function getKeysToBypass(): array
+  {
+    return $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      [
+        'postId',
+        'nonce'
+      ]
+    );
+  }
+
+  /**
    * Get the filter prefix.
    * 
    * @return string

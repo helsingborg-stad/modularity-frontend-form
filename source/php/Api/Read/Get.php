@@ -18,7 +18,7 @@ use WP_REST_Response;
 use WP_REST_Server;
 use WpService\WpService;
 
-use ModularityFrontendForm\Api\RestApiResponseStatus;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
@@ -98,14 +98,14 @@ class Post extends RestApiEndpoint
 
         if($result !== true) {
             return rest_ensure_response([
-                'status' => RestApiResponseStatus::Error,
+                'status' => RestApiResponseStatusEnums::GenericError->value,
                 'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
                 'errors' => $result,
             ]);
         }
 
         return rest_ensure_response([
-            'status' => RestApiResponseStatus::Success,
+            'status' => RestApiResponseStatusEnums::Success->value,
             'message' => __('Form submitted successfully', 'modularity-frontend-form')
         ]);
     }

@@ -18,7 +18,7 @@ use WP_REST_Response;
 use WP_REST_Server;
 use WpService\WpService;
 
-use ModularityFrontendForm\Api\RestApiResponseStatus;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
@@ -97,7 +97,7 @@ class Post extends RestApiEndpoint
         if($dataProcessorResult !== true) {
             return $this->wpService->restEnsureResponse(
                 $dataProcessor->getFirstError() ?? new WP_Error(
-                    RestApiResponseStatus::Error,
+                    RestApiResponseStatusEnums::GenericError,
                     __('An error occurred while processing the form', 'modularity-frontend-form'),
                     [
                         'status' => WP_Http::BAD_REQUEST
@@ -107,7 +107,7 @@ class Post extends RestApiEndpoint
         }
 
         return $this->wpService->restEnsureResponse([
-            'status' => RestApiResponseStatus::Success,
+            'status' => RestApiResponseStatusEnums::Success,
             'message' => __('Form submitted successfully', 'modularity-frontend-form')
         ]);
     }

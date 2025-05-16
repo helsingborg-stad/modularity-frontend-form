@@ -18,7 +18,7 @@ use WP_REST_Response;
 use WP_REST_Server;
 use WpService\WpService;
 
-use ModularityFrontendForm\Api\RestApiResponseStatus;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 
 class Update extends RestApiEndpoint
@@ -95,14 +95,14 @@ class Update extends RestApiEndpoint
 
         if($result !== true) {
             return $this->wpService->restEnsureResponse([
-                'status' => RestApiResponseStatus::Error,
+                'status' => RestApiResponseStatusEnums::GenericError,
                 'message' => __('Something went wrong when updating the form.', 'modularity-frontend-form'),
                 'errors' => $result,
             ]);
         }
 
         return $this->wpService->restEnsureResponse([
-            'status' => RestApiResponseStatus::Success,
+            'status' => RestApiResponseStatusEnums::Success,
             'message' => __('Form updated successfully', 'modularity-frontend-form')
         ]);
     }

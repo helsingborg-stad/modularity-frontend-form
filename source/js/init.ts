@@ -10,6 +10,7 @@ import SubmitStatusHandler from "./steps/submit/status/handler";
 import SubmitStatusRenderer from "./steps/submit/status/render";
 import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
+import ValidateForm from "./validation/validateForm";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -21,6 +22,7 @@ class Form {
     ) {
         const stepsObject = this.setupSteps();
         this.setupFields(stepsObject);
+        new ValidateForm();
     }
 
     private setupFields(stepsObject: StepsObject|null): void {

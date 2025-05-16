@@ -52,15 +52,15 @@ class WpDbHandler implements HandlerInterface {
    */
   private function insertPost(int $moduleID, array|null $fieldMeta): false|int {
 
-    $config = $this->moduleConfigInstance->getWpDbHandlerConfig();
+    $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpInsertPost([
         'post_title'    => $this->moduleConfigInstance->getModuleTitle(),
-        'post_type'     => $config->saveToPostType,
-        'post_status'   => $config->saveToPostTypeStatus,
+        'post_type'     => $moduleConfig->saveToPostType,
+        'post_status'   => $moduleConfig->saveToPostTypeStatus,
         'meta_input'    => [
-            'module_id' => $moduleID,
-            'nonce'     => $fieldMeta['nonce'] ?? '',
+          $this->config->getMetaDataNamespace('module_id') => $moduleID,
+          $this->config->getMetaDataNamespace('nonce')     => $fieldMeta['nonce'] ?? '',
         ],
     ]);
 
@@ -71,8 +71,8 @@ class WpDbHandler implements HandlerInterface {
           'handler_error',
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
           [
-            'post_type' => $config->saveToPostType,
-            'post_status' => $config->saveToPostTypeStatus,
+            'post_type' => $moduleConfig->saveToPostType,
+            'post_status' => $moduleConfig->saveToPostTypeStatus,
             'post_id'   => $result->get_error_data(),
           ]
         )

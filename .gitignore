@@ -58,3 +58,4 @@ dist/.temp
 !.gitignore
 !.editorconfig
 !.github
+!.devcontainer

@@ -7,7 +7,7 @@ use WpService\Contracts\AddFilter;
 use WpService\Contracts\GetPostTypeObject;
 use WpService\Contracts\GetPostType;
 use AcfService\Contracts\GetFieldGroups;
-
+// TODO: This crashes if EventManager is disabled
 class FormAdmin implements Hookable
 {
   public function __construct(

@@ -43,7 +43,7 @@ class Config implements ConfigInterface
   }
 
   /**
-   * The field namespace.
+   * The POST field namespace (all POST keys will be contained in this namespace).
    * 
    * @return string
    */
@@ -52,6 +52,19 @@ class Config implements ConfigInterface
     return $this->wpService->applyFilters(
       $this->createFilterKey(__FUNCTION__), 
       'mod-frontend-form'
+    );
+  }
+
+  /**
+   * The meta data namespace (all meta data keys will be prefixed with this "namespace").
+   * 
+   * @return string
+   */
+  public function getMetaDataNamespace(?string $key = null): string
+  {
+    return $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      'mod_frontend_form' . ($key ? '_' . $key : '')
     );
   }
 

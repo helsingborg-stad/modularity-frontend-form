@@ -22,6 +22,27 @@ class ValidatorFactory {
   ) {}
 
   /**
+   * Creates an array of validators for the read/get process
+   *
+   * @param int $moduleId The module ID
+   *
+   * @return ValidatorInterface[] An array of validators
+   */
+  public function createGetValidators(int $moduleId): array {
+    $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
+    
+    return array_unique(
+      array_merge(
+        $this->createInsertValidators($moduleId), 
+        [
+          new IsEditableValidator(...$args),
+          new TokenValidator(...$args),
+        ]
+      )
+    );
+  }
+
+  /**
    * Creates an array of validators for the update process
    *
    * @param int $moduleId The module ID

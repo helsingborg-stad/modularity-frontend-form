@@ -29,6 +29,39 @@ class TokenValidator implements ValidatorInterface
      */
     public function validate($data): ?ValidationResultInterface
     {
+        $token = $data['token'] ?? null;
+
+        if(!$token) {
+            $this->validationResult->setError(
+                new WP_Error(
+                    "validation_error", 
+                    $this->wpService->__(
+                        'Token is missing in request.',
+                    ), 
+                    [
+                        'fields' => [
+                            'key' => 'token'
+                        ],
+                    ]
+                )
+            );
+            return $this->validationResult;
+        }
+
+        // Check if the token is valid
+        $postId = $data['postId'] ?? null;
+        $tokenField = $this->acfService->getField('token', $postId);
+        if($tokenField !== $token) {
+            $this->validationResult->setError(
+                new WP_Error(
+                    "validation_error", 
+                    $this->wpService->__(
+                        'Token provided does not match the one registered for this post.',
+                    )
+                )
+            );
+        }
+
         return $this->validationResult;
     }
 }

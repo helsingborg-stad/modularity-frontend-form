@@ -37,7 +37,6 @@ class CustomInvalidValidationMessageItem {
 
     private getFirstInvalidReason(input: HTMLInputElement | HTMLSelectElement): keyof ValidityState | null {
         const validity = input.validity;
-        console.log(this.previousFirstInvalid);
 
         if (validity.valid) {
             return null;

@@ -36,6 +36,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             ],
             'fieldAttributeList' => [
                 'data-js-validation-message-pattern-mismatch' => 'some text',
+                'data-js-validation-message-type-mismatch' => 'some text',
                 'pattern' => '[^a]',
             ]
         ];

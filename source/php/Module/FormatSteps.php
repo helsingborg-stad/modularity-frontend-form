@@ -14,6 +14,7 @@ class FormatSteps {
         private WpService $wpService, 
         private AcfService $acfService,
         private ConfigInterface $config,
+        private object $lang
     ){}
 
     /**
@@ -52,7 +53,7 @@ class FormatSteps {
         foreach ($fieldGroups as $fieldGroup) {
             $fields = $this->acfService->acfGetFields($fieldGroup);
             foreach ($fields as $field) {
-                $formattedStep[] = (new Mapper($field, $this->wpService))->map();
+                $formattedStep[] = (new Mapper($field, $this->wpService, $this->lang))->map();
             }
 
             $formattedStep = $this->namespaceFieldName($formattedStep);

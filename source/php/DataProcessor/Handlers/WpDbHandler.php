@@ -59,6 +59,7 @@ class WpDbHandler implements HandlerInterface {
         'post_title'    => $this->moduleConfigInstance->getModuleTitle(),
         'post_type'     => $moduleConfig->saveToPostType,
         'post_status'   => $moduleConfig->saveToPostTypeStatus,
+        'post_password' => $this->createPostPassword(),
         'meta_input'    => [
           $this->config->getMetaDataNamespace('module_id') => $moduleID,
           $this->config->getMetaDataNamespace('nonce')     => $fieldMeta['nonce'] ?? '',
@@ -115,5 +116,19 @@ class WpDbHandler implements HandlerInterface {
       }
     }
     return true;
+  }
+
+  /**
+   * Creates a post password
+   *
+   * @return string The generated password
+   */
+  private function createPostPassword(): string
+  {
+    return $this->wpService->wpGeneratePassword(
+      32,
+      false,
+      false
+    );
   }
 }

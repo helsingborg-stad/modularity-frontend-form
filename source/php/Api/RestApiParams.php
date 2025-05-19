@@ -6,6 +6,7 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiParamEnums;
 use ModularityFrontendForm\Config\ModuleConfigFactory;
+use ModularityFrontendForm\Config\ConfigInterface;
 
 class RestApiParams 
 {
@@ -13,6 +14,7 @@ class RestApiParams
 
   public function __construct(
     private WpService $wpService,
+    private ConfigInterface $config,
     private ModuleConfigFactory $moduleConfigFactory,
   ) {}
 
@@ -72,7 +74,7 @@ class RestApiParams
       'validate_callback' => function ($moduleId) {
           return $this->getModuleConfigInstance(
               $moduleId
-          )->getModuleIsSubmittable();
+          )->getModuleIsSubmittableByCurrentUser();
       }
     ];
   }
@@ -91,11 +93,13 @@ class RestApiParams
       'required'    => true,
       'validate_callback' => function ($token, $request) {
           $postId = $request->get_params()['post-id'] ?? null;
-          $post = $this->wpService->getPost($postId);
-          if ($post === null) {
-              return false;
+          $post   = $this->wpService->getPost($postId);
+
+          if(is_a($post, 'WP_Post') === false) {
+            return false;
           }
-          return (bool) $token === $post->post_password;
+
+          return (bool) $token === $post->post_password && $post->post_password !== '';
       }
     ];
   }

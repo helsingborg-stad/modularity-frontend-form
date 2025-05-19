@@ -35,8 +35,7 @@ class ValidatorFactory {
       array_merge(
         $this->createInsertValidators($moduleId), 
         [
-          new IsEditableValidator(...$args),
-          new TokenValidator(...$args),
+          new IsEditableValidator(...$args)
         ]
       )
     );

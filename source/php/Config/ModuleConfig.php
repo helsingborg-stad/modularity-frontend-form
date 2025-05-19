@@ -40,7 +40,7 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getModuleIsSubmittable(): bool
+  public function getModuleIsSubmittableByCurrentUser(): bool
   {
     $moduleStatus = $this->wpService->getPostStatus($this->getModuleId());
     if($this->wpService->isUserLoggedIn()) {
@@ -57,6 +57,11 @@ class ModuleConfig implements ModuleConfigInterface
       ));
     }
     return in_array($moduleStatus, [PostStatus::Publish->value]);
+  }
+
+  public function getModuleIsEditable(): bool
+  {
+    return true;
   }
 
   /**

@@ -17,7 +17,8 @@ interface ModuleConfigInterface
     public function getModuleId(): int;
     public function getModuleSlug(): string;
     public function getModuleTitle(): string;
-    public function getModuleIsSubmittable(): bool;
+    public function getModuleIsSubmittableByCurrentUser(): bool;
+    public function getModuleIsEditable(): bool;
     public function getNonceKey(): string;
 
     public function getActivatedHandlers(): array;

@@ -37,7 +37,8 @@ class Config implements ConfigInterface
     return $this->wpService->applyFilters(
       $this->createFilterKey(__FUNCTION__), 
       [
-        'nonce'
+        'nonce',
+        'postId',
       ]
     );
   }

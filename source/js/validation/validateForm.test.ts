@@ -125,13 +125,3 @@ it('generates a valid query selector from validity keys', () => {
 
     });
 })
-
-// patternMismatch | Value doesn’t match the pattern attribute.
-// typeMismatch | Value does not match the type (e.g., type="email" but not a valid email).
-// customError | A custom error was set using setCustomValidity().
-// valid | All constraints are satisfied.
-
-// tooLong | Value exceeds maxlength.
-// tooShort | Value is shorter than minlength.
-// badInput | Typically for number inputs where the value can’t be parsed.
-// stepMismatch | Number doesn’t match step increment.

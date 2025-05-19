@@ -45,10 +45,9 @@ class FormPopulator {
   public async initialize(): Promise<void> {
     if (this.formParams) {
       const formData = await this.get(this.formParams.postId, this.formParams.token);
-      console.log("Form data fetched:", formData);
-
       if (formData) {
         this.populateForm(formData);
+        this.validateForm();
       }
     }
   }
@@ -77,12 +76,11 @@ class FormPopulator {
       });
     
       urlBuilder.search = params.toString();
-      
+
       return urlBuilder.toString();
     })();
 
     try {
-
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
@@ -94,20 +92,23 @@ class FormPopulator {
       console.error(`Error fetching form data: ${error.message}`);
       return null;
     }
-    
-    return null;
   }
 
   /**
    * Populates the form with the provided data.
    * @param formData The data to populate the form with.
    */
-  private populateForm(formData: any): void {
-    if (!this.form) return; 
-    for (const fieldName in formData) {
-      const fieldValue = formData[fieldName];
-      this.populateField(fieldName, fieldValue);
+  private populateForm(formData: any): boolean {
+    if (!this.form) {
+      return false
     }
+    for (const fieldName in formData) {
+      this.populateField(
+        fieldName, 
+        formData[fieldName] ?? ''
+      );
+    }
+    return true;
   }
 
   /**
@@ -116,24 +117,81 @@ class FormPopulator {
    * @param value The value to set for the field.
    */
   private populateField(fieldName: string, value: any): void {
-
     const fieldSelector = `[name="mod-frontend-form[${fieldName}]"]`;
-    const field = this.form.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+    const field         = this.form.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
 
-    if (!field) return;
-
-    if (field instanceof HTMLInputElement) {
-      if (field.type === 'checkbox') {
-        field.checked = Boolean(value);
-      } else if (field.type === 'radio') {
-        const radio = this.form.querySelector(`${fieldSelector}[value="${value}"]`) as HTMLInputElement | null;
-        if (radio) radio.checked = true;
-      } else {
-        field.value = value;
-      }
-    } else if (field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
-      field.value = value;
+    if (!field) {
+      console.warn(`Field not found: ${fieldSelector}`);
+      return;
     }
+
+    switch (true) {
+      case field instanceof HTMLInputElement && field.type === 'checkbox':
+        this.populateCheckbox(field, value);
+        break;
+      case field instanceof HTMLInputElement && field.type === 'radio':
+        this.populateRadio(fieldName, value);
+        break;
+      case field instanceof HTMLInputElement:
+        this.populateInput(field, value);
+        break;
+      case field instanceof HTMLSelectElement:
+        this.populateSelect(field, value);
+        break;
+      case field instanceof HTMLTextAreaElement:
+        this.populateTextarea(field, value);
+        break;
+    }
+  }
+
+  /**
+   * Populates an input field with the provided value.
+   * @param field The input element to populate.
+   * @param value The value to set for the input.
+   */
+  private populateInput(field: HTMLInputElement, value: any): void {
+    field.value = value;
+  }
+
+  /**
+   * Populates a checkbox field with the provided value.
+   * @param field The checkbox element to populate.
+   * @param value The value to set for the checkbox.
+   */
+  private populateCheckbox(field: HTMLInputElement, value: any): void {
+    field.checked = Boolean(value);
+  }
+
+  /**
+   * Populates a radio button field with the provided value.
+   * @param fieldName The name of the radio button group.
+   * @param value The value to set for the radio button.
+   */
+  private populateRadio(fieldName: string, value: any): void {
+    const selector  = `[name="mod-frontend-form[${fieldName}]"][value="${value}"]`;
+    const radio     = this.form.querySelector(selector) as HTMLInputElement | null;
+    
+    if (radio) {
+      radio.checked = true;
+    }
+  }
+
+  /**
+   * Populates a select field with the provided value.
+   * @param field The select element to populate.
+   * @param value The value to set for the select.
+   */
+  private populateSelect(field: HTMLSelectElement, value: any): void {
+    field.value = value;
+  }
+
+  /**
+   * Populates a textarea field with the provided value.
+   * @param field The textarea element to populate.
+   * @param value The value to set for the textarea.
+   */
+  private populateTextarea(field: HTMLTextAreaElement, value: any): void {
+    field.value = value;
   }
 
   /**
@@ -141,12 +199,10 @@ class FormPopulator {
    * @returns True if the form is valid, false otherwise.
    */
   private validateForm(): boolean {
-    return true;
-    /*if (!this.formElement) {
+    if (!this.form) {
       return false;
     }
-    return this.formElement.checkValidity();*/ 
-
+    return this.form.checkValidity();
   }
 }
 

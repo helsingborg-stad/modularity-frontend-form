@@ -20,6 +20,8 @@ use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
+use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
+use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
 
 class Update extends RestApiEndpoint
 {
@@ -69,36 +71,43 @@ class Update extends RestApiEndpoint
         $moduleId        = $request->get_params()['module-id']                          ?? null;
         $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
         $nonce           = $request->get_params()['nonce']                              ?? '';
-        $postId          = $request->get_params()['post-id']                            ?? null;
+
+        //Consolidated data
+        $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
+
+        // Handler factories
+        $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+        $handlerFactory     = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
 
         //Get validators
-        $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
+        $validators = (function () use ($moduleId, $validatorFactory) {
             return $validatorFactory->createUpdateValidators($moduleId) ?? [];
         })();
 
         // Get handlers
-        /*$handlers = (function () use ($moduleId) {
-            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config);
+        $handlers = (function () use ($moduleId, $handlerFactory) {
             return $handlerFactory->createHandlers($moduleId) ?? [];
-        })();*/ 
-        $handlers = [];
+        })(); 
 
-        // Validate & insert
-        $result = new DataProcessor(
+        // Creates the data processor
+        $dataProcessor = new DataProcessor(
             $validators,
             $handlers,
-            $this->config,
-            $this->getModuleConfigInstance($moduleId),
-            $moduleId
+            $handlerFactory->createNullHandler($moduleId),
         );
 
-        if($result !== true) {
-            return $this->wpService->restEnsureResponse([
-                'status' => RestApiResponseStatusEnums::GenericError,
-                'message' => __('Something went wrong when updating the form.', 'modularity-frontend-form'),
-                'errors' => $result,
-            ]);
+        $dataProcessorResult = $dataProcessor->process($data);
+
+        if($dataProcessorResult !== true) {
+            return $this->wpService->restEnsureResponse(
+                $dataProcessor->getFirstError() ?? new WP_Error(
+                    RestApiResponseStatusEnums::GenericError,
+                    __('An error occurred while processing the form', 'modularity-frontend-form'),
+                    [
+                        'status' => WP_Http::BAD_REQUEST
+                    ]
+                )
+            );
         }
 
         return $this->wpService->restEnsureResponse([

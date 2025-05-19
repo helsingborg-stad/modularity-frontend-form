@@ -21,7 +21,6 @@ class CustomInvalidValidationMessageItem {
             if (firstFaulty === null) {
                 return;
             }
-
             if (this.cachedCustomValidityMessages[firstFaulty]) {
                 this.item.setCustomValidity(this.cachedCustomValidityMessages[firstFaulty]);
                 return;
@@ -49,7 +48,7 @@ class CustomInvalidValidationMessageItem {
         if (this.previousFirstInvalid !== null && validity[this.previousFirstInvalid]) {
             return this.previousFirstInvalid;
         }
-
+        
         for (const key of this.validationKeys as (keyof ValidityState)[]) {
             if (validity[key]) {
                 this.previousFirstInvalid = key;

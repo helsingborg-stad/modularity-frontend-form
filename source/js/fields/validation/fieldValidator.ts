@@ -21,6 +21,7 @@ class FieldValidator implements FieldValidatorInterface {
 
         for (const validator of this.validators) {
             const isInvalid = validator.isInvalid();
+
             if (isInvalid) {
                 isValid = false;
                 this.uiHandler.addInvalidNotice(isInvalid.getFailedValidationMessage())
@@ -40,6 +41,10 @@ class FieldValidator implements FieldValidatorInterface {
     public valueChangeListener(): void {
         if (this.invalidValidator) {
             this.invalidValidator = this.invalidValidator.isInvalid();
+        }
+
+        if (this.invalidValidator) {
+            this.uiHandler.updateInvalidNotice(this.invalidValidator.getFailedValidationMessage());
         }
 
         if (!this.invalidValidator) {

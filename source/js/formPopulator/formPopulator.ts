@@ -42,9 +42,10 @@ class FormPopulator {
   /**
    * Initializes the form populator by fetching and populating the form data.
    */
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     if (this.formParams) {
-      let formData = this.get(this.formParams.postId, this.formParams.token);
+      const formData = await this.get(this.formParams.postId, this.formParams.token);
+      console.log("Form data fetched:", formData);
 
       if (formData) {
         this.populateForm(formData);
@@ -66,12 +67,18 @@ class FormPopulator {
       return null;
     }
 
-    url = (() => { 
-      const urlBuilder = new URL(url); 
-      urlBuilder.searchParams.append("post-id", postId.toString()); 
-      urlBuilder.searchParams.append("token", token); 
-      urlBuilder.searchParams.append("module-id", this.form.getAttribute("data-js-frontend-form-id") || "");
-      return urlBuilder.toString(); 
+    url = (() => {
+      const { form } = this;
+      const urlBuilder = new URL(url);
+      const params = new URLSearchParams({
+        'post-id': postId.toString(),
+        'token': token,
+        'module-id': form?.getAttribute('data-js-frontend-form-id') || '',
+      });
+    
+      urlBuilder.search = params.toString();
+      
+      return urlBuilder.toString();
     })();
 
     try {
@@ -82,7 +89,7 @@ class FormPopulator {
       }
 
       const json = await response.json();
-      return json?.formData ?? null;
+      return json?.data ?? null;
     } catch (error: any) {
       console.error(`Error fetching form data: ${error.message}`);
       return null;
@@ -96,7 +103,7 @@ class FormPopulator {
    * @param formData The data to populate the form with.
    */
   private populateForm(formData: any): void {
-    if (!this.form) return;
+    if (!this.form) return; 
     for (const fieldName in formData) {
       const fieldValue = formData[fieldName];
       this.populateField(fieldName, fieldValue);
@@ -109,11 +116,24 @@ class FormPopulator {
    * @param value The value to set for the field.
    */
   private populateField(fieldName: string, value: any): void {
-    /*if (!this.formElement) return;
-    const field = this.formElement.querySelector(`[name="${fieldName}"]`) as HTMLInputElement | null;
-    if (field) {
+
+    const fieldSelector = `[name="mod-frontend-form[${fieldName}]"]`;
+    const field = this.form.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+
+    if (!field) return;
+
+    if (field instanceof HTMLInputElement) {
+      if (field.type === 'checkbox') {
+        field.checked = Boolean(value);
+      } else if (field.type === 'radio') {
+        const radio = this.form.querySelector(`${fieldSelector}[value="${value}"]`) as HTMLInputElement | null;
+        if (radio) radio.checked = true;
+      } else {
+        field.value = value;
+      }
+    } else if (field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
       field.value = value;
-    }*/ 
+    }
   }
 
   /**

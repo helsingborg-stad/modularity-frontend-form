@@ -161,6 +161,19 @@ class FrontendForm extends \Modularity\Module
             'loading'                   => $this->wpService->__('Loading', 'modularity-frontend-form'),
             'newRow'                    => $this->wpService->__('New row', 'modularity-frontend-form'),
 
+            // Error Messages for fields
+            'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),
+            'errorEmail'               => $this->wpService->__('Please enter a valid email address', 'modularity-frontend-form'),
+            'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. https://website.com)', 'modularity-frontend-form'),
+            'errorPhone'               => $this->wpService->__('Please enter a valid phone number', 'modularity-frontend-form'),
+            'errorDate'                => $this->wpService->__('Please enter a valid date', 'modularity-frontend-form'),
+            'errorDateTime'            => $this->wpService->__('Please enter a valid date and time', 'modularity-frontend-form'),
+            'errorTime'                => $this->wpService->__('Please enter a valid time', 'modularity-frontend-form'),
+            'errorNumber'              => $this->wpService->__('Please enter a valid number', 'modularity-frontend-form'),
+            'errorMinLength'           => $this->wpService->__('Please enter at least {min} characters', 'modularity-frontend-form'),
+            'errorMaxLength'           => $this->wpService->__('Please enter no more than {max} characters', 'modularity-frontend-form'),
+            'errorMin'                 => $this->wpService->__('Please enter a value greater than or equal to {min}', 'modularity-frontend-form'),
+
             'statusTitleError'      => $this->wpService->__('Error', 'modularity-frontend-form'),
             'statusTitleSuccess'    => $this->wpService->__('Success', 'modularity-frontend-form'),
             'statusTitleSubmitting' => $this->wpService->__('Submitting', 'modularity-frontend-form'),

@@ -51,7 +51,7 @@ class Get extends RestApiEndpoint
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
             'args' => (new RestApiParams($this->wpService, $this->config, $this->moduleConfigFactory))->getParamSpecification(
-              //RestApiParamEnums::ModuleId,
+              RestApiParamEnums::ModuleId,
               RestApiParamEnums::PostId,
               RestApiParamEnums::Token
             )
@@ -70,16 +70,23 @@ class Get extends RestApiEndpoint
         //Get fields from post id 
         $postId          = $request->get_params()['post-id']                            ?? null;
         $post            = $this->wpService->getPost($postId);
-        
+        $fieldData      = $this->acfService->getFields($postId, true, false);
 
-        var_dump(get_fields($postId, true, false));
+        if ($fieldData !== false) {
+            return new WP_REST_Response(
+                [
+                    'status' => RestApiResponseStatusEnums::Success,
+                    'data'   => $fieldData
+                ],
+                WP_Http::OK
+            );
+        }
 
         return new WP_REST_Response(
             [
-                'status' => RestApiResponseStatusEnums::Success,
-                'data'   => $post
+                'status' => RestApiResponseStatusEnums::Success
             ],
-            WP_Http::OK
+            WP_Http::NOT_FOUND
         );
     }
 }

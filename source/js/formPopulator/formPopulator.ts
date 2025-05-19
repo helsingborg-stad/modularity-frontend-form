@@ -1,6 +1,7 @@
 type Token32 = string & { __lengthBrand: 32 };
 
 interface FormParams {
+  moduleId: number;
   postId: number;
   token: Token32;
 }
@@ -17,21 +18,30 @@ class FormPopulator {
     this.formParams = this.extractParamsFromUrl();
   }
 
+  /**
+   * Extracts the form parameters from the URL.
+   * @returns An object containing the module ID, post ID, and token, or null if not found.
+   */
   private extractParamsFromUrl(): FormParams | null {
     const params    = new URLSearchParams(window.location.search);
     const postIdRaw = params.get('postId');
     const tokenRaw  = params.get('token');
     const postId    = Number(postIdRaw);
+    const moduleId  = Number(this.form.getAttribute("data-js-frontend-form-id") || "");
   
     if (!isNaN(postId) && tokenRaw && tokenRaw.length === 32) {
       return {
-        postId,
+        moduleId: moduleId as number,
+        postId: postId as number,
         token: tokenRaw as Token32
       };
     }
     return null;
   }
 
+  /**
+   * Initializes the form populator by fetching and populating the form data.
+   */
   public initialize(): void {
     if (this.formParams) {
       let formData = this.get(this.formParams.postId, this.formParams.token);
@@ -42,6 +52,12 @@ class FormPopulator {
     }
   }
 
+  /**
+   * Fetches the form data from the server.
+   * @param postId The ID of the post.
+   * @param token The security validation key.
+   * @returns The form data as a string or null if not found.
+   */
   public async get(postId: number, token: Token32): Promise<string | null> {
     let url = this.modularityFrontendFormData?.apiRoutes?.getForm;
 
@@ -54,6 +70,7 @@ class FormPopulator {
       const urlBuilder = new URL(url); 
       urlBuilder.searchParams.append("post-id", postId.toString()); 
       urlBuilder.searchParams.append("token", token); 
+      urlBuilder.searchParams.append("module-id", this.form.getAttribute("data-js-frontend-form-id") || "");
       return urlBuilder.toString(); 
     })();
 
@@ -74,6 +91,10 @@ class FormPopulator {
     return null;
   }
 
+  /**
+   * Populates the form with the provided data.
+   * @param formData The data to populate the form with.
+   */
   private populateForm(formData: any): void {
     if (!this.form) return;
     for (const fieldName in formData) {
@@ -82,6 +103,11 @@ class FormPopulator {
     }
   }
 
+  /**
+   * Populates a specific field in the form with the provided value.
+   * @param fieldName The name of the field to populate.
+   * @param value The value to set for the field.
+   */
   private populateField(fieldName: string, value: any): void {
     /*if (!this.formElement) return;
     const field = this.formElement.querySelector(`[name="${fieldName}"]`) as HTMLInputElement | null;
@@ -90,6 +116,10 @@ class FormPopulator {
     }*/ 
   }
 
+  /**
+   * Validates the form after form is populated.
+   * @returns True if the form is valid, false otherwise.
+   */
   private validateForm(): boolean {
     return true;
     /*if (!this.formElement) {

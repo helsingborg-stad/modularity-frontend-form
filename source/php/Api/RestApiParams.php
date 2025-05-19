@@ -94,12 +94,10 @@ class RestApiParams
       'validate_callback' => function ($token, $request) {
           $postId = $request->get_params()['post-id'] ?? null;
           $post   = $this->wpService->getPost($postId);
-
           if(is_a($post, 'WP_Post') === false) {
             return false;
           }
-
-          return (bool) $token === $post->post_password && $post->post_password !== '';
+          return (bool) $token == $post->post_password && $post->post_password !== '';
       }
     ];
   }

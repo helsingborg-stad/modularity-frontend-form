@@ -28,7 +28,6 @@ class CustomInvalidValidationMessageItem {
             const customMessage = this.item.dataset[datasetKey];
 
             this.cachedCustomValidityMessages[firstFaulty] = customMessage ?? this.item.validationMessage;
-            console.log(this.cachedCustomValidityMessages);
 
             if (customMessage) {
                 this.item.setCustomValidity(customMessage);

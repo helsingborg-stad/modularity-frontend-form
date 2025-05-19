@@ -1,3 +1,5 @@
+import CustomInvalidValidationMessageItem from './customInvalidValidationMessageItem';
+
 class ValidateForm {
     private attributePrefix: string = 'data-js-validation-message-';
     private attributePrefixCamelCased: string = 'jsValidationMessage';
@@ -14,31 +16,13 @@ class ValidateForm {
         this.validationKeys = this.getValidationKeys();
         this.target = this.getTarget();
 
-        console.log(this.target);
-
-        // inputsWithCustomValidationMessage.forEach((input) => {
-
-        //     input.addEventListener('invalid', (event) => {
-        //         const target = event.target as HTMLInputElement | HTMLSelectElement;
-
-        //         for (const key of Object.getOwnPropertyNames(Object.getPrototypeOf(target.validity))) {
-        //             const propertyState = target.validity[key as keyof ValidityState];
-        //             const keyWithFirstUpperCase = key.charAt(0).toUpperCase() + key.slice(1);
-        //             const datasetKey = this.attributePrefixCamelCased + keyWithFirstUpperCase;
-
-        //             if (propertyState === false) {
-        //                 continue;
-        //             }
-
-        //             if (datasetKey in target.dataset) {
-        //                 target.setCustomValidity(
-        //                     target.dataset[datasetKey] ?? target.validationMessage
-        //                 );
-        //                 break; // stop after first match
-        //             }
-        //         }
-        //     });
-        // });
+        document.querySelectorAll(this.target).forEach(item => {
+            new CustomInvalidValidationMessageItem(
+                item as HTMLInputElement|HTMLSelectElement,
+                this.validationKeys,
+                this.attributePrefixCamelCased
+            )
+        });
     }
 
     private getTarget(): string {

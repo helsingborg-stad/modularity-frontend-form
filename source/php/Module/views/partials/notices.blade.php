@@ -7,6 +7,9 @@
     @notice([
         'type' => 'danger',
         'icon' => ['icon' => 'error'],
+        'classList' => [
+            'u-margin__bottom--1'
+        ]
     ])
         @element([
             'componentElement' => 'span',
@@ -31,6 +34,9 @@
     @notice([
         'type' => 'success',
         'icon' => ['icon' => 'check_circle'],
+        'classList' => [
+            'u-margin__bottom--1'
+        ]
     ])
         @element([
             'componentElement' => 'span',

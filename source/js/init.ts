@@ -21,6 +21,7 @@ class Form {
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
+        new ValidateForm();
         const stepsObject = this.setupSteps();
         this.setupFields(stepsObject);
         this.setupFormPopulator();

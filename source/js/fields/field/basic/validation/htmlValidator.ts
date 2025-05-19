@@ -11,9 +11,8 @@ class HtmlValidator implements ValidationControlInterface {
         return valid ? false : this;
     }
 
-    // TODO: For today
     public getFailedValidationMessage(): string {
-        return 'HTML validation failed';
+        return this.basic.getInput().validationMessage;
     }
 }
 

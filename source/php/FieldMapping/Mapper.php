@@ -11,10 +11,14 @@ class Mapper
     protected array $field;
     protected FieldMappingDirectorInterface $director;
 
-    public function __construct(array $field, WpService $wpService, ?FieldMappingDirectorInterface $director = null)
-    {
+    public function __construct(
+        array $field,
+        WpService $wpService,
+        object $lang,
+        ?FieldMappingDirectorInterface $director = null,
+    ) {
         $this->field = $field;
-        $this->director = $director ?? new FieldMappingDirector($wpService);
+        $this->director = $director ?? new FieldMappingDirector($wpService, $lang);
     }
 
     public function map(): mixed

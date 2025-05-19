@@ -19,7 +19,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
 
         foreach ($this->field['sub_fields'] as $index => $subfield) {
             $subfield['key'] = $this->field['key'] . '_INDEX_REPLACE_' . $subfield['key'];
-            $mappedSubfield = (new Mapper($subfield, $this->wpService))->map();
+            $mappedSubfield = (new Mapper($subfield, $this->wpService, $this->lang))->map();
 
             if(!is_null($mappedSubfield)) {
                 $subfields[] = $mappedSubfield;

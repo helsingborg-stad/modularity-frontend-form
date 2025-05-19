@@ -6,8 +6,8 @@ use WpService\WpService;
 
 trait FieldMapperGetInstance
 {
-    public static function getInstance(array $field, WpService $wpService): static
+    public static function getInstance(array $field, WpService $wpService, object $lang): static
     {
-        return new static($field, $wpService);
+        return new static($field, $wpService, $lang);
     }
 }

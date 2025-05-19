@@ -68,15 +68,15 @@ class Get extends RestApiEndpoint
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
         //Get fields from post id 
-        $postId          = $request->get_params()['post-id']                            ?? null;
-        $post            = $this->wpService->getPost($postId);
-        $fieldData      = $this->acfService->getFields($postId, true, false);
+        $postId          = $request->get_params()['post-id'] ?? null;
+        $fieldData       = $this->acfService->getFields($postId, true, false);
+        $fieldData       = $this->translateFieldNamesToFieldKeys($postId, $fieldData);
 
         if ($fieldData !== false) {
             return new WP_REST_Response(
                 [
                     'status' => RestApiResponseStatusEnums::Success,
-                    'data'   => $fieldData
+                    'data'   => $fieldData,
                 ],
                 WP_Http::OK
             );
@@ -88,5 +88,36 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    /**
+     * Translates field names to field keys
+     *
+     * @param int $postId The post ID
+     * @param array $fields The fields to translate
+     *
+     * @return array The translated fields
+     */
+    private function translateFieldNamesToFieldKeys(int $postId, array $fields): array
+    {
+        $translatedFields = [];
+
+        foreach($fields as $key => $fieldValue) {
+            $translatedFields[$this->translateFieldNameToFieldKey($postId, $key)] = $fieldValue;
+        }
+        return $translatedFields;
+    }
+
+    /**
+     * Translates a field name to a field key
+     *
+     * @param int $postId The post ID
+     * @param string $fieldName The field name to translate
+     *
+     * @return string The translated field key
+     */
+    private function translateFieldNameToFieldKey(int $postId, string $fieldName): string
+    {
+        return get_post_meta($postId, "_" . $fieldName, true) ?? $fieldName;
     }
 }

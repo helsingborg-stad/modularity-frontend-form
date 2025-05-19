@@ -123,6 +123,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
     const titleEl = this.formContainer.querySelector('[data-js-frontend-form-working__title]') as HTMLElement;
     if (titleEl) {
       const statusTitles: Record<SubmitStatus, string> = {
+        [SubmitStatus.Loading]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Loading',
         [SubmitStatus.Success]: this.modularityFrontendFormLang?.statusTitleSucess ?? 'Success',
         [SubmitStatus.Error]: this.modularityFrontendFormLang?.statusTitleError ?? 'Error',
         [SubmitStatus.Working]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Submitting'

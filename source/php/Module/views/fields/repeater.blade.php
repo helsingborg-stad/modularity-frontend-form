@@ -8,6 +8,9 @@
         @typography([
             'element' => 'h2',
             'variant' => 'h4',
+            'classList' => [
+                'u-margin__bottom--1'
+            ],
         ])
             {{ $field['label'] }}
         @endtypography

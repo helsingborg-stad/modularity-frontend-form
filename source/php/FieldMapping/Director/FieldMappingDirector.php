@@ -33,7 +33,8 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
      * @var WpService
      */
     public function __construct(
-        protected WpService $wpService
+        protected WpService $wpService,
+        protected object $lang,
     ) {
     }
 
@@ -77,6 +78,6 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
             throw new \RuntimeException("Invalid mapper class: {$mapperClass}");
         }
 
-        return $mapperClass::getInstance($field, $this->wpService);
+        return $mapperClass::getInstance($field, $this->wpService, $this->lang);
     }
 }

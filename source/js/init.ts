@@ -20,9 +20,9 @@ class Form {
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
+        new ValidateForm();
         const stepsObject = this.setupSteps();
         this.setupFields(stepsObject);
-        new ValidateForm();
     }
 
     private setupFields(stepsObject: StepsObject|null): void {

@@ -3,24 +3,21 @@ class Notice implements NoticeInterface {
     private successNotice: string;
     private errorNoticeTarget: string = '[data-js-frontend-form-error-notice]';
     private successNoticeTarget: string = '[data-js-frontend-form-success-notice]';
-    private messageReplaceTarget: string = '{MESSAGE_PLACEHOLDER}';
     constructor(private formContainer: HTMLElement) {
         this.errorNotice = this.extractNotice(this.errorNoticeTarget);
         this.successNotice = this.extractNotice(this.successNoticeTarget);
     }
 
-    getErrorNotice(message: string): HTMLElement {
+    getErrorNotice(): HTMLElement {
         const div = document.createElement('div');
-        const errorNotice = this.errorNotice.replace(this.messageReplaceTarget, message);
-        div.innerHTML = errorNotice;
+        div.innerHTML = this.errorNotice;
 
         return div;
     }
 
-    getSuccessNotice(message: string): HTMLElement {
+    getSuccessNotice(): HTMLElement {
         const div = document.createElement('div');
-        const successNotice = this.successNotice.replace(this.messageReplaceTarget, message);
-        div.innerHTML = successNotice;
+        div.innerHTML = this.successNotice;
 
         return div;
     }

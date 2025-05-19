@@ -35,9 +35,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
                 'data-js-field-name' => $this->field['key'],
             ],
             'fieldAttributeList' => [
-                'data-js-validation-message-pattern-mismatch' => 'some text',
-                'data-js-validation-message-type-mismatch' => 'some text',
-                'pattern' => '[^a]',
+                'data-js-validation-message-value-missing' => 'This field is required.'
             ]
         ];
     }

@@ -7,10 +7,18 @@
     @notice([
         'type' => 'danger',
         'icon' => ['icon' => 'error'],
-        'message' => [
-            'text' => '{MESSAGE_PLACEHOLDER}'
-        ]
     ])
+        @element([
+            'componentElement' => 'span',
+            'classList' => [
+                'c-notice__message'
+            ],
+            'attributeList' => [
+                'data-js-frontend-form-notice-message' => true,
+            ]
+        ])
+        html
+        @endelement
     @endnotice
 @endelement
 
@@ -23,9 +31,17 @@
     @notice([
         'type' => 'success',
         'icon' => ['icon' => 'check_circle'],
-        'message' => [
-            'text' => '{MESSAGE_PLACEHOLDER}'
-        ]
     ])
+        @element([
+            'componentElement' => 'span',
+            'classList' => [
+                'c-notice__message'
+            ],
+            'attributeList' => [
+                'data-js-frontend-form-notice-message' => true,
+            ]
+        ])
+        html
+        @endelement
     @endnotice
 @endelement

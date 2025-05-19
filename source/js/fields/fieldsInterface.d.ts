@@ -62,6 +62,7 @@ interface FieldValidatorUIHandlerInterface {
     init(field: FieldInterface): void;
     addInvalidNotice(message: string): void;
     removeInvalidNotice(): void;
+    updateInvalidNotice(message: string): void;
 }
 
 interface ValidationControlInterface {

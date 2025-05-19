@@ -11,13 +11,16 @@ class CustomInvalidValidationMessageItem {
     }
 
     private setInvalidListener(): void {
+        this.item.addEventListener('input', () => {
+            this.item.setCustomValidity('');
+        });
+
         this.item.addEventListener('invalid', (event: Event) => {
             const firstFaulty = this.getFirstInvalidReason(this.item as HTMLInputElement | HTMLSelectElement);
 
             if (firstFaulty === null) {
                 return;
             }
-
             if (this.cachedCustomValidityMessages[firstFaulty]) {
                 this.item.setCustomValidity(this.cachedCustomValidityMessages[firstFaulty]);
                 return;
@@ -45,7 +48,7 @@ class CustomInvalidValidationMessageItem {
         if (this.previousFirstInvalid !== null && validity[this.previousFirstInvalid]) {
             return this.previousFirstInvalid;
         }
-
+        
         for (const key of this.validationKeys as (keyof ValidityState)[]) {
             if (validity[key]) {
                 this.previousFirstInvalid = key;

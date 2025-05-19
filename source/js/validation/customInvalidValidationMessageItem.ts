@@ -11,6 +11,10 @@ class CustomInvalidValidationMessageItem {
     }
 
     private setInvalidListener(): void {
+        this.item.addEventListener('input', () => {
+            this.item.setCustomValidity('');
+        });
+
         this.item.addEventListener('invalid', (event: Event) => {
             const firstFaulty = this.getFirstInvalidReason(this.item as HTMLInputElement | HTMLSelectElement);
 

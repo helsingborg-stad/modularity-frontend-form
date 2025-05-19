@@ -11,6 +11,7 @@ import SubmitStatusRenderer from "./steps/submit/status/render";
 import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
 import ValidateForm from "./validation/validateForm";
+import FormPopulator from "./formPopulator/formPopulator";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -22,7 +23,18 @@ class Form {
     ) {
         const stepsObject = this.setupSteps();
         this.setupFields(stepsObject);
+        this.setupFormPopulator();
         new ValidateForm();
+    }
+
+    private setupFormPopulator(): void {
+        const formPopulator = new FormPopulator(
+            this.formContainer,
+            this.form,
+            modularityFrontendFormData,
+            modularityFrontendFormLang
+        );
+        formPopulator.initialize();
     }
 
     private setupFields(stepsObject: StepsObject|null): void {

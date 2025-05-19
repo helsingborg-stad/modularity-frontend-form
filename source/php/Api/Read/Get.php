@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\Api\Submit;
+namespace ModularityFrontendForm\Api\Read;
 
 use AcfService\AcfService;
 use ModularityFrontendForm\Api\RestApiEndpoint;
@@ -22,13 +22,15 @@ use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
-class Post extends RestApiEndpoint
+use function AcfService\Implementations\get_fields;
+
+class Get extends RestApiEndpoint
 {
     use GetModuleConfigInstanceTrait;
 
     public const NAMESPACE = 'modularity-frontend-form/v1';
-    public const ROUTE     = 'submit/post';
-    public const KEY       = 'submitForm';
+    public const ROUTE     = 'read/get';
+    public const KEY       = 'getForm';
 
     public function __construct(
         private WpService $wpService,
@@ -45,11 +47,11 @@ class Post extends RestApiEndpoint
     public function handleRegisterRestRoute(): bool
     {
         return register_rest_route(self::NAMESPACE, self::ROUTE, array(
-            'methods'             => WP_REST_Server::CREATABLE,
+            'methods'             => WP_REST_Server::READABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
             'args' => (new RestApiParams($this->wpService, $this->config, $this->moduleConfigFactory))->getParamSpecification(
-              RestApiParamEnums::ModuleId,
+              //RestApiParamEnums::ModuleId,
               RestApiParamEnums::PostId,
               RestApiParamEnums::Token
             )
@@ -65,48 +67,19 @@ class Post extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        $moduleId        = $request->get_params()['module-id']                          ?? null;
-        $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
-        $nonce           = $request->get_params()['nonce']                              ?? '';
+        //Get fields from post id 
+        $postId          = $request->get_params()['post-id']                            ?? null;
+        $post            = $this->wpService->getPost($postId);
+        
 
-        //Consolidated data
-        $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
+        var_dump(get_fields($postId, true, false));
 
-        //Get validators
-        $validators = (function () use ($moduleId) {
-            $validatorFactory = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
-            return $validatorFactory->createInsertValidators($moduleId) ?? [];
-        })();
-
-        // Get handlers
-        $handlers = (function () use ($moduleId) {
-            $handlerFactory = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
-            return $handlerFactory->createHandlers($moduleId) ?? [];
-        })(); 
-
-        // Creates the data processor
-        $dataProcessor = new DataProcessor(
-            $validators,
-            $handlers,
-            $this->config,
-            $this->getModuleConfigInstance($moduleId),
-            $moduleId
+        return new WP_REST_Response(
+            [
+                'status' => RestApiResponseStatusEnums::Success,
+                'data'   => $post
+            ],
+            WP_Http::OK
         );
-
-        // Process data (validate with validators and handle with handlers)
-        $result = $dataProcessor->process($data);
-
-        if($result !== true) {
-            return rest_ensure_response([
-                'status' => RestApiResponseStatusEnums::GenericError->value,
-                'message' => __('Something went wrong when saving the form.', 'modularity-frontend-form'),
-                'errors' => $result,
-            ]);
-        }
-
-        return rest_ensure_response([
-            'status' => RestApiResponseStatusEnums::Success->value,
-            'message' => __('Form submitted successfully', 'modularity-frontend-form')
-        ]);
     }
 }

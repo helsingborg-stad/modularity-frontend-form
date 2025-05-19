@@ -7,7 +7,8 @@ use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
 use ModularityFrontendForm\Api\Submit\Post;
-
+use ModularityFrontendForm\Api\Submit\Update;
+use ModularityFrontendForm\Api\Read\Get;
 use ModularityFrontendForm\Config\Config;
 
 use \Modularity\HooksRegistrar\Hookable;
@@ -72,6 +73,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
         $restEndpoints = [
             new Api\Submit\Post($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Submit\Update($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
+            new Api\Read\Get($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Nonce\Get($this->wpService, $this->config, $this->moduleConfigFactory),
         ];
 

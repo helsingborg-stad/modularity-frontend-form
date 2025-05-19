@@ -25,7 +25,6 @@ class Form {
         const stepsObject = this.setupSteps();
         this.setupFields(stepsObject);
         this.setupFormPopulator();
-        new ValidateForm();
     }
 
     private setupFormPopulator(): void {

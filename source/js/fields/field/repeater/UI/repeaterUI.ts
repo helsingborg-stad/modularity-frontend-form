@@ -6,6 +6,7 @@ class RepeaterUI implements RepeaterUIInterface {
     private repeaterField!: RepeaterInterface;
     private conditionBuilder!: ConditionBuilderInterface;
     private rowFieldsObject: RowFieldsObject = {};
+    private rowChangeListeners: RowCountChangeListener[] = []; 
 
     constructor(
         private fieldBuilder: FieldBuilderInterface,
@@ -36,6 +37,14 @@ class RepeaterUI implements RepeaterUIInterface {
         return this.rowCount;
     }
 
+    public addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void {
+        this.rowChangeListeners.push(rowCountChangeListener);
+    }
+
+    private rowCountChanged(count: number): void {
+        this.rowChangeListeners.forEach(listener => listener(count));
+    }
+
     private setupListener() {
         this.addRowButton?.addEventListener('click', (e) => {
             e.preventDefault();
@@ -48,9 +57,10 @@ class RepeaterUI implements RepeaterUIInterface {
                 e.preventDefault();
                 this.rowBuilder.deleteRow(row);
                 this.removeRow(rowId);
-                this.rowCount--;
+                this.rowCountChanged(--this.rowCount);
             });
-            this.rowCount++;
+
+            this.rowCountChanged(++this.rowCount);
             this.rowIndex++;
         });
     }

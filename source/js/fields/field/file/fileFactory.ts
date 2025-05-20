@@ -1,10 +1,10 @@
 import FieldValidator from "../../validation/fieldValidator";
 import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
+import Basic from "../basic/basic";
 import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import FileConditionsHandler from "./condition/fileConditionsHandler";
 import FileConditionValidator from "./condition/fileConditionValidator";
-import File from "./file";
 
 class FileFactory {
     static create(
@@ -21,7 +21,7 @@ class FileFactory {
             return NullFieldFactory.create(field, 'file', name, unstructuredConditions, notices, stepId);
         }
 
-        return new File(
+        return new Basic(
             field as HTMLInputElement,
             input,
             name,

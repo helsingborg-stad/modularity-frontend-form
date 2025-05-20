@@ -53,7 +53,6 @@ interface FieldBuilderInterface {
 interface FieldValidatorInterface {
     init(field: FieldInterface): void;
     validate(): boolean;
-    valueChangeListener(): void;
 }
 
 interface FieldValidatorUIHandlerInterface {

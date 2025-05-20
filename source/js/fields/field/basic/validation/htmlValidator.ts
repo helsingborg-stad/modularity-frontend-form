@@ -7,7 +7,6 @@ class HtmlValidator implements ValidationControlInterface {
 
     public isInvalid(): false|ValidationControlInterface {
         const valid = this.basic.getInput().checkValidity();
-
         return valid ? false : this;
     }
 

@@ -36,21 +36,6 @@ class FieldValidator implements FieldValidatorInterface {
 
         return isValid;
     }
-
-    // TODO: Listen when leaving the field if its faulty. Continue to listen until corrected.
-    public valueChangeListener(): void {
-        if (this.invalidValidator) {
-            this.invalidValidator = this.invalidValidator.isInvalid();
-        }
-
-        if (this.invalidValidator) {
-            this.uiHandler.updateInvalidNotice(this.invalidValidator.getFailedValidationMessage());
-        }
-
-        if (!this.invalidValidator) {
-            this.uiHandler.removeInvalidNotice();
-        }
-    }
 }
 
 export default FieldValidator

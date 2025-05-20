@@ -1,6 +1,6 @@
 import SubmitStatus from './enum';
 
-interface SubmitStatusHandlerInterface {
+interface StatusHandlerInterface {
   /**
    * Set the status and message.
    * @param status A value from SubmitStatus enum.
@@ -9,4 +9,4 @@ interface SubmitStatusHandlerInterface {
   setStatus(status: SubmitStatus, message: string, icon: string, progress: number, delay?: number): void;
 }
 
-export default SubmitStatusHandlerInterface;
+export default StatusHandlerInterface;

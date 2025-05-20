@@ -1,10 +1,11 @@
 import SubmitStatus from './enum';
-import SubmitStatusRendererInterface from './renderInterface';
+import StatusRendererInterface from './renderInterface';
 
-class SubmitStatusRenderer implements SubmitStatusRendererInterface {
+class StatusRenderer implements StatusRendererInterface {
   private messageQueue: Array<{ status: string; message: string; icon: string; progress: number; delay: number }> = [];
   private isProcessing: boolean = false;
   private statusClasses: Array<string> = [
+    'is-loading',
     'is-working',
     'is-success',
     'is-error'
@@ -123,7 +124,7 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
     const titleEl = this.formContainer.querySelector('[data-js-frontend-form-working__title]') as HTMLElement;
     if (titleEl) {
       const statusTitles: Record<SubmitStatus, string> = {
-        [SubmitStatus.Loading]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Loading',
+        [SubmitStatus.Loading]: this.modularityFrontendFormLang?.statusTitleLoading ?? 'Loading',
         [SubmitStatus.Success]: this.modularityFrontendFormLang?.statusTitleSucess ?? 'Success',
         [SubmitStatus.Error]: this.modularityFrontendFormLang?.statusTitleError ?? 'Error',
         [SubmitStatus.Working]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Submitting'
@@ -155,4 +156,4 @@ class SubmitStatusRenderer implements SubmitStatusRendererInterface {
   }
 }
 
-export default SubmitStatusRenderer;
+export default StatusRenderer;

@@ -1,5 +1,5 @@
-import SubmitStatusHandler from "../steps/submit/status/handler";
-import SubmitStatus from "../steps/submit/status/enum";
+import StatusHandler from "../formStatus/handler";
+import SubmitStatus from "../formStatus/enum";
 import AsyncNonceInterface from "./asyncNonceInterface";
 class AsyncNonce implements AsyncNonceInterface {
 
@@ -16,11 +16,11 @@ class AsyncNonce implements AsyncNonceInterface {
    * Fetch the nonce from the server.
    * @returns The nonce string or null if not found.
    */
-  public async get(submitStatusHandler: SubmitStatusHandler, moduleId: number): Promise<string | null> {
+  public async get(statusHandler: StatusHandler, moduleId: number): Promise<string | null> {
     let url = this.modularityFrontendFormData?.apiRoutes?.nonceGet;
 
     if (!url) {
-      submitStatusHandler.setStatus(
+      statusHandler.setStatus(
         SubmitStatus.Error,
         this.modularityFrontendFormLang?.nonceUrlMissing ?? "Could not find the nonce URL. Please check your configuration.",
         "link_off",
@@ -36,7 +36,7 @@ class AsyncNonce implements AsyncNonceInterface {
     })() : url;
 
     try {
-      submitStatusHandler.setStatus(
+      statusHandler.setStatus(
         SubmitStatus.Working,
         this.modularityFrontendFormLang?.nonceRequest ?? "Fetching security validation key...",
         "lock_open",
@@ -45,7 +45,7 @@ class AsyncNonce implements AsyncNonceInterface {
 
       const response = await fetch(url);
       if (!response.ok) {
-        submitStatusHandler.setStatus(
+        statusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.nonceRequestFailed ?? "Failed to fetch security validation key, please try again.",
           "error",
@@ -54,7 +54,7 @@ class AsyncNonce implements AsyncNonceInterface {
         throw new Error(`HTTP error: ${response.status}`);
       }
 
-      submitStatusHandler.setStatus(
+      statusHandler.setStatus(
         SubmitStatus.Working,
         this.modularityFrontendFormLang?.nonceRequestSuccess ?? "Fetched security validation key...",
         "lock",
@@ -64,7 +64,7 @@ class AsyncNonce implements AsyncNonceInterface {
       const json = await response.json();
       return json?.nonce ?? null;
     } catch (error: any) {
-      submitStatusHandler.setStatus(
+      statusHandler.setStatus(
         SubmitStatus.Error,
         this.modularityFrontendFormLang?.nonceRequestFailed ?? "Failed to fetch security validation key, please try again.",
         "error",
@@ -136,10 +136,10 @@ class AsyncNonce implements AsyncNonceInterface {
    */
   public async setup(
     form: HTMLFormElement,
-    submitStatusHandler: SubmitStatusHandler,
+    statusHandler: StatusHandler,
   ): Promise<void> {
     const moduleId  = parseInt(form.getAttribute("data-js-frontend-form-id") || "");
-    const nonce     = await this.get(submitStatusHandler, moduleId);
+    const nonce     = await this.get(statusHandler, moduleId);
     if (nonce) {
       this.inject(form, nonce, "async-nonce-element");
     }

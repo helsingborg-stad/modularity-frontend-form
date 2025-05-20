@@ -4,25 +4,16 @@
         'data-js-frontend-form-error-notice' => 'true',
     ]
 ])
-    @notice([
-        'type' => 'danger',
-        'icon' => ['icon' => 'error'],
+    @element([
         'classList' => [
-            'u-margin__bottom--1'
+            'mod-frontend-form__notice'
+        ],
+        'attributeList' => [
+            'data-js-frontend-form-notice-message' => true,
         ]
     ])
-        @element([
-            'componentElement' => 'span',
-            'classList' => [
-                'c-notice__message'
-            ],
-            'attributeList' => [
-                'data-js-frontend-form-notice-message' => true,
-            ]
-        ])
-        html
-        @endelement
-    @endnotice
+        <!-- error notice -->
+    @endelement
 @endelement
 
 @element([
@@ -31,23 +22,14 @@
         'data-js-frontend-form-success-notice' => 'true',
     ]
 ])
-    @notice([
-        'type' => 'success',
-        'icon' => ['icon' => 'check_circle'],
+    @element([
         'classList' => [
-            'u-margin__bottom--1'
+            'mod-frontend-form__notice'
+        ],
+        'attributeList' => [
+            'data-js-frontend-form-notice-message' => true,
         ]
     ])
-        @element([
-            'componentElement' => 'span',
-            'classList' => [
-                'c-notice__message'
-            ],
-            'attributeList' => [
-                'data-js-frontend-form-notice-message' => true,
-            ]
-        ])
-        html
-        @endelement
-    @endnotice
+        <!-- success notice -->
+    @endelement
 @endelement

@@ -58,7 +58,6 @@ class Checkbox implements CheckboxInterface {
         this.choices.forEach(choice => {
             choice.addEventListener('change', () => {
                 this.conditionsHandler.checkConditions();
-                // this.validator.valueChangeListener();
                 this.validator.validate();
             });
         });

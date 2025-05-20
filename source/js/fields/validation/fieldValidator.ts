@@ -34,6 +34,10 @@ class FieldValidator implements FieldValidatorInterface {
             this.uiHandler.removeInvalidNotice();
         }
 
+        if (!isValid && this.invalidValidator) {
+            this.uiHandler.updateInvalidNotice(this.invalidValidator.getFailedValidationMessage());
+        }
+
         return isValid;
     }
 }

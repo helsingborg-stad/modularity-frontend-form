@@ -2,6 +2,7 @@ import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
 import StatusRenderer from "../formStatus/render";
 import SubmitStatus from "../formStatus/enum";
+import { TypedFormElement } from "../form/form";
 
 type Token32 = string & { __lengthBrand: 32 };
 
@@ -15,8 +16,7 @@ class FormPopulator {
   private formParams: FormParams | null = null;
 
   constructor(
-    private formContainer: HTMLElement, 
-    private form: HTMLFormElement,
+    private typedFormElement: TypedFormElement,
     private modularityFrontendFormData: ModularityFrontendFormData,
     private modularityFrontendFormLang: ModularityFrontendFormLang,
     private asyncNonce: AsyncNonce,
@@ -35,7 +35,7 @@ class FormPopulator {
     const postIdRaw = params.get('postId');
     const tokenRaw  = params.get('token');
     const postId    = Number(postIdRaw);
-    const moduleId  = Number(this.form.getAttribute("data-js-frontend-form-id") || "");
+    const moduleId  = Number(this.typedFormElement.formElement.getAttribute("data-js-frontend-form-id") || "");
   
     if (!isNaN(postId) && tokenRaw && tokenRaw.length === 32) {
       return {
@@ -72,7 +72,7 @@ class FormPopulator {
         this.populateForm(formData);
         this.validateForm();
       }
-      
+
     }
   }
 
@@ -97,12 +97,12 @@ class FormPopulator {
     }
 
     url = (() => {
-      const { form } = this;
+      const { typedFormElement } = this;
       const urlBuilder = new URL(url);
       const params = new URLSearchParams({
         'post-id': postId.toString(),
         'token': token,
-        'module-id': form?.getAttribute('data-js-frontend-form-id') || '',
+        'module-id': typedFormElement.formElement?.getAttribute('data-js-frontend-form-id') || '',
       });
     
       urlBuilder.search = params.toString();
@@ -152,7 +152,7 @@ class FormPopulator {
    * @param formData The data to populate the form with.
    */
   private populateForm(formData: any): boolean {
-    if (!this.form) {
+    if (!this.typedFormElement.formElement) {
       return false
     }
     for (const fieldName in formData) {
@@ -171,7 +171,7 @@ class FormPopulator {
    */
   private populateField(fieldName: string, value: any): void {
     const fieldSelector = `[name="mod-frontend-form[${fieldName}]"]`;
-    const field         = this.form.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+    const field         = this.typedFormElement.formElement.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
 
     if (!field) {
       console.warn(`Field not found: ${fieldSelector}`);
@@ -222,7 +222,7 @@ class FormPopulator {
    */
   private populateRadio(fieldName: string, value: any): void {
     const selector  = `[name="mod-frontend-form[${fieldName}]"][value="${value}"]`;
-    const radio     = this.form.querySelector(selector) as HTMLInputElement | null;
+    const radio     = this.typedFormElement.form.querySelector(selector) as HTMLInputElement | null;
     
     if (radio) {
       radio.checked = true;
@@ -252,10 +252,10 @@ class FormPopulator {
    * @returns True if the form is valid, false otherwise.
    */
   private validateForm(): boolean {
-    if (!this.form) {
+    if (!this.typedFormElement.formElement) {
       return false;
     }
-    return this.form.checkValidity();
+    return this.typedFormElement.form.checkValidity();
   }
 }
 

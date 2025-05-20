@@ -12,15 +12,23 @@ import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
 import ValidateForm from "./validation/validateForm";
 import FormPopulator from "./formPopulator/formPopulator";
+import { TypedFormElement, FormMode } from "./form/form";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
 
 class Form {
+    private typedFormElement: TypedFormElement;
+
     constructor(
         private formContainer: HTMLElement,
         private form: HTMLFormElement
     ) {
+        this.typedFormElement = new TypedFormElement(
+            this.form,
+            FormMode.Post
+        );
+
         new ValidateForm();
         const stepsObject = this.setupSteps();
         this.setupFields(stepsObject);
@@ -29,8 +37,7 @@ class Form {
 
     private setupFormPopulator(): void {
         const formPopulator = new FormPopulator(
-            this.formContainer,
-            this.form,
+            this.typedFormElement,
             modularityFrontendFormData,
             modularityFrontendFormLang,
             new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),

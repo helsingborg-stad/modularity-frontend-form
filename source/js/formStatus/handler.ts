@@ -1,9 +1,9 @@
 import SubmitStatus from './enum';
-import SubmitStatusHandlerInterface from './handlerInterface';
+import StatusHandlerInterface from './handlerInterface';
 
-class SubmitStatusHandler implements SubmitStatusHandlerInterface {
+class StatusHandler implements StatusHandlerInterface {
   /**
-   * Constructor for SubmitStatusHandler.
+   * Constructor for StatusHandler.
    * @param formContainer The form container element.
    */
   constructor(
@@ -23,4 +23,4 @@ class SubmitStatusHandler implements SubmitStatusHandlerInterface {
     );
   }
 }
-export default SubmitStatusHandler;
+export default StatusHandler;

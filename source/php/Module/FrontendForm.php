@@ -171,20 +171,23 @@ class FrontendForm extends \Modularity\Module
             'errorTime'                => $this->wpService->__('Please enter a valid time', 'modularity-frontend-form'),
             'errorNumber'              => $this->wpService->__('Please enter a valid number', 'modularity-frontend-form'),
 
-            'statusTitleError'      => $this->wpService->__('Error', 'modularity-frontend-form'),
-            'statusTitleSuccess'    => $this->wpService->__('Success', 'modularity-frontend-form'),
-            'statusTitleSubmitting' => $this->wpService->__('Submitting', 'modularity-frontend-form'),
+            'statusTitleLoading'       => $this->wpService->__('Loading', 'modularity-frontend-form'),
+            'statusTitleError'         => $this->wpService->__('Error', 'modularity-frontend-form'),
+            'statusTitleSuccess'       => $this->wpService->__('Success', 'modularity-frontend-form'),
+            'statusTitleSubmitting'    => $this->wpService->__('Submitting', 'modularity-frontend-form'),
 
-            'submitting'            => $this->wpService->__('Submitting', 'modularity-frontend-form'),
-            'submitInit'            => $this->wpService->__('Preparing', 'modularity-frontend-form'),
-            'submitSuccess'         => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
-            'submitUrlError'        => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
-            'submitError'           => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
+            'submitting'               => $this->wpService->__('Submitting', 'modularity-frontend-form'),
+            'submitInit'               => $this->wpService->__('Preparing', 'modularity-frontend-form'),
+            'submitSuccess'            => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
+            'submitUrlError'           => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
+            'submitError'              => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
 
-            'nonceRequest'          => $this->wpService->__('Securing', 'modularity-frontend-form'),
-            'nonceUrlMissing'       => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
-            'nonceRequestSuccess'   => $this->wpService->__('Securing', 'modularity-frontend-form'),
-            'nonceRequestFailed'    => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
+            'communicationError'       => $this->wpService->__('Communication error', 'modularity-frontend-form'),
+
+            'nonceRequest'             => $this->wpService->__('Securing', 'modularity-frontend-form'),
+            'nonceUrlMissing'          => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
+            'nonceRequestSuccess'      => $this->wpService->__('Securing', 'modularity-frontend-form'),
+            'nonceRequestFailed'       => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
         ];
     }
 

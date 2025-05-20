@@ -1,7 +1,7 @@
 import AsyncNonce from "../../asyncNonce/asyncNonce";
-import SubmitStatusHandler from "./status/handler";
-import SubmitStatusRenderer from "./status/render";
-import SubmitStatus from "./status/enum";
+import StatusHandler from "../../formStatus/handler";
+import StatusRenderer from "../../formStatus/render";
+import SubmitStatus from "../../formStatus/enum";
 import SubmitInterface from "./submitInterface";
 
 class Submit implements SubmitInterface {
@@ -10,8 +10,8 @@ class Submit implements SubmitInterface {
       private modularityFrontendFormData: ModularityFrontendFormData,
       private modularityFrontendFormLang: ModularityFrontendFormLang,
       private asyncNonce: AsyncNonce,
-      private submitStatusHandler: SubmitStatusHandler,
-      private submitStatusRenderer: SubmitStatusRenderer,
+      private statusHandler: StatusHandler,
+      private statusRenderer: StatusRenderer,
     ) {}
     
     /**
@@ -23,10 +23,10 @@ class Submit implements SubmitInterface {
     public async submit(): Promise<void> {
 
       // Render the submit status when changed
-      this.submitStatusRenderer.setup();
+      this.statusRenderer.setup();
 
       // Set the initial status to working
-      this.submitStatusHandler.setStatus(
+      this.statusHandler.setStatus(
         SubmitStatus.Working,
         this.modularityFrontendFormLang?.submitInit ?? "Submitting your form, please wait...",
         'send',
@@ -36,7 +36,7 @@ class Submit implements SubmitInterface {
       const url = this.modularityFrontendFormData.apiRoutes?.submitForm;
     
       if (!url) {
-        this.submitStatusHandler.setStatus(
+        this.statusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.submitUrlError ?? "Could not find the submit URL. Please check your configuration.",
           'link_off',
@@ -46,14 +46,14 @@ class Submit implements SubmitInterface {
       }
 
       //Init nonce by fetching nonce from endpoint and injecting it into the form
-      await this.asyncNonce.setup(this.form, this.submitStatusHandler);
+      await this.asyncNonce.setup(this.form, this.statusHandler);
     
       try {
 
         //Get data-js-frontend-form-id 
         const formId = this.form.getAttribute("data-js-frontend-form-id");
         if (!formId) {
-          this.submitStatusHandler.setStatus(
+          this.statusHandler.setStatus(
             SubmitStatus.Error,
             this.modularityFrontendFormLang?.submitError ?? "Could not find the form ID. Please check your configuration.",
             'link_off',
@@ -76,7 +76,7 @@ class Submit implements SubmitInterface {
         // Failed
         if (!response.ok) {
           if(json.code == "invalid_field_values") {
-            this.submitStatusHandler.setStatus(
+            this.statusHandler.setStatus(
               SubmitStatus.Error,
               json?.message ?? this.modularityFrontendFormLang?.submitError,
               'data_alert',
@@ -87,7 +87,7 @@ class Submit implements SubmitInterface {
           }
 
 
-          this.submitStatusHandler.setStatus(
+          this.statusHandler.setStatus(
             SubmitStatus.Error,
             json?.message ?? this.modularityFrontendFormLang?.submitError,
             'error',
@@ -98,7 +98,7 @@ class Submit implements SubmitInterface {
     
         // Success
         if(response.ok) {
-          this.submitStatusHandler.setStatus(
+          this.statusHandler.setStatus(
             SubmitStatus.Success,
             this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
             'celebration',
@@ -108,7 +108,7 @@ class Submit implements SubmitInterface {
         }
 
       } catch (error: any) {
-        this.submitStatusHandler.setStatus(
+        this.statusHandler.setStatus(
           SubmitStatus.Error,
           this.modularityFrontendFormLang?.submitError ?? "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : ""),
           'error',

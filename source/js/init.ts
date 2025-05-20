@@ -6,8 +6,8 @@ import Submit from "./steps/submit/submit";
 import FieldBuilder from "./fields/fieldBuilder";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
-import SubmitStatusHandler from "./steps/submit/status/handler";
-import SubmitStatusRenderer from "./steps/submit/status/render";
+import StatusHandler from "./formStatus/handler";
+import StatusRenderer from "./formStatus/render";
 import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
 import ValidateForm from "./validation/validateForm";
@@ -32,7 +32,10 @@ class Form {
             this.formContainer,
             this.form,
             modularityFrontendFormData,
-            modularityFrontendFormLang
+            modularityFrontendFormLang,
+            new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
+            new StatusHandler(this.formContainer),
+            new StatusRenderer(this.formContainer, modularityFrontendFormLang),
         );
         formPopulator.initialize();
     }
@@ -90,8 +93,8 @@ class Form {
                     modularityFrontendFormData,
                     modularityFrontendFormLang,
                     new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
-                    new SubmitStatusHandler(this.formContainer),
-                    new SubmitStatusRenderer(this.formContainer, modularityFrontendFormLang),
+                    new StatusHandler(this.formContainer),
+                    new StatusRenderer(this.formContainer, modularityFrontendFormLang),
                 ),
             ),
             new StepUIManager(

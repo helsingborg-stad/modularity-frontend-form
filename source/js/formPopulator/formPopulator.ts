@@ -1,3 +1,8 @@
+import AsyncNonce from "../asyncNonce/asyncNonce";
+import StatusHandler from "../formStatus/handler";
+import StatusRenderer from "../formStatus/render";
+import SubmitStatus from "../formStatus/enum";
+
 type Token32 = string & { __lengthBrand: 32 };
 
 interface FormParams {
@@ -14,6 +19,9 @@ class FormPopulator {
     private form: HTMLFormElement,
     private modularityFrontendFormData: ModularityFrontendFormData,
     private modularityFrontendFormLang: ModularityFrontendFormLang,
+    private asyncNonce: AsyncNonce,
+    private statusHandler: StatusHandler,
+    private statusRenderer: StatusRenderer,
   ) {
     this.formParams = this.extractParamsFromUrl();
   }
@@ -43,6 +51,19 @@ class FormPopulator {
    * Initializes the form populator by fetching and populating the form data.
    */
   public async initialize(): Promise<void> {
+
+    // Render the submit status when changed
+    this.statusRenderer.setup();
+
+    // Set the initial status to working
+    this.statusHandler.setStatus(
+      SubmitStatus.Loading,
+      "Loading form data...",
+      'file_open',
+      0,
+      1000
+    );
+
     if (this.formParams) {
       const formData = await this.get(this.formParams.postId, this.formParams.token);
       if (formData) {
@@ -63,6 +84,16 @@ class FormPopulator {
 
     if (!url) {
       console.error("Could not find the form data URL. Please check your configuration.");
+
+      this.statusHandler.setStatus(
+        SubmitStatus.Loading,
+        "Could not find url.",
+        'file_open',
+        100,
+        2000
+      );
+
+
       return null;
     }
 
@@ -81,15 +112,38 @@ class FormPopulator {
     })();
 
     try {
-      const response = await fetch(url);
+      const response  = await fetch(url);
+      const json      = await response.json();
+
       if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
+        this.statusHandler.setStatus(
+          SubmitStatus.Error,
+          json.message ?? this.modularityFrontendFormLang?.communicationError ?? "Communication error.",
+          'vpn_key_alert',
+          0,
+          10000
+        );
+        return null;
       }
 
-      const json = await response.json();
+      this.statusHandler.setStatus(
+        SubmitStatus.Loading,
+        "Loading form data...",
+        'file_open',
+        100,
+        500
+      );
+
       return json?.data ?? null;
+      
     } catch (error: any) {
-      console.error(`Error fetching form data: ${error.message}`);
+      this.statusHandler.setStatus(
+        SubmitStatus.Error,
+        this.modularityFrontendFormLang?.communicationError ?? "Communication error.",
+        'link_off',
+        0,
+        10000
+      );
       return null;
     }
   }

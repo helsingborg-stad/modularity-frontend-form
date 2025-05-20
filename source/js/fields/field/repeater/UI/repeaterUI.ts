@@ -7,6 +7,7 @@ class RepeaterUI implements RepeaterUIInterface {
     private conditionBuilder!: ConditionBuilderInterface;
     private rowFieldsObject: RowFieldsObject = {};
     private rowChangeListeners: RowCountChangeListener[] = []; 
+    private rowCountElement: HTMLElement|null = null;
 
     constructor(
         private fieldBuilder: FieldBuilderInterface,
@@ -17,19 +18,24 @@ class RepeaterUI implements RepeaterUIInterface {
         private stepId: string
     ) {}
 
-    public init(repeaterField: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void {
+    public init(
+        repeaterField: RepeaterInterface,
+        conditionBuilder: ConditionBuilderInterface,
+    ): void {
         this.repeaterField = repeaterField;
         this.conditionBuilder = conditionBuilder;
+        this.rowCountElement = this.repeaterField.getField().querySelector('[data-js-repeater-row-counter]');
 
         if (!this.repeaterField || !this.conditionBuilder) {
             console.error("Repeater field or condition builder is not set");
             return;
         }
 
+        this.setupListeners();
+
         for(let i = 0; i < this.repeaterField.getMinRows(); i++) {
             this.buildRow(false);
         }
-        this.setupListener();
     }
 
     public getRowIndex(): number {
@@ -48,10 +54,20 @@ class RepeaterUI implements RepeaterUIInterface {
         this.rowChangeListeners.forEach(listener => listener(count));
     }
 
-    private setupListener() {
-        this.addRowButton?.addEventListener('click', (e) => {
+    private setupListeners() {
+        this.addRowButton.addEventListener('click', (e) => {
             e.preventDefault();
             this.buildRow();
+        });
+
+        if (this.rowCountElement) {
+            this.addRowChangeListener(count => {
+                this.rowCountElement!.innerHTML = count.toString();
+            });
+        }
+
+        this.addRowChangeListener(count => {
+            this.addRowButton.disabled = count >= this.repeaterField.getMaxRows()
         });
     }
 

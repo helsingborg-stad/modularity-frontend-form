@@ -10,6 +10,7 @@
     @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
 
     @form([
+        'validation' => false,
         'attributeList' => [
             'data-js-frontend-form-id' => $moduleId,
         ],

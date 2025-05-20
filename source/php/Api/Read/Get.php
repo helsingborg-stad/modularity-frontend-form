@@ -69,8 +69,10 @@ class Get extends RestApiEndpoint
     {
         //Get fields from post id 
         $postId          = $request->get_params()['post-id'] ?? null;
+        $moduleId        = $request->get_params()['module-id'] ?? null;
         $fieldData       = $this->acfService->getFields($postId, true, false);
         $fieldData       = $this->translateFieldNamesToFieldKeys($postId, $fieldData);
+        $fieldData       = $this->filterUnmappedFieldKeysForPostType($moduleId, $fieldData);
 
         if ($fieldData !== false) {
             return new WP_REST_Response(
@@ -119,5 +121,24 @@ class Get extends RestApiEndpoint
     private function translateFieldNameToFieldKey(int $postId, string $fieldName): string
     {
         return get_post_meta($postId, "_" . $fieldName, true) ?? $fieldName;
+    }
+
+    /**
+     * Removes fields that are not registered in any of the field groups mapped to the post type.
+     * 
+     * @param array $fieldKeys The fields to check
+     * @param string $postType The post type to check against
+     * @param array $defaultKeys The default keys to include, if any.
+     */
+    private function filterUnmappedFieldKeysForPostType($moduleId, $fieldData): array
+    {
+        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($moduleId)->getFieldKeysRegisteredAsFormFields();
+
+        $fieldData = array_intersect_key(
+            $fieldData,
+            array_flip($fieldKeysRegisteredAsFormFields)
+        );
+
+        return $fieldData;
     }
 }

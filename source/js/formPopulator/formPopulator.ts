@@ -55,21 +55,24 @@ class FormPopulator {
     // Render the submit status when changed
     this.statusRenderer.setup();
 
-    // Set the initial status to working
-    this.statusHandler.setStatus(
-      SubmitStatus.Loading,
-      "Loading form data...",
-      'file_open',
-      0,
-      1000
-    );
-
+    
     if (this.formParams) {
+
+      // Set the initial status to working
+      this.statusHandler.setStatus(
+        SubmitStatus.Loading,
+        "Loading form data...",
+        'file_open',
+        0,
+        1000
+      );
+
       const formData = await this.get(this.formParams.postId, this.formParams.token);
       if (formData) {
         this.populateForm(formData);
         this.validateForm();
       }
+      
     }
   }
 
@@ -83,8 +86,6 @@ class FormPopulator {
     let url = this.modularityFrontendFormData?.apiRoutes?.getForm;
 
     if (!url) {
-      console.error("Could not find the form data URL. Please check your configuration.");
-
       this.statusHandler.setStatus(
         SubmitStatus.Loading,
         "Could not find url.",
@@ -92,8 +93,6 @@ class FormPopulator {
         100,
         2000
       );
-
-
       return null;
     }
 

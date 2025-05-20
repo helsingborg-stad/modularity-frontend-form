@@ -2,7 +2,7 @@ import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
 import StatusRenderer from "../formStatus/render";
 import SubmitStatus from "../formStatus/enum";
-import { TypedFormElement } from "../form/form";
+import { TypedFormElement, FormMode } from "../form/form";
 
 type Token32 = string & { __lengthBrand: 32 };
 
@@ -69,6 +69,7 @@ class FormPopulator {
 
       const formData = await this.get(this.formParams.postId, this.formParams.token);
       if (formData) {
+        this.typedFormElement.mode = FormMode.Update;// Set the form mode to update
         this.populateForm(formData);
         this.validateForm();
       }

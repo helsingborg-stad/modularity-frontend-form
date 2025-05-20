@@ -5,6 +5,7 @@ import RepeaterConditionsHandler from "./condition/repeaterConditionsHandler";
 import RepeaterConditionValidator from "./condition/repeaterConditionValidator";
 import Repeater from "./repeater";
 import RepeaterUIFactory from "./UI/repeaterUIFactory";
+import RowCount from "./validation/rowCount";
 
 class RepeaterFactory {
     public static create(
@@ -39,6 +40,7 @@ class RepeaterFactory {
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
                 [
+                    new RowCount()
                 ]
             )
         );

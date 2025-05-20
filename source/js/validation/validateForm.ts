@@ -16,12 +16,21 @@ class ValidateForm {
         this.validationKeys = this.getValidationKeys();
         this.target = this.getTarget();
 
-        document.querySelectorAll(this.target).forEach(item => {
-            new CustomInvalidValidationMessageItem(
-                item as HTMLInputElement|HTMLSelectElement,
-                this.validationKeys,
-                this.attributePrefixCamelCased
-            )
+        this.applyValidation(document);
+        this.listenForDomChanges();
+    }
+
+    private applyValidation(root: ParentNode): void {
+        root.querySelectorAll(this.target).forEach(item => {
+            const element = item as HTMLInputElement | HTMLSelectElement;
+            if (!(element.dataset.validationInitialized)) {
+                new CustomInvalidValidationMessageItem(
+                    element,
+                    this.validationKeys,
+                    this.attributePrefixCamelCased
+                );
+                element.dataset.validationInitialized = 'true';
+            }
         });
     }
 
@@ -39,6 +48,23 @@ class ValidateForm {
         return Object.getOwnPropertyNames(
             Object.getPrototypeOf(document.createElement('input').validity)
         ).filter((key) => !this.excludeKeys.includes(key));
+    }
+
+    private listenForDomChanges(): void {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node instanceof HTMLElement) {
+                        this.applyValidation(node);
+                    }
+                });
+            });
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     }
 }
 

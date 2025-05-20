@@ -1,5 +1,8 @@
 class Repeater implements RepeaterInterface {
     private required: boolean = false;
+    private minRows: number = 0;
+    private maxRows: number = 0;
+
     constructor(
         private field: HTMLElement,
         private name: string,
@@ -12,10 +15,13 @@ class Repeater implements RepeaterInterface {
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.required = this.field.hasAttribute('data-js-required');
+        this.minRows  = parseInt(this.field.getAttribute('data-js-min-rows') ?? "0");
+        this.maxRows  = parseInt(this.field.getAttribute('data-js-max-rows') ?? "100");
         this.repeaterUI.init(this, conditionBuilder);
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
         this.validator.init(this);
+        this.listenForChanges();
     }
 
     public getName(): string {
@@ -38,6 +44,14 @@ class Repeater implements RepeaterInterface {
         return this.repeaterUI.getRowCount() > 0;
     }
 
+    public getMinRows(): number {
+        return this.minRows;
+    }
+
+    public getMaxRows(): number {
+        return this.maxRows;
+    }
+
     public getRowCount(): number {
         return this.repeaterUI.getRowCount();
     }
@@ -48,6 +62,12 @@ class Repeater implements RepeaterInterface {
     
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    private listenForChanges(): void {
+        this.repeaterUI.addRowChangeListener((rowCount: number) => {
+            this.validator.validate();
+        });
     }
 }
 

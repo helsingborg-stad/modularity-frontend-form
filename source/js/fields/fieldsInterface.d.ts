@@ -20,6 +20,8 @@ interface CheckboxInterface extends FieldInterface {
 
 interface RepeaterInterface extends FieldInterface {
     getRowCount(): number;
+    getMinRows(): number;
+    getMaxRows(): number;
 }
 
 interface RadioInterface extends FieldInterface {

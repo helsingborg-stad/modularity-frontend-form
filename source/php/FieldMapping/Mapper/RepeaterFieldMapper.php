@@ -29,7 +29,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
         $mapped = (new BasicFieldMapper($this->field, 'repeater'))->map();
 
         if ($mapped['required']) {
-            $mapped['attributeList']['data-js-required'] = 'true';
+            $this->field['min'] = $this->field['min'] ?: 1;
             unset($mapped['required']);
         }
 
@@ -37,6 +37,9 @@ class RepeaterFieldMapper implements FieldMapperInterface
             $mapped['fields'] = $subfields;
             $mapped['min']    = $this->field['min'] ?: 0;
             $mapped['max']    = $this->field['max'] ?: 100;
+
+            $mapped['attributeList']['data-js-min-rows'] = $mapped['min'];
+            $mapped['attributeList']['data-js-max-rows'] = $mapped['max'];
         }
 
         return $mapped ?? null;

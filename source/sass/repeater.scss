@@ -33,6 +33,14 @@
     transition: max-height 0.2s ease, opacity 0.2s ease;
     opacity: 0;
 
+    &.no-remove {
+        .mod-frontend-form__repeater-row-remove {
+            visibility: hidden;
+            pointer-events: none;
+            opacity: 0;
+        }
+    }
+
     .mod-frontend-form__repeater-row-remove.c-button {
         background-color: #f0f0f0;
         width: 2rem;

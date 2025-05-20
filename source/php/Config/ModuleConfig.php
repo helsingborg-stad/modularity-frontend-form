@@ -124,6 +124,57 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
+  public function getFieldKeysRegisteredAsFormFields(): ?array
+  {
+    $steps = $this->acfService->getField('formSteps', $this->getModuleId());
+    if ($steps === null) {
+        return null;
+    }
+    $fieldKeys = [];
+    foreach ($steps as $step) {
+        if (!isset($step['formStepGroup']) || !is_array($step['formStepGroup']) || count($step['formStepGroup']) === 0) {
+            continue;
+        }
+
+        $fields = acf_get_fields($step['formStepGroup'][0]); //TODO: Implement in acfService
+        if (!is_array($fields)) {
+            continue;
+        }
+        foreach ($fields as $field) {
+            $fieldKeys = array_merge($fieldKeys, $this->getFieldKeysRecursive($field));
+        }
+    }
+
+    return array_values(array_unique($fieldKeys));
+  }
+
+  /**
+   * Recursively gets field keys from a field array
+   *
+   * @param array $field The field array
+   *
+   * @return array The field keys
+   */
+  private function getFieldKeysRecursive(array $field): array
+  {
+    $keys = [];
+
+    if (isset($field['key']) && str_starts_with($field['key'], 'field_')) {
+        $keys[] = $field['key'];
+    }
+
+    if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
+        foreach ($field['sub_fields'] as $subField) {
+            $keys = array_merge($keys, $this->getFieldKeysRecursive($subField));
+        }
+    }
+
+    return $keys;
+  }
+
+  /**
+   * @inheritdoc
+   */
   public function getNonceKey(): string
   {
     $moduleData = $this->wpService->getPost($this->getModuleId());

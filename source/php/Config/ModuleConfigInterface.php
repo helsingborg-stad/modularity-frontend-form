@@ -21,6 +21,8 @@ interface ModuleConfigInterface
     public function getModuleIsEditable(): bool;
     public function getNonceKey(): string;
 
+    public function getFieldKeysRegisteredAsFormFields(): ?array;
+
     public function getActivatedHandlers(): array;
     public function getWpDbHandlerConfig(): ?object;
     public function getMailHandlerConfig(): ?object;

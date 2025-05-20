@@ -69,8 +69,13 @@ class Get extends RestApiEndpoint
     {
         //Get fields from post id 
         $postId          = $request->get_params()['post-id'] ?? null;
+        $moduleId        = $request->get_params()['module-id'] ?? null;
         $fieldData       = $this->acfService->getFields($postId, true, false);
         $fieldData       = $this->translateFieldNamesToFieldKeys($postId, $fieldData);
+        $fieldData       = $this->filterUnmappedFieldKeysForPostType($moduleId, $fieldData);
+
+        //Add post title
+        $fieldData       = $this->prependPostTitleToFieldData($fieldData, $postId);
 
         if ($fieldData !== false) {
             return new WP_REST_Response(
@@ -88,6 +93,19 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    /**
+     * Prepend the post title to the field data
+     *
+     * @param array $fieldData The field data
+     * @param int $postId The post ID
+     *
+     * @return array The field data with the post title prepended
+     */
+    private function prependPostTitleToFieldData(array $fieldData, int $postId): array
+    {
+        return ['post_title' => $this->wpService->getPost($postId)->post_title ?? null] + $fieldData;
     }
 
     /**
@@ -119,5 +137,24 @@ class Get extends RestApiEndpoint
     private function translateFieldNameToFieldKey(int $postId, string $fieldName): string
     {
         return get_post_meta($postId, "_" . $fieldName, true) ?? $fieldName;
+    }
+
+    /**
+     * Removes fields that are not registered in any of the field groups mapped to the post type.
+     * 
+     * @param array $fieldKeys The fields to check
+     * @param string $postType The post type to check against
+     * @param array $defaultKeys The default keys to include, if any.
+     */
+    private function filterUnmappedFieldKeysForPostType($moduleId, $fieldData): array
+    {
+        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($moduleId)->getFieldKeysRegisteredAsFormFields();
+
+        $fieldData = array_intersect_key(
+            $fieldData,
+            array_flip($fieldKeysRegisteredAsFormFields)
+        );
+
+        return $fieldData;
     }
 }

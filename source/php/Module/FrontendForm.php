@@ -55,8 +55,6 @@ class FrontendForm extends \Modularity\Module
 
     private FormatSteps $formatSteps;
 
-    private FormSecurity $formSecurity;
-
     public function init(): void
     {
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
@@ -69,13 +67,6 @@ class FrontendForm extends \Modularity\Module
         );
 
         $this->cacheBust    = new CacheBust();
-
-        //Manages form security
-        $this->formSecurity = new FormSecurity(
-            $this->wpService,
-            $this->formIdQueryParam,
-            $this->formTokenQueryParam
-        );
 
         //Form admin service
         $formAdmin = new FormAdmin($this->wpService, $this->acfService, 'formStepGroup');

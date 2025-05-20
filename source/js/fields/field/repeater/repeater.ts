@@ -16,6 +16,7 @@ class Repeater implements RepeaterInterface {
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
         this.validator.init(this);
+        this.listenForChanges();
     }
 
     public getName(): string {
@@ -48,6 +49,12 @@ class Repeater implements RepeaterInterface {
     
     public getField(): HTMLElement {
         return this.field;
+    }
+
+    private listenForChanges(): void {
+        this.repeaterUI.addRowChangeListener((rowCount: number) => {
+            this.validator.validate();
+        });
     }
 }
 

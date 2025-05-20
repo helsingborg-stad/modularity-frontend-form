@@ -19,7 +19,10 @@
             ]
         ])
             @element([
-                'componentElement' => 'span'
+                'componentElement' => 'span',
+                'attributeList' => [
+                    'data-js-repeater-row-counter' => 'true'
+                ]
             ])
                 {{ $field['min'] }}
             @endelement

@@ -33,10 +33,6 @@ interface BasicInterface extends FieldInterface {
     getInput(): HTMLInputElement;
 }
 
-interface FileInterface extends FieldInterface {
-    getInput(): HTMLInputElement;
-}
-
 interface GoogleMapInterface extends FieldInterface {
     getOpenstreetmap(): OpenstreetmapInterface;
     getHiddenField(): HTMLInputElement;

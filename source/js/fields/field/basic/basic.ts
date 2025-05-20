@@ -53,13 +53,21 @@ class Basic implements BasicInterface {
 
     private listenForChanges(): void {
         this.getInput().addEventListener('input', () => {
-            this.conditionsHandler.checkConditions();
-            this.getValidator().valueChangeListener();
+            this.getConditionsHandler().checkConditions();
+            this.onInput();
         });
 
         this.getInput().addEventListener('blur', () => {
-            this.getValidator().validate();
+            this.onBlur();
         });
+    }
+
+    protected onInput(): void {
+        this.getValidator().valueChangeListener();
+    }
+
+    protected onBlur(): void {
+        this.getValidator().validate();
     }
 }
 

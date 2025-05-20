@@ -1,10 +1,10 @@
 import FieldValidator from "../../validation/fieldValidator";
 import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
-import Basic from "../basic/basic";
 import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import FileConditionsHandler from "./condition/fileConditionsHandler";
 import FileConditionValidator from "./condition/fileConditionValidator";
+import File from "./file";
 
 class FileFactory {
     static create(
@@ -15,13 +15,13 @@ class FileFactory {
         stepId: string
     ): FieldInterface {
         const input = field.querySelector('input[type="file"]') as HTMLInputElement;
-
+        console.log("HELLO")
         if (!input) {
             console.error('Input field is not an input element with type "file"');
             return NullFieldFactory.create(field, 'file', name, unstructuredConditions, notices, stepId);
         }
 
-        return new Basic(
+        return new File(
             field as HTMLInputElement,
             input,
             name,

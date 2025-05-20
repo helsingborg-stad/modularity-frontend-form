@@ -26,6 +26,9 @@ class RepeaterUI implements RepeaterUIInterface {
             return;
         }
 
+        for(let i = 0; i < this.repeaterField.getMinRows(); i++) {
+            this.buildRow(false);
+        }
         this.setupListener();
     }
 
@@ -48,20 +51,7 @@ class RepeaterUI implements RepeaterUIInterface {
     private setupListener() {
         this.addRowButton?.addEventListener('click', (e) => {
             e.preventDefault();
-            const rowId = this.rowIndex.toString();
-            const row = this.rowBuilder.createRow(rowId);
-            const builtRow = this.buildAddedFields(row);
-            this.rowFieldsObject[rowId] = builtRow;
-            
-            row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.rowBuilder.deleteRow(row);
-                this.removeRow(rowId);
-                this.rowCountChanged(--this.rowCount);
-            });
-
-            this.rowCountChanged(++this.rowCount);
-            this.rowIndex++;
+            this.buildRow();
         });
     }
 
@@ -69,6 +59,23 @@ class RepeaterUI implements RepeaterUIInterface {
         for (const fieldName in this.rowFieldsObject[rowId]) {
             this.fieldBuilder.removeField(fieldName);
         }
+    }
+
+    private buildRow(includeRemoveRowButton: boolean = true): void {
+        const rowId = this.rowIndex.toString();
+        const row = this.rowBuilder.createRow(rowId, includeRemoveRowButton);
+        const builtRow = this.buildAddedFields(row);
+        this.rowFieldsObject[rowId] = builtRow;
+        
+        row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.rowBuilder.deleteRow(row);
+            this.removeRow(rowId);
+            this.rowCountChanged(--this.rowCount);
+        });
+
+        this.rowCountChanged(++this.rowCount);
+        this.rowIndex++;
     }
 
     private buildAddedFields(row: HTMLElement): FieldsObject {

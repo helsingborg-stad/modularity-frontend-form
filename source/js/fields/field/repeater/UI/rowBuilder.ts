@@ -3,17 +3,21 @@ class RowBuilder implements RowBuilderInterface {
 
     constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}
 
-    public createRow(id: string): HTMLElement {
+    public createRow(id: string, includeRemoveRowButton: boolean = true): HTMLElement {
         let rowHtml = this.template.innerHTML;
         rowHtml = rowHtml.replaceAll(this.replacement, id);
 
-        return this.appendRow(rowHtml);
+        return this.appendRow(rowHtml, includeRemoveRowButton);
     }
 
-    private appendRow(rowHtml: string): HTMLElement {
+    private appendRow(rowHtml: string, includeRemoveRowButton: boolean = true): HTMLElement {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = rowHtml;
         const row = tempDiv.firstElementChild as HTMLElement;
+
+        if (!includeRemoveRowButton) {
+            row.classList.add('no-remove');
+        }
       
         this.templateContainer.appendChild(row);
         requestAnimationFrame(() => {

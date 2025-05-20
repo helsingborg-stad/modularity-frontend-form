@@ -6,7 +6,7 @@ interface RepeaterUIInterface {
 }
 
 interface RowBuilderInterface {
-    createRow(id: string): HTMLElement;
+    createRow(id: string, includeRemoveRowButton: boolean = true): HTMLElement;
     deleteRow(row: HTMLElement): void;
 }
 

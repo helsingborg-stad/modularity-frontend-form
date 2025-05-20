@@ -74,6 +74,9 @@ class Get extends RestApiEndpoint
         $fieldData       = $this->translateFieldNamesToFieldKeys($postId, $fieldData);
         $fieldData       = $this->filterUnmappedFieldKeysForPostType($moduleId, $fieldData);
 
+        //Add post title
+        $fieldData       = $this->prependPostTitleToFieldData($fieldData, $postId);
+
         if ($fieldData !== false) {
             return new WP_REST_Response(
                 [
@@ -90,6 +93,19 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    /**
+     * Prepend the post title to the field data
+     *
+     * @param array $fieldData The field data
+     * @param int $postId The post ID
+     *
+     * @return array The field data with the post title prepended
+     */
+    private function prependPostTitleToFieldData(array $fieldData, int $postId): array
+    {
+        return ['post_title' => $this->wpService->getPost($postId)->post_title ?? null] + $fieldData;
     }
 
     /**

@@ -6,7 +6,7 @@
         @typography([
             'element' => 'legend',
         ])
-            {{ $field['label'] }}
+            {{ $field['label'] }} {!! $field['required'] ? '<span class="u-color__text--danger">*</span>' : '' !!}
         @endtypography
     @endif
     @foreach ($field['choices'] as $choice)

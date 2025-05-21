@@ -35,6 +35,7 @@ $color-danger: var(--color-danger, #d73740) !default;
         opacity: 1;
         transform: scaleY(1);
         max-height: 100%;
+        margin-top: 2rem;
     }
 }
 .mod-frontend-form__step-header {
@@ -104,4 +105,41 @@ $color-danger: var(--color-danger, #d73740) !default;
 
 .is-error .mod-frontend-form-working {
     color: #721c24;
+}
+
+/* Loading */ 
+.mod-frontend-form.is-success .c-paper,
+.mod-frontend-form.is-loading .c-paper,
+.mod-frontend-form.is-working .c-paper,
+.mod-frontend-form.is-error .c-paper,
+.mod-frontend-form.is-success .mod-frontend-form__step-buttons,
+.mod-frontend-form.is-error .mod-frontend-form__step-buttons,
+.mod-frontend-form.is-working .mod-frontend-form__step-buttons,
+.mod-frontend-form.is-loading .mod-frontend-form__step-buttons {
+    .c-typography,
+    .c-button,
+    .c-field {
+        color: transparent !important;
+        background-color: rgba(#0000, .05) !important;
+        border-color: rgba(#0000, .05) !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        border-radius: 4px;
+        user-select: none;
+        pointer-events: none;
+        position: relative;
+        border-radius: 6px;
+
+        * {
+            visibility: hidden !important;
+            pointer-events: none !important;
+            user-select: none !important;   
+        }
+    }
+
+    .c-typography,
+    .c-button,
+    .c-field {
+        animation: pulse 1.5s infinite ease-in-out;
+    }
 }

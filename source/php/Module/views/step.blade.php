@@ -10,6 +10,8 @@
                 'mod-frontend-form__step-header',
             ]
         ])
+
+            <!-- Step Header -->
             @element([])
                 @if($step['title'])
                     @typography([
@@ -18,14 +20,17 @@
                         {{ $step['title'] }}
                     @endtypography
                 @endif
-                @if($step['title'])
+                @if($step['description'])
                     @typography([
+                        'element' => 'div',
                         'classList' => ['u-margin__top--1']
                     ])
                         {!! $step['description'] !!}
                     @endtypography
                 @endif
             @endelement
+
+            <!-- Step Header Edit Button -->
             @button([
                 'icon' => 'edit',
                 'text' => $lang->edit,
@@ -42,21 +47,23 @@
                 ]
             ])
             @endbutton
+
         @endelement
-            @element([
-                'attributeList' => [
-                    'data-js-frontend-form-step' => $index,
-                ],
-                'classList' => [
-                    'mod-frontend-form__step',
-                    $index === 0 ? 'is-visible' : ''
-                ]
-            ])
-                @foreach($step['fields'] as $field)
-                    @if (isset($field['view']))  
-                        @includeIf('fields.' . $field['view'], ['field' => $field])
-                    @endif
-                @endforeach
-            @endelement
+
+        @element([
+            'attributeList' => [
+                'data-js-frontend-form-step' => $index,
+            ],
+            'classList' => [
+                'mod-frontend-form__step',
+                $index === 0 ? 'is-visible' : ''
+            ]
+        ])
+            @foreach($step['fields'] as $field)
+                @if (isset($field['view']))  
+                    @includeIf('fields.' . $field['view'], ['field' => $field])
+                @endif
+            @endforeach
+        @endelement
     @endpaper
 @endif

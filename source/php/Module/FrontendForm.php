@@ -99,6 +99,7 @@ class FrontendForm extends \Modularity\Module
 
         //Steps
         $data['steps'] = $this->formatSteps->formatSteps($fields->formSteps ?? []);
+        $data['stepsCount'] = count($data['steps']);
 
         //Language
         $data['lang'] = $this->getLang();

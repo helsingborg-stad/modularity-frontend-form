@@ -4,6 +4,7 @@ import NullFieldFactory from "../nullField/nullFieldFactory";
 import SelectConditionHandler from "./condition/selectConditionHandler";
 import SelectConditionValidator from "./condition/selectConditionValidator";
 import Select from "./select";
+import HtmlValidator from "./validation/htmlValidator";
 
 class SelectFactory {
     public static create(
@@ -30,7 +31,9 @@ class SelectFactory {
             new SelectConditionHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
-                []
+                [
+                    new HtmlValidator()
+                ]
             )
         )
     }

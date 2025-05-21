@@ -14,7 +14,7 @@
         'classList' => [
             'u-visibility--hidden'
         ],
-        'text' => $lang->previous ?? 'Previous',
+        'text' => $lang->previous,
     ])
     @endbutton
     @button([
@@ -24,7 +24,7 @@
         'attributeList' => [
             'data-js-frontend-form-next-step' => 'true'
         ],
-        'text' => $lang->next ?? 'Next',
+        'text' => $stepsCount === 1 ? $lang->submit : $lang->next,
     ])
     @endbutton
 @endelement

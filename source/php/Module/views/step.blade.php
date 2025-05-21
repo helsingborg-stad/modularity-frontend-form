@@ -3,6 +3,7 @@
         'padding' => 4,
         'attributeList' => [
             'data-js-frontend-form-step-container' => $index,
+            'style' => 'z-index: ' . (1000 - $index) . ';',
         ]
     ])
         @element([

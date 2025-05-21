@@ -1,16 +1,12 @@
 @element([
+    'componentElement' => 'fieldset',
     'attributeList' => $field['attributeList'] ?? [],
 ])
     @if (!empty($field['label']))
         @typography([
-            'element' => 'h2',
-            'variant' => 'h4',
-            'classList' => [
-                'u-margin__bottom--1',
-                'u-margin__top--0'
-            ],
+            'element' => 'legend',
         ])
-            {{ $field['label'] }}
+            {{ $field['label'] }} {!! $field['required'] ? '<span class="u-color__text--danger">*</span>' : '' !!}
         @endtypography
     @endif
     @foreach ($field['choices'] as $choice)

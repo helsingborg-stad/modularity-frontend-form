@@ -61,7 +61,12 @@ class Select implements SelectInterface {
 
     public listenForChanges(): void {
         this.getSelect().addEventListener('change', () => {
+            this.getValidator().validate();
             this.conditionsHandler.checkConditions();
+        });
+
+        this.getSelect().addEventListener('blur', () => {
+            this.getValidator().validate();
         });
     }
 }

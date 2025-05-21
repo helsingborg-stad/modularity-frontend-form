@@ -2,7 +2,8 @@ import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
 import StatusRenderer from "../formStatus/render";
 import SubmitStatus from "../formStatus/enum";
-import { TypedFormElement, FormMode } from "../form/form";
+import FormMode from "../form/formModeEnum";  
+import TypedFormElement from "../form/form";
 
 type Token32 = string & { __lengthBrand: 32 };
 

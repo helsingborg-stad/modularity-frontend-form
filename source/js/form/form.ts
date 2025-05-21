@@ -1,9 +1,5 @@
-export enum FormMode {
-  Post    = 'post',
-  Update  = 'update'
-}
-
-export class TypedFormElement {
+import FormMode from './formModeEnum';
+export class Form {
   private _mode: FormMode;
   public form: HTMLFormElement;
 
@@ -17,6 +13,7 @@ export class TypedFormElement {
   }
 
   set mode(value: FormMode) {
+    this.form.setAttribute('data-form-mode', value);
     this._mode = value;
   }
 
@@ -25,6 +22,7 @@ export class TypedFormElement {
   }
 
   get formElementContainer(): HTMLElement { 
-    return this.form.closest('.modularity-frontend-form') as HTMLElement;
+    return this.form.closest('[data-js-frontend-form]') as HTMLElement;
   }
 }
+export default Form;

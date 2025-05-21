@@ -3,10 +3,12 @@ import StatusHandler from "../../formStatus/handler";
 import StatusRenderer from "../../formStatus/render";
 import SubmitStatus from "../../formStatus/enum";
 import SubmitInterface from "./submitInterface";
+import Form from "../../form/form";
+import FormMode from "../../form/formModeEnum";
 
 class Submit implements SubmitInterface {
     constructor(
-      private form: HTMLFormElement,
+      private form: Form,
       private modularityFrontendFormData: ModularityFrontendFormData,
       private modularityFrontendFormLang: ModularityFrontendFormLang,
       private asyncNonce: AsyncNonce,
@@ -46,12 +48,12 @@ class Submit implements SubmitInterface {
       }
 
       //Init nonce by fetching nonce from endpoint and injecting it into the form
-      await this.asyncNonce.setup(this.form, this.statusHandler);
+      await this.asyncNonce.setup(this.form.formElement, this.statusHandler);
     
       try {
 
         //Get data-js-frontend-form-id 
-        const formId = this.form.getAttribute("data-js-frontend-form-id");
+        const formId = this.form.formElement.getAttribute("data-js-frontend-form-id");
         if (!formId) {
           this.statusHandler.setStatus(
             SubmitStatus.Error,
@@ -68,7 +70,7 @@ class Submit implements SubmitInterface {
 
         const response = await fetch(finalUrl, {
           method: "POST",
-          body: new FormData(this.form)
+          body: new FormData(this.form.formElement)
         });
     
         const json = await response.json();

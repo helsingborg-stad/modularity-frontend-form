@@ -12,20 +12,21 @@ import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
 import ValidateForm from "./validation/validateForm";
 import FormPopulator from "./formPopulator/formPopulator";
-import { TypedFormElement, FormMode } from "./form/form";
+import Form from "./form/form";
+import FormMode from "./form/formModeEnum";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
 
-class Form {
-    private typedFormElement: TypedFormElement;
+class FormHandler {
+    private form: Form;
 
     constructor(
         private formContainer: HTMLElement,
-        private form: HTMLFormElement
+        private formElement: HTMLFormElement
     ) {
-        this.typedFormElement = new TypedFormElement(
-            this.form,
+        this.form = new Form(
+            this.formElement,
             FormMode.Post
         );
 
@@ -37,12 +38,12 @@ class Form {
 
     private setupFormPopulator(): void {
         const formPopulator = new FormPopulator(
-            this.typedFormElement,
+            this.form,
             modularityFrontendFormData,
             modularityFrontendFormLang,
             new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
-            new StatusHandler(this.formContainer),
-            new StatusRenderer(this.formContainer, modularityFrontendFormLang),
+            new StatusHandler(this.form.formElementContainer),
+            new StatusRenderer(this.form.formElementContainer, modularityFrontendFormLang),
         );
         formPopulator.initialize();
     }
@@ -57,7 +58,7 @@ class Form {
 
         const builder = new FieldBuilder(
             fieldsInitiatorInstance,
-            new Notice(this.formContainer),
+            new Notice(this.form.formElementContainer),
             modularityFrontendFormData,
             modularityFrontendFormLang
         );
@@ -89,7 +90,7 @@ class Form {
             return null;
         }
 
-        const steps = getSteps(this.formContainer);
+        const steps = getSteps(this.form.formElementContainer);
 
         new Steps(
             steps,
@@ -123,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = formContainer.querySelector('form');
 
         if (form) {
-            new Form(formContainer as HTMLElement, form as HTMLFormElement);
+            new FormHandler(formContainer as HTMLElement, form as HTMLFormElement);
         }
     });
 });

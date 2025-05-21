@@ -35,7 +35,12 @@ class Submit implements SubmitInterface {
         10
       );
 
-      const url = this.modularityFrontendFormData.apiRoutes?.submitForm;
+      // Respect the form mode, set endpoint accordingly
+      const url = this.form.mode === FormMode.Post
+        ? this.modularityFrontendFormData.apiRoutes?.submitForm
+        : this.form.mode === FormMode.Update
+        ? this.modularityFrontendFormData.apiRoutes?.updateForm
+        : null;
     
       if (!url) {
         this.statusHandler.setStatus(

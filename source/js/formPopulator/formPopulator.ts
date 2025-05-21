@@ -71,6 +71,7 @@ class FormPopulator {
       if (formData) {
         this.typedFormElement.mode = FormMode.Update;// Set the form mode to update
         this.populateForm(formData);
+        // Maybe happens automatically when populating the form
         this.validateForm();
       }
 

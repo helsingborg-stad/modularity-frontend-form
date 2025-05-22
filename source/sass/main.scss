@@ -72,6 +72,7 @@ $color-danger: var(--color-danger, #d73740) !default;
 .mod-frontend-form__notice {
     font-size: .75rem;
     color: $color-danger;
+    margin-top: 4px;
 }
 
 .mod-frontend-form-working {

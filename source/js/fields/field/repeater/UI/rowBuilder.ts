@@ -21,7 +21,7 @@ class RowBuilder implements RowBuilderInterface {
       
         this.templateContainer.appendChild(row);
         requestAnimationFrame(() => {
-            row.style.maxHeight = row.scrollHeight + 'px';
+            row.style.maxHeight = (row.scrollHeight + 48) + 'px';
         });
 
         row.addEventListener('transitionend', () => {
@@ -33,8 +33,8 @@ class RowBuilder implements RowBuilderInterface {
     }
 
     public deleteRow(row: HTMLElement): void {
-        row.style.maxHeight = row.scrollHeight + 'px';
-
+        row.style.maxHeight = (row.scrollHeight + 48) + 'px';
+        
         requestAnimationFrame(() => {
             row.classList.add('animate-remove');
             row.style.maxHeight = '0px';

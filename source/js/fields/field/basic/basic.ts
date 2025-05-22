@@ -1,5 +1,6 @@
 class Basic implements BasicInterface {
     private required: boolean = false;
+    private hasBeenFilled: boolean = false;
     constructor(
         private field: HTMLElement,
         private input: HTMLInputElement,
@@ -54,10 +55,12 @@ class Basic implements BasicInterface {
     private listenForChanges(): void {
         this.getInput().addEventListener('input', () => {
             this.getConditionsHandler().checkConditions();
-            this.getValidator().validate();
+
+            this.hasBeenFilled && this.getValidator().validate();
         });
 
         this.getInput().addEventListener('blur', () => {
+            this.hasBeenFilled = true;
             this.getValidator().validate();
         });
     }

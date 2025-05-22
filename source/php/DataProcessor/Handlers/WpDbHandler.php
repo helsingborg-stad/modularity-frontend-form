@@ -35,11 +35,17 @@ class WpDbHandler implements HandlerInterface {
    */
   public function handle(array $data): ?HandlerResultInterface
   {
-    $this->insertPost(
-      $this->moduleConfigInstance->getModuleId(),
-      $data
-    );
-
+    if(in_array('post_id', $data) && get_post($data['post_id']) !== null) {
+      $this->updatePost(
+        $this->moduleConfigInstance->getModuleId(),
+        $data
+      );
+    } else {
+      $this->insertPost(
+        $this->moduleConfigInstance->getModuleId(),
+        $data
+      );
+    }
     return $this->handlerResult;
   }
 
@@ -72,6 +78,39 @@ class WpDbHandler implements HandlerInterface {
         new WP_Error(
           RestApiResponseStatusEnums::HandlerError->value,
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
+          [
+            'post_type' => $moduleConfig->saveToPostType,
+            'post_status' => $moduleConfig->saveToPostTypeStatus,
+            'post_id'   => $result->get_error_data(),
+          ]
+        )
+      );
+      return false;
+    }
+    $this->storeFields($fieldMeta, $result);
+    return true;
+  }
+
+  private function updatePost(int $moduleID, array|null $fieldMeta): false|int {
+
+    $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
+
+    $result = $this->wpService->wpUpdatePost([
+        'ID'           => $fieldMeta['post_id'],
+        'post_title'   => $this->moduleConfigInstance->getModuleTitle(),
+        'post_status'  => $moduleConfig->saveToPostTypeStatus,
+        'meta_input'   => [
+          $this->config->getMetaDataNamespace('module_id') => $moduleID,
+          $this->config->getMetaDataNamespace('nonce')     => $fieldMeta['nonce'] ?? '',
+        ],
+    ]);
+
+    // Set error 
+    if ($this->wpService->isWpError($result)) {
+      $this->handlerResult->setError(
+        new WP_Error(
+          RestApiResponseStatusEnums::HandlerError->value,
+          $this->wpService->__('Could not update post.', 'modularity-frontend-form'),
           [
             'post_type' => $moduleConfig->saveToPostType,
             'post_status' => $moduleConfig->saveToPostTypeStatus,

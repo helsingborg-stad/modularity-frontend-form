@@ -20,7 +20,7 @@
     @button([
         'style' => 'filled',
         'color' => 'primary',
-        'icon' => 'arrow_forward_ios',
+        'icon' => $stepsCount === 1 ? 'send' : 'arrow_forward_ios',
         'attributeList' => [
             'data-js-frontend-form-next-step' => 'true'
         ],

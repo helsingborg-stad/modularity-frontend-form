@@ -3,7 +3,7 @@ import StatusHandler from "../formStatus/handler";
 import StatusRenderer from "../formStatus/render";
 import SubmitStatus from "../formStatus/enum";
 import FormMode from "../form/formModeEnum";  
-import TypedFormElement from "../form/form";
+import Form from "../form/form";
 
 type Token32 = string & { __lengthBrand: 32 };
 
@@ -17,7 +17,7 @@ class FormPopulator {
   private formParams: FormParams | null = null;
 
   constructor(
-    private typedFormElement: TypedFormElement,
+    private form: Form,
     private modularityFrontendFormData: ModularityFrontendFormData,
     private modularityFrontendFormLang: ModularityFrontendFormLang,
     private asyncNonce: AsyncNonce,
@@ -36,7 +36,7 @@ class FormPopulator {
     const postIdRaw = params.get('postId');
     const tokenRaw  = params.get('token');
     const postId    = Number(postIdRaw);
-    const moduleId  = Number(this.typedFormElement.formElement.getAttribute("data-js-frontend-form-id") || "");
+    const moduleId  = Number(this.form.formElement.getAttribute("data-js-frontend-form-id") || "");
   
     if (!isNaN(postId) && tokenRaw && tokenRaw.length === 32) {
       return {
@@ -70,10 +70,8 @@ class FormPopulator {
 
       const formData = await this.get(this.formParams.postId, this.formParams.token);
       if (formData) {
-        this.typedFormElement.mode = FormMode.Update;// Set the form mode to update
+        this.form.mode = FormMode.Update;// Set the form mode to update
         this.populateForm(formData);
-        // Maybe happens automatically when populating the form
-        this.validateForm();
       }
 
     }
@@ -99,13 +97,16 @@ class FormPopulator {
       return null;
     }
 
+    const nonce = await this.asyncNonce.get(this.statusHandler, this.form.formId);
+    
     url = (() => {
-      const { typedFormElement } = this;
+      const { form } = this;
       const urlBuilder = new URL(url);
       const params = new URLSearchParams({
         'post-id': postId.toString(),
         'token': token,
-        'module-id': typedFormElement.formElement?.getAttribute('data-js-frontend-form-id') || '',
+        'module-id': form.formElement?.getAttribute('data-js-frontend-form-id') || '',
+        'nonce': nonce?.toString() || '',
       });
     
       urlBuilder.search = params.toString();
@@ -155,7 +156,7 @@ class FormPopulator {
    * @param formData The data to populate the form with.
    */
   private populateForm(formData: any): boolean {
-    if (!this.typedFormElement.formElement) {
+    if (!this.form.formElement) {
       return false
     }
     for (const fieldName in formData) {
@@ -174,7 +175,7 @@ class FormPopulator {
    */
   private populateField(fieldName: string, value: any): void {
     const fieldSelector = `[name="mod-frontend-form[${fieldName}]"]`;
-    const field         = this.typedFormElement.formElement.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+    const field         = this.form.formElement.querySelector(fieldSelector) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
 
     if (!field) {
       console.warn(`Field not found: ${fieldSelector}`);
@@ -225,7 +226,7 @@ class FormPopulator {
    */
   private populateRadio(fieldName: string, value: any): void {
     const selector  = `[name="mod-frontend-form[${fieldName}]"][value="${value}"]`;
-    const radio     = this.typedFormElement.form.querySelector(selector) as HTMLInputElement | null;
+    const radio     = this.form.formElement.querySelector(selector) as HTMLInputElement | null;
     
     if (radio) {
       radio.checked = true;
@@ -239,7 +240,7 @@ class FormPopulator {
    */
   private populateSelect(field: HTMLSelectElement, value: any): void {
     field.value = value;
-  }
+  } 
 
   /**
    * Populates a textarea field with the provided value.
@@ -248,17 +249,6 @@ class FormPopulator {
    */
   private populateTextarea(field: HTMLTextAreaElement, value: any): void {
     field.value = value;
-  }
-
-  /**
-   * Validates the form after form is populated.
-   * @returns True if the form is valid, false otherwise.
-   */
-  private validateForm(): boolean {
-    if (!this.typedFormElement.formElement) {
-      return false;
-    }
-    return this.typedFormElement.form.checkValidity();
   }
 }
 

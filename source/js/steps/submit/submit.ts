@@ -52,25 +52,27 @@ class Submit implements SubmitInterface {
         return;
       }
 
-      //Init nonce by fetching nonce from endpoint and injecting it into the form
-      await this.asyncNonce.setup(this.form.formElement, this.statusHandler);
+      const nonce = await this.asyncNonce.get(this.statusHandler, this.form.formId);
     
       try {
-
-        //Get data-js-frontend-form-id 
-        const formId = this.form.formElement.getAttribute("data-js-frontend-form-id");
-        if (!formId) {
-          this.statusHandler.setStatus(
-            SubmitStatus.Error,
-            this.modularityFrontendFormLang?.submitError ?? "Could not find the form ID. Please check your configuration.",
-            'link_off',
-            0
-          );
-          return;
-        }
-        
         const urlWithParams = new URL(url);
-        urlWithParams.searchParams.append("module-id", formId);
+
+        //Params common to all requests
+        urlWithParams.searchParams.append("module-id", this.form.formId.toString());
+        urlWithParams.searchParams.append("nonce", nonce?.toString() || "");
+
+        //If in update mode, append postId & token to the URL
+        if(this.form.mode === FormMode.Update && this.form.formUpdateId) {
+            const token = (() => {
+              const urlParams = new URLSearchParams(window.location.search);
+              return urlParams.get('token') ?? null;
+            })();
+            if (token) {
+              urlWithParams.searchParams.append("token", token);
+            }
+          urlWithParams.searchParams.append("post-id", this.form.formUpdateId.toString());
+        }
+
         const finalUrl = urlWithParams.toString();
 
         const response = await fetch(finalUrl, {

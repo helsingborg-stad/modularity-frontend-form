@@ -5,4 +5,6 @@ export interface FormInterface {
   set mode(value: FormMode);
   formElement: HTMLFormElement;
   formElementContainer: HTMLElement;
+  get formId(): number;
+  get formUpdateId(): number | null;
 }

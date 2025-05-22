@@ -51,15 +51,13 @@ class ValidatorFactory {
   public function createUpdateValidators(int $moduleId): array {
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
       
-      return array_unique(
-        array_merge(
-          $this->createInsertValidators($moduleId), 
-          [
-            new IsEditableValidator(...$args),
-            new TokenValidator(...$args),
-          ]
-        )
-      );
+      //Feature toggles
+      $useIsEditable = true;
+
+      $insertValidators =  $this->createInsertValidators($moduleId); 
+      return array_filter($insertValidators + [
+        $useIsEditable ? new IsEditableValidator(...$args) : null,
+      ]);
   }
 
   /**
@@ -73,7 +71,7 @@ class ValidatorFactory {
 
       $config = $this->getModuleConfigInstance($moduleId);
 
-      $useNonceValidator          = true;
+      //Feature toggles
       $useFieldValidationWithAcf  = true;
 
       //Check if the module is configured to use the WPDB handler
@@ -88,8 +86,7 @@ class ValidatorFactory {
 
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
 
-      return  array_filter([
-          $useNonceValidator          ? new NonceValidator(...$args) : null,
+      return array_filter([
           $useFieldsExistsOnPostType  ? new FieldsExistsOnPostType(...$args) : null,
           $useFieldsExists            ? new FieldsExists(...$args) : null,
           $useFieldValidationWithAcf  ? new FieldValidationWithAcf(...$args) : null,

@@ -35,6 +35,7 @@ class RestApiParams
           RestApiParamEnums::PostId   => self::getPostIdSpecification(),
           RestApiParamEnums::ModuleId => self::getModuleIdSpecification(),
           RestApiParamEnums::Token    => self::getTokenSpecification(),
+          RestApiParamEnums::Nonce    => self::getNonceSpecification(),
         };
       }
 
@@ -44,7 +45,7 @@ class RestApiParams
   /**
    * Specification for the post id parameter.
    * 
-   * @return array
+   * @return WP_Error|true
    */
   private function getPostIdSpecification(): array
   {
@@ -74,7 +75,7 @@ class RestApiParams
   /**
    * Specification for the module id parameter.
    * 
-   * @return array
+   * @return WP_Error|true
    */
   private function getModuleIdSpecification(): array
   {
@@ -106,7 +107,7 @@ class RestApiParams
   /**
    * Specification for the token parameter.
    * 
-   * @return array
+   * @return WP_Error|true
    */
   private function getTokenSpecification(): array
   {
@@ -119,7 +120,10 @@ class RestApiParams
           return substr($this->wpService->sanitizeTextField($token), 0, 32);
       },
       'validate_callback' => function ($token, $request) {
-          $postId = $request->get_params()['post-id'] ?? null;
+          $postId = $request->get_params()[
+            RestApiParamEnums::PostId->value
+          ] ?? null;
+          
           $post   = $this->wpService->getPost($postId);
 
           // Not a post
@@ -149,6 +153,42 @@ class RestApiParams
             );
           }
 
+          return true;
+      }
+    ];
+  }
+
+  /**
+   * Specification for the nonce parameter.
+   * 
+   * @return WP_Error|true
+   */
+  public function getNonceSpecification(): array
+  {
+    return [
+      'description' => __('The nonce that is used to authenticate the request.', 'modularity-frontend-form'),
+      'type'        => 'string',
+      'format'      => 'uri',
+      'required'    => true,
+      'sanitize_callback' => function ($nonce) {
+          return $this->wpService->sanitizeTextField($nonce);
+      },
+      'validate_callback' => function ($nonce, $request) {
+          $moduleId = $request->get_params()[
+            RestApiParamEnums::ModuleId->value
+          ] ?? null;
+
+          $result   =  $this->getModuleConfigInstance(
+            $moduleId
+          )->getNonceKey();
+
+          if($result === false) {
+            return new WP_Error(
+              'invalid_nonce',
+              __('The nonce provided, does not match the asset.', 'modularity-frontend-form'),
+              ['status' => 403]
+            );
+          }
           return true;
       }
     ];

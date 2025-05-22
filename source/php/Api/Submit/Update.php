@@ -52,9 +52,10 @@ class Update extends RestApiEndpoint
             'args' => (
               new RestApiParams($this->wpService, $this->config, $this->moduleConfigFactory)
             )->getParamSpecification(
-              RestApiParamEnums::ModuleId,
-              RestApiParamEnums::PostId,
-              RestApiParamEnums::Token
+                RestApiParamEnums::ModuleId,
+                RestApiParamEnums::Nonce,
+                RestApiParamEnums::PostId,
+                RestApiParamEnums::Token
             )
         ));
     }

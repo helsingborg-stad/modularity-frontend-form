@@ -30,8 +30,7 @@ class UrlFactory {
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
                 [
-                    new HtmlValidator(),
-                    
+                    new HtmlValidator()
                 ]
             )
         );

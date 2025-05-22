@@ -1,4 +1,5 @@
 interface FieldsInitiatorInterface {
+    init(fieldBuilder: FieldBuilderInterface): void;
     initializeConditionals(fields: FieldsObject): void;
 }
 
@@ -47,7 +48,8 @@ interface SelectInterface extends FieldInterface {
 interface FieldBuilderInterface {
     build(field: HTMLElement, type: string, step: string): FieldInterface;
     getFieldsObject(): FieldsObject;
-    removeField(name: string): void;
+    getFieldsStepObject(): FieldsStepObject;
+    removeField(name: string, stepId: string): void;
 }
 
 interface FieldValidatorInterface {
@@ -84,6 +86,12 @@ interface ConditionValidatorInterface {
 
 type FieldsObject = {
     [key: string]: FieldInterface;
+}
+
+type FieldsStepObject = {
+    [key: string]: {
+        [key: string]: FieldInterface;
+    }
 }
 
 type ValidationFieldsObject = {

@@ -1,5 +1,6 @@
 import StepFactory from "../stepFactory";
 
+// TODO: This is a factory
 export function getSteps(container: HTMLElement): StepsObject {
     let steps: StepsObject = {};
     container.querySelectorAll('[data-js-frontend-form-step-container]').forEach((stepContainer) => {

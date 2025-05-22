@@ -2,7 +2,7 @@ import { getSteps } from "./steps/helper/getSteps";
 import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
 import StepUIManager from "./steps/StepUIManager";
-import Submit from "./steps/submit/submit";
+import Submit from "./submit/submit";
 import FieldBuilder from "./fields/fieldBuilder";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
@@ -14,6 +14,7 @@ import ValidateForm from "./validation/validateForm";
 import FormPopulator from "./formPopulator/formPopulator";
 import Form from "./form/form";
 import FormMode from "./form/formModeEnum";
+import Validate from "./fields/validation/validate";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -30,9 +31,27 @@ class FormHandler {
             FormMode.Post
         );
 
+        this.init();
+    }
+
+    private init(): void {
         new ValidateForm();
-        const stepsObject = this.setupSteps();
-        this.setupFields(stepsObject);
+        const validate = new Validate();
+        const stepsObject = this.setupSteps(validate);
+
+        if (!stepsObject) {
+            console.error("No steps were found");
+            return;
+        }
+
+        const fieldsInitiatorInstance = new FieldsInitiator();
+        const builder = this.createBuilder(fieldsInitiatorInstance);
+        const conditionBuilder = new ConditionBuilder(builder);
+        validate.init(builder);
+        fieldsInitiatorInstance.init(builder);
+    
+        this.setupFields(stepsObject, builder, conditionBuilder);
+        fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
         this.setupFormPopulator();
     }
 
@@ -48,14 +67,7 @@ class FormHandler {
         formPopulator.initialize();
     }
 
-    private setupFields(stepsObject: StepsObject|null): void {
-        if (!stepsObject) {
-            console.error("No steps were found");
-            return;
-        }
-
-        const fieldsInitiatorInstance = new FieldsInitiator();
-
+    private createBuilder(fieldsInitiatorInstance: FieldsInitiatorInterface): FieldBuilderInterface {
         const builder = new FieldBuilder(
             fieldsInitiatorInstance,
             new Notice(this.form.formElementContainer),
@@ -63,8 +75,10 @@ class FormHandler {
             modularityFrontendFormLang
         );
 
-        fieldsInitiatorInstance.init(builder);
+        return builder;
+    }
 
+    private setupFields(stepsObject: StepsObject, builder: FieldBuilderInterface, conditionBuilder: ConditionBuilderInterface): void {
         for (const stepId in stepsObject) {
             const step = stepsObject[stepId];
             step.getStepContainer().querySelectorAll('[data-js-field]').forEach(element => {
@@ -72,16 +86,12 @@ class FormHandler {
             });
         }
 
-        const conditionBuilder = new ConditionBuilder(builder);
-
         for (const fieldName in builder.getFieldsObject()) {
             builder.getFieldsObject()[fieldName].init(conditionBuilder);
         }
-
-        fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
     }
 
-    private setupSteps(): StepsObject|null {
+    private setupSteps(validate: ValidateInterface): StepsObject|null {
         const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
         const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
@@ -91,19 +101,22 @@ class FormHandler {
         }
 
         const steps = getSteps(this.form.formElementContainer);
+        const submit = new Submit(
+            this.form, 
+            modularityFrontendFormData,
+            modularityFrontendFormLang,
+            new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
+            new StatusHandler(this.formContainer),
+            new StatusRenderer(this.formContainer, modularityFrontendFormLang),
+        );
 
         new Steps(
             steps,
+            validate,
             new StepNavigator(
                 steps,
-                new Submit(
-                    this.form, 
-                    modularityFrontendFormData,
-                    modularityFrontendFormLang,
-                    new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
-                    new StatusHandler(this.formContainer),
-                    new StatusRenderer(this.formContainer, modularityFrontendFormLang),
-                ),
+                validate,
+                submit,
             ),
             new StepUIManager(
                 steps,

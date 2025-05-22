@@ -1,10 +1,10 @@
-import AsyncNonce from "../../asyncNonce/asyncNonce";
-import StatusHandler from "../../formStatus/handler";
-import StatusRenderer from "../../formStatus/render";
-import SubmitStatus from "../../formStatus/enum";
+import AsyncNonce from "../asyncNonce/asyncNonce";
+import StatusHandler from "../formStatus/handler";
+import StatusRenderer from "../formStatus/render";
+import SubmitStatus from "../formStatus/enum";
 import SubmitInterface from "./submitInterface";
-import Form from "../../form/form";
-import FormMode from "../../form/formModeEnum";
+import Form from "../form/form";
+import FormMode from "../form/formModeEnum";
 
 class Submit implements SubmitInterface {
     constructor(
@@ -14,7 +14,25 @@ class Submit implements SubmitInterface {
       private asyncNonce: AsyncNonce,
       private statusHandler: StatusHandler,
       private statusRenderer: StatusRenderer,
-    ) {}
+    ) {
+      this.disableFormSubmission();
+    }
+
+    /**
+     * Disable the form submission to prevent default behavior.
+     */
+    private disableFormSubmission(): void {
+      const message = 'Form submission is disabled';
+      this.form.formElement.addEventListener('submit', (e) => {
+        console.warn(message);
+        e.preventDefault();
+      });
+
+      this.form.formElement.submit = function() {
+        console.warn(message);
+        return;
+      };
+    }
     
     /**
      * Setup the submit functionality.

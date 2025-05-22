@@ -34,6 +34,7 @@
                 'data-js-repeater-add-row' => 'true'
             ],
             'classList' => [
+                'mod-frontend-form__repeater-add',
                 'u-margin__top--2'
             ]
         ])

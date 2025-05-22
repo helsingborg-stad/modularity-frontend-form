@@ -11,6 +11,8 @@ $border-radius: calc(var(--base, 8px) * var(--c-field-border-radius, 0.25));
 
 .mod-frontend-form__repeater {
     transition: all .4s ease-in-out;
+    display: flex;
+    flex-direction: column;
 }
 
 .mod-frontend-form__repeater-min-max {
@@ -26,6 +28,10 @@ $border-radius: calc(var(--base, 8px) * var(--c-field-border-radius, 0.25));
     flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: .5rem;
+}
+
+.mod-frontend-form__repeater-add {
+    align-self: flex-end;
 }
 
 .mod-frontend-form__repeater-row {

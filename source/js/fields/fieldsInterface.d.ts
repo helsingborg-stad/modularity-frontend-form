@@ -52,6 +52,12 @@ interface FieldBuilderInterface {
     removeField(name: string, stepId: string): void;
 }
 
+interface ValidateInterface {
+    init(builder: FieldBuilderInterface): void;
+    validateSteps(): boolean;
+    validateStep(stepId: string): boolean;
+}
+
 interface FieldValidatorInterface {
     init(field: FieldInterface): void;
     validate(): boolean;

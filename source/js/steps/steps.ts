@@ -4,10 +4,11 @@ import StepUIManager from "./StepUIManager";
 class Steps implements StepsInterface {
     constructor(
         private steps: StepsObject,
+        private validate: ValidateInterface,
         private stepNavigator: StepNavigator,
         private stepUIManager: StepUIManager,
         private nextButton: HTMLButtonElement,
-        private previousButton: HTMLButtonElement,
+        private previousButton: HTMLButtonElement
     ) {
     }
 
@@ -20,6 +21,9 @@ class Steps implements StepsInterface {
     private setupEdit() {
         for (const step of Object.values(this.steps)) {
             step.onEdit(() => {
+                if (this.stepIsInvalid()) {
+                    return;
+                }
                 const prevStep = this.stepNavigator.getActiveStep();
                 const nextStep = this.stepNavigator.goTo(step.getId());
 
@@ -34,6 +38,9 @@ class Steps implements StepsInterface {
     private setupNext() {
         this.nextButton.addEventListener('click', async (e) => {
             e.preventDefault();
+            if (this.stepIsInvalid()) {
+                return;
+            }
             const prevStep = this.stepNavigator.getActiveStep();
             const nextStep = this.stepNavigator.goNext();
 
@@ -47,6 +54,9 @@ class Steps implements StepsInterface {
     private setupPrevious() {
         this.previousButton.addEventListener('click', async (e) => {
             e.preventDefault();
+            if (this.stepIsInvalid()) {
+                return;
+            }
             const prevStep = this.stepNavigator.getActiveStep();
             const nextStep = this.stepNavigator.goPrevious();
 
@@ -55,6 +65,10 @@ class Steps implements StepsInterface {
                 this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
             }
         });
+    }
+
+    private stepIsInvalid(): boolean {
+        return !this.validate.validateStep(this.stepNavigator.getActiveStepIndex().toString());
     }
 }
 

@@ -14,6 +14,7 @@ import ValidateForm from "./validation/validateForm";
 import FormPopulator from "./formPopulator/formPopulator";
 import Form from "./form/form";
 import FormMode from "./form/formModeEnum";
+import Validate from "./fields/validation/validate";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -35,7 +36,8 @@ class FormHandler {
 
     private init(): void {
         new ValidateForm();
-        const stepsObject = this.setupSteps();
+        const validate = new Validate();
+        const stepsObject = this.setupSteps(validate);
 
         if (!stepsObject) {
             console.error("No steps were found");
@@ -45,6 +47,7 @@ class FormHandler {
         const fieldsInitiatorInstance = new FieldsInitiator();
         const builder = this.createBuilder(fieldsInitiatorInstance);
         const conditionBuilder = new ConditionBuilder(builder);
+        validate.init(builder);
         fieldsInitiatorInstance.init(builder);
     
         this.setupFields(stepsObject, builder, conditionBuilder);
@@ -88,7 +91,7 @@ class FormHandler {
         }
     }
 
-    private setupSteps(): StepsObject|null {
+    private setupSteps(validate: ValidateInterface): StepsObject|null {
         const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
         const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
@@ -101,6 +104,7 @@ class FormHandler {
 
         new Steps(
             steps,
+            validate,
             new StepNavigator(
                 steps,
                 new Submit(

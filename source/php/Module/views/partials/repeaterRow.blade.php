@@ -19,10 +19,8 @@
         @endforeach
     @endelement
         @button([
-            'style' => 'filled',
-            'icon' => 'remove',
             'style' => 'basic',
-            'color' => 'primary',
+            'icon' => 'delete',
             'size' => 'md',
             'classList' => [
                 'mod-frontend-form__repeater-row-remove',

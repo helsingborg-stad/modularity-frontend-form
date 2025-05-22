@@ -26,8 +26,9 @@
             @endelement
         @endelement
         @button([
-            'text' => $lang->newRow . ' [+]',
-            'color' => 'primary',
+            'text' => $lang->newRow,
+            'icon' => 'playlist_add',
+            'color' => 'secondary',
             'style' => 'filled',
             'attributeList' => [
                 'data-js-repeater-add-row' => 'true'

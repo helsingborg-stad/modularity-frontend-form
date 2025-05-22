@@ -40,6 +40,7 @@
                 'reversePositions' => true,
                 'classList' => [
                     'mod-frontend-form__step-header-edit',
+                    $index === 0 ? 'is-editable' : '',
                     $index === 0 ? 'u-visibility--hidden' : ''
                 ],
                 'attributeList' => [

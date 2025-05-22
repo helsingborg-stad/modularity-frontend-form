@@ -1,5 +1,6 @@
 class StepUIManager implements StepUIManagerInterface {
     private visibilityHiddenClass: string = 'u-visibility--hidden';
+    private allowEditClass: string = 'is-editable';
     private nextButtonLabelElement: HTMLElement|null;
     private maxSteps: number;
     private iconElement: HTMLElement|null;
@@ -29,6 +30,10 @@ class StepUIManager implements StepUIManagerInterface {
         this.prevButton.classList.toggle(this.visibilityHiddenClass, activeStep === 0);
         this.steps[previousActiveStep].getEditButton().classList.remove(this.visibilityHiddenClass);
         this.steps[activeStep].getEditButton().classList.add(this.visibilityHiddenClass);
+    }
+
+    public canEditStep(step: StepInterface): void {
+        step.getEditButton().classList.add(this.allowEditClass);
     }
 }
 

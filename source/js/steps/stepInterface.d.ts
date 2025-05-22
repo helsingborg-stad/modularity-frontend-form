@@ -24,6 +24,7 @@ interface StepNavigatorInterface {
 
 interface StepUIManagerInterface {
     updateButtonStates(activeStep: number, previousActiveStep: number): void;
+    canEditStep(step: StepInterface): void;
 }
 
 type StepsObject = { [key: number]: StepInterface }

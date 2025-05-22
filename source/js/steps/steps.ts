@@ -22,8 +22,9 @@ class Steps implements StepsInterface {
         for (const step of Object.values(this.steps)) {
             step.onEdit(() => {
                 if (this.stepIsInvalid()) {
-                    return;
+                    this.handleInvalidStep();
                 }
+
                 const prevStep = this.stepNavigator.getActiveStep();
                 const nextStep = this.stepNavigator.goTo(step.getId());
 
@@ -41,11 +42,13 @@ class Steps implements StepsInterface {
             if (this.stepIsInvalid()) {
                 return;
             }
+
             const prevStep = this.stepNavigator.getActiveStep();
             const nextStep = this.stepNavigator.goNext();
 
             if (nextStep) {
                 nextStep.showStepAndHidePrevious(prevStep);
+                this.stepUIManager.canEditStep(nextStep);
                 this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
             }
         });
@@ -55,7 +58,7 @@ class Steps implements StepsInterface {
         this.previousButton.addEventListener('click', async (e) => {
             e.preventDefault();
             if (this.stepIsInvalid()) {
-                return;
+                this.handleInvalidStep();
             }
             const prevStep = this.stepNavigator.getActiveStep();
             const nextStep = this.stepNavigator.goPrevious();
@@ -65,6 +68,10 @@ class Steps implements StepsInterface {
                 this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
             }
         });
+    }
+
+    private handleInvalidStep(): void {
+        
     }
 
     private stepIsInvalid(): boolean {

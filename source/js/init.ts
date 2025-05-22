@@ -2,7 +2,7 @@ import { getSteps } from "./steps/helper/getSteps";
 import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
 import StepUIManager from "./steps/StepUIManager";
-import Submit from "./steps/submit/submit";
+import Submit from "./submit/submit";
 import FieldBuilder from "./fields/fieldBuilder";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
@@ -101,20 +101,22 @@ class FormHandler {
         }
 
         const steps = getSteps(this.form.formElementContainer);
+        const submit = new Submit(
+            this.form, 
+            modularityFrontendFormData,
+            modularityFrontendFormLang,
+            new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
+            new StatusHandler(this.formContainer),
+            new StatusRenderer(this.formContainer, modularityFrontendFormLang),
+        );
 
         new Steps(
             steps,
             validate,
             new StepNavigator(
                 steps,
-                new Submit(
-                    this.form, 
-                    modularityFrontendFormData,
-                    modularityFrontendFormLang,
-                    new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
-                    new StatusHandler(this.formContainer),
-                    new StatusRenderer(this.formContainer, modularityFrontendFormLang),
-                ),
+                validate,
+                submit,
             ),
             new StepUIManager(
                 steps,

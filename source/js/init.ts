@@ -30,9 +30,25 @@ class FormHandler {
             FormMode.Post
         );
 
+        this.init();
+    }
+
+    private init(): void {
         new ValidateForm();
         const stepsObject = this.setupSteps();
-        this.setupFields(stepsObject);
+
+        if (!stepsObject) {
+            console.error("No steps were found");
+            return;
+        }
+
+        const fieldsInitiatorInstance = new FieldsInitiator();
+        const builder = this.createBuilder(fieldsInitiatorInstance);
+        const conditionBuilder = new ConditionBuilder(builder);
+        fieldsInitiatorInstance.init(builder);
+    
+        this.setupFields(stepsObject, builder, conditionBuilder);
+        fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
         this.setupFormPopulator();
     }
 
@@ -48,14 +64,7 @@ class FormHandler {
         formPopulator.initialize();
     }
 
-    private setupFields(stepsObject: StepsObject|null): void {
-        if (!stepsObject) {
-            console.error("No steps were found");
-            return;
-        }
-
-        const fieldsInitiatorInstance = new FieldsInitiator();
-
+    private createBuilder(fieldsInitiatorInstance: FieldsInitiatorInterface): FieldBuilderInterface {
         const builder = new FieldBuilder(
             fieldsInitiatorInstance,
             new Notice(this.form.formElementContainer),
@@ -63,8 +72,10 @@ class FormHandler {
             modularityFrontendFormLang
         );
 
-        fieldsInitiatorInstance.init(builder);
+        return builder;
+    }
 
+    private setupFields(stepsObject: StepsObject, builder: FieldBuilderInterface, conditionBuilder: ConditionBuilderInterface): void {
         for (const stepId in stepsObject) {
             const step = stepsObject[stepId];
             step.getStepContainer().querySelectorAll('[data-js-field]').forEach(element => {
@@ -72,13 +83,9 @@ class FormHandler {
             });
         }
 
-        const conditionBuilder = new ConditionBuilder(builder);
-
         for (const fieldName in builder.getFieldsObject()) {
             builder.getFieldsObject()[fieldName].init(conditionBuilder);
         }
-
-        fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
     }
 
     private setupSteps(): StepsObject|null {

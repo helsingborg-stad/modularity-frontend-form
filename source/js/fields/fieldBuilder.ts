@@ -19,6 +19,7 @@ class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
     private condition: string = 'data-js-conditional-logic';
     private fieldsObject: FieldsObject = {};
+    private fieldsStepObject: FieldsStepObject = {};
 
     constructor(
         private fieldsInitiator: FieldsInitiatorInterface,
@@ -190,15 +191,26 @@ class FieldBuilder implements FieldBuilderInterface {
 
         this.fieldsObject[fieldInstance.getName()] = fieldInstance;
 
+        if (!this.fieldsStepObject[stepId]) {
+            this.fieldsStepObject[stepId] = {};
+        }
+
+        this.fieldsStepObject[stepId][fieldInstance.getName()] = fieldInstance;
+
         return fieldInstance;
     }
 
-    public removeField(name: string): void {
+    public removeField(name: string, stepId: string): void {
         delete this.fieldsObject[name];
+        delete this.fieldsStepObject[stepId][name];
     }
 
     public getFieldsObject(): FieldsObject {
         return this.fieldsObject;
+    }
+
+    public getFieldsStepObject(): FieldsStepObject {
+        return this.fieldsStepObject;
     }
 
     private getFieldName(field: HTMLElement): string {

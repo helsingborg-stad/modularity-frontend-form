@@ -73,7 +73,7 @@ class RepeaterUI implements RepeaterUIInterface {
 
     private removeRow(rowId: string): void {
         for (const fieldName in this.rowFieldsObject[rowId]) {
-            this.fieldBuilder.removeField(fieldName);
+            this.fieldBuilder.removeField(fieldName, this.stepId);
         }
     }
 

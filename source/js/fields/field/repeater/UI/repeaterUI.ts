@@ -82,7 +82,7 @@ class RepeaterUI implements RepeaterUIInterface {
         const row = this.rowBuilder.createRow(rowId, includeRemoveRowButton);
         const builtRow = this.buildAddedFields(row);
         this.rowFieldsObject[rowId] = builtRow;
-        
+
         row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
             e.preventDefault();
             this.rowBuilder.deleteRow(row);
@@ -90,8 +90,24 @@ class RepeaterUI implements RepeaterUIInterface {
             this.rowCountChanged(--this.rowCount);
         });
 
+        // Only focus if the row is not auto generated
+        if (includeRemoveRowButton) {
+            this.focusOnNewRow(row);
+        }
+
         this.rowCountChanged(++this.rowCount);
         this.rowIndex++;
+    }
+
+    // Focus on the first focusable element in the new row
+    private focusOnNewRow(row: HTMLElement): void {
+        const firstFocusable = row.querySelector<HTMLElement>(':not(.u-display--none) input, :not(.u-display--none) select, :not(.u-display--none) textarea, :not(.u-display--none) fieldset');
+
+        if (!firstFocusable) {
+            return;
+        }
+
+        firstFocusable.focus();
     }
 
     private buildAddedFields(row: HTMLElement): FieldsObject {

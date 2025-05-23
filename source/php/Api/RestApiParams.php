@@ -22,10 +22,9 @@ class RestApiParams implements RestApiParamsInterface
   ) {}
 
   /**
-   * Returns the values from the request for the given parameters.
+   * Returns the values from the request for registered param enums.
    * 
    * @param WP_REST_Request $request The request to get the values from.
-   * @param RestApiParams ...$enum The parameters to get the values for.
    * 
    * @return array The values for the given parameters.
    */

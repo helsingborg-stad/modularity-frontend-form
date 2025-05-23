@@ -16,10 +16,11 @@ class TextareaFieldMapper implements FieldMapperInterface
         $mapped = (new BasicFieldMapper($this->field, 'textarea'))->map();
 
         if (is_array($mapped)) {
-            $mapped['placeholder']        = $this->field['placeholder'] ?? '';
-            $mapped['value']              = $this->field['default_value'] ?? '';
-            $mapped['rows']               = $this->field['rows'] ?: 5;
-            $mapped['multiline']          = $mapped['rows'];
+            $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
+            $mapped['value']                               = $this->field['default_value'] ?? '';
+            $mapped['rows']                                = $this->field['rows'] ?: 5;
+            $mapped['multiline']                           = $mapped['rows'];
+            $mapped['moveAttributesListToFieldAttributes'] = false;
         }
 
         return $mapped ?? null;

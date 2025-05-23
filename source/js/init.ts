@@ -13,8 +13,8 @@ import ValidateForm from "./validation/validateForm";
 import FormPopulator from "./formPopulator/formPopulator";
 import Form from "./form/form";
 import FormMode from "./form/formModeEnum";
-import Validate from "./fields/validation/validate";
 import StepsFactory from "./steps/stepsFactory";
+import StepValidator from "./fields/validation/stepValidator";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -36,8 +36,8 @@ class FormHandler {
 
     private init(): void {
         new ValidateForm();
-        const validate = new Validate();
-        const stepsObject = this.setupSteps(validate);
+        const stepValidator = new StepValidator();
+        const stepsObject = this.setupSteps(stepValidator);
 
         if (!stepsObject) {
             console.error("No steps were found");
@@ -47,7 +47,7 @@ class FormHandler {
         const fieldsInitiatorInstance = new FieldsInitiator();
         const builder = this.createBuilder(fieldsInitiatorInstance);
         const conditionBuilder = new ConditionBuilder(builder);
-        validate.init(builder);
+        stepValidator.init(builder);
         fieldsInitiatorInstance.init(builder);
     
         this.setupFields(stepsObject, builder, conditionBuilder);

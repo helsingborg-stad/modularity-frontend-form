@@ -1,4 +1,4 @@
-class Validate implements ValidateInterface {
+class StepValidator implements ValidateInterface {
     private builder!: FieldBuilderInterface;
 
     public init(builder: FieldBuilderInterface): void {
@@ -34,4 +34,4 @@ class Validate implements ValidateInterface {
     }
 }
 
-export default Validate;
+export default StepValidator;

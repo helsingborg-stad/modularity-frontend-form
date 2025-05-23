@@ -1,6 +1,8 @@
 class StepUIManager implements StepUIManagerInterface {
     private visibilityHiddenClass: string = 'u-visibility--hidden';
     private allowEditClass: string = 'is-editable';
+    private invalidClass: string = 'is-invalid';
+    private animateErrorClass: string = 'animate-shake';
     private nextButtonLabelElement: HTMLElement|null;
     private maxSteps: number;
     private iconElement: HTMLElement|null;
@@ -33,11 +35,17 @@ class StepUIManager implements StepUIManagerInterface {
     }
 
     public handleInvalidStep(step: StepInterface, isInvalid: boolean): void {
-        step.getStepContainer().classList.toggle('is-invalid', isInvalid);
+        step.getStepContainer().classList.toggle(this.invalidClass, isInvalid);
     }
 
     public canEditStep(step: StepInterface): void {
         step.getStepContainer().classList.add(this.allowEditClass);
+    }
+
+    public addErrorIndicator(step: StepInterface): void {
+        step.getStepContainer().classList.remove(this.animateErrorClass);
+        step.getStepContainer().offsetWidth;
+        step.getStepContainer().classList.add(this.animateErrorClass);
     }
 }
 

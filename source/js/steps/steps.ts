@@ -41,6 +41,7 @@ class Steps implements StepsInterface {
             this.handleInvalidStep(isInvalid);
 
             if (isInvalid) {
+                this.stepUIManager.addErrorIndicator(this.stepNavigator.getActiveStep());
                 return;
             }
 

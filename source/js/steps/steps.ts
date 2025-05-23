@@ -1,5 +1,5 @@
 import StepNavigator from "./stepNavigator";
-import StepUIManager from "./StepUIManager";
+import StepUIManager from "./stepUIManager";
 
 class Steps implements StepsInterface {
     constructor(

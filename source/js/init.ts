@@ -1,7 +1,6 @@
-import { getSteps } from "./steps/helper/getSteps";
 import StepNavigator from "./steps/stepNavigator";
 import Steps from "./steps/steps";
-import StepUIManager from "./steps/StepUIManager";
+import StepUIManager from "./steps/stepUIManager";
 import Submit from "./submit/submit";
 import FieldBuilder from "./fields/fieldBuilder";
 import ConditionBuilder from "./conditions/conditionBuilder";
@@ -15,6 +14,7 @@ import FormPopulator from "./formPopulator/formPopulator";
 import Form from "./form/form";
 import FormMode from "./form/formModeEnum";
 import Validate from "./fields/validation/validate";
+import StepsFactory from "./steps/stepsFactory";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -100,7 +100,7 @@ class FormHandler {
             return null;
         }
 
-        const steps = getSteps(this.form.formElementContainer);
+        const steps = StepsFactory.create(this.form.formElementContainer);
         const submit = new Submit(
             this.form, 
             modularityFrontendFormData,

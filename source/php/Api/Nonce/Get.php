@@ -11,6 +11,8 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use WpService\WpService;
+use ModularityFrontendForm\Api\RestApiParams;
+use ModularityFrontendForm\Api\RestApiParamEnums;
 
 class Get extends RestApiEndpoint
 {
@@ -38,12 +40,9 @@ class Get extends RestApiEndpoint
           'callback'            => array($this, 'handleRequest'),
           'permission_callback' => '__return_true',
           'args'                => [
-                'module-id' => [
-                    'description' => __('The module id that the request originates from', 'modularity-frontend-form'),
-                    'type'        => 'integer',
-                    'format'      => 'uri',
-                    'required'    => true
-                ]
+                (new RestApiParams($this->wpService, $this->config, $this->moduleConfigFactory))->getParamSpecification(
+                    RestApiParamEnums::ModuleId
+                )
             ]
       ));
     }
@@ -57,10 +56,14 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response
     {
-        $moduleId = $request->get_params()['module-id'] ?? null;
+        $params = (new RestApiParams(
+            $this->wpService, 
+            $this->config, 
+            $this->moduleConfigFactory)
+        )->getValuesFromRequest($request);
 
         $nonceKey = $this->getModuleConfigInstance(
-            $moduleId
+            $params->moduleId,
         )->getNonceKey();
         
         return new WP_REST_Response([

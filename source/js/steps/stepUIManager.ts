@@ -19,10 +19,17 @@ class StepUIManager implements StepUIManagerInterface {
     }
 
     public updateButtonStates(activeStep: number, previousActiveStep: number): void {
+
+        const label = activeStep === this.maxSteps ?
+        this.lang.submit ?? 'Submit' :
+        this.lang.next ?? 'Next';
+
         if (this.nextButtonLabelElement) {
-            this.nextButtonLabelElement.innerHTML = activeStep === this.maxSteps ?
-                this.lang.submit ?? 'Submit' :
-                this.lang.next ?? 'Next'
+            this.nextButtonLabelElement.innerHTML = label; 
+        }
+
+        if (this.nextButton) {
+            this.nextButton.setAttribute('aria-label', label);
         }
 
         if (this.iconElement) {

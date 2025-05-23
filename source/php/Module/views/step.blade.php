@@ -4,6 +4,10 @@
         'attributeList' => [
             'data-js-frontend-form-step-container' => $index,
             'style' => 'z-index: ' . (1000 - $index) . ';',
+        ],
+        'classList' => [
+            'mod-frontend-form__step-container',
+            $index === 0 ? 'is-editable' : ''
         ]
     ])
         @element([
@@ -17,8 +21,19 @@
                 @if($step['title'])
                     @typography([
                         'element' => 'h2',
+                        'classList' => [
+                            'mod-frontend-form__step-header-title'
+                        ]
                     ])
-                        {{ $step['title'] }}
+                        {{ $step['title'] }} @icon([
+                            'icon' => 'error',
+                            'filled' => false,
+                            'size' => 'md',
+                            'classList' => [
+                                'mod-frontend-form__step-header-error-icon'
+                            ]
+                        ])
+                        @endicon
                     @endtypography
                 @endif
                 @if($step['description'])
@@ -40,7 +55,6 @@
                 'reversePositions' => true,
                 'classList' => [
                     'mod-frontend-form__step-header-edit',
-                    $index === 0 ? 'is-editable' : '',
                     $index === 0 ? 'u-visibility--hidden' : ''
                 ],
                 'attributeList' => [

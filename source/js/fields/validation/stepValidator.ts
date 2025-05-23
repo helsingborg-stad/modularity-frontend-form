@@ -1,19 +1,24 @@
-class Validate implements ValidateInterface {
+class StepValidator implements StepValidatorInterface {
     private builder!: FieldBuilderInterface;
+    private invalidSteps: string[] = [];
 
     public init(builder: FieldBuilderInterface): void {
         this.builder = builder;
     }
 
+    public getInvalidSteps(): string[] {
+        return [...this.invalidSteps].sort((a, b) => Number(a) - Number(b));
+    }
+
     public validateSteps(): boolean {
         const fieldsStepObject = this.builder.getFieldsStepObject();
 
-        const hasInvalidSteps = [];
+        this.invalidSteps = [];
         for (const stepId in fieldsStepObject) {
-            hasInvalidSteps.push(this.validateStep(stepId));
+            this.validateStep(stepId);
         }
 
-        return !hasInvalidSteps.includes(false);
+        return this.invalidSteps.length === 0;
     }
 
     public validateStep(stepId: string): boolean {
@@ -21,7 +26,6 @@ class Validate implements ValidateInterface {
         
         if (!fields) {
             console.error(`No fields found for step ${stepId}`);
-            // TODO: What should we do here? Maybe throw an error or return false?
             return true;
         }
         
@@ -30,8 +34,18 @@ class Validate implements ValidateInterface {
             hasInvalidFields.push(fields[fieldName].getValidator().validate());
         }
 
+        const valid = !hasInvalidFields.includes(false);
+
+        if (!valid && !this.invalidSteps.includes(stepId)) {
+            this.invalidSteps.push(stepId);
+        }
+
+        if (valid && this.invalidSteps.includes(stepId)) {
+            this.invalidSteps = this.invalidSteps.filter((id) => id !== stepId);
+        }
+
         return !hasInvalidFields.includes(false);
     }
 }
 
-export default Validate;
+export default StepValidator;

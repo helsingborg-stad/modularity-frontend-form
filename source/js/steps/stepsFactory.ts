@@ -1,9 +1,9 @@
-import StepFactory from "../stepFactory";
+import StepFactory from "./stepFactory";
 
-// TODO: This is a factory
-export function getSteps(container: HTMLElement): StepsObject {
-    let steps: StepsObject = {};
-    container.querySelectorAll('[data-js-frontend-form-step-container]').forEach((stepContainer) => {
+class StepsFactory {
+    public static create(container: HTMLElement): StepsObject {
+        let steps: StepsObject = {};
+        container.querySelectorAll('[data-js-frontend-form-step-container]').forEach((stepContainer) => {
         const step = stepContainer.querySelector('[data-js-frontend-form-step]');
         const id   = step?.getAttribute('data-js-frontend-form-step');
         const editButton = stepContainer.querySelector('[data-js-frontend-form-step-edit]');
@@ -15,6 +15,7 @@ export function getSteps(container: HTMLElement): StepsObject {
 
         const stepId = parseInt(id);
         steps[stepId] = StepFactory.createStep(
+            stepContainer as HTMLElement,
             editButton as HTMLElement,
             step as HTMLElement,
             stepId
@@ -22,4 +23,7 @@ export function getSteps(container: HTMLElement): StepsObject {
     });
 
     return steps;
+    }
 }
+
+export default StepsFactory;

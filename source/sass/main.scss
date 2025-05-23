@@ -48,12 +48,25 @@ $color-danger: var(--color-danger, #d73740) !default;
     justify-content: space-between;
 }
 
-.mod-frontend-form__step-header-edit {
-    display: none;
-
-    &.is-editable {
+.mod-frontend-form__step-container {
+    &.is-editable .mod-frontend-form__step-header-edit {
         display: flex;
     }
+}
+
+.mod-frontend-form__step-header-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.mod-frontend-form__step-header-error-icon {
+    display: none;
+    color: $color-danger;
+}
+
+.mod-frontend-form__step-header-edit {
+    display: none;
 }
 
 .status-message {
@@ -150,4 +163,24 @@ $color-danger: var(--color-danger, #d73740) !default;
     .c-field {
         animation: pulse 1.5s infinite ease-in-out;
     }
+}
+
+/* Invalid step */
+.mod-frontend-form__step-container.is-invalid {
+    .mod-frontend-form__step-header-error-icon {
+        display: flex;
+    }
+}
+
+.mod-frontend-form__step-container.animate-shake {
+    animation: shake .4s ease-in-out;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+    100% { transform: translateX(0); }
 }

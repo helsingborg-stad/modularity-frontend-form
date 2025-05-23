@@ -1,10 +1,10 @@
 import StepNavigator from "./stepNavigator";
-import StepUIManager from "./StepUIManager";
+import StepUIManager from "./stepUIManager";
 
 class Steps implements StepsInterface {
     constructor(
         private steps: StepsObject,
-        private validate: ValidateInterface,
+        private validate: StepValidatorInterface,
         private stepNavigator: StepNavigator,
         private stepUIManager: StepUIManager,
         private nextButton: HTMLButtonElement,
@@ -21,10 +21,8 @@ class Steps implements StepsInterface {
     private setupEdit() {
         for (const step of Object.values(this.steps)) {
             step.onEdit(() => {
-                if (this.stepIsInvalid()) {
-                    this.handleInvalidStep();
-                }
-
+                this.handleInvalidStep(this.stepIsInvalid());
+ 
                 const prevStep = this.stepNavigator.getActiveStep();
                 const nextStep = this.stepNavigator.goTo(step.getId());
 
@@ -39,7 +37,11 @@ class Steps implements StepsInterface {
     private setupNext() {
         this.nextButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            if (this.stepIsInvalid()) {
+            const isInvalid = this.stepIsInvalid();
+            this.handleInvalidStep(isInvalid);
+
+            if (isInvalid) {
+                this.stepUIManager.addErrorIndicator(this.stepNavigator.getActiveStep());
                 return;
             }
 
@@ -57,9 +59,7 @@ class Steps implements StepsInterface {
     private setupPrevious() {
         this.previousButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            if (this.stepIsInvalid()) {
-                this.handleInvalidStep();
-            }
+            this.handleInvalidStep(this.stepIsInvalid());
             const prevStep = this.stepNavigator.getActiveStep();
             const nextStep = this.stepNavigator.goPrevious();
 
@@ -70,8 +70,8 @@ class Steps implements StepsInterface {
         });
     }
 
-    private handleInvalidStep(): void {
-        
+    private handleInvalidStep(isInvalid: boolean): void {
+        this.stepUIManager.handleInvalidStep(this.stepNavigator.getActiveStep(), isInvalid);
     }
 
     private stepIsInvalid(): boolean {

@@ -15,10 +15,7 @@ class StepValidator implements StepValidatorInterface {
 
         this.invalidSteps = [];
         for (const stepId in fieldsStepObject) {
-            const isValid = this.validateStep(stepId);
-            if (!isValid) {
-                this.invalidSteps.push(stepId);
-            }
+            this.validateStep(stepId);
         }
 
         return this.invalidSteps.length === 0;

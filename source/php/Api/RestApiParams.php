@@ -37,7 +37,7 @@ class RestApiParams implements RestApiParamsInterface
     foreach ($params as $key => $value) {
       $enum = RestApiParamEnums::tryFrom($key);
       if ($enum !== null) {
-        $values[$enum->name] = $value ?? null;
+        $values[lcfirst($enum->name)] = $value ?? null;
       }
     }
     return (object) $values;

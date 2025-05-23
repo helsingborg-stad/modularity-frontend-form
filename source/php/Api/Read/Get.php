@@ -68,15 +68,19 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
+        $params = (new RestApiParams(
+            $this->wpService, 
+            $this->config, 
+            $this->moduleConfigFactory)
+        )->getValuesFromRequest($request);
+
         //Get fields from post id 
-        $postId          = $request->get_params()['post-id'] ?? null;
-        $moduleId        = $request->get_params()['module-id'] ?? null;
-        $fieldData       = $this->acfService->getFields($postId, true, false);
-        $fieldData       = $this->translateFieldNamesToFieldKeys($postId, $fieldData);
-        $fieldData       = $this->filterUnmappedFieldKeysForPostType($moduleId, $fieldData);
+        $fieldData       = $this->acfService->getFields($params->postId, true, false);
+        $fieldData       = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
+        $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
         //Add post title
-        $fieldData       = $this->prependPostTitleToFieldData($fieldData, $postId);
+        $fieldData       = $this->prependPostTitleToFieldData($fieldData, $params->postId);
 
         if ($fieldData !== false) {
             return new WP_REST_Response(
@@ -137,7 +141,7 @@ class Get extends RestApiEndpoint
      */
     private function translateFieldNameToFieldKey(int $postId, string $fieldName): string
     {
-        return get_post_meta($postId, "_" . $fieldName, true) ?? $fieldName;
+        return $this->wpService->getPostMeta($postId, "_" . $fieldName, true) ?? $fieldName;
     }
 
     /**

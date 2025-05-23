@@ -35,7 +35,7 @@ class ValidateForm {
     }
 
     private getTarget(): string {
-        return `:is(input, select):is(${
+        return `:is(input, select, textarea):is(${
             this.validationKeys
                 .map(key =>
                     `[${this.attributePrefix}${key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}]`

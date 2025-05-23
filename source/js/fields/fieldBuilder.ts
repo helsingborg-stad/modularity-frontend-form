@@ -14,6 +14,7 @@ import TimeFactory from "./field/time/timeFactory";
 import NumberFactory from "./field/number/numberFactory";
 import ImageFactory from "./field/image/imageFactory";
 import TrueFalseFactory from "./field/trueFalse/trueFalseFactory";
+import TextAreaFactory from "./field/textarea/textAreaFactory";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -74,6 +75,15 @@ class FieldBuilder implements FieldBuilderInterface {
                     stepId
                 );
                 break;
+            case 'textarea':
+            fieldInstance = TextAreaFactory.create(
+                field,
+                this.getFieldName(field),
+                this.getFieldCondition(field),
+                this.notices,
+                stepId
+            );
+            break;
             case 'email':
                 fieldInstance = EmailFactory.create(
                     field,

@@ -1,6 +1,6 @@
 import StepFactory from "../stepFactory";
 
-// TODO: This is a factory
+// TODO: This should be moved to "Steps factory" file.
 export function getSteps(container: HTMLElement): StepsObject {
     let steps: StepsObject = {};
     container.querySelectorAll('[data-js-frontend-form-step-container]').forEach((stepContainer) => {
@@ -15,6 +15,7 @@ export function getSteps(container: HTMLElement): StepsObject {
 
         const stepId = parseInt(id);
         steps[stepId] = StepFactory.createStep(
+            stepContainer as HTMLElement,
             editButton as HTMLElement,
             step as HTMLElement,
             stepId

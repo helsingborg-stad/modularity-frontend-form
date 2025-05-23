@@ -18,7 +18,7 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
         getChoices(): NodeListOf<HTMLInputElement> {
             return choices;
         },
-        getField(): HTMLElement {
+        getFieldContainer(): HTMLElement {
             return field;
         }
     } as CheckboxInterface;

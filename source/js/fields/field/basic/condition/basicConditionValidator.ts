@@ -6,7 +6,7 @@ class BasicConditionValidator implements ConditionValidatorInterface {
     }
 
     public validate(condition: any): boolean {
-        const value = this.parent?.getInput().value ?? '';
+        const value = this.parent?.getField().value ?? '';
 
         switch (condition.operator) {
             case '==':

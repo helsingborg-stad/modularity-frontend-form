@@ -1,3 +1,5 @@
+// TODO: This should probably be renamed to input.ts since it is used for all input types
+
 class Basic implements BasicInterface {
     private required: boolean = false;
     private hasBeenFilled: boolean = false;
@@ -12,7 +14,7 @@ class Basic implements BasicInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
-        this.required = this.getInput().hasAttribute('required');
+        this.required = this.getField().hasAttribute('required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
         this.validator.init(this);
@@ -36,30 +38,30 @@ class Basic implements BasicInterface {
         return this.validator;
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 
     public hasValue(): boolean {
-        return this.getInput().value.length > 0;
+        return this.getField().value.length > 0;
     }
 
     public isRequired(): boolean {
         return this.required;
     }
 
-    public getInput(): HTMLInputElement {
+    public getField(): HTMLInputElement {
         return this.input;
     }
 
     private listenForChanges(): void {
-        this.getInput().addEventListener('input', () => {
+        this.getField().addEventListener('input', () => {
             this.getConditionsHandler().checkConditions();
 
             this.hasBeenFilled && this.getValidator().validate();
         });
 
-        this.getInput().addEventListener('blur', () => {
+        this.getField().addEventListener('blur', () => {
             this.hasBeenFilled = true;
             this.getValidator().validate();
         });

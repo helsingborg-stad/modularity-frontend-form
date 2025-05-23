@@ -17,7 +17,7 @@ class NullField implements FieldInterface {
         this.validator.init(this);
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 

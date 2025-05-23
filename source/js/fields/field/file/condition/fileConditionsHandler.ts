@@ -16,8 +16,8 @@ class FileConditionsHandler implements ConditionsHandlerInterface {
 		if (this.parent && this.isDisabled !== disable) {
 			this.isDisabled = disable;
 
-            this.parent.getField().classList.toggle('u-display--none', disable);
-            this.parent.getInput().disabled = disable;
+            this.parent.getFieldContainer().classList.toggle('u-display--none', disable);
+            this.parent.getField().disabled = disable;
 
 			this.checkConditions();
 		}

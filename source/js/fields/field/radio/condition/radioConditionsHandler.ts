@@ -18,7 +18,7 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 
 			this.parent?.getChoices().forEach((checkbox, index) => {
 				if (index === 0) {
-					this.parent?.getField().classList.toggle('u-display--none', disabled)
+					this.parent?.getFieldContainer().classList.toggle('u-display--none', disabled)
 				}
 				
 				checkbox.disabled = disabled;

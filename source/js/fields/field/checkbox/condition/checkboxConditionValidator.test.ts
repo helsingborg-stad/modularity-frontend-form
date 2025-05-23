@@ -10,7 +10,7 @@
 //         getChoices() {
 //             return [] as any;
 //         },
-//         getField() {
+//         getFieldContainer() {
 //             return document.createElement('div');
 //         },
 //         init() {},

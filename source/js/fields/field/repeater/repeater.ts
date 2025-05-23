@@ -60,7 +60,7 @@ class Repeater implements RepeaterInterface {
         return this.required;
     }
     
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 

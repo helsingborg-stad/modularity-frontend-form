@@ -51,7 +51,7 @@ class Radio implements RadioInterface {
         return selectedChoice ? selectedChoice.value : '';
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 

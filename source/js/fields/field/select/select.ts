@@ -12,7 +12,7 @@ class Select implements SelectInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
-        this.required = this.getSelect().required;
+        this.required = this.getField().required;
         this.conditionsHandler.init(this, conditionBuilder);
         this.selectValidator.init(this);
         this.validator.init(this);
@@ -35,11 +35,11 @@ class Select implements SelectInterface {
         return this.validator;
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 
-    public getSelect(): HTMLSelectElement {
+    public getField(): HTMLSelectElement {
         return this.select;
     }
 
@@ -60,12 +60,12 @@ class Select implements SelectInterface {
     }
 
     public listenForChanges(): void {
-        this.getSelect().addEventListener('change', () => {
+        this.getField().addEventListener('change', () => {
             this.getValidator().validate();
             this.conditionsHandler.checkConditions();
         });
 
-        this.getSelect().addEventListener('blur', () => {
+        this.getField().addEventListener('blur', () => {
             this.getValidator().validate();
         });
     }

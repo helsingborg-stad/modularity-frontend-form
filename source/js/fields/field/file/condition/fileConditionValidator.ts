@@ -6,12 +6,12 @@ class FileConditionValidator implements ConditionValidatorInterface {
     }
 
     public validate(condition: any): boolean {
-        if (!this.parent?.getInput().files) {
+        if (!this.parent?.getField().files) {
             console.error('No files found in input element');
             return false;
         }
 
-        const value = this.parent.getInput().files!.length > 0;
+        const value = this.parent.getField().files!.length > 0;
 
         switch (condition.operator) {
             case '==':

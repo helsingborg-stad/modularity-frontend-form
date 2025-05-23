@@ -50,8 +50,8 @@ describe('Checkbox', () => {
     //     expect(checkBox.getChoices()).toBe(choices);
     // });
     
-    // it('getField() returns the available choices', () => {
-    //     expect(checkBox.getField()).toBe(field);
+    // it('getFieldContainer() returns the available choices', () => {
+    //     expect(checkBox.getFieldContainer()).toBe(field);
     // });
 
     // it('getSelectedChoices() returns selected choices values', () => {

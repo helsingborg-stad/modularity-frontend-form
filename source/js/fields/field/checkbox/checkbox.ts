@@ -11,7 +11,7 @@ class Checkbox implements CheckboxInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
-        this.required = this.getField().hasAttribute('data-js-required');
+        this.required = this.getFieldContainer().hasAttribute('data-js-required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.conditionValidator.init(this);
         this.validator.init(this);
@@ -50,7 +50,7 @@ class Checkbox implements CheckboxInterface {
         return [...this.getChoices()].filter(choice => choice.checked).map(choice => choice.value);
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 

@@ -31,8 +31,8 @@ class FieldValidatorUIHandler implements FieldValidatorUIHandlerInterface {
         this.noticeMessageElement = messageElement as HTMLElement;
         this.currentNoticeMessage = message;
         this.noticeMessageElement.innerHTML = message;
-        this.field.getField().classList.add(this.invalidClass);
-        this.field.getField().append(this.errorNotice);
+        this.field.getFieldContainer().classList.add(this.invalidClass);
+        this.field.getFieldContainer().append(this.errorNotice);
         this.activeNotice = this.errorNotice;
     }
 
@@ -47,7 +47,7 @@ class FieldValidatorUIHandler implements FieldValidatorUIHandlerInterface {
 
     public removeInvalidNotice(): void {
         if (this.activeNotice) {
-            this.field.getField().classList.remove(this.invalidClass);
+            this.field.getFieldContainer().classList.remove(this.invalidClass);
             this.activeNotice.remove();
             this.activeNotice = null;
         }

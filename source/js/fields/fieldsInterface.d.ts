@@ -6,7 +6,7 @@ interface FieldsInitiatorInterface {
 interface FieldInterface {
     init(conditionBuilder: ConditionBuilderInterface): void;
     getName(): string;
-    getField(): HTMLElement;
+    getFieldContainer(): HTMLElement;
     getConditionsHandler(): ConditionsHandlerInterface;
     getConditionValidator(): ConditionValidatorInterface;
     getValidator(): FieldValidatorInterface;
@@ -31,7 +31,11 @@ interface RadioInterface extends FieldInterface {
 }
 
 interface BasicInterface extends FieldInterface {
-    getInput(): HTMLInputElement;
+    getField(): HTMLInputElement;
+}
+
+interface TextAreaInterface extends FieldInterface {
+    getField(): HTMLTextAreaElement;
 }
 
 interface GoogleMapInterface extends FieldInterface {
@@ -40,7 +44,7 @@ interface GoogleMapInterface extends FieldInterface {
 }
 
 interface SelectInterface extends FieldInterface {
-    getSelect(): HTMLSelectElement;
+    getField(): HTMLSelectElement;
     getOptions(): NodeListOf<HTMLOptionElement>;
     getSelectedOptions(): string[];
 }

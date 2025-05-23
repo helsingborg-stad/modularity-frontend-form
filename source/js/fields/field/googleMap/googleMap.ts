@@ -14,7 +14,7 @@ class GoogleMap implements GoogleMapInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
-        this.required = this.getField().hasAttribute('data-js-required');
+        this.required = this.getFieldContainer().hasAttribute('data-js-required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.googleMapValidator.init(this);
         this.openstreetmapInstance.init();
@@ -42,7 +42,7 @@ class GoogleMap implements GoogleMapInterface {
         return this.openstreetmapInstance;
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 

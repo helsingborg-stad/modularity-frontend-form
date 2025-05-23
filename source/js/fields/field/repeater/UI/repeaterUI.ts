@@ -24,7 +24,7 @@ class RepeaterUI implements RepeaterUIInterface {
     ): void {
         this.repeaterField = repeaterField;
         this.conditionBuilder = conditionBuilder;
-        this.rowCountElement = this.repeaterField.getField().querySelector('[data-js-repeater-row-counter]');
+        this.rowCountElement = this.repeaterField.getFieldContainer().querySelector('[data-js-repeater-row-counter]');
 
         if (!this.repeaterField || !this.conditionBuilder) {
             console.error("Repeater field or condition builder is not set");

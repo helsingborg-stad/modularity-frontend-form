@@ -16,7 +16,7 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 		if (this.parent && this.isDisabled !== disabled) {
 			this.isDisabled = disabled;
 
-            this.parent.getField().classList.toggle('u-display--none', disabled);
+            this.parent.getFieldContainer().classList.toggle('u-display--none', disabled);
 			this.checkConditions();
 		}
 	}

@@ -38,7 +38,7 @@ class Message implements FieldInterface {
         return false;
     }
 
-    public getField(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 }

@@ -4,6 +4,7 @@ interface StepInterface {
     getId(): number;
     onEdit(callback: () => void): void;
     getStepContainer(): HTMLElement;
+    getstepContentContainer(): HTMLElement;
     getEditButton(): HTMLElement;
 }
 

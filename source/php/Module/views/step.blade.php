@@ -21,8 +21,19 @@
                 @if($step['title'])
                     @typography([
                         'element' => 'h2',
+                        'classList' => [
+                            'mod-frontend-form__step-header-title'
+                        ]
                     ])
-                        {{ $step['title'] }}
+                        {{ $step['title'] }} @icon([
+                            'icon' => 'error',
+                            'filled' => false,
+                            'size' => 'md',
+                            'classList' => [
+                                'mod-frontend-form__step-header-error-icon'
+                            ]
+                        ])
+                        @endicon
                     @endtypography
                 @endif
                 @if($step['description'])

@@ -54,6 +54,17 @@ $color-danger: var(--color-danger, #d73740) !default;
     }
 }
 
+.mod-frontend-form__step-header-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.mod-frontend-form__step-header-error-icon {
+    display: none;
+    color: $color-danger;
+}
+
 .mod-frontend-form__step-header-edit {
     display: none;
 }
@@ -151,5 +162,12 @@ $color-danger: var(--color-danger, #d73740) !default;
     .c-button,
     .c-field {
         animation: pulse 1.5s infinite ease-in-out;
+    }
+}
+
+/* Invalid step */
+.mod-frontend-form__step-container.is-invalid {
+    .mod-frontend-form__step-header-error-icon {
+        display: flex;
     }
 }

@@ -1,7 +1,7 @@
 class StepNavigator implements StepNavigatorInterface {
     constructor(
         private steps: StepsObject,
-        private validate: ValidateInterface,
+        private validate: StepValidatorInterface,
         private submit: SubmitInterface,
         private activeStep: number = 0
     ) {

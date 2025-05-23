@@ -91,7 +91,7 @@ class FormHandler {
         }
     }
 
-    private setupSteps(validate: ValidateInterface): StepsObject|null {
+    private setupSteps(validate: StepValidatorInterface): StepsObject|null {
         const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
         const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 

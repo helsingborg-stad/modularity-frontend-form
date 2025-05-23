@@ -4,7 +4,7 @@ import StepUIManager from "./stepUIManager";
 class Steps implements StepsInterface {
     constructor(
         private steps: StepsObject,
-        private validate: ValidateInterface,
+        private validate: StepValidatorInterface,
         private stepNavigator: StepNavigator,
         private stepUIManager: StepUIManager,
         private nextButton: HTMLButtonElement,

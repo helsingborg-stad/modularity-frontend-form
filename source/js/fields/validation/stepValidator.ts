@@ -1,4 +1,4 @@
-class StepValidator implements ValidateInterface {
+class StepValidator implements StepValidatorInterface {
     private builder!: FieldBuilderInterface;
     private invalidSteps: string[] = [];
 
@@ -7,7 +7,7 @@ class StepValidator implements ValidateInterface {
     }
 
     public getInvalidSteps(): string[] {
-        return this.invalidSteps;
+        return [...this.invalidSteps].sort((a, b) => Number(a) - Number(b));
     }
 
     public validateSteps(): boolean {

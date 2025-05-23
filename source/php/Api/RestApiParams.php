@@ -2,14 +2,16 @@
 
 namespace ModularityFrontendForm\Api;
 
+use LDAP\Result;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiParamEnums;
 use ModularityFrontendForm\Config\ModuleConfigFactory;
 use ModularityFrontendForm\Config\ConfigInterface;
 use WP_Error;
+use WP_REST_Request;
 
-class RestApiParams 
+class RestApiParams implements RestApiParamsInterface
 {
   use GetModuleConfigInstanceTrait;
 
@@ -18,6 +20,28 @@ class RestApiParams
     private ConfigInterface $config,
     private ModuleConfigFactory $moduleConfigFactory,
   ) {}
+
+  /**
+   * Returns the values from the request for the given parameters.
+   * 
+   * @param WP_REST_Request $request The request to get the values from.
+   * @param RestApiParams ...$enum The parameters to get the values for.
+   * 
+   * @return array The values for the given parameters.
+   */
+  public function getValuesFromRequest(
+    WP_REST_Request $request
+  ): object {
+    $params = $request->get_params();
+    $values = [];
+    foreach ($params as $key => $value) {
+      $enum = RestApiParamEnums::tryFrom($key);
+      if ($enum !== null) {
+        $values[$enum->name] = $value ?? null;
+      }
+    }
+    return (object) $values;
+  }
 
   /**
    * Returns the specification for the given parameter.
@@ -123,7 +147,7 @@ class RestApiParams
           $postId = $request->get_params()[
             RestApiParamEnums::PostId->value
           ] ?? null;
-          
+
           $post   = $this->wpService->getPost($postId);
 
           // Not a post

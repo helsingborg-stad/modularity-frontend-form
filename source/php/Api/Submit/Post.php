@@ -67,32 +67,24 @@ class Post extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        $moduleId        = $request->get_params()['module-id']                          ?? null;
-        $fieldMeta       = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
-        $nonce           = $request->get_params()['nonce']                              ?? '';
+        $params = (new RestApiParams(
+            $this->wpService, 
+            $this->config, 
+            $this->moduleConfigFactory)
+        )->getValuesFromRequest($request);
 
-        //Consolidated data
-        $data            = array_merge($fieldMeta, ['nonce' => $nonce]); 
+        // Data to be submitted
+        $data = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
 
         // Handler factories
         $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
         $handlerFactory     = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
 
-        //Get validators
-        $validators = (function () use ($moduleId, $validatorFactory) {
-            return $validatorFactory->createInsertValidators($moduleId) ?? [];
-        })();
-
-        // Get handlers
-        $handlers = (function () use ($moduleId, $handlerFactory) {
-            return $handlerFactory->createHandlers($moduleId) ?? [];
-        })(); 
-
         // Creates the data processor
         $dataProcessor = new DataProcessor(
-            $validators,
-            $handlers,
-            $handlerFactory->createNullHandler($moduleId),
+            $validatorFactory->createInsertValidators($params->moduleId),
+            $handlerFactory->createHandlers($params->moduleId),
+            $handlerFactory->createNullHandler($params->moduleId),
         );
 
         $dataProcessorResult = $dataProcessor->process($data);

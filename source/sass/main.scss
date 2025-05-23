@@ -139,7 +139,8 @@ $color-danger: var(--color-danger, #d73740) !default;
 .mod-frontend-form.is-loading .mod-frontend-form__step-buttons {
     .c-typography,
     .c-button,
-    .c-field {
+    .c-field__label,
+    .c-c-field__inner {
         color: transparent !important;
         background-color: rgba(#0000, .05) !important;
         border-color: rgba(#0000, .05) !important;
@@ -160,7 +161,8 @@ $color-danger: var(--color-danger, #d73740) !default;
 
     .c-typography,
     .c-button,
-    .c-field {
+    .c-field__label,
+    .c-c-field__inner {
         animation: pulse 1.5s infinite ease-in-out;
     }
 }

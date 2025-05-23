@@ -32,8 +32,12 @@ class StepUIManager implements StepUIManagerInterface {
         this.steps[activeStep].getEditButton().classList.add(this.visibilityHiddenClass);
     }
 
+    public handleInvalidStep(step: StepInterface, isInvalid: boolean): void {
+        step.getStepContainer().classList.toggle('is-invalid', isInvalid);
+    }
+
     public canEditStep(step: StepInterface): void {
-        step.getEditButton().classList.add(this.allowEditClass);
+        step.getStepContainer().classList.add(this.allowEditClass);
     }
 }
 

@@ -4,6 +4,10 @@
         'attributeList' => [
             'data-js-frontend-form-step-container' => $index,
             'style' => 'z-index: ' . (1000 - $index) . ';',
+        ],
+        'classList' => [
+            'mod-frontend-form__step-container',
+            $index === 0 ? 'is-editable' : ''
         ]
     ])
         @element([
@@ -40,7 +44,6 @@
                 'reversePositions' => true,
                 'classList' => [
                     'mod-frontend-form__step-header-edit',
-                    $index === 0 ? 'is-editable' : '',
                     $index === 0 ? 'u-visibility--hidden' : ''
                 ],
                 'attributeList' => [

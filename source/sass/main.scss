@@ -48,12 +48,14 @@ $color-danger: var(--color-danger, #d73740) !default;
     justify-content: space-between;
 }
 
-.mod-frontend-form__step-header-edit {
-    display: none;
-
-    &.is-editable {
+.mod-frontend-form__step-container {
+    &.is-editable .mod-frontend-form__step-header-edit {
         display: flex;
     }
+}
+
+.mod-frontend-form__step-header-edit {
+    display: none;
 }
 
 .status-message {

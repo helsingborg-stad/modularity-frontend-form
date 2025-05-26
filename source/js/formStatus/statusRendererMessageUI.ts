@@ -1,11 +1,12 @@
 import SubmitStatus from './enum';
 
-class StatusRendererUI {
+class StatusRendererMessageUI {
     constructor(
         private modularityFrontendFormLang: ModularityFrontendFormLang,
         private icon: HTMLElement,
         private title: HTMLElement,
-        private description: HTMLElement
+        private description: HTMLElement,
+        private progressbar: HTMLElement
     ) {}
 
     /**
@@ -47,6 +48,13 @@ class StatusRendererUI {
     public updateDescription(message: string, progress: number): void {
         this.description.textContent = (progress > 0 ? `${message} (${progress}%)` : message);
     }
+
+    /**
+     * Updates the progress bar width.
+     */
+    public updateProgressBar(progress: number): void {
+        this.progressbar.style.width = `${progress}%`;
+    }
 }
 
-export default StatusRendererUI;
+export default StatusRendererMessageUI;

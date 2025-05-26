@@ -26,7 +26,7 @@ class RestApiParams implements RestApiParamsInterface
    * 
    * @param WP_REST_Request $request The request to get the values from.
    * 
-   * @return array The values for the given parameters.
+   * @return object The values for the given parameters.
    */
   public function getValuesFromRequest(
     WP_REST_Request $request

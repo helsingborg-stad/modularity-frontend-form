@@ -24,7 +24,9 @@ class StatusRendererFactory {
                 description,
                 progressbar
             ),
-            new StatusRendererOverlayUI()
+            new StatusRendererOverlayUI(
+                formContainer
+            )
         );
     }
 }

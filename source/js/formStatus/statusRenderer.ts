@@ -5,12 +5,6 @@ import StatusRendererOverlayUI from './statusRendererOverlayUI';
 class StatusRenderer implements StatusRendererInterface {
     private messageQueue: MessageStatus[] = [];
     private isProcessing: boolean = false;
-    private statusClasses: Array<string> = [
-        'is-loading',
-        'is-working',
-        'is-success',
-        'is-error'
-    ];
 
     constructor(
         private formContainer: HTMLElement,
@@ -45,7 +39,7 @@ class StatusRenderer implements StatusRendererInterface {
      * @param message The message status to process.
      */
     private handleMessage({ status, message, icon, progress, delay }: MessageStatus): void {
-        this.applyStatusClass(status);
+        this.statusRendererOverlayUI.applyStatusClass(status);
         this.statusRendererMessageUI.updateProgressBar(progress);
         this.statusRendererMessageUI.updateDescription(message, progress);
         this.statusRendererMessageUI.updateTitle(status);
@@ -75,8 +69,8 @@ class StatusRenderer implements StatusRendererInterface {
      * Removes all status classes and hides the working element.
      */
     private resetUI(): void {
-        this.formContainer.classList.remove(...this.statusClasses);
-        this.hideWorkingElement();
+        this.statusRendererOverlayUI.removeStatusClasses();
+        this.statusRendererOverlayUI.hideWorkingOverlay();
     }
 
     /**
@@ -86,44 +80,9 @@ class StatusRenderer implements StatusRendererInterface {
         const { status, message, icon, progress, delay = 200 }: MessageStatus = (event as CustomEvent).detail;
         this.messageQueue.push({ status, message, icon, progress, delay });
         if (!this.isProcessing) {
-            this.showWorkingElement();
+            this.statusRendererOverlayUI.showWorkingOverlay();
             this.processQueue();
         }
-    }
-
-    /**
-     * Shows the working element with fade-in animation.
-     */
-    private showWorkingElement(): void {
-        const workingElement = this.formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
-        if (workingElement) {
-            workingElement.classList.remove('u-display--none');
-            workingElement.style.opacity = '0';
-            setTimeout(() => {
-                workingElement.style.opacity = '1';
-            }, 10);
-        }
-    }
-
-    /**
-     * Hides the working element with fade-out animation.
-     */
-    private hideWorkingElement(): void {
-        const workingElement = this.formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
-        if (workingElement) {
-            workingElement.style.opacity = '0';
-            setTimeout(() => {
-                workingElement.classList.add('u-display--none');
-            }, 1000);
-        }
-    }
-
-    /**
-     * Adds/removes appropriate status classes.
-     */
-    private applyStatusClass(status: string): void {
-        this.formContainer.classList.remove(...this.statusClasses);
-        this.formContainer.classList.add(`is-${status}`);
     }
 }
 

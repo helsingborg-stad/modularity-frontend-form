@@ -9,9 +9,10 @@ class StatusRendererFactory {
         const description = formContainer.querySelector('[data-js-frontend-form-working__description]') as HTMLElement;
         const progressbar = formContainer.querySelector('[data-js-frontend-form-working__progress] .c-progressbar__value') as HTMLElement;
 
+        const workingOverlay = formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
 
-        if (!statusIcon || !statusTitle || !description) {
-            console.error("Status icon|title|description|progressbar element not found in the form container.");
+        if (!statusIcon || !statusTitle || !description || !progressbar || !workingOverlay) {
+            console.error("Not all status elements were found the form container.");
             return null;
         }
 
@@ -25,7 +26,8 @@ class StatusRendererFactory {
                 progressbar
             ),
             new StatusRendererOverlayUI(
-                formContainer
+                formContainer,
+                workingOverlay
             )
         );
     }

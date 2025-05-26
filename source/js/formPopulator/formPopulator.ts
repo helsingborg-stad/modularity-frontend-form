@@ -1,9 +1,10 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
-import StatusRenderer from "../formStatus/render";
+import StatusRenderer from "../formStatus/statusRenderer";
 import SubmitStatus from "../formStatus/enum";
 import FormMode from "../form/formModeEnum";  
 import Form from "../form/form";
+import StatusRendererInterface from "../formStatus/renderInterface";
 
 type Token32 = string & { __lengthBrand: 32 };
 
@@ -22,7 +23,7 @@ class FormPopulator {
     private modularityFrontendFormLang: ModularityFrontendFormLang,
     private asyncNonce: AsyncNonce,
     private statusHandler: StatusHandler,
-    private statusRenderer: StatusRenderer,
+    private statusRenderer: StatusRendererInterface,
   ) {
     this.formParams = this.extractParamsFromUrl();
   }

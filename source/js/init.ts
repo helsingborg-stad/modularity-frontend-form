@@ -6,7 +6,7 @@ import FieldBuilder from "./fields/fieldBuilder";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
 import StatusHandler from "./formStatus/handler";
-import StatusRenderer from "./formStatus/render";
+import StatusRenderer from "./formStatus/statusRenderer";
 import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
 import ValidateForm from "./validation/validateForm";
@@ -15,6 +15,8 @@ import Form from "./form/form";
 import FormMode from "./form/formModeEnum";
 import StepsFactory from "./steps/stepsFactory";
 import StepValidator from "./fields/validation/stepValidator";
+import StatusRendererFactory from "./formStatus/statusRendererFactory";
+import StatusRendererInterface from "./formStatus/renderInterface";
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -36,6 +38,16 @@ class FormHandler {
 
     private init(): void {
         new ValidateForm();
+        const statusRenderer = StatusRendererFactory.create(
+            this.formContainer,
+            modularityFrontendFormLang
+        );
+
+        if (!statusRenderer) {
+            console.error("StatusRenderer could not be created.");
+            return;
+        }
+
         const stepValidator = new StepValidator();
         const stepsObject = this.setupSteps(stepValidator);
 
@@ -52,17 +64,17 @@ class FormHandler {
     
         this.setupFields(stepsObject, builder, conditionBuilder);
         fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
-        this.setupFormPopulator();
+        this.setupFormPopulator(statusRenderer);
     }
 
-    private setupFormPopulator(): void {
+    private setupFormPopulator(statusRenderer: StatusRendererInterface): void {
         const formPopulator = new FormPopulator(
             this.form,
             modularityFrontendFormData,
             modularityFrontendFormLang,
             new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
             new StatusHandler(this.form.formElementContainer),
-            new StatusRenderer(this.form.formElementContainer, modularityFrontendFormLang),
+            statusRenderer
         );
         formPopulator.initialize();
     }
@@ -91,7 +103,7 @@ class FormHandler {
         }
     }
 
-    private setupSteps(validate: StepValidatorInterface): StepsObject|null {
+    private setupSteps(validate: StepValidatorInterface, statusRenderer: StatusRendererInterface): StepsObject|null {
         const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
         const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
@@ -107,7 +119,7 @@ class FormHandler {
             modularityFrontendFormLang,
             new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
             new StatusHandler(this.formContainer),
-            new StatusRenderer(this.formContainer, modularityFrontendFormLang),
+            statusRenderer
         );
 
         new Steps(

@@ -1,5 +1,6 @@
 import SubmitStatus from './enum';
 import StatusRendererInterface from './renderInterface';
+import StatusRendererUI from './statusRendererUI';
 
 class StatusRenderer implements StatusRendererInterface {
     private messageQueue: MessageStatus[] = [];
@@ -11,7 +12,11 @@ class StatusRenderer implements StatusRendererInterface {
         'is-error'
     ];
 
-    constructor(private formContainer: HTMLElement, private modularityFrontendFormLang: ModularityFrontendFormLang,) { }
+    constructor(
+        private formContainer: HTMLElement,
+        private modularityFrontendFormLang: ModularityFrontendFormLang,
+        private statusRendererUI: StatusRendererUI
+    ) {}
 
     /**
      * Set up the event listener for submit status changes.
@@ -44,7 +49,7 @@ class StatusRenderer implements StatusRendererInterface {
         this.updateProgressBar(progress);
         this.updateDescription(message, progress);
         this.updateTitle(status);
-        this.updateIcon(icon);
+        this.statusRendererUI.updateIcon(icon);
 
         setTimeout(() => {
             this.processQueue();
@@ -154,28 +159,6 @@ class StatusRenderer implements StatusRendererInterface {
                 [SubmitStatus.Working]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Submitting'
             };
             titleEl.textContent = statusTitles[status as SubmitStatus] ?? '';
-        }
-    }
-
-    /**
-     * Changes the icon with transition effect.
-     */
-    private updateIcon(icon: string): void {
-        const iconEl = this.formContainer.querySelector('[data-js-frontend-form-working__icon]') as HTMLElement;
-        if (iconEl) {
-            const currentIcon = iconEl.getAttribute('data-material-symbol') || '';
-            const [currentBase] = currentIcon.split('_');
-            const [newBase] = icon.split('_');
-            if (currentBase !== newBase) {
-                iconEl.style.transition = 'opacity 0.3s';
-                iconEl.style.opacity = '0';
-                setTimeout(() => {
-                    iconEl.setAttribute('data-material-symbol', icon);
-                    iconEl.style.opacity = '1';
-                }, 300);
-            } else {
-                iconEl.setAttribute('data-material-symbol', icon);
-            }
         }
     }
 }

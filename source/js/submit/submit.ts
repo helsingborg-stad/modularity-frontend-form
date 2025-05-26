@@ -1,10 +1,11 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
-import StatusRenderer from "../formStatus/render";
+import StatusRenderer from "../formStatus/statusRenderer";
 import SubmitStatus from "../formStatus/enum";
 import SubmitInterface from "./submitInterface";
 import Form from "../form/form";
 import FormMode from "../form/formModeEnum";
+import StatusRendererInterface from "../formStatus/renderInterface";
 
 class Submit implements SubmitInterface {
     constructor(
@@ -13,7 +14,7 @@ class Submit implements SubmitInterface {
       private modularityFrontendFormLang: ModularityFrontendFormLang,
       private asyncNonce: AsyncNonce,
       private statusHandler: StatusHandler,
-      private statusRenderer: StatusRenderer,
+      private statusRenderer: StatusRendererInterface
     ) {
       this.disableFormSubmission();
     }

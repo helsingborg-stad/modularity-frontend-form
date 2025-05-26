@@ -49,7 +49,7 @@ class FormHandler {
         }
 
         const stepValidator = new StepValidator();
-        const stepsObject = this.setupSteps(stepValidator);
+        const stepsObject = this.setupSteps(stepValidator, statusRenderer);
 
         if (!stepsObject) {
             console.error("No steps were found");

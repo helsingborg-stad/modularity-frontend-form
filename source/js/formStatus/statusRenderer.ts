@@ -1,5 +1,6 @@
 import StatusRendererInterface from './renderInterface';
-import StatusRendererUI from './statusRendererUI';
+import StatusRendererMessageUI from './statusRendererMessageUI';
+import StatusRendererOverlayUI from './statusRendererOverlayUI';
 
 class StatusRenderer implements StatusRendererInterface {
     private messageQueue: MessageStatus[] = [];
@@ -13,7 +14,8 @@ class StatusRenderer implements StatusRendererInterface {
 
     constructor(
         private formContainer: HTMLElement,
-        private statusRendererUI: StatusRendererUI
+        private statusRendererMessageUI: StatusRendererMessageUI,
+        private statusRendererOverlayUI: StatusRendererOverlayUI
     ) {}
 
     /**
@@ -44,10 +46,10 @@ class StatusRenderer implements StatusRendererInterface {
      */
     private handleMessage({ status, message, icon, progress, delay }: MessageStatus): void {
         this.applyStatusClass(status);
-        this.updateProgressBar(progress);
-        this.statusRendererUI.updateDescription(message, progress);
-        this.statusRendererUI.updateTitle(status);
-        this.statusRendererUI.updateIcon(icon);
+        this.statusRendererMessageUI.updateProgressBar(progress);
+        this.statusRendererMessageUI.updateDescription(message, progress);
+        this.statusRendererMessageUI.updateTitle(status);
+        this.statusRendererMessageUI.updateIcon(icon);
 
         setTimeout(() => {
             this.processQueue();
@@ -122,16 +124,6 @@ class StatusRenderer implements StatusRendererInterface {
     private applyStatusClass(status: string): void {
         this.formContainer.classList.remove(...this.statusClasses);
         this.formContainer.classList.add(`is-${status}`);
-    }
-
-    /**
-     * Updates the progress bar width.
-     */
-    private updateProgressBar(progress: number): void {
-        const progressContainer = this.formContainer.querySelector('[data-js-frontend-form-working__progress] .c-progressbar__value') as HTMLElement;
-        if (progressContainer) {
-            progressContainer.style.width = `${progress}%`;
-        }
     }
 }
 

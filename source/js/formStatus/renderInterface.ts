@@ -1,4 +1,4 @@
 interface StatusRendererInterface {
-  setup(): void;
+  setup(): StatusRendererInterface;
 }
 export default StatusRendererInterface;

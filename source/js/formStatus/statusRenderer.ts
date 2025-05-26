@@ -1,10 +1,14 @@
 import StatusRendererInterface from './renderInterface';
 import StatusRendererMessageUI from './statusRendererMessageUI';
 import StatusRendererOverlayUI from './statusRendererOverlayUI';
+import SubmitStatus from './enum';
 
 class StatusRenderer implements StatusRendererInterface {
     private messageQueue: MessageStatus[] = [];
     private isProcessing: boolean = false;
+    private isSubmitting: boolean = false;
+    private isLoadingForm: boolean = false;
+    private lastMessageStatus: string|null = null;
 
     constructor(
         private formContainer: HTMLElement,
@@ -15,11 +19,19 @@ class StatusRenderer implements StatusRendererInterface {
     /**
      * Set up the event listener for submit status changes.
      */
-    public setup(): void {
+    public setup(): this {
         this.formContainer.addEventListener('submitStatusChanged', (event: Event) => {
             this.handleStatusEvent(event);
         });
+
+        return this;
     }
+
+    // never remove overlay when working is in progress
+    // Return to form (if success) or try again button (if error) when submiting
+
+    // When loading/populating form show form directly after loading complete if success, otherwise show error message and try again button
+
 
     /**
      * Process the message queue.

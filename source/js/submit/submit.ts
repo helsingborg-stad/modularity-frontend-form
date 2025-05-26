@@ -1,6 +1,5 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
-import StatusRenderer from "../formStatus/statusRenderer";
 import SubmitStatus from "../formStatus/enum";
 import SubmitInterface from "./submitInterface";
 import Form from "../form/form";
@@ -42,10 +41,6 @@ class Submit implements SubmitInterface {
      * @returns A promise that resolves when the form is submitted.
      */
     public async submit(): Promise<void> {
-
-      // Render the submit status when changed
-      this.statusRenderer.setup();
-
       // Set the initial status to working
       this.statusHandler.setStatus(
         SubmitStatus.Working,

@@ -29,7 +29,7 @@ class StatusRendererFactory {
                 formContainer,
                 workingOverlay
             )
-        );
+        ).setup();
     }
 }
 

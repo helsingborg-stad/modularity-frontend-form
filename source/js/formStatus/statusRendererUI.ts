@@ -1,7 +1,11 @@
+import SubmitStatus from './enum';
+
 class StatusRendererUI {
     constructor(
-        private icon: HTMLElement
-
+        private modularityFrontendFormLang: ModularityFrontendFormLang,
+        private icon: HTMLElement,
+        private title: HTMLElement,
+        private description: HTMLElement
     ) {}
 
     /**
@@ -21,6 +25,27 @@ class StatusRendererUI {
         } else {
             this.icon.setAttribute('data-material-symbol', iconName);
         }
+    }
+
+    /**
+     * Updates the title based on the status.
+     */
+    public updateTitle(status: string): void {
+        const statusTitles: Record<SubmitStatus, string> = {
+            [SubmitStatus.Loading]: this.modularityFrontendFormLang?.statusTitleLoading ?? 'Loading',
+            [SubmitStatus.Success]: this.modularityFrontendFormLang?.statusTitleSucess ?? 'Success',
+            [SubmitStatus.Error]: this.modularityFrontendFormLang?.statusTitleError ?? 'Error',
+            [SubmitStatus.Working]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Submitting'
+        };
+
+        this.title.textContent = statusTitles[status as SubmitStatus] ?? '';
+    }
+
+    /**
+     * Updates the descriptive text.
+     */
+    public updateDescription(message: string, progress: number): void {
+        this.description.textContent = (progress > 0 ? `${message} (${progress}%)` : message);
     }
 }
 

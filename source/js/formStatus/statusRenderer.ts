@@ -1,4 +1,3 @@
-import SubmitStatus from './enum';
 import StatusRendererInterface from './renderInterface';
 import StatusRendererUI from './statusRendererUI';
 
@@ -14,7 +13,6 @@ class StatusRenderer implements StatusRendererInterface {
 
     constructor(
         private formContainer: HTMLElement,
-        private modularityFrontendFormLang: ModularityFrontendFormLang,
         private statusRendererUI: StatusRendererUI
     ) {}
 
@@ -47,8 +45,8 @@ class StatusRenderer implements StatusRendererInterface {
     private handleMessage({ status, message, icon, progress, delay }: MessageStatus): void {
         this.applyStatusClass(status);
         this.updateProgressBar(progress);
-        this.updateDescription(message, progress);
-        this.updateTitle(status);
+        this.statusRendererUI.updateDescription(message, progress);
+        this.statusRendererUI.updateTitle(status);
         this.statusRendererUI.updateIcon(icon);
 
         setTimeout(() => {
@@ -133,32 +131,6 @@ class StatusRenderer implements StatusRendererInterface {
         const progressContainer = this.formContainer.querySelector('[data-js-frontend-form-working__progress] .c-progressbar__value') as HTMLElement;
         if (progressContainer) {
             progressContainer.style.width = `${progress}%`;
-        }
-    }
-
-    /**
-     * Updates the descriptive text.
-     */
-    private updateDescription(message: string, progress: number): void {
-        const descriptionEl = this.formContainer.querySelector('[data-js-frontend-form-working__description]') as HTMLElement;
-        if (descriptionEl) {
-            descriptionEl.textContent = (progress > 0 ? `${message} (${progress}%)` : message);
-        }
-    }
-
-    /**
-     * Updates the title based on the status.
-     */
-    private updateTitle(status: string): void {
-        const titleEl = this.formContainer.querySelector('[data-js-frontend-form-working__title]') as HTMLElement;
-        if (titleEl) {
-            const statusTitles: Record<SubmitStatus, string> = {
-                [SubmitStatus.Loading]: this.modularityFrontendFormLang?.statusTitleLoading ?? 'Loading',
-                [SubmitStatus.Success]: this.modularityFrontendFormLang?.statusTitleSucess ?? 'Success',
-                [SubmitStatus.Error]: this.modularityFrontendFormLang?.statusTitleError ?? 'Error',
-                [SubmitStatus.Working]: this.modularityFrontendFormLang?.statusTitleSubmitting ?? 'Submitting'
-            };
-            titleEl.textContent = statusTitles[status as SubmitStatus] ?? '';
         }
     }
 }

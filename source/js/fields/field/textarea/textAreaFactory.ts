@@ -15,7 +15,7 @@ class TextAreaFactory {
         stepId: string
     ): FieldInterface {
         const textarea = field.querySelector(`textarea`) as HTMLTextAreaElement;
-        console.log('TextAreaFactory', field, textarea);
+
         if (!textarea) {
             console.error('TextArea field is missing textarea element');
             return NullFieldFactory.create(field, 'textarea', name, unstructuredConditions, notices, stepId);

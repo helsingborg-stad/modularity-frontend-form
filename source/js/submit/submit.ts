@@ -1,6 +1,6 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
-import SubmitStatus from "../formStatus/enum";
+import {SubmitStatus} from "../formStatus/enum";
 import SubmitInterface from "./submitInterface";
 import Form from "../form/form";
 import FormMode from "../form/formModeEnum";
@@ -41,6 +41,7 @@ class Submit implements SubmitInterface {
      * @returns A promise that resolves when the form is submitted.
      */
     public async submit(): Promise<void> {
+      // this.statusHandler.setCurrentAction();
       // Set the initial status to working
       this.statusHandler.setStatus(
         SubmitStatus.Working,
@@ -126,7 +127,9 @@ class Submit implements SubmitInterface {
             this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
             'celebration',
             100,
-            4000
+            4000,
+            true,
+            false
           );
         }
 
@@ -136,7 +139,9 @@ class Submit implements SubmitInterface {
           this.modularityFrontendFormLang?.submitError ?? "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : ""),
           'error',
           0,
-          4000
+          4000,
+          true,
+          true
         );
       }
     }

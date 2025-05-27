@@ -1,7 +1,7 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
 import StatusHandler from "../formStatus/handler";
 import StatusRenderer from "../formStatus/statusRenderer";
-import SubmitStatus from "../formStatus/enum";
+import {SubmitStatus} from "../formStatus/enum";
 import FormMode from "../form/formModeEnum";  
 import Form from "../form/form";
 import StatusRendererInterface from "../formStatus/renderInterface";
@@ -55,7 +55,6 @@ class FormPopulator {
   public async initialize(): Promise<void> {
 
     // Render the submit status when changed
-    this.statusRenderer.setup();
 
     
     if (this.formParams) {

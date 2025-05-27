@@ -1,4 +1,4 @@
-import SubmitStatus from './enum';
+import {SubmitStatus} from './enum';
 import StatusHandlerInterface from './handlerInterface';
 
 class StatusHandler implements StatusHandlerInterface {
@@ -15,10 +15,19 @@ class StatusHandler implements StatusHandlerInterface {
    * @param status A value from SubmitStatus enum.
    * @param message The status message to display.
    */
-  public setStatus(status: SubmitStatus, message: string, icon: string, progress: number, delay?: number): void {
+  public setStatus(
+    status: SubmitStatus,
+    message: string,
+    icon: string,
+    progress: number,
+    delay: number = 200,
+    showReturn: boolean = false,
+    showTryAgain: boolean = false
+    
+  ): void {
     this.formContainer.dispatchEvent(
       new CustomEvent(
-        'submitStatusChanged', {detail: {status, message, icon, progress, delay}}
+        'submitStatusChanged', {detail: {status, message, icon, progress, delay, showReturn, showTryAgain} as MessageStatus}
       )
     );
   }

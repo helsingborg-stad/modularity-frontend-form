@@ -1,4 +1,4 @@
-import SubmitStatus from './enum';
+import {SubmitStatus} from './enum';
 
 interface StatusHandlerInterface {
   /**

@@ -3,5 +3,7 @@ type MessageStatus = {
     message: string;
     icon: string;
     progress: number;
-    delay: number;
+    delay?: number;
+    showReturn?: boolean;
+    showTryAgain?: boolean;
 }

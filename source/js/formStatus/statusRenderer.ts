@@ -1,14 +1,12 @@
 import StatusRendererInterface from './renderInterface';
 import StatusRendererMessageUI from './statusRendererMessageUI';
 import StatusRendererOverlayUI from './statusRendererOverlayUI';
-import SubmitStatus from './enum';
+import {SubmitStatus} from './enum';
 
 class StatusRenderer implements StatusRendererInterface {
     private messageQueue: MessageStatus[] = [];
     private isProcessing: boolean = false;
-    private isSubmitting: boolean = false;
-    private isLoadingForm: boolean = false;
-    private lastMessageStatus: string|null = null;
+    private latestStatus: MessageStatus|null = null;
 
     constructor(
         private formContainer: HTMLElement,
@@ -37,43 +35,37 @@ class StatusRenderer implements StatusRendererInterface {
      * Process the message queue.
      */
     private processQueue(): void {
-        if (this.messageQueue.length === 0) {
-            this.handleEmptyQueue();
-            return;
+        if (this.messageQueue[0]) {
+            this.latestStatus = this.messageQueue.shift()!;
+            this.isProcessing = true;
         }
 
-        this.isProcessing = true;
-        this.handleMessage(this.messageQueue.shift()!);
+        if (this.isDone()) {
+            this.isProcessing = false;
+        }
+
+        // this.isProcessing = true;
+        // this.latestStatus = this.messageQueue.shift()!;
+        this.handleMessage();
     }
 
     /**
      * Handle the message from the queue.
      * @param message The message status to process.
      */
-    private handleMessage({ status, message, icon, progress, delay }: MessageStatus): void {
-        this.statusRendererOverlayUI.applyStatusClass(status);
-        this.statusRendererMessageUI.updateProgressBar(progress);
-        this.statusRendererMessageUI.updateDescription(message, progress);
-        this.statusRendererMessageUI.updateTitle(status);
-        this.statusRendererMessageUI.updateIcon(icon);
+    private handleMessage(): void {
+        this.statusRendererOverlayUI.applyStatusClass(this.latestStatus!.status);
+        
+        // check showReturn and showTryAgain
+        //add to statusRendererOverlayUI
+        this.statusRendererMessageUI.updateProgressBar(this.latestStatus!.progress);
+        this.statusRendererMessageUI.updateDescription(this.latestStatus!.message, this.latestStatus!.progress);
+        this.statusRendererMessageUI.updateTitle(this.latestStatus!.status);
+        this.statusRendererMessageUI.updateIcon(this.latestStatus!.icon);
 
         setTimeout(() => {
             this.processQueue();
-        }, delay);
-    }
-
-    /**
-     * Handle the case when the queue is empty.
-     * Resets the UI after a delay if no messages are being processed.
-     */
-    private handleEmptyQueue() {
-        console.log('No messages in queue, resetting status.');
-        this.isProcessing = false;
-        setTimeout(() => {
-            if (!this.isProcessing) {
-                this.resetUI();
-            }
-        }, 4000);
+        }, this.latestStatus!.delay);
     }
 
     /**
@@ -83,6 +75,10 @@ class StatusRenderer implements StatusRendererInterface {
     private resetUI(): void {
         this.statusRendererOverlayUI.removeStatusClasses();
         this.statusRendererOverlayUI.hideWorkingOverlay();
+    }
+
+    private isDone(): boolean {
+        return this.latestStatus!.status === SubmitStatus.Success || this.latestStatus!.status === SubmitStatus.Error
     }
 
     /**

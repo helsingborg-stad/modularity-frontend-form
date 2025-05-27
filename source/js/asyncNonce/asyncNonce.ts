@@ -1,5 +1,5 @@
 import StatusHandler from "../formStatus/handler";
-import SubmitStatus from "../formStatus/enum";
+import {SubmitStatus} from "../formStatus/enum";
 import AsyncNonceInterface from "./asyncNonceInterface";
 class AsyncNonce implements AsyncNonceInterface {
 

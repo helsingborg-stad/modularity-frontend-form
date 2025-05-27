@@ -22,6 +22,14 @@ class StatusRendererOverlayUI {
         }, 1000);
     }
 
+    public showReturnButton(): void {
+
+    }
+
+    public showTryAgainButton(): void {
+        
+    }
+
     /**
      * Shows the working element with fade-in animation.
      */

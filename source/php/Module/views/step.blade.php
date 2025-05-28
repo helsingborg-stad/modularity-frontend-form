@@ -7,7 +7,8 @@
         ],
         'classList' => [
             'mod-frontend-form__step-container',
-            $index === 0 ? 'is-editable' : ''
+            $index === 0 ? 'is-editable' : '',
+            $index === 0 ? 'is-active' : ''
         ]
     ])
         @element([
@@ -39,7 +40,10 @@
                 @if($step['description'])
                     @typography([
                         'element' => 'div',
-                        'classList' => ['u-margin__top--1']
+                        'classList' => [
+                            'u-margin__top--1',
+                            'mod-frontend-form__step-header-description'
+                        ]
                     ])
                         {!! $step['description'] !!}
                     @endtypography

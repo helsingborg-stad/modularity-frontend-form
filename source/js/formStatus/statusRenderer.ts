@@ -1,7 +1,6 @@
 import StatusRendererInterface from './renderInterface';
 import StatusRendererMessageUI from './statusRendererMessageUI';
 import StatusRendererOverlayUI from './statusRendererOverlayUI';
-import {SubmitStatus} from './enum';
 
 class StatusRenderer implements StatusRendererInterface {
     private messageQueue: MessageStatus[] = [];
@@ -14,6 +13,12 @@ class StatusRenderer implements StatusRendererInterface {
         private statusRendererOverlayUI: StatusRendererOverlayUI,
         private statusRendererButtonUIHandler: StatusRendererButtonUIHandlerInterface
     ) {}
+
+    public reset() {
+        this.latestStatus = null;
+        this.isProcessing = false;
+        this.messageQueue = [];
+    }
 
     /**
      * Set up the event listener for submit status changes.
@@ -60,30 +65,24 @@ class StatusRenderer implements StatusRendererInterface {
         this.statusRendererMessageUI.updateTitle(this.latestStatus!.status);
         this.statusRendererMessageUI.updateIcon(this.latestStatus!.icon);
 
+        // if hideOverlay is true, remove overlay and reset
+        if (this.latestStatus!.hideOverlay) {
+            this.statusRendererOverlayUI.removeOverlay(this.latestStatus!.delay);
+            this.reset();
+            return;
+        }
+
         setTimeout(() => {
             this.processQueue();
         }, this.latestStatus!.delay);
     }
 
     /**
-     * Resets the UI to its initial state.
-     * Removes all status classes and hides the working element.
-     */
-    private resetUI(): void {
-        this.statusRendererOverlayUI.removeStatusClasses();
-        this.statusRendererOverlayUI.hideWorkingOverlay();
-    }
-
-    private isDone(): boolean {
-        return this.latestStatus!.status === SubmitStatus.Success || this.latestStatus!.status === SubmitStatus.Error
-    }
-
-    /**
      * Handles submit status event: extracts event details, queues, and shows working element if needed.
      */
     private handleStatusEvent(event: Event): void {
-        const { status, message, icon, progress, delay = 200, showReturn = false, showTryAgain = false }: MessageStatus = (event as CustomEvent).detail;
-        this.messageQueue.push({ status, message, icon, progress, delay, showReturn, showTryAgain });
+        const { status, message, icon, progress, delay = 200, showReturn = false, showTryAgain = false, hideOverlay = false }: MessageStatus = (event as CustomEvent).detail;
+        this.messageQueue.push({ status, message, icon, progress, delay, showReturn, showTryAgain, hideOverlay });
         if (!this.isProcessing) {
             this.statusRendererOverlayUI.showWorkingOverlay();
             this.processQueue();

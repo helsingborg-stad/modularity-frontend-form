@@ -6,6 +6,7 @@ type MessageStatus = {
     delay?: number;
     showReturn?: boolean;
     showTryAgain?: FormActionInterface|false;
+    hideOverlay?: boolean;
 }
 
 interface StatusRendererButtonUIHandlerInterface {

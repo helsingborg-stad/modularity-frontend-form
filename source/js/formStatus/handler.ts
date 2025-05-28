@@ -22,12 +22,13 @@ class StatusHandler implements StatusHandlerInterface {
     progress: number,
     delay: number = 200,
     showReturn: boolean = false,
-    showTryAgain: FormActionInterface|false = false
+    showTryAgain: FormActionInterface|false = false,
+    hideOverlay: boolean = false
     
   ): void {
     this.formContainer.dispatchEvent(
       new CustomEvent(
-        'submitStatusChanged', {detail: {status, message, icon, progress, delay, showReturn, showTryAgain} as MessageStatus}
+        'submitStatusChanged', {detail: {status, message, icon, progress, delay, showReturn, showTryAgain, hideOverlay} as MessageStatus}
       )
     );
   }

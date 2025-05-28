@@ -52,6 +52,13 @@ $color-danger: var(--color-danger, #d73740) !default;
     &.is-editable .mod-frontend-form__step-header-edit {
         display: flex;
     }
+
+    &:not(.is-active) {
+        .mod-frontend-form__step-header-description {
+            mask-image: linear-gradient(180deg,#000 0,#000 10%,#0000);
+            max-height: 4.25em;
+        }
+    }
 }
 
 .mod-frontend-form__step-header-title {

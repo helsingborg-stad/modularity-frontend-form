@@ -78,9 +78,9 @@
                 'u-display--none'
             ],
             'attributeList' => [
-                'data-js-frontend-form-working-try-again-button' => 'true'
+                'data-js-frontend-form-working-return-button' => 'true'
             ],
-            'text' => $lang->tryAgain ?? 'Try again'
+            'text' => $lang->return ?? 'Return'
         ])
         @endbutton
         @button([
@@ -91,9 +91,9 @@
                 'u-display--none'
             ],
             'attributeList' => [
-                'data-js-frontend-form-working-return-button' => 'true'
+                'data-js-frontend-form-working-try-again-button' => 'true'
             ],
-            'text' => $lang->return ?? 'Return'
+            'text' => $lang->tryAgain ?? 'Try again'
         ])
         @endbutton
     @endelement

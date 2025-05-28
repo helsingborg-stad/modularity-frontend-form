@@ -22,7 +22,7 @@ class StepsFactory {
         );
     });
 
-    return steps;
+        return steps;
     }
 }
 

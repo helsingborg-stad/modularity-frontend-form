@@ -18,6 +18,7 @@ class Submit implements SubmitInterface {
     }
 
     public retry(): void {
+        this.statusRenderer.reset();
         this.submit();
     }
 

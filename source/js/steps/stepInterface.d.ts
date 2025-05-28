@@ -27,6 +27,8 @@ interface StepUIManagerInterface {
     updateButtonStates(activeStep: number, previousActiveStep: number): void;
     canEditStep(step: StepInterface): void;
     handleInvalidStep(step: StepInterface, isInvalid: boolean): void;
+    addActiveClass(step: StepInterface): void;
+    removeActiveClass(step: StepInterface): void;
 }
 
 type StepsObject = { [key: number]: StepInterface }

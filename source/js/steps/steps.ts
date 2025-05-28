@@ -28,6 +28,8 @@ class Steps implements StepsInterface {
 
                 if (nextStep) {
                     nextStep.showStepAndHidePrevious(prevStep);
+                    this.stepUIManager.addActiveClass(nextStep);
+                    this.stepUIManager.removeActiveClass(prevStep);
                     this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
                 }
             })
@@ -50,6 +52,8 @@ class Steps implements StepsInterface {
 
             if (nextStep) {
                 nextStep.showStepAndHidePrevious(prevStep);
+                this.stepUIManager.addActiveClass(nextStep);
+                this.stepUIManager.removeActiveClass(prevStep);
                 this.stepUIManager.canEditStep(nextStep);
                 this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
             }
@@ -64,6 +68,8 @@ class Steps implements StepsInterface {
             const nextStep = this.stepNavigator.goPrevious();
 
             if (nextStep) {
+                this.stepUIManager.removeActiveClass(prevStep);
+                this.stepUIManager.addActiveClass(nextStep);
                 nextStep.showStepAndHidePrevious(prevStep);
                 this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
             }

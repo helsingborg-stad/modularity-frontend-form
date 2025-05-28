@@ -76,6 +76,24 @@ class StepUIManager implements StepUIManagerInterface {
         step.getStepContainer().offsetWidth;
         step.getStepContainer().classList.add(this.animateErrorClass);
     }
+
+    /**
+     * Removes the error indicator from the step.
+     * 
+     * @param step The step to remove the error indicator from
+     */
+    public removeActiveClass(step: StepInterface): void {
+        step.getStepContainer().classList.remove('is-active');
+    }
+
+    /**
+     * Adds the active class to the step.
+     * 
+     * @param step The step to add the active class to
+     */
+    public addActiveClass(step: StepInterface): void {
+        step.getStepContainer().classList.add('is-active');
+    }
 }
 
 export default StepUIManager;

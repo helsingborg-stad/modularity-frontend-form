@@ -1,4 +1,5 @@
 import StatusRenderer from "./statusRenderer";
+import StatusRendererButtonUIHandler from "./statusRendererButtonUIHandler";
 import StatusRendererMessageUI from "./statusRendererMessageUI";
 import StatusRendererOverlayUI from "./statusRendererOverlayUI";
 
@@ -8,10 +9,12 @@ class StatusRendererFactory {
         const statusTitle = formContainer.querySelector('[data-js-frontend-form-working__title]') as HTMLElement;
         const description = formContainer.querySelector('[data-js-frontend-form-working__description]') as HTMLElement;
         const progressbar = formContainer.querySelector('[data-js-frontend-form-working__progress] .c-progressbar__value') as HTMLElement;
+        const tryAgainButton = formContainer.querySelector('[data-js-frontend-form-working-try-again-button]') as HTMLElement;
+        const returnButton = formContainer.querySelector('[data-js-frontend-form-working-return-button]') as HTMLElement;
 
         const workingOverlay = formContainer.querySelector('[data-js-frontend-form-working]') as HTMLElement;
 
-        if (!statusIcon || !statusTitle || !description || !progressbar || !workingOverlay) {
+        if (!statusIcon || !statusTitle || !description || !progressbar || !workingOverlay || !tryAgainButton || !returnButton) {
             console.error("Not all status elements were found the form container.");
             return null;
         }
@@ -28,6 +31,10 @@ class StatusRendererFactory {
             new StatusRendererOverlayUI(
                 formContainer,
                 workingOverlay
+            ),
+            new StatusRendererButtonUIHandler(
+                returnButton,
+                tryAgainButton
             )
         ).setup();
     }

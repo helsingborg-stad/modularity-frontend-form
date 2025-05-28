@@ -22,7 +22,7 @@ class StatusHandler implements StatusHandlerInterface {
     progress: number,
     delay: number = 200,
     showReturn: boolean = false,
-    showTryAgain: boolean = false
+    showTryAgain: FormActionInterface|false = false
     
   ): void {
     this.formContainer.dispatchEvent(

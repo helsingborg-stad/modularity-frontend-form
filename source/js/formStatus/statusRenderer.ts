@@ -11,7 +11,8 @@ class StatusRenderer implements StatusRendererInterface {
     constructor(
         private formContainer: HTMLElement,
         private statusRendererMessageUI: StatusRendererMessageUI,
-        private statusRendererOverlayUI: StatusRendererOverlayUI
+        private statusRendererOverlayUI: StatusRendererOverlayUI,
+        private statusRendererButtonUIHandler: StatusRendererButtonUIHandlerInterface
     ) {}
 
     /**
@@ -40,12 +41,6 @@ class StatusRenderer implements StatusRendererInterface {
             this.isProcessing = true;
         }
 
-        if (this.isDone()) {
-            this.isProcessing = false;
-        }
-
-        // this.isProcessing = true;
-        // this.latestStatus = this.messageQueue.shift()!;
         this.handleMessage();
     }
 
@@ -58,6 +53,8 @@ class StatusRenderer implements StatusRendererInterface {
         
         // check showReturn and showTryAgain
         //add to statusRendererOverlayUI
+        this.statusRendererButtonUIHandler.toggleReturnButton(this.latestStatus!.showReturn);
+        this.statusRendererButtonUIHandler.toggleTryAgainButton(this.latestStatus!.showTryAgain);
         this.statusRendererMessageUI.updateProgressBar(this.latestStatus!.progress);
         this.statusRendererMessageUI.updateDescription(this.latestStatus!.message, this.latestStatus!.progress);
         this.statusRendererMessageUI.updateTitle(this.latestStatus!.status);
@@ -85,8 +82,8 @@ class StatusRenderer implements StatusRendererInterface {
      * Handles submit status event: extracts event details, queues, and shows working element if needed.
      */
     private handleStatusEvent(event: Event): void {
-        const { status, message, icon, progress, delay = 200 }: MessageStatus = (event as CustomEvent).detail;
-        this.messageQueue.push({ status, message, icon, progress, delay });
+        const { status, message, icon, progress, delay = 200, showReturn = false, showTryAgain = false }: MessageStatus = (event as CustomEvent).detail;
+        this.messageQueue.push({ status, message, icon, progress, delay, showReturn, showTryAgain });
         if (!this.isProcessing) {
             this.statusRendererOverlayUI.showWorkingOverlay();
             this.processQueue();

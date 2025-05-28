@@ -5,5 +5,11 @@ type MessageStatus = {
     progress: number;
     delay?: number;
     showReturn?: boolean;
-    showTryAgain?: boolean;
+    showTryAgain?: FormActionInterface|false;
+}
+
+interface StatusRendererButtonUIHandlerInterface {
+    setup(): this;
+    toggleReturnButton(shouldShow?: boolean): void;
+    toggleTryAgainButton(shouldShow?: FormActionInterface|false): void;
 }

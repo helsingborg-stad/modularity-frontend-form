@@ -1,14 +1,11 @@
-class StatusRendererButtonUIHandlerInterface implements StatusRendererButtonUIHandlerInterface {
+class StatusRendererButtonUIHandler implements StatusRendererButtonUIHandlerInterface {
     private tryAgainOnclick: FormActionInterface|false = false;
     constructor(
         private returnButton: HTMLElement,
         private tryAgainButton: HTMLElement
-    ) {}
-
-    public setup(): this {
-        this.returnToFormListener();
+    ) {
         this.tryAgainListener();
-        return this;
+        this.returnToFormListener();
     }
 
     public toggleReturnButton(shouldShow: boolean = false): void {
@@ -38,4 +35,4 @@ class StatusRendererButtonUIHandlerInterface implements StatusRendererButtonUIHa
     }
 }
 
-export default StatusRendererButtonUIHandlerInterface;
+export default StatusRendererButtonUIHandler;

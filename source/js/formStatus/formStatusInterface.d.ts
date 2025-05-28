@@ -9,7 +9,6 @@ type MessageStatus = {
 }
 
 interface StatusRendererButtonUIHandlerInterface {
-    setup(): this;
     toggleReturnButton(shouldShow?: boolean): void;
     toggleTryAgainButton(shouldShow?: FormActionInterface|false): void;
 }

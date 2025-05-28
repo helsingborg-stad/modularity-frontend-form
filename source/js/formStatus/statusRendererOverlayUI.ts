@@ -9,25 +9,13 @@ class StatusRendererOverlayUI {
         private formContainer: HTMLElement,
         private workingOverlay: HTMLElement
     ) {
-
     }
 
-    /**
-     * Hides the working element with fade-out animation.
-     */
-    public hideWorkingOverlay(): void {
-        this.workingOverlay.style.opacity = '0';
+    public removeOverlay(delay: number = 0): void {
         setTimeout(() => {
             this.workingOverlay.classList.add('u-display--none');
-        }, 1000);
-    }
-
-    public showReturnButton(): void {
-
-    }
-
-    public showTryAgainButton(): void {
-        
+            this.removeStatusClasses();
+        }, delay);
     }
 
     /**

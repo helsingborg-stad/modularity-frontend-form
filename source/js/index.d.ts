@@ -1,0 +1,3 @@
+interface FormActionInterface {
+    retry(): void;
+}

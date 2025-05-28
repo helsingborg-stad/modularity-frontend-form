@@ -79,9 +79,9 @@
             ],
             'attributeList' => [
                 'data-js-frontend-form-working-try-again-button' => 'true'
-            ]
+            ],
+            'text' => $lang->tryAgain ?? 'Try again'
         ])
-            {{ $lang->tryAgain ?? 'Try again' }}
         @endbutton
         @button([
             'style' => 'filled',
@@ -92,9 +92,9 @@
             ],
             'attributeList' => [
                 'data-js-frontend-form-working-return-button' => 'true'
-            ]
+            ],
+            'text' => $lang->return ?? 'Return'
         ])
-            {{ $lang->return ?? 'Return' }}
         @endbutton
     @endelement
 @endelement

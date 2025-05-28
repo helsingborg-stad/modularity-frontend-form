@@ -14,7 +14,7 @@ interface FormParams {
   token: Token32;
 }
 
-class FormPopulator {
+class FormPopulator implements FormActionInterface {
   private formParams: FormParams | null = null;
 
   constructor(
@@ -26,6 +26,11 @@ class FormPopulator {
     private statusRenderer: StatusRendererInterface,
   ) {
     this.formParams = this.extractParamsFromUrl();
+  }
+
+  retry(): void {
+    this.statusRenderer.reset();
+    this.initialize();
   }
 
   /**
@@ -92,7 +97,9 @@ class FormPopulator {
         "Could not find url.",
         'file_open',
         100,
-        2000
+        2000,
+        true,
+        this
       );
       return null;
     }
@@ -124,7 +131,9 @@ class FormPopulator {
           json.message ?? this.modularityFrontendFormLang?.communicationError ?? "Communication error.",
           'vpn_key_alert',
           0,
-          10000
+          10000,
+          true,
+          this
         );
         return null;
       }
@@ -145,7 +154,9 @@ class FormPopulator {
         this.modularityFrontendFormLang?.communicationError ?? "Communication error.",
         'link_off',
         0,
-        10000
+        10000,
+        true,
+        this
       );
       return null;
     }

@@ -57,7 +57,6 @@ class FormHandler {
         }
 
         const fieldsInitiatorInstance = new FieldsInitiator();
-        console.log(stepsObject)
         const builder = this.createBuilder(fieldsInitiatorInstance);
         const conditionBuilder = new ConditionBuilder(builder);
         stepValidator.init(builder);

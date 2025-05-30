@@ -14,16 +14,18 @@ class RowBuilder implements RowBuilderInterface {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = rowHtml;
         const row = tempDiv.firstElementChild as HTMLElement;
+        
+        this.templateContainer.appendChild(row);
+
+        requestAnimationFrame(() => {
+            row.style.maxHeight = !includeRemoveRowButton ? 'unset' : (row.scrollHeight + 48) + 'px';
+        });
 
         if (!includeRemoveRowButton) {
             row.classList.add('no-remove');
+            row.classList.add('animate-show');
         }
-      
-        this.templateContainer.appendChild(row);
-        requestAnimationFrame(() => {
-            row.style.maxHeight = (row.scrollHeight + 48) + 'px';
-        });
-
+        
         row.addEventListener('transitionend', () => {
             row.classList.add('animate-show');
             row.style.maxHeight = 'unset';

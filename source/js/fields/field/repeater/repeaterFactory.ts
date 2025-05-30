@@ -29,7 +29,6 @@ class RepeaterFactory {
             return NullFieldFactory.create(field, 'repeater', name, unstructuredConditions, notices, stepId);
         }
 
-        // TODO: Need to add validators to check if repeater is empty/required
         return new Repeater(
             field,
             name,

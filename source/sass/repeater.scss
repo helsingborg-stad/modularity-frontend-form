@@ -1,4 +1,4 @@
-$border-radius: calc(var(--base, 8px) * var(--c-field-border-radius, 0.25));
+@use "./variables.scss" as *;
 
 .mod-frontend-form__repeater-container {
     display: flex;

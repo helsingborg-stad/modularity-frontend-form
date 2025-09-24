@@ -1,0 +1,5 @@
+$color-primary: var(--color-primary, #ae0b05) !default;
+$color-primary-contrasting: var(--color-primary-contrasting, #ffffff) !default;
+$color-danger: var(--color-danger, #d73740) !default;
+
+$border-radius: calc(var(--base, 8px) * var(--c-field-border-radius, 0.25));

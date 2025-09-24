@@ -230,6 +230,10 @@ class FrontendForm extends \Modularity\Module
             $this->cacheBust->name('js-init.js')
         );
 
+        $this->addAttributesToScriptTag($this->getScriptHandle(), [
+            'type' => 'module'
+        ]);
+
         // Language strings
         $this->wpService->wpLocalizeScript(
             $this->getScriptHandle(),
@@ -299,6 +303,24 @@ class FrontendForm extends \Modularity\Module
                 $this->formTokenQueryParam
             ]
         );
+    }
+
+    /**
+     * Add attributes to the script tag for a given handle.
+     *
+     * @param string $handle The handle of the script to modify.
+     * @param array $attributes Key-value pairs of attributes to add to the script tag.
+     * @return void
+     */
+    private function addAttributesToScriptTag(string $handle, array $attributes): void {
+        $this->wpService->addFilter('script_loader_tag', function($tag, $tag_handle) use ($handle, $attributes) {
+            if ($tag_handle === $handle) {
+                foreach ($attributes as $key => $value) {
+                    $tag = str_replace(' src=', sprintf(' %s="%s" src=', esc_attr($key), esc_attr($value)), $tag);
+                }
+            }
+            return $tag;
+        }, 10, 2);
     }
 
     /**

@@ -15,6 +15,7 @@ import NumberFactory from "./field/number/numberFactory";
 import ImageFactory from "./field/image/imageFactory";
 import TrueFalseFactory from "./field/trueFalse/trueFalseFactory";
 import TextAreaFactory from "./field/textarea/textAreaFactory";
+import GalleryFactory from "./field/gallery/galleryFactory";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -40,6 +41,15 @@ class FieldBuilder implements FieldBuilderInterface {
         switch (type) {
             case 'image':
                 fieldInstance = ImageFactory.create(
+                    field,
+                    this.getFieldName(field),
+                    this.getFieldCondition(field),
+                    this.notices,
+                    stepId
+                );
+                break;
+            case 'gallery':
+                fieldInstance = GalleryFactory.create(
                     field,
                     this.getFieldName(field),
                     this.getFieldCondition(field),

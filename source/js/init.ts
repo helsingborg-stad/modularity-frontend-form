@@ -32,7 +32,6 @@ class FormHandler {
             this.formElement,
             FormMode.Post
         );
-
         this.init();
     }
 
@@ -146,6 +145,7 @@ class FormHandler {
         return steps;
     }
 
+    // TODO: add loader removal functionality
     private removeLoader(): void {
 
     }

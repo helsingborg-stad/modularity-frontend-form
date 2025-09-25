@@ -23,6 +23,7 @@ use ModularityFrontendForm\FieldMapping\Mapper\RepeaterFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\TimePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\DatePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\ButtonGroupFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\GalleryFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\GoogleMapFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\TaxonomyFieldMapper;
 
@@ -60,6 +61,7 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
         'button_group'  => ButtonGroupFieldMapper::class,
         'google_map'    => GoogleMapFieldMapper::class,
         'taxonomy'      => TaxonomyFieldMapper::class,
+        'gallery'       => GalleryFieldMapper::class
     ];
 
     /**

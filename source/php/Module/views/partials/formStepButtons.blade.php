@@ -3,20 +3,22 @@
         'mod-frontend-form__step-buttons'
     ]
 ])
-    @button([
-        'style' => 'filled',
-        'color' => 'default',
-        'icon' => 'arrow_back_ios',
-        'reversePositions' => true,
-        'attributeList' => [
-            'data-js-frontend-form-previous-step' => 'true'
-        ],
-        'classList' => [
-            'u-visibility--hidden'
-        ],
-        'text' => $lang->previous,
-    ])
-    @endbutton
+    @if ($stepsCount > 1)
+        @button([
+            'style' => 'filled',
+            'color' => 'default',
+            'icon' => 'arrow_back_ios',
+            'reversePositions' => true,
+            'attributeList' => [
+                'data-js-frontend-form-previous-step' => 'true'
+            ],
+            'classList' => [
+                'u-visibility--hidden'
+            ],
+            'text' => $lang->previous,
+        ])
+        @endbutton
+    @endif
     @button([
         'style' => 'filled',
         'color' => 'primary',

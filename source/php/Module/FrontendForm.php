@@ -206,7 +206,7 @@ class FrontendForm extends \Modularity\Module
         $this->wpService->wpRegisterStyle(
             $this->getScriptHandle(),
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
-            $this->cacheBust->name('css-main.css')
+            $this->cacheBust->name('css/main.css')
         );
 
         $this->wpService->wpEnqueueStyle($this->getScriptHandle());

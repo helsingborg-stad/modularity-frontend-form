@@ -94,6 +94,7 @@
                 $index === 0 ? 'is-visible' : ''
             ]
         ])
+            <!-- Step Fields -->
             @foreach($step['fields'] as $field)
                 @if (isset($field['view']))  
                     @includeIf('fields.' . $field['view'], ['field' => $field])

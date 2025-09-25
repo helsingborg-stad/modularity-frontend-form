@@ -19,6 +19,8 @@ class ImageFieldMapper implements FieldMapperInterface
             $mapped['accept'] = !empty($this->field['mime_types'])
                 ? str_replace(' ', ',', $this->field['mime_types'])
                 : 'image/*';
+
+            $mapped['maxSize'] = $this->fields['max_size'] ?? null;
         }
 
         return $mapped ?? null;

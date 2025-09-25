@@ -14,6 +14,7 @@ class GalleryFieldMapper implements FieldMapperInterface
     public function map(): ?array
     {
         $mapped = (new BasicFieldMapper($this->field, 'gallery'))->map();
+
         if (is_array($mapped)) {
             $mapped['accept'] = !empty($this->field['mime_types'])
                 ? str_replace(' ', ',', $this->field['mime_types'])

@@ -1,5 +1,2 @@
-@imageinput([
-    'accept' => 'image/*',
-    'name' => 'images',
-])
+@imageinput($field)
 @endimageinput

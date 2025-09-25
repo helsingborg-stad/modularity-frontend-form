@@ -12,8 +12,7 @@
             'data-js-frontend-form-previous-step' => 'true'
         ],
         'classList' => [
-            'u-visibility--hidden',
-            $stepsCount === 1 ? 'u-display--none' : ''
+            'u-visibility--hidden'
         ],
         'text' => $lang->previous,
     ])

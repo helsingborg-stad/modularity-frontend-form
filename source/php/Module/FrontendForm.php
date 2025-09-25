@@ -19,12 +19,14 @@ use WpService\Contracts\IsUserLoggedIn;
 use WpService\Contracts\GetQueryVar;
 use WpService\Contracts\GetPostType;
 use WpService\Contracts\GetPostTypeObject;
+use WpService\Contracts\WpRegisterScript;
+use WpService\Contracts\WpEnqueueScript;
+use WpService\Contracts\WpRegisterStyle;
 use WpService\Contracts\GetPermalink;
 use WpService\Contracts\GetPostMeta;
 use WpService\Contracts\UpdatePostMeta;
 use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
-use AcfService\Contracts\AcfGetFields;
 use ModularityFrontendForm\Module\FormatSteps;
 use ModularityFrontendForm\Config\Config;
 
@@ -50,7 +52,7 @@ class FrontendForm extends \Modularity\Module
     private $formIdQueryParam    = 'formid'; // The query parameter for the form id.
     private $formTokenQueryParam = 'token';  // The query parameter for the form token.
 
-    private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl $wpService;
+    private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl&WpRegisterScript&WpRegisterStyle&WpEnqueueScript $wpService;
     private AcfService $acfService;
 
     private FormatSteps $formatSteps;
@@ -222,18 +224,17 @@ class FrontendForm extends \Modularity\Module
         if (!$this->hasModule()) {
             return;
         }
-
         // Register the script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle(),
             MODULARITYFRONTENDFORM_URL . '/dist/' . 
-            $this->cacheBust->name('js-init.js')
+            $this->cacheBust->name('js/init.js')
         );
 
         $this->addAttributesToScriptTag($this->getScriptHandle(), [
             'type' => 'module'
         ]);
-
+        
         // Language strings
         $this->wpService->wpLocalizeScript(
             $this->getScriptHandle(),

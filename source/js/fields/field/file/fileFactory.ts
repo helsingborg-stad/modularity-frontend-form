@@ -15,7 +15,7 @@ class FileFactory {
         stepId: string
     ): FieldInterface {
         const input = field.querySelector('input[type="file"]') as HTMLInputElement;
-        console.log("HELLO")
+
         if (!input) {
             console.error('Input field is not an input element with type "file"');
             return NullFieldFactory.create(field, 'file', name, unstructuredConditions, notices, stepId);

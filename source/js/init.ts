@@ -61,12 +61,9 @@ class FormHandler {
         const conditionBuilder = new ConditionBuilder(builder);
         stepValidator.init(builder);
         fieldsInitiatorInstance.init(builder);
-        // Removes loader after fields are initialized
-        // TODO: Do we need a loader? Or should we just show the fields as soon as they are ready?
-        stepsObject[0].getStepContainer().classList.remove('is-loading');
         this.setupFields(stepsObject, builder, conditionBuilder);
         fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
-        // TODO: should this run earlier?
+        this.removeLoader(stepsObject);
         this.setupFormPopulator(statusRenderer);
     }
 
@@ -146,8 +143,9 @@ class FormHandler {
         return steps;
     }
 
-    private removeLoader(): void {
-
+    private removeLoader(stepsObject: StepsObject): void {
+        stepsObject[0].getStepContainer().classList.remove('is-loading');
+        this.formContainer.querySelector('.mod-frontend-form__step-loader')?.remove();
     }
 }
 

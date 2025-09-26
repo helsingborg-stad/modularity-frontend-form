@@ -18,8 +18,8 @@ class SelectFieldMapper implements FieldMapperInterface
         if (is_array($mapped)) {
             $mapped['options']     = $this->field['choices'] ?: [];
             $mapped['preselected'] = $this->field['default_value'] ?? null;
-            $mapped['placeholder'] = $this->field['placeholder']  ?: '';
-            $mapped['multiple']    = $this->field['multiple'] ?: false;
+            $mapped['placeholder'] = $this->field['placeholder']  ?? '';
+            $mapped['multiple']    = $this->field['multiple'] ?? false;
         }
 
         return $mapped ?? null;

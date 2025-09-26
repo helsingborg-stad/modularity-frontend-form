@@ -32,7 +32,6 @@ class FormHandler {
             this.formElement,
             FormMode.Post
         );
-
         this.init();
     }
 

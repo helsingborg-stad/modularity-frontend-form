@@ -5,12 +5,6 @@ namespace ModularityFrontendForm;
 use AcfService\AcfService;
 use WpService\WpService;
 
-use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
-use ModularityFrontendForm\Api\Submit\Post;
-use ModularityFrontendForm\Api\Submit\Update;
-use ModularityFrontendForm\Api\Read\Get;
-use ModularityFrontendForm\Config\Config;
-
 use \Modularity\HooksRegistrar\Hookable;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
@@ -19,14 +13,15 @@ use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
  * Class App
  * @package ModularityFrontendForm
  */
-class App implements \Modularity\HooksRegistrar\Hookable {
+class App implements Hookable {
 
     public function __construct(
         private WpService $wpService, 
         private AcfService $acfService, 
         private ConfigInterface $config, 
         private ModuleConfigFactoryInterface $moduleConfigFactory
-    ){}
+    ){
+    }
 
     /**
      * Add hooks to WordPress
@@ -35,6 +30,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
     public function addHooks(): void
     {
         $this->wpService->addAction('plugins_loaded', array($this, 'registerModule'));
+        $this->wpService->addAction('init', array($this, 'registerFieldsPostType'));
 
         //Register the API routes
         foreach (['rest_api_init','init'] as $action) {
@@ -62,6 +58,26 @@ class App implements \Modularity\HooksRegistrar\Hookable {
         } else {
             throw new \Exception('Modularity is not active: frontend form module cannot be registered.');
         }
+    }
+
+    /**
+     * Register the post type
+     * @return void
+     */
+    public function registerFieldsPostType()
+    {
+        $this->wpService->registerPostType('frontend_form_fields', [
+            'labels' => [
+                'name'          => __('Frontend form fields', 'modularity-frontend-form'),
+                'singular_name' => __('Frontend form fields', 'modularity-frontend-form'),
+                'menu_name'     => __('Form fields', 'modularity-frontend-form'),
+            ],
+            'public'        => false,
+            'show_ui'       => true,
+            'show_in_menu'  => false,
+            'menu_icon'     => 'dashicons-feedback',
+            'supports'      => ['title'],
+        ]);
     }
 
     /**

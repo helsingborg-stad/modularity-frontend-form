@@ -2,15 +2,24 @@
 
 namespace ModularityFrontendForm\FieldMapping\Mapper;
 
-use ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
+use ModularityFrontendForm\FieldMapping\Mapper\CheckboxFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\SelectFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\RadioFieldMapper;
 
 class TaxonomyFieldMapper implements FieldMapperInterface
 {
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
+
+    private array $mapClasses = [
+        'checkbox'     => CheckboxFieldMapper::class,
+        'radio'        => RadioFieldMapper::class,
+        'select'       => SelectFieldMapper::class,
+        'multi_select' => SelectFieldMapper::class,
+    ];
 
     public function map(): ?array
     {
@@ -18,9 +27,14 @@ class TaxonomyFieldMapper implements FieldMapperInterface
             $this->getTermsFromTaxonomy($this->field)
         );
 
-        $this->field['type'] = $this->field['field_type'] ?? 'checkbox';
+        $type   = $this->field['field_type'] ?? 'select';
+        $mapper = $this->mapClasses[$type] ?? SelectFieldMapper::class;
 
-        return (new Mapper($this->field, $this->wpService))->map();
+        if ($type === 'multi_select') {
+            $this->field['multiple'] = true;
+        }
+
+        return (new $mapper($this->field, $this->wpService, $this->lang))->map();
     }
 
     /**

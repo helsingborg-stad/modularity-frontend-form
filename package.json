@@ -53,5 +53,6 @@
     },
     "dependencies": {
         "vite-config-factory": "^1.0.1"
-    }
+    },
+    "version": "0.51.1"
 }

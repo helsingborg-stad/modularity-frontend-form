@@ -28,9 +28,7 @@ class FormatSteps {
     {
         $formattedSteps = [];
         foreach ($steps as $key => $step) {
-            $formattedSteps[$key]['title'] = !empty($step['formStepIncludesPostTitle']) ?
-                ($step['formStepTitle'] ?? null) :
-                null;
+            $formattedSteps[$key]['title'] = $step['formStepTitle'] ?? null;
             $formattedSteps[$key]['description'] = $step['formStepContent'] ?? null;
             $formattedSteps[$key]['fields'] = $this->formatStep($step);
         }

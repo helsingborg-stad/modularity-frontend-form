@@ -18,7 +18,7 @@ class TrueFalseFieldMapper implements FieldMapperInterface
             1 => $this->wpService->__('Yes', 'modularity-frontend-form'),
         ];
 
-        $mapped = (new RadioFieldMapper($this->field, $this->wpService))->map();
+        $mapped = (new RadioFieldMapper($this->field, $this->wpService, $this->lang))->map();
 
         if (is_array($mapped)) {
             $mapped['attributeList']['style'] = 'display: flex;';

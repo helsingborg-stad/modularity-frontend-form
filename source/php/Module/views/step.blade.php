@@ -3,7 +3,7 @@
         'padding' => 4,
         'attributeList' => [
             'data-js-frontend-form-step-container' => $index,
-            'style' => 'z-index: ' . (1000 - $index) . ';',
+            'style' => 'z-index: ' . (5100 - $index) . ';',
         ],
         'classList' => [
             'mod-frontend-form__step-container',

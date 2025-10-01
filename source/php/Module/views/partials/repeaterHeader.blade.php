@@ -24,7 +24,7 @@
                     'data-js-repeater-row-counter' => 'true'
                 ]
             ])
-                {{ $field['min'] }}
+                {!! "&nbsp;" . (string) $field['min'] !!}
             @endelement
             &nbsp;/&nbsp;
             @element([

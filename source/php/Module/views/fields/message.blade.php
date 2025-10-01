@@ -1,6 +1,6 @@
 @typography([
     'attributeList' => $field['attributeList'],
-    'classList' => $field['classList'] ?? [],
+    'classList' => $field['classList'],
 ])
     {{ $field['message'] }}
 @endtypography

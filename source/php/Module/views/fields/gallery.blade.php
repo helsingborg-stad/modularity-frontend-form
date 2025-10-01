@@ -7,6 +7,6 @@
     'description' => $field['description'],
     'filesMax' => $field['filesMax'],
     'maxSize' => $field['maxSize'],
-    'classList' => $field['classList'] ?? []
+    'classList' => $field['classList'],
 ])
 @endimageinput

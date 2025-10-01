@@ -1,7 +1,8 @@
 @element([
     'componentElement' => 'fieldset',
-    'attributeList' => $field['attributeList'] ?? [],
-    'classList' => $field['classList'] ?? [],
+    'attributeList' => $field['attributeList'],
+    'classList' => $field['classList'],
+    'id' => $field['id'],
 ])
     @if (!empty($field['label']))
         @typography([

@@ -1,7 +1,5 @@
 @element([
-    'classList' => [
-        'openstreetmap'
-    ],
+    'classList' => $field['classList'] ?? [],
     'attributeList' => $field['attributeList'] ?? [],
 ])
     @field([

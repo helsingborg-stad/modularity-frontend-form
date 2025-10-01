@@ -40,6 +40,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
 
             $mapped['attributeList']['data-js-min-rows'] = $mapped['min'];
             $mapped['attributeList']['data-js-max-rows'] = $mapped['max'];
+            $mapped['buttonLabel'] = $this->field['button_label'] ?: $this->lang->newRow;
         }
 
         return $mapped ?? null;

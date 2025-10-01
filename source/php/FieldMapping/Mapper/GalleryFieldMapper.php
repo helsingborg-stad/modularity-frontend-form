@@ -17,11 +17,11 @@ class GalleryFieldMapper implements FieldMapperInterface
 
         if (is_array($mapped)) {
             $mapped['accept'] = !empty($this->field['mime_types'])
-                ? str_replace(' ', ',', $this->field['mime_types'])
-                : 'image/*';
+            ? str_replace(' ', ',', $this->field['mime_types'])
+            : 'image/*';
 
-            $mapped['filesMax'] = $this->fields['max'] ?? 100;
-            $mapped['maxSize'] = $this->fields['max_size'] ?? null;
+            $mapped['filesMax'] = !empty($this->field['max']) ? $this->field['max'] : 50;
+            $mapped['maxSize'] = !empty($this->field['max_size']) ? $this->field['max_size'] : 10;
         }
 
         return $mapped ?? null;

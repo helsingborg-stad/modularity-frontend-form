@@ -2,6 +2,7 @@
     'classList' => [
         'openstreetmap'
     ],
+    'id' => $field['id'],
     'attributeList' => $field['attributeList'] ?? [],
 ])
     @field([

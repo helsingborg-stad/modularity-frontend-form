@@ -1,5 +1,6 @@
 @element([
     'componentElement' => 'fieldset',
+    'id' => $field['id'],
     'attributeList' => $field['attributeList'] ?? [],
 ])
     @if (!empty($field['label']))

@@ -24,6 +24,7 @@
                     'data-js-repeater-row-counter' => 'true'
                 ]
             ])
+                <!-- min -->
                 {{ $field['min'] }}
             @endelement
             &nbsp;/&nbsp;

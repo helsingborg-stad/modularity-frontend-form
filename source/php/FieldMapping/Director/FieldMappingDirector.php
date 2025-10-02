@@ -75,11 +75,9 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
     public function resolveMapper(array $field): FieldMapperInterface
     {
         $type = $field['type'] ?? 'text';
-        $mapperClass = $this->mapperMap[$type];
+        $mapperClass = $this->mapperMap[$type] ?? null;
 
-        if (!is_subclass_of($mapperClass, FieldMapperInterface::class)) {
-            error_log("Invalid mapper class: {$mapperClass}");
-
+        if (empty($mapperClass) || !is_subclass_of($mapperClass, FieldMapperInterface::class)) {
             return new ErrorFieldMapper($field, $this->wpService, $this->lang);
         }
 

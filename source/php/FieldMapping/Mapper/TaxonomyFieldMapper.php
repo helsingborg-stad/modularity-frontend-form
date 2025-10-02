@@ -21,7 +21,7 @@ class TaxonomyFieldMapper implements FieldMapperInterface
         'multi_select' => SelectFieldMapper::class,
     ];
 
-    public function map(): ?array
+    public function map(): array
     {
         $this->field['choices'] = $this->structureTerms(
             $this->getTermsFromTaxonomy($this->field)

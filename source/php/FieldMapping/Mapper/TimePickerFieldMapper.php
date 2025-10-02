@@ -11,7 +11,7 @@ class TimePickerFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
-    public function map(): ?array
+    public function map(): array
     {
         $mapped = (new BasicFieldMapper($this->field, 'time'))->map();
 

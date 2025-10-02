@@ -11,7 +11,7 @@ class ButtonGroupFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
-    public function map(): ?array
+    public function map(): array
     {
         return (new RadioFieldMapper($this->field, $this->wpService, $this->lang))->map();
     }

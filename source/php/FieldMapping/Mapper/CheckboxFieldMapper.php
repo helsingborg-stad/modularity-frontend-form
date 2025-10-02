@@ -11,27 +11,25 @@ class CheckboxFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
-    public function map(): ?array
+    public function map(): array
     {
         $mapped = (new BasicFieldMapper($this->field, 'checkbox'))->map();
 
-        if (is_array($mapped)) {
-            $mapped['choices'] = [];
-            if ($mapped['required']) {
-                $mapped['attributeList']['data-js-required'] = 'true';
-            }
-
-            foreach ($this->field['choices'] as $key => $value) {
-                $mapped['choices'][$key] = [
-                    'type'     => $mapped['type'],
-                    'label'    => $value,
-                    'name'     => $this->field['key'],
-                    'value'    => $key,
-                    'checked'  => in_array($key, $this->field['default_value'] ?? [], true),
-                ];
-            }
+        $mapped['choices'] = [];
+        if ($mapped['required']) {
+            $mapped['attributeList']['data-js-required'] = 'true';
         }
 
-        return $mapped ?? null;
+        foreach ($this->field['choices'] as $key => $value) {
+            $mapped['choices'][$key] = [
+                'type'     => $mapped['type'],
+                'label'    => $value,
+                'name'     => $this->field['key'],
+                'value'    => $key,
+                'checked'  => in_array($key, $this->field['default_value'] ?? [], true),
+            ];
+        }
+
+        return $mapped;
     }
 }

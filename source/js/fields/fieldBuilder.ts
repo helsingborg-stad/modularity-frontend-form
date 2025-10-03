@@ -16,6 +16,7 @@ import ImageFactory from "./field/image/imageFactory";
 import TrueFalseFactory from "./field/trueFalse/trueFalseFactory";
 import TextAreaFactory from "./field/textarea/textAreaFactory";
 import GalleryFactory from "./field/gallery/galleryFactory";
+import WysiwygFactory from "./field/wysiwyg/wysiwygFactory";
 
 class FieldBuilder implements FieldBuilderInterface {
     private name: string = 'data-js-field-name';
@@ -197,6 +198,15 @@ class FieldBuilder implements FieldBuilderInterface {
                     stepId
                 );
                 break;
+            case 'wysiwyg':
+                fieldInstance = WysiwygFactory.create(
+                    field,
+                    this.getFieldName(field),
+                    this.getFieldCondition(field),
+                    this.notices,
+                    stepId
+                )
+                // break;
             default:
                 fieldInstance = NullFieldFactory.create(
                     field,

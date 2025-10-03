@@ -27,6 +27,7 @@ use ModularityFrontendForm\FieldMapping\Mapper\ErrorFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\GalleryFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\GoogleMapFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\TaxonomyFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\WysiwygFieldMapper;
 
 class FieldMappingDirector implements FieldMappingDirectorInterface
 {
@@ -62,7 +63,8 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
         'button_group'  => ButtonGroupFieldMapper::class,
         'google_map'    => GoogleMapFieldMapper::class,
         'taxonomy'      => TaxonomyFieldMapper::class,
-        'gallery'       => GalleryFieldMapper::class
+        'gallery'       => GalleryFieldMapper::class,
+        'wysiwyg'       => WysiwygFieldMapper::class,
     ];
 
     /**

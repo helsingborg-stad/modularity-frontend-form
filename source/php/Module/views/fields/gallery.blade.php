@@ -6,6 +6,7 @@
     'attributeList' => $field['attributeList'],
     'description' => $field['description'],
     'filesMax' => $field['filesMax'],
-    'maxSize' => $field['maxSize']
+    'maxSize' => $field['maxSize'],
+    'classList' => $field['classList'],
 ])
 @endimageinput

@@ -1,5 +1,6 @@
 @element([
-    'attributeList' => $field['attributeList'] ?? []
+    'attributeList' => $field['attributeList'],
+    'classList' => $field['classList'],
 ])
     @foreach ($field['choices'] as $choice)
         @option($choice)

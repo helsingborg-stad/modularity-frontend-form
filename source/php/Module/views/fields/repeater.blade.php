@@ -1,9 +1,7 @@
 @if (!empty($field['fields']))
     @element([
-        'classList' => [
-            'mod-frontend-form__repeater'
-        ],
-        'attributeList' => $field['attributeList'] ?? [],
+        'attributeList' => $field['attributeList'],
+        'classList' => $field['classList'],
     ])
         @include('partials.repeaterHeader')
         @element([

@@ -5,6 +5,7 @@
     'accept'   => $field['accept'],
     'attributeList' => $field['attributeList'],
     'description' => $field['description'],
-    'maxSize' => $field['maxSize']
+    'maxSize' => $field['maxSize'],
+    'classList' => $field['classList'],
 ])
 @endimageinput

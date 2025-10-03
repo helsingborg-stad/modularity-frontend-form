@@ -29,14 +29,25 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             'required'    => $this->field['required'] ?: false,
             'description' => $this->field['instructions'] ?: '',
             'disabled'    => true,
-            'attributeList' => [
-                'data-js-conditional-logic' => $conditionalLogicMapper->map() ?? "{}",
-                'data-js-field' => $this->type,
-                'data-js-field-name' => $this->field['key'],
-            ],
+            'attributeList' => $this->createAttributeList($conditionalLogicMapper),
             'fieldAttributeList' => [
                 'data-js-validation-message-value-missing' => 'This field is required.'
-            ]
+            ],
+            'classList' => explode(' ', $this->field['wrapper']['class'] ?? []),
         ];
+    }
+
+    /**
+     * Create attribute list for field
+     */
+    private function createAttributeList(ConditionalLogicMapper $conditionalLogicMapper): array
+    {
+        $attributeList = [
+            'data-js-conditional-logic' => $conditionalLogicMapper->map() ?? "{}",
+            'data-js-field' => $this->type,
+            'data-js-field-name' => $this->field['key']
+        ];
+
+        return $attributeList;
     }
 }

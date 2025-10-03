@@ -23,6 +23,7 @@ use ModularityFrontendForm\FieldMapping\Mapper\RepeaterFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\TimePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\DatePickerFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\ButtonGroupFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\ErrorFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\GalleryFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\GoogleMapFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\TaxonomyFieldMapper;
@@ -74,10 +75,10 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
     public function resolveMapper(array $field): FieldMapperInterface
     {
         $type = $field['type'] ?? 'text';
-        $mapperClass = $this->mapperMap[$type] ?? TextFieldMapper::class;
+        $mapperClass = $this->mapperMap[$type] ?? null;
 
-        if (!is_subclass_of($mapperClass, FieldMapperInterface::class)) {
-            throw new \RuntimeException("Invalid mapper class: {$mapperClass}");
+        if (empty($mapperClass) || !is_subclass_of($mapperClass, FieldMapperInterface::class)) {
+            return new ErrorFieldMapper($field, $this->wpService, $this->lang);
         }
 
         return $mapperClass::getInstance($field, $this->wpService, $this->lang);

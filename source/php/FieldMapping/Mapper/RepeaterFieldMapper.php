@@ -13,7 +13,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
-    public function map(): ?array
+    public function map(): array
     {
         $subfields = [];
 
@@ -33,17 +33,15 @@ class RepeaterFieldMapper implements FieldMapperInterface
             unset($mapped['required']);
         }
 
-        if (is_array($mapped)) {
-            $mapped['fields'] = $subfields;
-            $mapped['min']    = $this->field['min'] ?: 0;
-            $mapped['max']    = $this->field['max'] ?: 100;
+        $mapped['fields'] = $subfields;
+        $mapped['min']    = $this->field['min'] ?: 0;
+        $mapped['max']    = $this->field['max'] ?: 100;
 
-            $mapped['attributeList']['data-js-min-rows'] = $mapped['min'];
-            $mapped['attributeList']['data-js-max-rows'] = $mapped['max'];
+        $mapped['attributeList']['data-js-min-rows'] = $mapped['min'];
+        $mapped['attributeList']['data-js-max-rows'] = $mapped['max'];
 
-            $mapped['classList'][] = 'mod-frontend-form__repeater';
-        }
+        $mapped['classList'][] = 'mod-frontend-form__repeater';
 
-        return $mapped ?? null;
+        return $mapped;
     }
 }

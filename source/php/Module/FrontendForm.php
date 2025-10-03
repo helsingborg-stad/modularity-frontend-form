@@ -62,7 +62,7 @@ class FrontendForm extends \Modularity\Module
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService   = new NativeAcfService();
         $this->formatSteps  = new FormatSteps(
-            $this->wpService, 
+            $this->wpService,
             $this->acfService,
             new Config($this->wpService, 'modularity-frontend-form'), //TODO: Use a config factory,
             $this->getLang()
@@ -135,7 +135,8 @@ class FrontendForm extends \Modularity\Module
             By submitting this form, you're agreeing to our terms and conditions. 
             You're also consenting to us processing your personal data in line with GDPR regulations, 
             and confirming that you have full rights to use all provided content.
-            EOD, 'modularity-frontend-form'
+            EOD,
+            'modularity-frontend-form'
         );
 
         return (object) [
@@ -154,10 +155,11 @@ class FrontendForm extends \Modularity\Module
             'atLeastOneValueIsRequired' => $this->wpService->__('At least one value is required', 'modularity-frontend-form'),
             'loading'                   => $this->wpService->__('Loading', 'modularity-frontend-form'),
             'newRow'                    => $this->wpService->__('New row', 'modularity-frontend-form'),
+            'followingFieldIsNotSupported' => $this->wpService->__('The following field is not supported', 'modularity-frontend-form'),
 
             // Error Messages for fields
             'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),
-            'errorEmail'               => $this->wpService->__('Please enter a valid email address','modularity-frontend-form'),
+            'errorEmail'               => $this->wpService->__('Please enter a valid email address', 'modularity-frontend-form'),
             'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. https://website.com)', 'modularity-frontend-form'),
             'errorPhone'               => $this->wpService->__('Please enter a valid phone number', 'modularity-frontend-form'),
             'errorDate'                => $this->wpService->__('Please enter a valid date', 'modularity-frontend-form'),
@@ -205,8 +207,8 @@ class FrontendForm extends \Modularity\Module
 
         $this->wpService->wpRegisterStyle(
             $this->getScriptHandle(),
-            MODULARITYFRONTENDFORM_URL . '/dist/' . 
-            $this->cacheBust->name('css/main.css')
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('css/main.css')
         );
 
         $this->wpService->wpEnqueueStyle($this->getScriptHandle());
@@ -227,14 +229,14 @@ class FrontendForm extends \Modularity\Module
         // Register the script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle(),
-            MODULARITYFRONTENDFORM_URL . '/dist/' . 
-            $this->cacheBust->name('js/init.js')
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('js/init.js')
         );
 
         $this->addAttributesToScriptTag($this->getScriptHandle(), [
             'type' => 'module'
         ]);
-        
+
         // Language strings
         $this->wpService->wpLocalizeScript(
             $this->getScriptHandle(),
@@ -265,11 +267,11 @@ class FrontendForm extends \Modularity\Module
     private function getScriptData(): array
     {
         return $this->wpService->applyFilters(
-            'Modularity/Module/FrontendForm/Assets/Data', 
+            'Modularity/Module/FrontendForm/Assets/Data',
             [
                 'placeSearchApiUrl' => $this->wpService->getRestUrl(null, 'placesearch/v1/openstreetmap'),
             ]
-        ); 
+        );
     }
 
     /**
@@ -313,8 +315,9 @@ class FrontendForm extends \Modularity\Module
      * @param array $attributes Key-value pairs of attributes to add to the script tag.
      * @return void
      */
-    private function addAttributesToScriptTag(string $handle, array $attributes): void {
-        $this->wpService->addFilter('script_loader_tag', function($tag, $tag_handle) use ($handle, $attributes) {
+    private function addAttributesToScriptTag(string $handle, array $attributes): void
+    {
+        $this->wpService->addFilter('script_loader_tag', function ($tag, $tag_handle) use ($handle, $attributes) {
             if ($tag_handle === $handle) {
                 foreach ($attributes as $key => $value) {
                     $tag = str_replace(' src=', sprintf(' %s="%s" src=', esc_attr($key), esc_attr($value)), $tag);

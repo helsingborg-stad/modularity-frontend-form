@@ -14,7 +14,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
         return new static($field, $type);
     }
 
-    public function map(): ?array
+    public function map(): array
     {
         $conditionalLogicMapper = new ConditionalLogicMapper(
             $this->field,

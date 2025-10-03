@@ -11,18 +11,16 @@ class NumberFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
-    public function map(): ?array
+    public function map(): array
     {
         $mapped = (new BasicFieldMapper($this->field, 'number'))->map();
 
-        if (is_array($mapped)) {
-            $mapped['placeholder']                         = $this->field['placeholder'] ?: '';
-            $mapped['value']                               = $this->field['default_value'] ?: '';
-            $mapped['moveAttributesListToFieldAttributes'] = false;
-            $mapped['attributeList']['min']                = $this->field['min'] ?? null;
-            $mapped['attributeList']['max']                = $this->field['max'] ?? null;
-        }
+        $mapped['placeholder']                         = $this->field['placeholder'] ?: '';
+        $mapped['value']                               = $this->field['default_value'] ?: '';
+        $mapped['moveAttributesListToFieldAttributes'] = false;
+        $mapped['attributeList']['min']                = $this->field['min'] ?? null;
+        $mapped['attributeList']['max']                = $this->field['max'] ?? null;
 
-        return $mapped ?? null;
+        return $mapped;
     }
 }

@@ -1,5 +1,6 @@
 @use "./variables.scss" as *;
 @use "./repeater.scss";
+@use "./wysiwyg.scss";
 @import "@helsingborg-stad/openstreetmap/dist/main.css";
 
 .mod-frontend-form form {

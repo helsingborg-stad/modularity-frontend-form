@@ -3,7 +3,7 @@ import { exec } from "./defaultActions";
 class ContentArea implements ContentAreaInterface {
     private contentArea!: HTMLElement;
     private formatBlock = 'formatBlock';
-    private defaultParagraphSeparator = 'br';
+    private defaultParagraphSeparator = 'p';
     private defaultParagraphSeparatorString = 'defaultParagraphSeparator';
 
     constructor(private config: EditorConfigInterface) {}

@@ -43,6 +43,10 @@ interface GoogleMapInterface extends FieldInterface {
     getHiddenField(): HTMLInputElement;
 }
 
+interface WysiwygInterface extends FieldInterface {
+    getEditor(): Editor;
+}
+
 interface SelectInterface extends FieldInterface {
     getField(): HTMLSelectElement;
     getOptions(): NodeListOf<HTMLOptionElement>;

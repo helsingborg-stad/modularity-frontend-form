@@ -1,7 +1,7 @@
 import FieldValidator from "../../validation/fieldValidator";
 import Editor from "./editor/editor";
 
-class Wysiwyg implements FieldInterface {
+class Wysiwyg implements WysiwygInterface {
     private required: boolean = false;
 
     constructor(
@@ -14,36 +14,40 @@ class Wysiwyg implements FieldInterface {
     ) {
     }
 
-    init(conditionBuilder: ConditionBuilderInterface): void {
+    public init(conditionBuilder: ConditionBuilderInterface): void {
         this.required = this.getFieldContainer().hasAttribute('data-js-required');
-        throw new Error("Method not implemented.");
+        
     }
 
-    getName(): string {
-        throw new Error("Method not implemented.");
+    public getName(): string {
+        return this.name;
     }
 
-    getFieldContainer(): HTMLElement {
+    public getFieldContainer(): HTMLElement {
         return this.field;
     }
 
-    getConditionsHandler(): ConditionsHandlerInterface {
+    public getConditionsHandler(): ConditionsHandlerInterface {
         return this.conditionsHandler;
     }
 
-    getConditionValidator(): ConditionValidatorInterface {
+    public getConditionValidator(): ConditionValidatorInterface {
         return this.conditionValidator;
     }
 
-    getValidator(): FieldValidatorInterface {
+    public getEditor(): Editor {
+        return this.editor;
+    }
+
+    public getValidator(): FieldValidatorInterface {
         return this.validator;
     }
 
-    isRequired(): boolean {
+    public isRequired(): boolean {
         return this.required;
     }
-    
-    hasValue(): boolean {
+
+    public hasValue(): boolean {
         return this.editor.hasContent();
     }
 }

@@ -30,13 +30,19 @@ export const defaultActions: EditorActions = {
         icon: createIcon('format_h1'),
         title: "Heading 1",
         state: () => queryCommandValue(formatBlock)?.toLowerCase() === "h1",
-        result: () => exec(formatBlock, "<h1>"),
+        result: () => {
+            const current = queryCommandValue(formatBlock)?.toLowerCase();
+            exec(formatBlock, current === "h1" ? "<p>" : "<h1>");
+        },
     },
     heading2: {
         icon: createIcon('format_h2'),
         title: "Heading 2",
         state: () => queryCommandValue(formatBlock)?.toLowerCase() === "h2",
-        result: () => exec(formatBlock, "<h2>"),
+        result: () => {
+            const current = queryCommandValue(formatBlock)?.toLowerCase();
+            exec(formatBlock, current === "h2" ? "<p>" : "<h2>");
+        },
     },
     paragraph: {
         icon: createIcon('format_paragraph'),

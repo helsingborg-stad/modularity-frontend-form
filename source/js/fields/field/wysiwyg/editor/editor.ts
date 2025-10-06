@@ -27,6 +27,16 @@ class Editor {
     public getActionbar(): ActionbarInterface {
         return this.actionbar;
     }
+
+    public getContent(): string {
+        return this.contentArea.getElement().innerHTML;
+    }
+
+    public hasContent(): boolean {
+        const content = this.contentArea.getElement().innerHTML.trim();
+        const isEmpty = !content || content === '<br>' || content === '<div><br></div>';
+        return !isEmpty;
+    }
 }
 
 export default Editor;

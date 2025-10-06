@@ -1,39 +1,50 @@
 import FieldValidator from "../../validation/fieldValidator";
+import Editor from "./editor/editor";
 
 class Wysiwyg implements FieldInterface {
+    private required: boolean = false;
+
     constructor(
         private field: HTMLElement,
         private name: string,
+        private editor: Editor,
         private conditionValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface,
         private validator: FieldValidatorInterface
     ) {
-        console.log(this.field);
     }
 
     init(conditionBuilder: ConditionBuilderInterface): void {
+        this.required = this.getFieldContainer().hasAttribute('data-js-required');
         throw new Error("Method not implemented.");
     }
+
     getName(): string {
         throw new Error("Method not implemented.");
     }
+
     getFieldContainer(): HTMLElement {
-        throw new Error("Method not implemented.");
+        return this.field;
     }
+
     getConditionsHandler(): ConditionsHandlerInterface {
-        throw new Error("Method not implemented.");
+        return this.conditionsHandler;
     }
+
     getConditionValidator(): ConditionValidatorInterface {
-        throw new Error("Method not implemented.");
+        return this.conditionValidator;
     }
+
     getValidator(): FieldValidatorInterface {
-        throw new Error("Method not implemented.");
+        return this.validator;
     }
+
     isRequired(): boolean {
-        throw new Error("Method not implemented.");
+        return this.required;
     }
+    
     hasValue(): boolean {
-        throw new Error("Method not implemented.");
+        return this.editor.hasContent();
     }
 }
 

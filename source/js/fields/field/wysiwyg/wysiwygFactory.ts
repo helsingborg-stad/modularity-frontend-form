@@ -36,6 +36,7 @@ class WysiwygFactory {
         return new Wysiwyg(
             field as HTMLElement,
             name,
+            editor,
             new BasicConditionValidator(),
             new BasicConditionsHandler(unstructuredConditions),
             new FieldValidator(

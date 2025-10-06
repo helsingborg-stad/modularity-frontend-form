@@ -2,12 +2,10 @@ interface EditorConfigInterface {
     getElement(): HTMLElement;
     getClasses(): EditorClasses;
     getEditorActions(): EditorActions;
-    getOnchange(): (html: string) => void;
 }
 
 interface EditorSettings {
     element: HTMLElement;
-    onChange: (html: string) => void;
     actions: EditorConfigActions;
     classes?: EditorConfigClasses;
 }

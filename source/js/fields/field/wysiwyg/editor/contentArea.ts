@@ -35,7 +35,7 @@ class ContentArea implements ContentAreaInterface {
                 this.contentArea.innerHTML = '';
             }
 
-            this.config.getOnchange()(this.contentArea.innerHTML);
+            this.editor.runChangeListeners(this.contentArea.innerHTML);
         });
 
         this.contentArea.addEventListener('keydown', (event: KeyboardEvent) => {

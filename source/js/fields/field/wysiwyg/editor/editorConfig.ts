@@ -21,10 +21,6 @@ class EditorConfig implements EditorConfigInterface {
         return this.actions;
     }
 
-    public getOnchange(): (html: string) => void {
-        return this.settings.onChange;
-    }
-
     private setActions() {
         let actions: EditorActions = {};
         for (const key in this.settings.actions) {

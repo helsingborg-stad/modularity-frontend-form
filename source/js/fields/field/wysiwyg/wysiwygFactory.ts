@@ -20,7 +20,6 @@ class WysiwygFactory {
 
         const editorConfig = new EditorConfig({
             element: field,
-            onChange: (html: string) => {console.log(html)},
             actions: {
                 bold: "bold",
                 italic: "italic",

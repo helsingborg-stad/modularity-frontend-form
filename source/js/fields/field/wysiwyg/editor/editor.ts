@@ -2,9 +2,10 @@ import EditorConfig from "./editorConfig";
 import ContentArea from "./contentArea";
 import Actionbar from "./actionbar";
 
-class Editor implements EditorInterface{
+class Editor implements EditorInterface {
     private contentArea!: ContentAreaInterface;
     private actionbar!: ActionbarInterface;
+    private listeners: ((html: string) => void)[] = [];
     constructor(
         private config: EditorConfig,
     ) {}
@@ -20,8 +21,12 @@ class Editor implements EditorInterface{
         return this;
     }
 
-    public addOnChange(onChange: (html: string) => void): void {
+    public addChangeListeners(listener: (html: string) => void): void {
+        this.listeners.push(listener);
+    }
 
+    public runChangeListeners(html: string): void {
+        this.listeners.forEach((listener) => listener(html));
     }
 
     public getContentArea(): ContentAreaInterface {

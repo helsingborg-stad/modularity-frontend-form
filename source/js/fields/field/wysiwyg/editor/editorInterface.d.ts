@@ -1,6 +1,6 @@
 interface EditorInterface {
     init(): EditorInterface;
-    addOnChange(onChange: (html: string) => void): void;
+    addChangeListeners(listener: (html: string) => void): void;
     getContentArea(): ContentAreaInterface;
     getActionbar(): ActionbarInterface;
     getContent(): string;

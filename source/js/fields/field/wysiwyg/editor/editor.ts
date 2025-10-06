@@ -2,15 +2,15 @@ import EditorConfig from "./editorConfig";
 import ContentArea from "./contentArea";
 import Actionbar from "./actionbar";
 
-class Editor {
+class Editor implements EditorInterface{
     private contentArea!: ContentAreaInterface;
     private actionbar!: ActionbarInterface;
     constructor(
         private config: EditorConfig,
     ) {}
 
-    public init(): Editor {
-        this.contentArea = new ContentArea(this.config);
+    public init(): EditorInterface {
+        this.contentArea = new ContentArea(this.config, this);
         this.actionbar = new Actionbar(this.config, this.contentArea);
         this.actionbar.appendActionbar();
         this.contentArea.appendContentArea();
@@ -18,6 +18,10 @@ class Editor {
         this.actionbar.addActionButtons(this.config.getEditorActions());
 
         return this;
+    }
+
+    public addOnChange(onChange: (html: string) => void): void {
+
     }
 
     public getContentArea(): ContentAreaInterface {

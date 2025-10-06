@@ -1,4 +1,5 @@
 import { exec } from "./defaultActions";
+import Editor from "./editor";
 
 class ContentArea implements ContentAreaInterface {
     private contentArea!: HTMLElement;
@@ -6,7 +7,10 @@ class ContentArea implements ContentAreaInterface {
     private defaultParagraphSeparator = 'p';
     private defaultParagraphSeparatorString = 'defaultParagraphSeparator';
 
-    constructor(private config: EditorConfigInterface) {}
+    constructor(
+        private config: EditorConfigInterface,
+        private editor: Editor
+    ) {}
 
     public getElement(): HTMLElement {
         return this.contentArea;

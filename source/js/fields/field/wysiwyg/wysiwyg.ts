@@ -1,13 +1,10 @@
-import FieldValidator from "../../validation/fieldValidator";
-import Editor from "./editor/editor";
-
 class Wysiwyg implements WysiwygInterface {
     private required: boolean = false;
 
     constructor(
         private field: HTMLElement,
         private name: string,
-        private editor: Editor,
+        private editor: EditorInterface,
         private conditionValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface,
         private validator: FieldValidatorInterface
@@ -16,7 +13,6 @@ class Wysiwyg implements WysiwygInterface {
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.required = this.getFieldContainer().hasAttribute('data-js-required');
-        
     }
 
     public getName(): string {
@@ -35,7 +31,7 @@ class Wysiwyg implements WysiwygInterface {
         return this.conditionValidator;
     }
 
-    public getEditor(): Editor {
+    public getEditor(): EditorInterface {
         return this.editor;
     }
 

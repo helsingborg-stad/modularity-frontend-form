@@ -44,7 +44,7 @@ interface GoogleMapInterface extends FieldInterface {
 }
 
 interface WysiwygInterface extends FieldInterface {
-    getEditor(): Editor;
+    getEditor(): EditorInterface;
 }
 
 interface SelectInterface extends FieldInterface {

@@ -41,9 +41,7 @@ class WysiwygFactory {
             new BasicConditionsHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
-                [
-                    new HtmlValidator()
-                ]
+                []
             )
         );
     }

@@ -206,7 +206,7 @@ class FieldBuilder implements FieldBuilderInterface {
                     this.notices,
                     stepId
                 )
-                // break;
+                break;
             default:
                 fieldInstance = NullFieldFactory.create(
                     field,

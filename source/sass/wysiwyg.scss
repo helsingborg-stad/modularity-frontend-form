@@ -1,0 +1,40 @@
+$primary-color: var(--color-primary, #ae0b05);
+$primary-color-contrasting: var(--color-primary-contrasting, var(--color-white, #ffffff));
+$field-background-color: var(--c-field-background-color, var(--color-form-fields, #f5f5f5));
+$field-border-radius: var(--radius-sm, calc(var(--base, 8px) / 2));
+
+.mod-frontend-form__wysiwyg {
+    .mod-frontend-form__wysiwyg-actionbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+    }
+
+    .mod-frontend-form__wysiwyg-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1 / 1;
+        color: $primary-color-contrasting;
+        background-color: $primary-color;
+        border: none;
+        cursor: pointer;
+        transition: background-color .2s ease-in-out, color .2s ease-in-out, border .2s ease-in-out;
+        border: 2px solid transparent;
+
+        &.mod-frontend-form__wysiwyg-button--selected {
+            background-color: $primary-color-contrasting;
+            color: $primary-color;
+            border-color: $primary-color;
+        }
+    }
+
+    .mod-frontend-form__wysiwyg-content {
+        height: 25rem;
+        background-color: $field-background-color;
+        padding: 1.5rem;
+        margin-top: .5rem;
+        overflow: auto;
+        border-radius: $field-border-radius;
+    }
+}

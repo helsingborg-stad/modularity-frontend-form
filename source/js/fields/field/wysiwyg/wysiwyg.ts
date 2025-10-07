@@ -49,6 +49,10 @@ class Wysiwyg implements WysiwygInterface {
         return this.editor.hasContent();
     }
 
+    public getHiddenField(): HTMLInputElement {
+        return this.hiddenField;
+    }
+
     private addChangeListener(): void {
         this.editor.addChangeListeners((html: string) => {
             this.hiddenField.value = html;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ddadb19bbad98664105cc4eb02de71b4",
+    "content-hash": "3eee4d75b9c52f2b865f9e97f70fcba8",
     "packages": [
         {
             "name": "helsingborg-stad/acfservice",

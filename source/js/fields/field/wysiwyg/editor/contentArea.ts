@@ -6,11 +6,13 @@ class ContentArea implements ContentAreaInterface {
     private formatBlock = "formatBlock";
     private defaultParagraphSeparator = "p";
     private defaultParagraphSeparatorString = "defaultParagraphSeparator";
+    private shouldCleanFontTags = false;
+    private currentCaretPosition: Range | null = null;
 
     constructor(
         private config: EditorConfigInterface,
         private editor: Editor
-    ) {}
+    ) { }
 
     public getElement(): HTMLElement {
         return this.contentArea;
@@ -31,17 +33,14 @@ class ContentArea implements ContentAreaInterface {
         exec(this.defaultParagraphSeparatorString, this.defaultParagraphSeparator);
     }
 
-    /** ----------------------------
-     * Event Handlers
-     * ---------------------------- */
     private handleInput(event: Event): void {
         const el = event.target as HTMLElement;
         const firstChild = el.firstChild;
-        const shouldCleanFont = this.shouldCleanFont(el, firstChild);
 
-        if (shouldCleanFont) {
+        if (this.shouldCleanFontTags) {
             this.cleanFontTags(el);
             this.restoreCaretToEnd(el);
+            this.shouldCleanFontTags = false;
         }
 
         this.ensureParagraphBlock(el, firstChild);
@@ -55,10 +54,6 @@ class ContentArea implements ContentAreaInterface {
         }
     }
 
-    private shouldCleanFont(el: HTMLElement, firstChild: ChildNode | null): boolean {
-        return firstChild !== null || el.innerHTML === "<br>";
-    }
-
     private cleanFontTags(el: HTMLElement): void {
         el.innerHTML = el.innerHTML.replace(/<\/?font[^>]*>/gi, "");
     }
@@ -66,13 +61,21 @@ class ContentArea implements ContentAreaInterface {
     private ensureParagraphBlock(el: HTMLElement, firstChild: ChildNode | null): void {
         if (firstChild && firstChild.nodeType === 3) {
             exec(this.formatBlock, `<${this.defaultParagraphSeparator}>`);
-        } else if (
-            !firstChild ||
-            el.innerHTML === "<br>" ||
-            el.innerHTML === `<${this.defaultParagraphSeparator}><br></${this.defaultParagraphSeparator}>`
-        ) {
+        } else if (this.isBlockEmpty(el)) {
             el.innerHTML = "";
+            this.shouldCleanFontTags = true;
         }
+    }
+
+    private isBlockEmpty(el: HTMLElement): boolean {
+        return !el.firstChild ||
+            el.innerHTML === "<br>" ||
+            el.innerHTML === `<${this.defaultParagraphSeparator}><br></${this.defaultParagraphSeparator}>` ||
+            (
+                el.childNodes.length === 1 &&
+                el.firstChild?.nodeName.toLowerCase() === this.defaultParagraphSeparator &&
+                (el.firstChild as HTMLElement).innerHTML.trim() === "<br>"
+            )
     }
 
     private restoreCaretToEnd(el: HTMLElement): void {

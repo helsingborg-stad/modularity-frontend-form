@@ -57,6 +57,7 @@ class Actionbar implements ActionbarInterface {
         button.innerHTML = actionButton.icon;
         button.title = actionButton.title;
         button.setAttribute('type', 'button');
+        button.setAttribute('data-tooltip', actionButton.title);
         return button;
     }
 

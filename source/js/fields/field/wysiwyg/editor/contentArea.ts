@@ -55,10 +55,6 @@ class ContentArea implements ContentAreaInterface {
         }
     }
 
-    /** ----------------------------
-     * Utility Methods
-     * ---------------------------- */
-
     private shouldCleanFont(el: HTMLElement, firstChild: ChildNode | null): boolean {
         return firstChild !== null || el.innerHTML === "<br>";
     }

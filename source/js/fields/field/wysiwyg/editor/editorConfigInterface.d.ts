@@ -15,13 +15,11 @@ type DefaultEditorAction =
     | "italic"
     | "underline"
     | "strikethrough"
-    | "heading1"
     | "heading2"
-    | "paragraph"
+    | "heading3"
     | "quote"
     | "olist"
     | "ulist"
-    | "code"
     | "link";
 
 interface EditorAction {

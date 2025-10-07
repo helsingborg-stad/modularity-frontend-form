@@ -1,10 +1,14 @@
-import { defaultActions } from "./defaultActions";
 import { defaultClasses } from "./defaultCssClasses";
+import Actions from "./actions";
 
 class EditorConfig implements EditorConfigInterface {
     private classes: EditorClasses;
     private actions: EditorActions;
-    constructor(private settings: EditorSettings) {
+
+    constructor(
+        private actionsInstance: ActionsInterface,
+        private settings: EditorSettings
+    ) {
         this.classes = this.setClasses();
         this.actions = this.setActions();
     }
@@ -23,6 +27,7 @@ class EditorConfig implements EditorConfigInterface {
 
     private setActions() {
         let actions: EditorActions = {};
+        const defaultActions = this.actionsInstance.getDefaultActions();
         for (const key in this.settings.actions) {
             if (typeof this.settings.actions[key] === 'string') {
                 const actionKey = this.settings.actions[key] as keyof typeof defaultActions;

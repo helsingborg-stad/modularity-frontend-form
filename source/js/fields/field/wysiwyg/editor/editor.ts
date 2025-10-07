@@ -8,10 +8,11 @@ class Editor implements EditorInterface {
     private listeners: ((html: string) => void)[] = [];
     constructor(
         private config: EditorConfig,
+        private actions: ActionsInterface
     ) {}
 
     public init(): EditorInterface {
-        this.contentArea = new ContentArea(this.config, this);
+        this.contentArea = new ContentArea(this.config, this, this.actions);
         this.actionbar = new Actionbar(this.config, this.contentArea);
         this.actionbar.appendActionbar();
         this.contentArea.appendContentArea();

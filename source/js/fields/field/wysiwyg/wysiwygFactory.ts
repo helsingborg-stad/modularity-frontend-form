@@ -6,17 +6,19 @@ import Editor from "./editor/editor";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import WysiwygConditionValidator from "./condition/wysiwygConditionValidator";
 import WysiwygConditionsHandler from "./condition/wysiwygConditionsHandler";
+import Actions from "./editor/actions";
 
 class WysiwygFactory {
     public static create(
         field: HTMLElement,
         name: string,
         unstructuredConditions: any,
+        modularityFrontendFormLang: ModularityFrontendFormLang,
         notices: NoticeInterface,
         stepId: string
     ): FieldInterface {
-
-        const editorConfig = new EditorConfig({
+        const actions = new Actions();
+        const editorConfig = new EditorConfig(actions, {
             element: field,
             actions: {
                 bold: "bold",
@@ -27,7 +29,8 @@ class WysiwygFactory {
         });
 
         const editor = (new Editor(
-            editorConfig
+            editorConfig,
+            actions
         )).init();
 
         const hiddenField = field.querySelector('[data-js-wysiwyg-hidden-field]') as HTMLInputElement;

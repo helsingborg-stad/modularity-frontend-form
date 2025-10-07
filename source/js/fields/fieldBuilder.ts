@@ -203,6 +203,7 @@ class FieldBuilder implements FieldBuilderInterface {
                     field,
                     this.getFieldName(field),
                     this.getFieldCondition(field),
+                    this.modularityFrontendFormLang,
                     this.notices,
                     stepId
                 )

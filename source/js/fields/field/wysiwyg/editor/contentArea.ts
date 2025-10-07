@@ -1,4 +1,3 @@
-import { exec } from "./defaultActions";
 import Editor from "./editor";
 
 class ContentArea implements ContentAreaInterface {
@@ -10,7 +9,8 @@ class ContentArea implements ContentAreaInterface {
 
     constructor(
         private config: EditorConfigInterface,
-        private editor: Editor
+        private editor: Editor,
+        private actions: ActionsInterface
     ) { }
 
     public getElement(): HTMLElement {
@@ -29,7 +29,7 @@ class ContentArea implements ContentAreaInterface {
     public setupChangeListener(): void {
         this.contentArea.addEventListener("input", this.handleInput.bind(this));
         this.contentArea.addEventListener("keydown", this.handleKeyDown.bind(this));
-        exec(this.defaultParagraphSeparatorString, this.defaultParagraphSeparator);
+        this.actions.exec(this.defaultParagraphSeparatorString, this.defaultParagraphSeparator);
     }
 
     private handleInput(event: Event): void {
@@ -49,7 +49,7 @@ class ContentArea implements ContentAreaInterface {
 
     private handleKeyDown(event: KeyboardEvent): void {
         if (event.key === "Enter") {
-            setTimeout(() => exec("formatBlock", `<${this.defaultParagraphSeparator}>`), 0);
+            setTimeout(() => this.actions.exec("formatBlock", `<${this.defaultParagraphSeparator}>`), 0);
         }
     }
 
@@ -59,7 +59,7 @@ class ContentArea implements ContentAreaInterface {
 
     private ensureParagraphBlock(el: HTMLElement, firstChild: ChildNode | null): void {
         if (firstChild && firstChild.nodeType === 3) {
-            exec(this.formatBlock, `<${this.defaultParagraphSeparator}>`);
+            this.actions.exec(this.formatBlock, `<${this.defaultParagraphSeparator}>`);
         } else if (this.isBlockEmpty(el)) {
             el.innerHTML = "";
             this.shouldCleanFontTags = true;

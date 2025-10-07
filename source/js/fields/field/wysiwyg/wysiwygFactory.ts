@@ -17,14 +17,20 @@ class WysiwygFactory {
         notices: NoticeInterface,
         stepId: string
     ): FieldInterface {
-        const actions = new Actions();
+        const actions = new Actions(modularityFrontendFormLang);
         const editorConfig = new EditorConfig(actions, {
             element: field,
             actions: {
                 bold: "bold",
                 italic: "italic",
+                underline: "underline",
+                strikethrough: "strikethrough",
+                link: "link",
+                quote: "quote",
+                olist: "olist",
                 ulist: "ulist",
                 heading2: "heading2",
+                heading3: "heading3",
             }
         });
 

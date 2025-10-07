@@ -36,5 +36,9 @@ $field-border-radius: var(--radius-sm, calc(var(--base, 8px) / 2));
         margin-top: .5rem;
         overflow: auto;
         border-radius: $field-border-radius;
+
+        p {
+            margin-top: unset;
+        }
     }
 }

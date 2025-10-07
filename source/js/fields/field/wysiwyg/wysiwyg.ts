@@ -14,6 +14,7 @@ class Wysiwyg implements WysiwygInterface {
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.required = this.getFieldContainer().hasAttribute('data-js-required');
+        this.addChangeListener();
     }
 
     public getName(): string {
@@ -46,6 +47,12 @@ class Wysiwyg implements WysiwygInterface {
 
     public hasValue(): boolean {
         return this.editor.hasContent();
+    }
+
+    private addChangeListener(): void {
+        this.editor.addChangeListeners((html: string) => {
+            this.hiddenField.value = html;
+        });
     }
 }
 

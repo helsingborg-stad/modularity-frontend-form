@@ -43,7 +43,7 @@ class Editor implements EditorInterface {
 
     public hasContent(): boolean {
         const content = this.contentArea.getElement().innerHTML.trim();
-        const isEmpty = !content || content === '<br>' || content === '<div><br></div>';
+        const isEmpty = !content || content === '<br>' || content === '<div><br></div>' || content === '<p><br></p>';
         return !isEmpty;
     }
 }

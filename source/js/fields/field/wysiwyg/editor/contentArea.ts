@@ -41,6 +41,7 @@ class ContentArea implements ContentAreaInterface {
 
         if (shouldCleanFont) {
             this.cleanFontTags(el);
+            this.restoreCaretToEnd(el);
         }
 
         this.ensureParagraphBlock(el, firstChild);
@@ -76,6 +77,15 @@ class ContentArea implements ContentAreaInterface {
         ) {
             el.innerHTML = "";
         }
+    }
+
+    private restoreCaretToEnd(el: HTMLElement): void {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
     }
 }
 

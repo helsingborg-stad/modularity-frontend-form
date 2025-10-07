@@ -8,6 +8,8 @@
             'data-js-google-map-hidden-field' => true
         ],
         'required' => $field['required'] ?? false,
+        'disabled' => true,
+        'name' => $field['name']
     ])
     @endfield
     @element([

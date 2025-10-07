@@ -7,7 +7,6 @@ class ContentArea implements ContentAreaInterface {
     private defaultParagraphSeparator = "p";
     private defaultParagraphSeparatorString = "defaultParagraphSeparator";
     private shouldCleanFontTags = false;
-    private currentCaretPosition: Range | null = null;
 
     constructor(
         private config: EditorConfigInterface,

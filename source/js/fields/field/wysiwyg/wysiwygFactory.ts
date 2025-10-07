@@ -1,14 +1,11 @@
 import FieldValidator from "../../validation/fieldValidator";
 import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
-import BasicConditionsHandler from "../basic/condition/basicConditionHandler";
-import BasicConditionValidator from "../basic/condition/basicConditionValidator";
-import HtmlValidator from "../basic/validation/htmlValidator";
 import EditorConfig from "./editor/editorConfig";
 import Wysiwyg from "./wysiwyg";
 import Editor from "./editor/editor";
-import ContentArea from "./editor/contentArea";
-import Actionbar from "./editor/actionbar";
 import NullFieldFactory from "../nullField/nullFieldFactory";
+import WysiwygConditionValidator from "./condition/wysiwygConditionValidator";
+import WysiwygConditionsHandler from "./condition/wysiwygConditionsHandler";
 
 class WysiwygFactory {
     public static create(
@@ -45,8 +42,8 @@ class WysiwygFactory {
             hiddenField,
             name,
             editor,
-            new BasicConditionValidator(),
-            new BasicConditionsHandler(unstructuredConditions),
+            new WysiwygConditionValidator(),
+            new WysiwygConditionsHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
                 []

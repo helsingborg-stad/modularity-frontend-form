@@ -28,4 +28,15 @@ type ModularityFrontendFormLang = {
     statusTitleSucess?: string;
     statusTitleError?: string;
     statusTitleSubmitting?: string;
+
+    bold?: string;
+    italic?: string;
+    underline?: string;
+    strikeThrough?: string;
+    ulist?: string;
+    olist?: string;
+    link?: string;
+    blockquote?: string;
+    heading?: string;
+    subheading?: string;
 };

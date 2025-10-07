@@ -184,6 +184,18 @@ class FrontendForm extends \Modularity\Module
             'nonceUrlMissing'          => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
             'nonceRequestSuccess'      => $this->wpService->__('Securing', 'modularity-frontend-form'),
             'nonceRequestFailed'       => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
+            
+            // wysiwyg
+            'bold'              => $this->wpService->__('Bold', 'modularity-frontend-form'),
+            'italic'            => $this->wpService->__('Italic', 'modularity-frontend-form'),
+            'underline'         => $this->wpService->__('Underline', 'modularity-frontend-form'),
+            'strikeThrough'     => $this->wpService->__('Strikethrough', 'modularity-frontend-form'),
+            'ulist'             => $this->wpService->__('Bullet list', 'modularity-frontend-form'),
+            'olist'             => $this->wpService->__('Numbered list', 'modularity-frontend-form'),
+            'link'              => $this->wpService->__('Link', 'modularity-frontend-form'),
+            'blockquote'        => $this->wpService->__('Blockquote', 'modularity-frontend-form'),
+            'heading'           => $this->wpService->__('Heading', 'modularity-frontend-form'),
+            'subheading'        => $this->wpService->__('Subheading', 'modularity-frontend-form'),
         ];
     }
 

@@ -3,6 +3,7 @@ class Wysiwyg implements WysiwygInterface {
 
     constructor(
         private field: HTMLElement,
+        private hiddenField: HTMLInputElement,
         private name: string,
         private editor: EditorInterface,
         private conditionValidator: ConditionValidatorInterface,

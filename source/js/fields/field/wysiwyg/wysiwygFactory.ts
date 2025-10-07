@@ -8,6 +8,7 @@ import Wysiwyg from "./wysiwyg";
 import Editor from "./editor/editor";
 import ContentArea from "./editor/contentArea";
 import Actionbar from "./editor/actionbar";
+import NullFieldFactory from "../nullField/nullFieldFactory";
 
 class WysiwygFactory {
     public static create(
@@ -32,8 +33,16 @@ class WysiwygFactory {
             editorConfig
         )).init();
 
+        const hiddenField = field.querySelector('[data-js-wysiwyg-hidden-field]') as HTMLInputElement;
+
+        if (!hiddenField) {
+            console.error('Failed to find hidden input field needed for Wysiwyg field.')
+            return NullFieldFactory.create(field, 'wysiwyg', name, unstructuredConditions, notices, stepId);
+        }
+
         return new Wysiwyg(
             field as HTMLElement,
+            hiddenField,
             name,
             editor,
             new BasicConditionValidator(),

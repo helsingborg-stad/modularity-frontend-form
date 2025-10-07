@@ -10,6 +10,8 @@
             'data-js-wysiwyg-hidden-field' => true
         ],
         'required' => $field['required'] ?? false,
+        'name' => $field['name'],
+        'disabled' => true
     ])
     @endfield
 <!-- Wysiwyg -->

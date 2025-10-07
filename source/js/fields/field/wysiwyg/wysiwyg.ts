@@ -14,6 +14,9 @@ class Wysiwyg implements WysiwygInterface {
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.required = this.getFieldContainer().hasAttribute('data-js-required');
+        this.conditionsHandler.init(this, conditionBuilder);
+        this.conditionValidator.init(this);
+        this.validator.init(this);
         this.addChangeListener();
     }
 

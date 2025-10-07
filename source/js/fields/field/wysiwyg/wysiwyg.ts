@@ -59,6 +59,7 @@ class Wysiwyg implements WysiwygInterface {
     private addChangeListener(): void {
         this.editor.addChangeListeners((html: string) => {
             this.hiddenField.value = html;
+            this.conditionsHandler.checkConditions();
         });
     }
 }

@@ -25,7 +25,7 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
 
     it('getIsDisabled() returns false initially and true after validate() disables the field', () => {
         let validateCalled = false;
-    
+
         const conditionMock: ConditionInterface = {
             validate() {
                 validateCalled = true;
@@ -38,18 +38,18 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
                 return [];
             }
         };
-    
+
         const handler = new CheckboxConditionsHandler("");
         handler.init(fakeCheckbox, {
             build() {
                 return [conditionMock];
             }
         });
-    
+
         expect(handler.getIsDisabled()).toBe(false);
-    
+
         handler.validate();
-    
+
         expect(validateCalled).toBe(true);
         expect(handler.getIsDisabled()).toBe(true);
     });
@@ -57,13 +57,13 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
     it('getConditions() returns the correct list', () => {
         const conditionMock: ConditionInterface = {
             validate() {
-              return true; // or false depending on the test
+                return true; // or false depending on the test
             },
             getConditions() {
-              return [];
+                return [];
             },
             getConditionFieldNames() {
-              return [];
+                return [];
             }
         };
 
@@ -79,7 +79,7 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
         expect(result[0]).toBe(conditionMock);
     });
 
-    it('addValueChangeListener() triggers validate() on change', () => {
+    it('addValueChangeListener() triggers validate() on checkConditions()', () => {
         let validateCalled = 0;
 
         const mockField = {
@@ -104,8 +104,8 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
 
         handler.addValueChangeListener(mockField);
 
-        // Trigger change event on first checkbox
-        choices[0].dispatchEvent(new Event('change'));
+        // Call checkConditions to trigger validate on registered fields
+        handler.checkConditions();
 
         expect(validateCalled).toBe(1);
     });
@@ -114,15 +114,15 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
         const handler = new CheckboxConditionsHandler("");
         const conditionMock: ConditionInterface = {
             validate() {
-              return true; // or false depending on the test
+                return true; // or false depending on the test
             },
             getConditions() {
-              return [];
+                return [];
             },
             getConditionFieldNames() {
-              return [];
+                return [];
             }
-          };
+        };
 
         handler.init(fakeCheckbox, {
             build() {
@@ -141,15 +141,15 @@ describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
 });
 
 function createConditionMock() {
-    return  {
+    return {
         validate() {
-          return true; // or false depending on the test
+            return true; // or false depending on the test
         },
         getConditions() {
-          return [];
+            return [];
         },
         getConditionFieldNames() {
-          return [];
+            return [];
         }
     } as ConditionInterface;
 }

@@ -1,128 +1,155 @@
-// import { describe, it, expect } from '@jest/globals';
-// import CheckboxConditionValidator from './checkboxConditionValidator';
+import { describe, expect, it } from '@jest/globals';
+import CheckboxConditionsHandler from './checkboxConditionsHandler';
 
-// // Manual mock of CheckboxInterface
-// function createMockCheckbox(selectedValues: string[]): CheckboxInterface {
-//     return {
-//         getSelectedChoices() {
-//             return selectedValues;
-//         },
-//         getChoices() {
-//             return [] as any;
-//         },
-//         getFieldContainer() {
-//             return document.createElement('div');
-//         },
-//         init() {},
-//         getName() {
-//             return 'mock';
-//         },
-//         getValidator() {
-//             return {} as any;
-//         },
-//         getConditionsHandler() {
-//             return {} as any;
-//         },
-//         getConditionValidator() {
-//             return {} as any;
-//         }
-//     };
-// }
+function createChoicesAndField(): [HTMLElement, NodeListOf<HTMLInputElement>] {
+    const field = document.createElement('div');
+    field.innerHTML = `
+        <input type="checkbox" name="testField" value="1" checked>
+        <input type="checkbox" name="testField2" value="2">
+    `;
+    const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
+    return [field, choices];
+}
 
-// function createCondition(operator: string, value: string = ''): Condition {
-//     return {
-//         operator,
-//         value,
-//         field: '', // Mocking 'field' property (you can adjust as needed)
-//         class: null, // Mocking 'class' property (you can adjust as needed)
-//     };
-// }
-// describe('CheckboxConditionValidator', () => {
-//     it('returns true for === when value is selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['apple', 'banana']));
+describe('CheckboxConditionsHandler - Public Methods (manual mocks)', () => {
+    const [field, choices] = createChoicesAndField();
 
-//         const result = validator.validate(createCondition('===', 'banana'));
-//         expect(result).toBe(true);
-//     });
+    const fakeCheckbox = {
+        getChoices(): NodeListOf<HTMLInputElement> {
+            return choices;
+        },
+        getFieldContainer(): HTMLElement {
+            return field;
+        }
+    } as CheckboxInterface;
 
-//     it('returns false for === when value is not selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['apple', 'banana']));
+    it('getIsDisabled() returns false initially and true after validate() disables the field', () => {
+        let validateCalled = false;
 
-//         const result = validator.validate(createCondition('===', 'orange'));
-//         expect(result).toBe(false);
-//     });
+        const conditionMock: ConditionInterface = {
+            validate() {
+                validateCalled = true;
+                return false; // Simulate invalid condition
+            },
+            getConditions() {
+                return [];
+            },
+            getConditionFieldNames() {
+                return [];
+            }
+        };
 
-//     it('returns true for !== when value is not selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['apple']));
+        const handler = new CheckboxConditionsHandler("");
+        handler.init(fakeCheckbox, {
+            build() {
+                return [conditionMock];
+            }
+        });
 
-//         const result = validator.validate(createCondition('!==', 'banana'));
-//         expect(result).toBe(true);
-//     });
+        expect(handler.getIsDisabled()).toBe(false);
 
-//     it('returns false for !== when value is selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['apple']));
+        handler.validate();
 
-//         const result = validator.validate(createCondition('!==', 'apple'));
-//         expect(result).toBe(false);
-//     });
+        expect(validateCalled).toBe(true);
+        expect(handler.getIsDisabled()).toBe(true);
+    });
 
-//     it('returns true for ==empty when nothing is selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox([]));
+    it('getConditions() returns the correct list', () => {
+        const conditionMock: ConditionInterface = {
+            validate() {
+                return true;
+            },
+            getConditions() {
+                return [];
+            },
+            getConditionFieldNames() {
+                return [];
+            }
+        };
 
-//         const result = validator.validate(createCondition('==empty'));
-//         expect(result).toBe(true);
-//     });
+        const handler = new CheckboxConditionsHandler("");
+        handler.init(fakeCheckbox, {
+            build() {
+                return [conditionMock];
+            }
+        });
 
-//     it('returns false for ==empty when something is selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['1']));
+        const result = handler.getConditions();
+        expect(result.length).toBe(1);
+        expect(result[0]).toBe(conditionMock);
+    });
 
-//         const result = validator.validate(createCondition('==empty'));
-//         expect(result).toBe(false);
-//     });
+    it('addValueChangeListener() triggers validate() on checkConditions()', () => {
+        let validateCalled = 0;
 
-//     it('returns true for !=empty when something is selected', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['1']));
+        const mockField = {
+            getName() {
+                return 'mockField';
+            },
+            getConditionsHandler() {
+                return {
+                    validate() {
+                        validateCalled++;
+                    }
+                };
+            }
+        } as FieldInterface;
 
-//         const result = validator.validate(createCondition('!=empty'));
-//         expect(result).toBe(true);
-//     });
+        const handler = new CheckboxConditionsHandler("");
+        handler.init(fakeCheckbox, {
+            build() {
+                return [];
+            }
+        });
 
-//     it('returns true for > comparison', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['10', '20']));
+        handler.addValueChangeListener(mockField);
 
-//         const result = validator.validate(createCondition('>', '15'));
-//         expect(result).toBe(true);
-//     });
+        // Call checkConditions to trigger validate on registered fields
+        handler.checkConditions();
 
-//     it('returns false for > when no values match', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['5', '10']));
+        expect(validateCalled).toBe(1);
+    });
 
-//         const result = validator.validate(createCondition('>', '20'));
-//         expect(result).toBe(false);
-//     });
+    it('validate() enables field when at least one condition returns true', () => {
+        const handler = new CheckboxConditionsHandler("");
+        const conditionMock: ConditionInterface = {
+            validate() {
+                return true;
+            },
+            getConditions() {
+                return [];
+            },
+            getConditionFieldNames() {
+                return [];
+            }
+        };
 
-//     it('returns true for < comparison', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['5', '10']));
+        handler.init(fakeCheckbox, {
+            build() {
+                return [conditionMock];
+            }
+        });
 
-//         const result = validator.validate(createCondition('<', '6'));
-//         expect(result).toBe(true);
-//     });
+        // Manually disable first
+        (handler as any).updateDisabled(true);
+        expect(handler.getIsDisabled()).toBe(true);
 
-//     it('returns false for unknown operator', () => {
-//         const validator = new CheckboxConditionValidator();
-//         validator.init(createMockCheckbox(['something']));
+        // Then re-enable
+        handler.validate();
+        expect(handler.getIsDisabled()).toBe(false);
+    });
+});
 
-//         const result = validator.validate(createCondition('~unknown~', 'something'));
-//         expect(result).toBe(false);
-//     });
-// });
+function createConditionMock() {
+    return {
+        validate() {
+            return true;
+        },
+        getConditions() {
+            return [];
+        },
+        getConditionFieldNames() {
+            return [];
+        }
+    } as ConditionInterface;
+}

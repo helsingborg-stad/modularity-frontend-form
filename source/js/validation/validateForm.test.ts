@@ -9,33 +9,39 @@ const patternMessage = "Custom validation message";
  * @jest-environment jsdom
  */
 describe('validateForm', () => {
-    it.each([
-        [`<input type="text" name="testInput" pattern="^a" data-js-validation-message-pattern-mismatch="${patternMessage}"/>`, 'b'],
-        [`<select name="testInput" data-js-validation-message-value-missing="${patternMessage}" required value=""></select>`, null],
-        [`<input type="text" name="testInput" data-js-validation-message-value-missing="${patternMessage}" required/>`, null],
-        [`<input name="testInput" data-js-validation-message-type-mismatch="${patternMessage}" type="email"/>`, 'invalid-email'],
-        [`<input type="number" name="testInput" data-js-validation-message-range-overflow="${patternMessage}" max="5"/>`, '10'],
-        [`<input type="number" name="testInput" data-js-validation-message-range-underflow="${patternMessage}" min="5"/>`, '4'],
-        [`<input type="number" step="2" name="testInput" data-js-validation-message-step-mismatch="${patternMessage}"/>`, '3'],
-        // [`<input type="number" name="testInput" data-js-validation-message-bad-input="${patternMessage}"/>`, 'a'],
-    ])('allows for custom validation message using: %s', async (inputHtml: string, userInput: string|null) => {
-        const user = userEvent.setup();
-        document.body.innerHTML = `<form data-testid="testForm">${inputHtml}</form>`;
-        const form: HTMLFormElement = screen.getByTestId('testForm');
-        const input = form.querySelector('input[name="testInput"],select[name="testInput"]') as HTMLInputElement;
-        new ValidateForm();
+    it('applies custom validation messages for multiple scenarios', async () => {
+  const user = userEvent.setup();
 
-        if (userInput !== null) {
-            await user.type(input, userInput);
-        } else {
-            input.focus();
-            input.blur();
-        }
+  const cases: [string, string | null][] = [
+    [`<input type="text" name="testInput" pattern="^a" data-js-validation-message-pattern-mismatch="${patternMessage}"/>`, 'b'],
+    [`<select name="testInput" data-js-validation-message-value-missing="${patternMessage}" required value=""></select>`, null],
+    [`<input type="text" name="testInput" data-js-validation-message-value-missing="${patternMessage}" required/>`, null],
+    [`<input name="testInput" data-js-validation-message-type-mismatch="${patternMessage}" type="email"/>`, 'invalid-email'],
+    [`<input type="number" name="testInput" data-js-validation-message-range-overflow="${patternMessage}" max="5"/>`, '10'],
+    [`<input type="number" name="testInput" data-js-validation-message-range-underflow="${patternMessage}" min="5"/>`, '4'],
+    [`<input type="number" step="2" name="testInput" data-js-validation-message-step-mismatch="${patternMessage}"/>`, '3'],
+  ];
 
-        form.checkValidity();
+  for (const [inputHtml, userInput] of cases) {
+    document.body.innerHTML = `<form data-testid="testForm">${inputHtml}</form>`;
+    const form = screen.getByTestId('testForm') as HTMLFormElement;
+    const input = form.querySelector('input[name="testInput"],select[name="testInput"]') as HTMLInputElement;
+    new ValidateForm();
 
-        expect(input.validationMessage).toBe(patternMessage);
-    });
+    if (userInput !== null) {
+      await user.clear(input);
+      await user.type(input, userInput);
+    } else {
+      input.focus();
+      input.blur();
+    }
+
+    form.checkValidity();
+
+    expect(input.validationMessage).toBe(patternMessage);
+  }
+});
+
 
 it('filters out excluded validity keys', () => {
     const validateForm = new (ValidateForm as any)();

@@ -1,12 +1,12 @@
 class RowBuilder implements RowBuilderInterface {
-    private replacement: string = 'INDEX_REPLACE';
+    private replacement: string = 'index_replace';
 
     constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}
 
     public createRow(id: string, includeRemoveRowButton: boolean = true): HTMLElement {
         let rowHtml = this.template.innerHTML;
+        console.log(rowHtml);
         rowHtml = rowHtml.replaceAll(this.replacement, id);
-
         return this.appendRow(rowHtml, includeRemoveRowButton);
     }
 

@@ -21,6 +21,7 @@ class RadioFieldMapper implements FieldMapperInterface
         foreach ($this->field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type'     => $mapped['type'],
+                'id'       => $mapped['id'] . '-' . $key,
                 'label'    => $value,
                 'required' => $mapped['required'] ?: false,
                 'name'     => $this->field['key'],

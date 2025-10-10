@@ -15,6 +15,8 @@ class WysiwygFieldMapper implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, 'wysiwyg'))->map();
 
+        $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
+
         return $mapped;
     }
 }

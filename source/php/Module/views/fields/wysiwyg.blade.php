@@ -1,9 +1,7 @@
 @element([
     'attributeList' => $field['attributeList'],
     'id' => $field['id'],
-    'classList' => [
-        'mod-frontend-form__wysiwyg',
-    ],
+    'classList' => $field['classList']
 ])
     @field([
         'type' => 'hidden',

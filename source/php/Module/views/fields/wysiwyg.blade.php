@@ -1,5 +1,6 @@
 @element([
     'attributeList' => $field['attributeList'],
+    'id' => $field['id'],
     'classList' => [
         'mod-frontend-form__wysiwyg',
     ],

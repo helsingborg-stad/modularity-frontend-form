@@ -1,6 +1,7 @@
 @element([
     'classList' => $field['classList'],
     'attributeList' => $field['attributeList'],
+    'id' => $field['id']
 ])
     @field([
         'type' => 'hidden',

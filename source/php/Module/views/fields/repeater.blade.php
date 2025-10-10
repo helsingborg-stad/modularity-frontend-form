@@ -2,6 +2,7 @@
     @element([
         'attributeList' => $field['attributeList'],
         'classList' => $field['classList'],
+        'id' => $field['id'],
     ])
         @include('partials.repeaterHeader')
         @element([

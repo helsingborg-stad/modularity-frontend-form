@@ -24,7 +24,7 @@
             @endelement
         @endelement
         @button([
-            'text' => $lang->newRow,
+            'text' => $field['buttonLabel'],
             'icon' => 'playlist_add',
             'color' => 'secondary',
             'style' => 'filled',

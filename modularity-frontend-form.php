@@ -16,7 +16,7 @@
 use AcfService\Implementations\NativeAcfService;
 use WpService\Implementations\NativeWpService;
 
- // Protect agains direct file access
+// Protect agains direct file access
 if (! defined('WPINC')) {
     die;
 }
@@ -48,19 +48,20 @@ $wpService->addAction('acf/init', function () {
     $acfExportManager->setTextdomain('modularity-frontend-form');
     $acfExportManager->setExportFolder(MODULARITYFRONTENDFORM_PATH . 'source/php/AcfFields/');
     $acfExportManager->autoExport(array(
-        'mod-frontend-forms' => 'group_6627a5e16d74c'
+        'mod-frontend-forms' => 'group_6627a5e16d74c',
+        'mod-frontend-form-title' => 'group_68d545b18c491'
     ));
 
     $acfExportManager->import();
 });
 
 //Config 
-$config                 = ModularityFrontendForm\Config\ConfigFactory::create($wpService); 
+$config                 = ModularityFrontendForm\Config\ConfigFactory::create($wpService);
 $moduleConfigFactory    = new ModularityFrontendForm\Config\ModuleConfigFactory($wpService, $acfService, $config);
 
 // Start application
 $app = new ModularityFrontendForm\App(
-    $wpService, 
+    $wpService,
     $acfService,
     $config,
     $moduleConfigFactory

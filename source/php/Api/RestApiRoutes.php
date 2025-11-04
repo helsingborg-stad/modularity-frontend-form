@@ -4,7 +4,7 @@ namespace ModularityFrontendForm\Api;
 
 use WpService\WpService;
 
-class RestApiRoutes implements \Modularity\HooksRegistrar\Hookable
+class RestApiRoutes implements \Municipio\HooksRegistrar\Hookable
 {
   public function __construct(
     private WpService $wpService, 

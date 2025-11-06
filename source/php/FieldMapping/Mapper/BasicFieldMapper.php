@@ -28,7 +28,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             'name'        => $this->field['key'],
             'required'    => $this->field['required'] ?: false,
             'description' => $this->field['instructions'] ?: '',
-            'id'          => $this->field['wrapper']['id'] ?: '',
+            'id'          => $this->field['wrapper']['id'] ?: $this->field['key'],
             'disabled'    => true,
             'attributeList' => $this->createAttributeList($conditionalLogicMapper),
             'fieldAttributeList' => [

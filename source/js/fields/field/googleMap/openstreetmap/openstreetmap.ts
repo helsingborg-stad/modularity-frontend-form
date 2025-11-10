@@ -54,6 +54,11 @@ class Openstreetmap implements OpenstreetmapInterface {
             .addTo(this.map)
             .addListItemListener((e) => this.handleListItemClick(e));
 
+        // Invalidate size due to the container changing in size
+        setTimeout(() => {
+            this.map.invalidateSize();
+        }, 100);
+
         this.map.addListener('click', (e) => this.handleClick(e));
         this.setResetButtonClickListener();
     }

@@ -29,12 +29,16 @@ class StepValidator implements StepValidatorInterface {
             return true;
         }
         
-        const hasInvalidFields = [];
+        const fieldValidity = [];
         for (const fieldName in fields) {
-            hasInvalidFields.push(fields[fieldName].getValidator().validate());
+            if (fields[fieldName].getConditionsHandler().getIsDisabled()) {
+                continue;
+            }
+
+            fieldValidity.push(fields[fieldName].getValidator().validate());
         }
 
-        const valid = !hasInvalidFields.includes(false);
+        const valid = !fieldValidity.includes(false);
 
         if (!valid && !this.invalidSteps.includes(stepId)) {
             this.invalidSteps.push(stepId);
@@ -44,7 +48,7 @@ class StepValidator implements StepValidatorInterface {
             this.invalidSteps = this.invalidSteps.filter((id) => id !== stepId);
         }
 
-        return !hasInvalidFields.includes(false);
+        return !fieldValidity.includes(false);
     }
 }
 

@@ -1,0 +1,104 @@
+
+/* Loading */ 
+.mod-frontend-form.is-success .c-paper,
+.mod-frontend-form.is-loading .c-paper,
+.mod-frontend-form.is-working .c-paper,
+.mod-frontend-form.is-error .c-paper,
+.mod-frontend-form.is-success .mod-frontend-form__step-buttons,
+.mod-frontend-form.is-error .mod-frontend-form__step-buttons,
+.mod-frontend-form.is-working .mod-frontend-form__step-buttons,
+.mod-frontend-form.is-loading .mod-frontend-form__step-buttons {
+    .c-typography,
+    .c-button,
+    .c-field__label,
+    .c-c-field__inner {
+        color: transparent !important;
+        background-color: rgba(#0000, .05) !important;
+        border-color: rgba(#0000, .05) !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        border-radius: 4px;
+        user-select: none;
+        pointer-events: none;
+        position: relative;
+        border-radius: 6px;
+
+        * {
+            visibility: hidden !important;
+            pointer-events: none !important;
+            user-select: none !important;   
+        }
+    }
+
+    .c-typography,
+    .c-button,
+    .c-field__label,
+    .c-c-field__inner {
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+}
+
+.mod-frontend-form__steps {
+    z-index: 5000;
+
+    .mod-frontend-form__step-container {
+        opacity: 0;
+        width: 100%;
+        position: absolute;
+        transform: translateX(0);
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        max-height: 0;
+        top: 2rem;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .mod-frontend-form__step-container.is-active {
+        opacity: 1;
+        position: relative;
+        max-height: unset;
+        top: 0;
+        transform: translateX(0);
+        pointer-events: auto;
+        z-index: 2;
+        overflow: visible;
+    }
+
+    /* outgoing should be below entering */
+    .mod-frontend-form__step-container.animate-exit-left  { transform: translateX(-100%); opacity: 0; z-index: 1; }
+    .mod-frontend-form__step-container.animate-exit-right { transform: translateX(100%);  opacity: 0; z-index: 1; }
+
+    /* incoming must start offscreen; keep it above exit (so it appears on top) */
+    .mod-frontend-form__step-container.animate-enter-right { transform: translateX(100%);  opacity: 0; z-index: 3; }
+    .mod-frontend-form__step-container.animate-enter-left  { transform: translateX(-100%); opacity: 0; z-index: 3; }
+
+    /* when enter + is-active the transform goes to 0 and opacity to 1 */
+    .mod-frontend-form__step-container.animate-enter-right.is-active,
+    .mod-frontend-form__step-container.animate-enter-left.is-active {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    .mod-frontend-form__step-buttons {
+        z-index: 4000;
+    }
+}
+
+.mod-frontend-form__step-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mod-frontend-form__step-container.animate-shake {
+    animation: shake .4s ease-in-out forwards;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+    100% { transform: translateX(0); }
+}

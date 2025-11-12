@@ -1,7 +1,7 @@
 class StepNavigator implements StepNavigatorInterface {
     constructor(
         private steps: StepsObject,
-        private validate: StepValidatorInterface,
+        private validator: StepValidatorInterface,
         private submit: SubmitInterface,
         private activeStep: number = 0
     ) {
@@ -46,11 +46,19 @@ class StepNavigator implements StepNavigatorInterface {
         return this.activeStep;
     }
 
+    public getStep(id: number): StepInterface|null {
+        if (this.steps[id]) {
+            return this.steps[id];
+        }
+
+        return null;
+    }
+
     private handleLastStep(): void {
-        const isValid = this.validate.validateSteps();
+        const isValid = this.validator.validateSteps();
 
         if (!isValid) {
-            const invalidStep = this.validate.getInvalidSteps()[0];
+            const invalidStep = this.validator.getInvalidSteps()[0];
             if (invalidStep && this.steps[Number(invalidStep)]) {
                 const step = this.steps[Number(invalidStep)];
                 step.getEditButton().click();

@@ -1,16 +1,15 @@
 @if (!empty($step['fields']))
     @paper([
-        'padding' => 4,
         'attributeList' => [
             'data-js-frontend-form-step-container' => $index,
-            'style' => 'z-index: ' . (5100 - $index) . ';',
         ],
         'classList' => [
             'mod-frontend-form__step-container',
             $index === 0 ? 'is-editable' : '',
             $index === 0 ? 'is-active' : '',
             $index === 0 ? 'is-loading' : '',
-        ]
+        ],
+        'padding' => 4
     ])
         @element([
             'classList' => [
@@ -91,7 +90,6 @@
             ],
             'classList' => [
                 'mod-frontend-form__step',
-                $index === 0 ? 'is-visible' : ''
             ]
         ])
             <!-- Step Fields -->

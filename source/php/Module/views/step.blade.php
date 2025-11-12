@@ -69,21 +69,6 @@
             @endbutton
 
         @endelement
-        @if ($index === 0)
-            @loader([
-                'shape' => 'linear',
-                'size' => 'xs',
-                'attributeList' => [
-                    'style' => 'top: -2rem;'
-                ],
-                'classList' => [
-                    'u-margin__top--2',
-                    'u-margin__bottom--2',
-                    'mod-frontend-form__step-loader',
-                ]
-            ])
-            @endloader
-        @endif
         @element([
             'attributeList' => [
                 'data-js-frontend-form-step' => $index,

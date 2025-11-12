@@ -144,7 +144,6 @@ class FormHandler {
 
     private removeLoader(stepsObject: StepsObject): void {
         stepsObject[0].getStepContainer().classList.remove('is-loading');
-        this.formContainer.querySelector('.mod-frontend-form__step-loader')?.remove();
     }
 }
 

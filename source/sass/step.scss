@@ -54,6 +54,36 @@
         overflow: hidden;
     }
 
+    .mod-frontend-form__step-container.is-active {
+        opacity: 1;
+        position: relative;
+        max-height: unset;
+        top: 0;
+        transform: translateX(0);
+        pointer-events: auto;
+        z-index: 2;
+        overflow: visible;
+    }
+
+    /* outgoing should be below entering */
+    .mod-frontend-form__step-container.animate-exit-left {
+        transform: translateX(-100%);
+        opacity: 0;
+        max-height: 999rem;
+        z-index: 1;
+    }
+
+    .mod-frontend-form__step-container.animate-exit-right {
+        transform: translateX(100%);
+        max-height: 999rem;
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .mod-frontend-form__step-buttons {
+        z-index: 4000;
+    }
+
     .mod-frontend-form__step-container.is-loading {
         pointer-events: none;
 
@@ -90,54 +120,6 @@
                 transform: translate(-50%, -50%) rotate(360deg);
             }
         }
-    }
-
-    .mod-frontend-form__step-container.is-active {
-        opacity: 1;
-        position: relative;
-        max-height: unset;
-        top: 0;
-        transform: translateX(0);
-        pointer-events: auto;
-        z-index: 2;
-        overflow: visible;
-    }
-
-    /* outgoing should be below entering */
-    .mod-frontend-form__step-container.animate-exit-left {
-        transform: translateX(-100%);
-        opacity: 0;
-        z-index: 1;
-    }
-
-    .mod-frontend-form__step-container.animate-exit-right {
-        transform: translateX(100%);
-        opacity: 0;
-        z-index: 1;
-    }
-
-    /* incoming must start offscreen; keep it above exit (so it appears on top) */
-    .mod-frontend-form__step-container.animate-enter-right {
-        transform: translateX(100%);
-        opacity: 0;
-        z-index: 3;
-    }
-
-    .mod-frontend-form__step-container.animate-enter-left {
-        transform: translateX(-100%);
-        opacity: 0;
-        z-index: 3;
-    }
-
-    /* when enter + is-active the transform goes to 0 and opacity to 1 */
-    .mod-frontend-form__step-container.animate-enter-right.is-active,
-    .mod-frontend-form__step-container.animate-enter-left.is-active {
-        transform: translateX(0);
-        opacity: 1;
-    }
-
-    .mod-frontend-form__step-buttons {
-        z-index: 4000;
     }
 }
 

@@ -5,9 +5,7 @@ class StepUIManager implements StepUIManagerInterface {
     private invalidClass: string = 'is-invalid';
     private shakeAnimationClass: string = 'animate-shake';
     private exitRightAnimationClass: string = 'animate-exit-right';
-    private enterLeftAnimationClass: string = 'animate-enter-left';
     private exitLeftAnimationClass: string = 'animate-exit-left';
-    private enterRightAnimationClass: string = 'animate-enter-right';
     private nextButtonLabelElement: HTMLElement|null;
     private maxSteps: number;
     private iconElement: HTMLElement|null;
@@ -77,53 +75,39 @@ class StepUIManager implements StepUIManagerInterface {
 
     /**
      * Show and hide steps with animation
+     * 
+     * @param stepToShow The step to show
+     * @param stepToHide The step to hide
      */
    public showAndHideSteps(stepToShow: StepInterface, stepToHide: StepInterface): void {
-        const showIndex = stepToShow.getId();
-        const hideIndex = stepToHide.getId();
-        const nextEl = stepToShow.getStepContainer() as HTMLElement;
-        const prevEl = stepToHide.getStepContainer() as HTMLElement;
-
-        const isNext = showIndex > hideIndex;
-        const enterClass = isNext ? 'animate-enter-right' : 'animate-enter-left';
-        const exitClass  = isNext ? 'animate-exit-left'  : 'animate-exit-right';
+        const exitClass  = stepToShow.getId() > stepToHide.getId() ? this.exitLeftAnimationClass  : this.exitRightAnimationClass;
         const allAnim = ['animate-exit-left','animate-exit-right','animate-enter-left','animate-enter-right', 'animate-shake'];
 
         this.hideStep(stepToHide);
         this.showStep(stepToShow);
 
         // Clean old classes
-        prevEl.classList.remove(...allAnim);
-        nextEl.classList.remove(...allAnim);
+        stepToHide.getStepContainer().classList.remove(...allAnim);
+        stepToShow.getStepContainer().classList.remove(...allAnim);
+        // Trigger reflow to restart animation
+        void stepToShow.getStepContainer().offsetWidth;
+        // Add new classes
+        stepToHide.getStepContainer().classList.add(exitClass);
+        stepToShow.getStepContainer().classList.add(this.isActiveClass);
 
-        // Set start transform for the new step
-        nextEl.classList.add(enterClass);
-
-        // Force reflow so browser applies the initial translateX before transition
-        void nextEl.offsetWidth;
-
-        // Move old step out and new one in
-        prevEl.classList.add(exitClass);
-        nextEl.classList.add('is-active');
-
-        // Clean up after transition (using transitionend, no global flags)
+        // Cleanup
         const onTransitionEnd = (e: TransitionEvent) => {
             if (e.propertyName !== 'transform' && e.propertyName !== 'opacity') return;
 
-            prevEl.classList.remove('is-active', exitClass);
-            nextEl.classList.remove(enterClass);
-
-            prevEl.removeEventListener('transitionend', onTransitionEnd);
-            nextEl.removeEventListener('transitionend', onTransitionEnd);
+            stepToHide.getStepContainer().classList.remove(this.isActiveClass, exitClass);
+            stepToHide.getStepContainer().removeEventListener('transitionend', onTransitionEnd);
         };
 
-        prevEl.addEventListener('transitionend', onTransitionEnd);
-        nextEl.addEventListener('transitionend', onTransitionEnd);
+        stepToHide.getStepContainer().addEventListener('transitionend', onTransitionEnd);
 
         // Fallback cleanup
         setTimeout(() => {
-            prevEl.classList.remove('is-active', exitClass);
-            nextEl.classList.remove(enterClass);
+            stepToHide.getStepContainer().classList.remove(this.isActiveClass, exitClass);
         }, 400);
     }
 

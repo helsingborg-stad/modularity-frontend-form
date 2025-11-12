@@ -1,17 +1,11 @@
 class Step implements StepInterface {
-
     constructor(
         private stepContainer: HTMLElement,
         private editButton: HTMLElement,
         private stepContentContainer: HTMLElement,
-        public animateStepHelperInstance: AnimateStepHelperInterface,
-        private id: number
+        private id: number,
+        private validator: StepValidatorInterface
     ) {
-    }
-
-    public async showStepAndHidePrevious(previousStep: StepInterface): Promise<void> {
-        await previousStep.animateStepHelperInstance.hide();
-        this.animateStepHelperInstance.show();
     }
 
     public onEdit(callback: () => void): void {
@@ -25,7 +19,11 @@ class Step implements StepInterface {
         return this.stepContainer;
     }
 
-    public getstepContentContainer(): HTMLElement {
+    public validate(): boolean {
+        return this.validator.validateStep(this.getId().toString());
+    }
+
+    public getStepContentContainer(): HTMLElement {
         return this.stepContentContainer;
     }
 

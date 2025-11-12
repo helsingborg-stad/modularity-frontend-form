@@ -19,7 +19,12 @@
         ],
     ])
 
-        @element(['classList' => ['u-position--relative', 'mod-frontend-form__steps']])
+        @element([
+            'classList' => [
+                'u-position--relative',
+                'mod-frontend-form__steps',
+            ]
+        ])
 
             @include('partials.working')
 

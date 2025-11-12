@@ -6,7 +6,6 @@ import FieldBuilder from "./fields/fieldBuilder";
 import ConditionBuilder from "./conditions/conditionBuilder";
 import AsyncNonce from "./asyncNonce/asyncNonce";
 import StatusHandler from "./formStatus/handler";
-import StatusRenderer from "./formStatus/statusRenderer";
 import FieldsInitiator from "./fields/fieldsInitiator";
 import Notice from "./fields/notice/notice";
 import ValidateForm from "./validation/validateForm";
@@ -102,7 +101,7 @@ class FormHandler {
         }
     }
 
-    private setupSteps(validate: StepValidatorInterface, statusRenderer: StatusRendererInterface): StepsObject|null {
+    private setupSteps(validator: StepValidatorInterface, statusRenderer: StatusRendererInterface): StepsObject|null {
         const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
         const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
@@ -111,7 +110,7 @@ class FormHandler {
             return null;
         }
 
-        const steps = StepsFactory.create(this.form.formElementContainer);
+        const steps = StepsFactory.create(this.form.formElementContainer, validator);
         const submit = new Submit(
             this.form, 
             modularityFrontendFormData,
@@ -122,11 +121,12 @@ class FormHandler {
         );
 
         new Steps(
+            this.form,
             steps,
-            validate,
+            validator,
             new StepNavigator(
                 steps,
-                validate,
+                validator,
                 submit,
             ),
             new StepUIManager(

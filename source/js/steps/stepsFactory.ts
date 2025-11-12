@@ -1,7 +1,7 @@
 import StepFactory from "./stepFactory";
 
 class StepsFactory {
-    public static create(container: HTMLElement): StepsObject {
+    public static create(container: HTMLElement, validator: StepValidatorInterface): StepsObject {
         let steps: StepsObject = {};
         container.querySelectorAll('[data-js-frontend-form-step-container]').forEach((stepContainer) => {
             const step = stepContainer.querySelector('[data-js-frontend-form-step]');
@@ -18,7 +18,8 @@ class StepsFactory {
                 stepContainer as HTMLElement,
                 editButton as HTMLElement,
                 step as HTMLElement,
-                stepId
+                stepId,
+                validator
             );
         });
 

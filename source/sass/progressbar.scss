@@ -26,9 +26,8 @@ $step-color: var(--step-color, #ffffff) !default;
 }
 
 .mod-frontend-form__progressbar-step {
-    flex: 1;
+    // flex: 1;
     position: relative;
-    align-items: center;
     flex-direction: column;
     text-align: center;
     display: flex;
@@ -36,17 +35,28 @@ $step-color: var(--step-color, #ffffff) !default;
     pointer-events: none;
 
     .mod-frontend-form__progressbar-step-button {
+        display: flex;
+        flex-direction: row;
+        gap: .25rem;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .mod-frontend-form__progressbar-step-button:hover {
+        overflow: visible;
+    }
+
+    .mod-frontend-form__progressbar-step-icon {
         z-index: 1000;
-        transform: translateY(50%);
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
         background-color: $step-background-color;
         display: flex;
         justify-content: center;
+        width: 2rem;
+        height: 2rem;
         align-items: center;
         color: $step-color;
         border: 2px solid;
+        border-radius: 50%;
         border-color: $step-background-color;
         transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
     }
@@ -57,14 +67,14 @@ $step-color: var(--step-color, #ffffff) !default;
     }
 
     .mod-frontend-form__progressbar-step-indicator {
-        width: 100%;
+        width: 125%;
         &::after {
             content: '';
             position: absolute;
             top: 50%;
             height: .25rem;
-            width: 100%;
-            left: 50%;
+            width: 125%;
+            left: 0%;
             transform: translateY(-50%);
             background-color: $default-step-background-color;
             z-index: -1;

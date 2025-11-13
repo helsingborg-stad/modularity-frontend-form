@@ -20,32 +20,22 @@
                 'data-js-frontend-form-progressbar-step' => $index
             ]
         ])
-        @icon([
-            'classList' => [
-                'mod-frontend-form__progressbar-step-button',
-            ],
-            'icon' => 'remove',
-            'size' => 'sm'
-        ])
-        @endicon
-            @element([
-                'componentElement' => 'span',
-                'classList' => [
-                    'mod-frontend-form__progressbar-step-indicator'
-                ]
-            ])
-                <!-- progress indicator -->
-            @endelement
             @element([
                 'classList' => [
-                    'u-margin__top--2',
-                    'mod-frontend-form__progressbar-step-title',
-                    'u-color__text--darker',
-                    'u-bold',
-                    'u-text-small'
-                ]
+                    'mod-frontend-form__progressbar-step-button',
+                ],
             ])
+                @icon([
+                    'icon' => 'remove',
+                    'size' => 'sm',
+                    'classList' => [
+                        'mod-frontend-form__progressbar-step-icon'
+                    ]
+                ])
+                @endicon
+                <span style="color:black;position:absolute;padding-left:2.25rem;white-space:nowrap;height:2rem;display:flex;align-items:center;background:blue;">
                 {{ $step['title'] }}
+                </span>
             @endelement
         @endelement
     @endforeach

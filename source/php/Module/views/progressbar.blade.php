@@ -33,7 +33,7 @@
                     ]
                 ])
                 @endicon
-                <span style="color:black;position:absolute;padding-left:2.25rem;white-space:nowrap;height:2rem;display:flex;align-items:center;background:blue;">
+                <span style="color:black;position:absolute;padding-left:2.25rem;white-space:nowrap;height:2rem;display:flex;align-items:center;background:yellow;">
                 {{ $step['title'] }}
                 </span>
             @endelement

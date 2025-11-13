@@ -1,12 +1,11 @@
-import Form from "../form/form";
 import StepNavigator from "./stepNavigator";
 import StepUIManager from "./stepUIManager";
 
 class Steps implements StepsInterface {
+    private editableSteps: {[key: number]: boolean} = {};
+
     constructor(
-        private form: Form,
         private steps: StepsObject,
-        private validator: StepValidatorInterface,
         private stepNavigator: StepNavigator,
         private stepUIManager: StepUIManager,
         private nextButton: HTMLButtonElement,
@@ -15,13 +14,28 @@ class Steps implements StepsInterface {
     }
 
     public init() {
+        this.editableSteps[this.stepNavigator.getActiveStepIndex()] = true;
         this.setupPrevious();
         this.setupNext();
         this.setupEdit();
     }
 
     private setupEdit() {
+        for (const step of Object.values(this.steps)) {
+            if (!step.getEditItem()) continue;
+            step.getEditItem()!.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (step.getId() === this.stepNavigator.getActiveStepIndex()) return;
+                if (!this.editableSteps[step.getId()]) return;
+                const currentStep = this.stepNavigator.getActiveStep();
+                const nextStep = this.stepNavigator.goTo(step.getId());
+                this.stepUIManager.handleValidity(currentStep, currentStep.validate());
 
+                if (nextStep) {
+                    this.handleMove(currentStep, nextStep);
+                }
+            });
+        }
     }
 
     private setupNext() {
@@ -30,7 +44,7 @@ class Steps implements StepsInterface {
             const currentStep = this.stepNavigator.getActiveStep();
             const stepIsValid = currentStep.validate();
 
-            this.stepUIManager.handleValidity(currentStep, stepIsValid);
+            this.stepUIManager.handleValidity(currentStep, stepIsValid, true);
             
             if (!stepIsValid) {
                 this.stepUIManager.triggerErrorAnimation(currentStep);
@@ -38,17 +52,10 @@ class Steps implements StepsInterface {
             }
 
             const nextStep    = this.stepNavigator.goNext();
-
             if (nextStep) {
-                this.stepUIManager.updateButtonStates(
-                    nextStep.getId(),
-                    currentStep.getId()
-                );
-
-                this.stepUIManager.showAndHideSteps(nextStep, currentStep);
+                this.editableSteps[nextStep.getId()] = true;
+                this.handleMove(currentStep, nextStep);
             }
-
-            console.log('Next button clicked');
         });
     }
 
@@ -62,14 +69,18 @@ class Steps implements StepsInterface {
             this.stepUIManager.handleValidity(currentStep, stepIsValid);
 
             if (nextStep) {
-                this.stepUIManager.updateButtonStates(
-                    nextStep.getId(),
-                    currentStep.getId()
-                );
-
-                this.stepUIManager.showAndHideSteps(nextStep, currentStep);
+                this.handleMove(currentStep, nextStep);
             }
         });
+    }
+
+    private handleMove(currentStep: StepInterface, nextStep: StepInterface): void {
+        this.stepUIManager.updateButtonStates(
+            nextStep.getId(),
+            currentStep.getId()
+        );
+
+        this.stepUIManager.showAndHideSteps(nextStep, currentStep);
     }
 }
 

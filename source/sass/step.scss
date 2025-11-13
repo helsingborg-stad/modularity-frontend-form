@@ -1,3 +1,122 @@
+@use "./variables.scss" as *;
+
+.mod-frontend-form__steps {
+    z-index: 5000;
+
+    /* Step */
+    .mod-frontend-form__step-container {
+        opacity: 0;
+        width: 100%;
+        position: absolute;
+        transform: translateX(0) scale(.2);
+        transition: opacity .4s ease-in-out, transform .4s ease-in-out;
+        max-height: 0;
+        top: 2rem;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+
+        .mod-frontend-form__step-header-title {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mod-frontend-form__step-header-error-icon {
+            display: none;
+            color: $color-danger;
+        }
+
+        &.is-active {
+            opacity: 1;
+            position: relative;
+            max-height: unset;
+            top: 0;
+            transform: translateX(0) scale(1);
+            pointer-events: auto;
+            z-index: 2;
+            overflow: visible;
+        }
+
+        &.is-invalid {
+            .mod-frontend-form__step-header-error-icon {
+                display: block;
+            }
+        }
+
+        &:is(.animate-exit-right, .animate-exit-left) {
+            max-height: 999rem;
+            opacity: 0;
+            z-index: 1;
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        &.animate-exit-right {
+            transform: translateX(100%) scale(.2);
+        }
+
+        &.animate-exit-left {
+            transform: translateX(-100%) scale(.2);
+        }
+
+        &.animate-shake {
+            animation: shake .4s ease-in-out forwards;
+        }
+
+        &.is-loading {
+            pointer-events: none;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(10px);
+                z-index: 3000;
+            }
+
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                border: 0.25rem solid rgba(0, 0, 0, 0.1);
+                border-top-color: #333;
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                transform: translate(-50%, -50%);
+                z-index: 3001;
+            }
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%,60% { transform: translateX(-6px); }
+            40%,80% { transform: translateX(6px); }
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+    }
+}
+
+
+.mod-frontend-form__step-buttons {
+    z-index: 4000;
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* Loading */
 .mod-frontend-form.is-success .c-paper,
 .mod-frontend-form.is-loading .c-paper,
@@ -36,103 +155,4 @@
     .c-c-field__inner {
         animation: pulse 1.5s infinite ease-in-out;
     }
-}
-
-.mod-frontend-form__steps {
-    z-index: 5000;
-
-    .mod-frontend-form__step-container {
-        opacity: 0;
-        width: 100%;
-        position: absolute;
-        transform: translateX(0);
-        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-        max-height: 0;
-        top: 2rem;
-        pointer-events: none;
-        z-index: -1;
-        overflow: hidden;
-    }
-
-    .mod-frontend-form__step-container.is-active {
-        opacity: 1;
-        position: relative;
-        max-height: unset;
-        top: 0;
-        transform: translateX(0);
-        pointer-events: auto;
-        z-index: 2;
-        overflow: visible;
-    }
-
-    /* outgoing should be below entering */
-    .mod-frontend-form__step-container.animate-exit-left {
-        transform: translateX(-100%);
-        opacity: 0;
-        max-height: 999rem;
-        z-index: 1;
-    }
-
-    .mod-frontend-form__step-container.animate-exit-right {
-        transform: translateX(100%);
-        max-height: 999rem;
-        opacity: 0;
-        z-index: 1;
-    }
-
-    .mod-frontend-form__step-buttons {
-        z-index: 4000;
-    }
-
-    .mod-frontend-form__step-container.is-loading {
-        pointer-events: none;
-
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            z-index: 3000;
-        }
-
-
-        &::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 0.25rem solid rgba(0, 0, 0, 0.1);
-            border-top-color: #333;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            transform: translate(-50%, -50%);
-            z-index: 3001;
-        }
-
-        @keyframes spin {
-            to {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
-        }
-    }
-}
-
-.mod-frontend-form__step-buttons {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.mod-frontend-form__step-container.animate-shake {
-    animation: shake .4s ease-in-out forwards;
-}
-@keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20%,60% { transform: translateX(-6px); }
-    40%,80% { transform: translateX(6px); }
 }

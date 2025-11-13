@@ -111,6 +111,7 @@ class FormHandler {
         }
 
         const steps = StepsFactory.create(this.form.formElementContainer, validator);
+
         const submit = new Submit(
             this.form, 
             modularityFrontendFormData,
@@ -121,9 +122,7 @@ class FormHandler {
         );
 
         new Steps(
-            this.form,
             steps,
-            validator,
             new StepNavigator(
                 steps,
                 validator,

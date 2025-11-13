@@ -5,10 +5,11 @@ class StepsFactory {
         let steps: StepsObject = {};
         container.querySelectorAll('[data-js-frontend-form-step-container]').forEach((stepContainer) => {
             const step = stepContainer.querySelector('[data-js-frontend-form-step]');
-            const id   = step?.getAttribute('data-js-frontend-form-step');
-            const editButton = stepContainer.querySelector('[data-js-frontend-form-step-edit]');
+            const id = step?.getAttribute('data-js-frontend-form-step');
+            const editItem = container.querySelector(`[data-js-frontend-form-progressbar-step="${id}"]`);
+            const editItemIcon = editItem?.querySelector(`[data-material-symbol]`);
 
-            if (!id || !editButton) {
+            if (!id) {
                 console.error("Missing data-js-frontend-form-step attribute");
                 return;
             }
@@ -16,8 +17,9 @@ class StepsFactory {
             const stepId = parseInt(id);
             steps[stepId] = StepFactory.createStep(
                 stepContainer as HTMLElement,
-                editButton as HTMLElement,
                 step as HTMLElement,
+                editItem as HTMLElement,
+                editItemIcon as HTMLElement,
                 stepId,
                 validator
             );

@@ -3,15 +3,17 @@ import Step from './step';
 class StepFactory {
     public static createStep(
         stepContainer: HTMLElement,
-        editButton: HTMLElement,
         step: HTMLElement,
+        editItem: HTMLElement | null,
+        editItemIcon: HTMLElement | null,
         id: number,
         validator: StepValidatorInterface
     ): Step {
         return new Step(
             stepContainer,
-            editButton,
             step,
+            editItem,
+            editItemIcon,
             id,
             validator
         );

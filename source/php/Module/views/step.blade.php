@@ -1,5 +1,5 @@
 @if (!empty($step['fields']))
-    @paper([
+    @element([
         'attributeList' => [
             'data-js-frontend-form-step-container' => $index,
         ],
@@ -9,7 +9,6 @@
             $index === 0 ? 'is-active' : '',
             $index === 0 ? 'is-loading' : '',
         ],
-        'padding' => 4
     ])
         @element([
             'classList' => [
@@ -18,56 +17,35 @@
         ])
 
             <!-- Step Header -->
-            @element([])
-                @if($step['title'])
-                    @typography([
-                        'element' => 'h2',
+            @if($step['title'])
+                @typography([
+                    'element' => 'h2',
+                    'classList' => [
+                        'mod-frontend-form__step-header-title'
+                    ]
+                ])
+                    {{ $step['title'] }} @icon([
+                        'icon' => 'error',
+                        'filled' => false,
+                        'size' => 'md',
                         'classList' => [
-                            'mod-frontend-form__step-header-title'
+                            'mod-frontend-form__step-header-error-icon'
                         ]
                     ])
-                        {{ $step['title'] }} @icon([
-                            'icon' => 'error',
-                            'filled' => false,
-                            'size' => 'md',
-                            'classList' => [
-                                'mod-frontend-form__step-header-error-icon'
-                            ]
-                        ])
-                        @endicon
-                    @endtypography
-                @endif
-                @if($step['description'])
-                    @typography([
-                        'element' => 'div',
-                        'classList' => [
-                            'u-margin__top--1',
-                            'mod-frontend-form__step-header-description'
-                        ]
-                    ])
-                        {!! $step['description'] !!}
-                    @endtypography
-                @endif
-            @endelement
-
-            <!-- Step Header Edit Button -->
-            @button([
-                'icon' => 'edit',
-                'text' => $lang->edit,
-                'size' => 'sm',
-                'style' => 'basic',
-                'reversePositions' => true,
-                'classList' => [
-                    'mod-frontend-form__step-header-edit',
-                    $index === 0 ? 'u-visibility--hidden' : ''
-                ],
-                'attributeList' => [
-                    'role' => 'button',
-                    'data-js-frontend-form-step-edit' => $index,
-                ]
-            ])
-            @endbutton
-
+                    @endicon
+                @endtypography
+            @endif
+            @if($step['description'])
+                @typography([
+                    'element' => 'div',
+                    'classList' => [
+                        'u-margin__top--1',
+                        'mod-frontend-form__step-header-description'
+                    ]
+                ])
+                    {!! $step['description'] !!}
+                @endtypography
+            @endif
         @endelement
         @element([
             'attributeList' => [
@@ -84,5 +62,5 @@
                 @endif
             @endforeach
         @endelement
-    @endpaper
+    @endelement
 @endif

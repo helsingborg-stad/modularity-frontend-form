@@ -1,9 +1,9 @@
 interface StepInterface {
     getId(): number;
-    onEdit(callback: () => void): void;
     getStepContainer(): HTMLElement;
     getStepContentContainer(): HTMLElement;
-    getEditButton(): HTMLElement;
+    getEditItem(): HTMLElement|null;
+    getEditItemIcon(): HTMLElement|null;
     validate(): boolean;
 }
 
@@ -26,8 +26,7 @@ interface StepNavigatorInterface {
 
 interface StepUIManagerInterface {
     updateButtonStates(activeStep: number, previousActiveStep: number): void;
-    canEditStep(step: StepInterface): void;
-    handleValidity(step: StepInterface, valid: boolean): void;
+    handleValidity(step: StepInterface, valid: boolean, allowEdit: boolean = false): void;
     triggerErrorAnimation(step: StepInterface): void;
     showAndHideSteps(stepToShow: StepInterface, stepToHide: StepInterface): void;
     showStep(step: StepInterface): void;

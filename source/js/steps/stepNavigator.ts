@@ -61,7 +61,7 @@ class StepNavigator implements StepNavigatorInterface {
             const invalidStep = this.validator.getInvalidSteps()[0];
             if (invalidStep && this.steps[Number(invalidStep)]) {
                 const step = this.steps[Number(invalidStep)];
-                step.getEditButton().click();
+                // TODO: go to invalid step
                 step.getStepContainer().scrollIntoView({ behavior: 'smooth' });
             }
 

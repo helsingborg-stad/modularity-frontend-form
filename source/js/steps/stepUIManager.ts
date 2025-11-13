@@ -1,15 +1,15 @@
 class StepUIManager implements StepUIManagerInterface {
     private visibilityHiddenClass: string = 'u-visibility--hidden';
     private isActiveClass: string = 'is-active';
-    private allowEditClass: string = 'is-editable';
+    private validClass: string = 'is-valid';
     private invalidClass: string = 'is-invalid';
+    private hasPassedClass: string = 'has-passed';
     private shakeAnimationClass: string = 'animate-shake';
     private exitRightAnimationClass: string = 'animate-exit-right';
     private exitLeftAnimationClass: string = 'animate-exit-left';
     private nextButtonLabelElement: HTMLElement|null;
     private maxSteps: number;
     private iconElement: HTMLElement|null;
-    private currentStep: StepInterface;
 
     constructor(
         private steps: StepsObject,
@@ -20,7 +20,6 @@ class StepUIManager implements StepUIManagerInterface {
         this.nextButtonLabelElement = this.nextButton.querySelector('.c-button__label-text');
         this.iconElement = this.nextButton.querySelector('.c-icon');
         this.maxSteps = Object.keys(this.steps).length - 1;
-        this.currentStep = this.steps[0];
     }
 
     /**
@@ -48,8 +47,6 @@ class StepUIManager implements StepUIManagerInterface {
         }
 
         this.prevButton.classList.toggle(this.visibilityHiddenClass, activeStep === 0);
-        this.steps[previousActiveStep].getEditButton().classList.remove(this.visibilityHiddenClass);
-        this.steps[activeStep].getEditButton().classList.add(this.visibilityHiddenClass);
     }
 
     /**
@@ -58,8 +55,12 @@ class StepUIManager implements StepUIManagerInterface {
      * @param step The step to handle
      * @param isInvalid Whether the step is invalid or not
      */
-    public handleValidity(step: StepInterface, valid: boolean): void {
+    public handleValidity(step: StepInterface, valid: boolean, allowEdit: boolean = false): void {
         step.getStepContainer().classList.toggle(this.invalidClass, !valid);
+        step.getEditItem()?.classList.toggle(this.invalidClass, !valid);
+        step.getEditItem()?.classList.toggle(this.validClass, valid);
+        valid && allowEdit && step.getEditItem()?.classList.add(this.hasPassedClass);
+        this.updateEditItemIcon(step, valid);
     }
 
     /**
@@ -81,10 +82,9 @@ class StepUIManager implements StepUIManagerInterface {
      */
    public showAndHideSteps(stepToShow: StepInterface, stepToHide: StepInterface): void {
         const exitClass  = stepToShow.getId() > stepToHide.getId() ? this.exitLeftAnimationClass  : this.exitRightAnimationClass;
-        const allAnim = ['animate-exit-left','animate-exit-right','animate-enter-left','animate-enter-right', 'animate-shake'];
+        const allAnim = [this.exitLeftAnimationClass, this.exitRightAnimationClass, this.shakeAnimationClass];
 
         this.hideStep(stepToHide);
-        this.showStep(stepToShow);
 
         // Clean old classes
         stepToHide.getStepContainer().classList.remove(...allAnim);
@@ -94,11 +94,11 @@ class StepUIManager implements StepUIManagerInterface {
         // Add new classes
         stepToHide.getStepContainer().classList.add(exitClass);
         stepToShow.getStepContainer().classList.add(this.isActiveClass);
+        this.showStep(stepToShow);
 
         // Cleanup
         const onTransitionEnd = (e: TransitionEvent) => {
             if (e.propertyName !== 'transform' && e.propertyName !== 'opacity') return;
-
             stepToHide.getStepContainer().classList.remove(this.isActiveClass, exitClass);
             stepToHide.getStepContainer().removeEventListener('transitionend', onTransitionEnd);
         };
@@ -118,6 +118,7 @@ class StepUIManager implements StepUIManagerInterface {
      */
     public showStep(step: StepInterface): void {
         step.getStepContainer().classList.add(this.isActiveClass);
+        step.getEditItem()?.classList.add(this.isActiveClass);
     }
 
     /**
@@ -127,15 +128,13 @@ class StepUIManager implements StepUIManagerInterface {
      */
     public hideStep(step: StepInterface): void {
         step.getStepContainer().classList.remove(this.isActiveClass);
+        step.getEditItem()?.classList.remove(this.isActiveClass);
     }
 
-    /**
-     * Check if step is editable
-     * 
-     * @param step The step to check
-     */
-    public canEditStep(step: StepInterface): void {
-        step.getStepContainer().classList.add(this.allowEditClass);
+    private updateEditItemIcon(step: StepInterface, valid: boolean): void {
+        if (!step.getEditItemIcon()) return;
+
+        step.getEditItemIcon()!.setAttribute('data-material-symbol', valid ? 'check' : 'close');
     }
 }
 

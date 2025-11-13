@@ -1,0 +1,117 @@
+@use "./variables.scss" as *;
+
+$default-step-background-color: var(--color-light, #a3a3a3) !default;
+$step-background-color: var(--step-background-color, #a3a3a3) !default;
+$step-color: var(--step-color, #ffffff) !default;
+
+.mod-frontend-form__progressbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.mod-frontend-form__progressbar-step {
+    --step-background-color: var(--color-light, #a3a3a3);
+}
+
+.mod-frontend-form__progressbar-step.is-invalid {
+    --step-background-color: var(--color-danger, #d73740);
+}
+
+.mod-frontend-form__progressbar-step.is-valid {
+    --step-background-color: var(--color-success, #91d736);
+}
+
+.mod-frontend-form__progressbar-step {
+    flex: 1;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+
+    .mod-frontend-form__progressbar-step-button {
+        z-index: 1000;
+        transform: translateY(50%);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: $step-background-color;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $step-color;
+        border: 2px solid;
+        border-color: $step-background-color;
+        transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .mod-frontend-form__progressbar-step-title {
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .mod-frontend-form__progressbar-step-indicator {
+        width: 100%;
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            height: .25rem;
+            width: 100%;
+            left: 50%;
+            transform: translateY(-50%);
+            background-color: $default-step-background-color;
+            z-index: -1;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: .25rem;
+            width: 0;
+            transform: translateY(-50%);
+            background-color: $step-background-color;
+            transition: width 0.3s ease-in-out;
+        }
+    }
+
+    &:is(.is-invalid, .is-valid, .is-active) {
+        .mod-frontend-form__progressbar-step-button {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+    }
+
+    &.has-passed {
+        .mod-frontend-form__progressbar-step-indicator::before {
+            width: 100%;
+        }
+    }
+
+    &.is-last {
+        .mod-frontend-form__progressbar-step-indicator::after,
+        .mod-frontend-form__progressbar-step-indicator::before {
+            display: none;
+        }
+    }
+
+    &.is-active {
+        .mod-frontend-form__progressbar-step-button {
+            color: $step-background-color;
+            background-color: $step-color;
+            border-color: $step-background-color;
+        }
+
+        .mod-frontend-form__progressbar-step-title {
+            opacity: 0;
+        }
+    }
+}

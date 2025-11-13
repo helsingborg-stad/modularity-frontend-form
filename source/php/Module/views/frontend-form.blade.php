@@ -25,6 +25,17 @@
         ],
     ])
 
+        {{-- @element([
+            'componentElement' => 'ul',
+            'classList' => [
+                'mod-frontend-form__progressbar'
+            ]
+        ])
+            @foreach($steps as $index => $step)
+                @include('progressbar', ['step' => $step, 'index' => $index])
+            @endforeach
+        @endelement --}}
+
         @element([
             'classList' => [
                 'u-position--relative',

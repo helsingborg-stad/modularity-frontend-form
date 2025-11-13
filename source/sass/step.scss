@@ -8,8 +8,8 @@
         opacity: 0;
         width: 100%;
         position: absolute;
-        transform: translateX(0) scale(.2);
-        transition: opacity .4s ease-in-out, transform .4s ease-in-out;
+        transform: scale(.7);
+        transition: opacity .4s ease-in-out, transform .2s ease-in-out;
         max-height: 0;
         top: 2rem;
         pointer-events: none;
@@ -33,7 +33,7 @@
             position: relative;
             max-height: unset;
             top: 0;
-            transform: translateX(0) scale(1);
+            transform: scale(1);
             pointer-events: auto;
             z-index: 2;
             overflow: visible;
@@ -43,21 +43,6 @@
             .mod-frontend-form__step-header-error-icon {
                 display: block;
             }
-        }
-
-        &:is(.animate-exit-right, .animate-exit-left) {
-            max-height: 999rem;
-            opacity: 0;
-            z-index: 1;
-            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-        }
-
-        &.animate-exit-right {
-            transform: translateX(100%) scale(.2);
-        }
-
-        &.animate-exit-left {
-            transform: translateX(-100%) scale(.2);
         }
 
         &.animate-shake {

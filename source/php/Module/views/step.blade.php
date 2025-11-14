@@ -5,6 +5,8 @@
         ],
         'classList' => [
             'mod-frontend-form__step-container',
+            'o-layout-grid',
+            'o-layout-grid--gap-6',
             $index === 0 ? 'is-editable' : '',
             $index === 0 ? 'is-active' : '',
             $index === 0 ? 'is-loading' : '',
@@ -53,6 +55,10 @@
             ],
             'classList' => [
                 'mod-frontend-form__step',
+                'o-layout-grid',
+                'o-layout-grid--cols-12',
+                'o-layout-grid--row-gap-8',
+                'o-layout-grid--column-gap-6',
             ]
         ])
             <!-- Step Fields -->

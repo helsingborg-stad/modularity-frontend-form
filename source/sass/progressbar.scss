@@ -1,7 +1,7 @@
 @use "./variables.scss" as *;
 
-$default-step-background-color: var(--color-light, #a3a3a3) !default;
-$step-background-color: var(--step-background-color, #a3a3a3) !default;
+$default-step-background-color: var(--color-white, #ffffff) !default;;
+$step-background-color: var(--step-background-color, $default-step-background-color) !default;
 $step-color: var(--step-color, #ffffff) !default;
 
 .mod-frontend-form__progressbar {
@@ -11,18 +11,22 @@ $step-color: var(--step-color, #ffffff) !default;
     padding: 0;
     margin: 0;
     list-style: none;
+    background-color: rgba(0, 0, 0, .05);
 }
 
 .mod-frontend-form__progressbar-step {
-    --step-background-color: var(--color-light, #a3a3a3);
+    --step-background-color: var(--color-white, #ffffff);
+    --step-color: color-mix(in srgb, var(--color-dark, #707070), white 70%);
 }
 
 .mod-frontend-form__progressbar-step.is-invalid {
     --step-background-color: var(--color-danger, #d73740);
+    --step-color: #ffffff;
 }
 
 .mod-frontend-form__progressbar-step.is-valid {
     --step-background-color: var(--color-success, #91d736);
+    --step-color: #ffffff;
 }
 
 .mod-frontend-form__progressbar-step {
@@ -38,8 +42,8 @@ $step-color: var(--step-color, #ffffff) !default;
     .mod-frontend-form__progressbar-step-button {
         z-index: 1000;
         transform: translateY(50%);
-        width: 2rem;
-        height: 2rem;
+        width: 1.5rem;
+        height: 1.5rem;
         border-radius: 50%;
         background-color: $step-background-color;
         display: flex;
@@ -67,7 +71,7 @@ $step-color: var(--step-color, #ffffff) !default;
             left: 50%;
             transform: translateY(-50%);
             background-color: $default-step-background-color;
-            z-index: -1;
+            z-index: 0;
         }
 
         &::before {
@@ -77,6 +81,7 @@ $step-color: var(--step-color, #ffffff) !default;
             left: 50%;
             height: .25rem;
             width: 0;
+            z-index: 1;
             transform: translateY(-50%);
             background-color: $step-background-color;
             transition: width 0.3s ease-in-out;

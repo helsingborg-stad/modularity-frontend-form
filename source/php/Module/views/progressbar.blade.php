@@ -1,7 +1,8 @@
 @element([
     'componentElement' => 'ul',
     'classList' => [
-        'mod-frontend-form__progressbar'
+        'mod-frontend-form__progressbar',
+        'u-padding__y--4'
     ]
 ])
     @foreach($steps as $index => $step)

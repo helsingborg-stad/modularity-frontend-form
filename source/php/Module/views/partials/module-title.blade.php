@@ -1,6 +1,7 @@
 @element([
     'classList' => [
-        'u-text-align--center'
+        'u-text-align--center',
+        'u-padding__x--4',
     ]
 ])
     @if (empty($hideTitle) && !empty($postTitle))

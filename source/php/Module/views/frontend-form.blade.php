@@ -3,12 +3,12 @@
         'mod-frontend-form',
         'o-layout-grid',
         'o-layout-grid--gap-12',
-        'u-level-3'
+        'u-level-3',
+        'u-padding__y--4',
     ],
     'attributeList' => [
         'data-js-frontend-form' => 'true'
-    ],
-    'padding' => 4
+    ]
 ])
 
     @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
@@ -21,7 +21,8 @@
             'data-js-frontend-form-id' => $moduleId,
         ],
         'classList' => [
-            'mod-frontend-form__form'
+            'mod-frontend-form__form',
+            'u-padding__x--4',
         ],
     ])
         @element([

@@ -1,6 +1,6 @@
 @use "./variables.scss" as *;
 
-$default-step-background-color: var(--color-white, #ffffff) !default;;
+$default-step-background-color: color-mix(in srgb, var(--color-dark, #707070), white 70%);
 $step-background-color: var(--step-background-color, $default-step-background-color) !default;
 $step-color: var(--step-color, #ffffff) !default;
 
@@ -15,8 +15,8 @@ $step-color: var(--step-color, #ffffff) !default;
 }
 
 .mod-frontend-form__progressbar-step {
-    --step-background-color: var(--color-white, #ffffff);
-    --step-color: color-mix(in srgb, var(--color-dark, #707070), white 70%);
+    --step-color: var(--color-white, #ffffff);
+    --step-background-color: color-mix(in srgb, var(--color-dark, #707070), white 70%);
 }
 
 .mod-frontend-form__progressbar-step.is-invalid {

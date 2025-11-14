@@ -34,8 +34,41 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             'fieldAttributeList' => [
                 'data-js-validation-message-value-missing' => 'This field is required.'
             ],
-            'classList' => explode(' ', $this->field['wrapper']['class'] ?? ''),
+            'classList' => $this->createClassList(),
         ];
+    }
+
+    private function createClassList(): array
+    {
+
+        $classList =  explode(' ', $this->field['wrapper']['class'] ?? '');
+        $classList[] = 'mod-frontend-form__field';
+
+        if (!empty($this->field['wrapper']['width'])) {
+            $classList[] = 'o-layout-grid--col-span-' . $this->calculateColumnSpan((int) $this->field['wrapper']['width']);
+        } else {
+            $classList[] = 'o-layout-grid--col-span-12';
+        }
+
+        return $classList;
+    }
+
+    /**
+     * Calculate column span based on width percentage
+     * 
+     * @param int $widthPercentage
+     * @return int
+     */
+    private function calculateColumnSpan(int $widthPercentage): int
+    {
+        $widthPercentage = max(0, min(100, $widthPercentage));
+        $span = (int) round(($widthPercentage / 100) * 12);
+
+        if ($widthPercentage > 0 && $span < 1) {
+            $span = 1;
+        }
+
+        return min($span, 123);
     }
 
     /**

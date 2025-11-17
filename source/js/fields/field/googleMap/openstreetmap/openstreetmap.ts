@@ -159,13 +159,16 @@ class Openstreetmap implements OpenstreetmapInterface {
 
     // Updates the search input to show the fetched place
     private updateSearchInput(): void {
-        const searchInput = this.search.getInput();
-        if (searchInput && this.currentPlace) {
+        if (this.search.getInput() && this.currentPlace) {
             this.search.setSearchListItems(null);
             this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(this.currentPlace);
             this.search.showResetButton();
             this.search.hideSpinner();
             this.search.getInput()!.focus();
+
+            setTimeout(() => {
+                this.search.getInput()!.scrollLeft = 0;
+            }, 0);
         }
     }
 

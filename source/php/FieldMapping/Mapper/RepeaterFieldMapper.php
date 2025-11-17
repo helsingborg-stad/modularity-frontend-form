@@ -52,6 +52,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
         $mapped['buttonLabel'] = $this->field['button_label'] ?: $this->lang->newRow;
 
         $mapped['classList'][] = 'mod-frontend-form__repeater';
+        $mapped['classList'][] = 'o-layout-grid';
 
         return $mapped;
     }

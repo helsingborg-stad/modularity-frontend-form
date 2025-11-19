@@ -17,6 +17,15 @@ class EmailFieldMapper implements FieldMapperInterface
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?: '';
         $mapped['value']                               = $this->field['default_value'] ?: '';
+
+        $errorMessage = sprintf(
+            $this->lang->errorEmail,
+            'example@example.com'
+        );
+
+        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $errorMessage;
+        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $errorMessage;
+
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;

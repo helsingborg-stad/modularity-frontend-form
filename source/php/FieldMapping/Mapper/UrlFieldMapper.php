@@ -17,7 +17,14 @@ class UrlFieldMapper implements FieldMapperInterface
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';
-        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $this->lang->errorUrl;
+
+        $errorMessage = sprintf(
+            $this->lang->errorUrl,
+            'https://website.com'
+        );
+
+        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $errorMessage;
+        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $errorMessage;
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped ?? null;

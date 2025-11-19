@@ -21,6 +21,23 @@ class DatePickerFieldMapper implements FieldMapperInterface
         $mapped['maxDate']                             = $this->field['max_date'] ?? null;
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
+        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $this->lang->errorDate;
+        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $this->lang->errorDate;
+
+        if (!empty($this->field['min_date'])) {
+            $mapped['fieldAttributeList']['data-js-validation-message-range-underflow'] = sprintf(
+                $this->lang->errorDateRangeUnderflow,
+                $this->field['min_date']
+            );
+        }
+
+        if (!empty($this->field['max_date'])) {
+            $mapped['fieldAttributeList']['data-js-validation-message-range-overflow'] = sprintf(
+                $this->lang->errorDateRangeOverflow,
+                $this->field['max_date']
+            );
+        }
+
         return $mapped;
     }
 }

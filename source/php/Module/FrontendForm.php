@@ -159,13 +159,21 @@ class FrontendForm extends \Modularity\Module
 
             // Error Messages for fields
             'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),
-            'errorEmail'               => $this->wpService->__('Please enter a valid email address', 'modularity-frontend-form'),
-            'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. https://website.com)', 'modularity-frontend-form'),
+            'errorSelect'              => $this->wpService->__('Please select an option', 'modularity-frontend-form'),
+            'errorEmail'               => $this->wpService->__('Please enter a valid email address (ex. %s)','modularity-frontend-form'),
+            'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. %s)', 'modularity-frontend-form'),
             'errorPhone'               => $this->wpService->__('Please enter a valid phone number', 'modularity-frontend-form'),
-            'errorDate'                => $this->wpService->__('Please enter a valid date', 'modularity-frontend-form'),
+            'errorDate'                => $this->wpService->__('Please enter a valid date (ex. yyyy-mm-dd)', 'modularity-frontend-form'),
+            'errorDateRangeUnderflow'   => $this->wpService->__('Please enter a date after %s', 'modularity-frontend-form'),
+            'errorDateRangeOverflow'    => $this->wpService->__('Please enter a date before %s', 'modularity-frontend-form'),
             'errorDateTime'            => $this->wpService->__('Please enter a valid date and time', 'modularity-frontend-form'),
-            'errorTime'                => $this->wpService->__('Please enter a valid time', 'modularity-frontend-form'),
+            'errorTime'                => $this->wpService->__('Please enter a valid time (ex. hh:mm)', 'modularity-frontend-form'),
+            'errorTimeRangeUnderflow'   => $this->wpService->__('Please enter a time after %s', 'modularity-frontend-form'),
+            'errorTimeRangeOverflow'    => $this->wpService->__('Please enter a time before %s', 'modularity-frontend-form'),
             'errorNumber'              => $this->wpService->__('Please enter a valid number', 'modularity-frontend-form'),
+            'errorNumberUnderflow'     => $this->wpService->__('Please enter a number greater than or equal to %s', 'modularity-frontend-form'),
+            'errorNumberOverflow'      => $this->wpService->__('Please enter a number smaller than or equal to %s', 'modularity-frontend-form'),
+            'errorNumberStepMismatch'  => $this->wpService->__('Please enter a number in increments of %s', 'modularity-frontend-form'),
 
             'statusTitleLoading'       => $this->wpService->__('Loading', 'modularity-frontend-form'),
             'statusTitleError'         => $this->wpService->__('Error', 'modularity-frontend-form'),
@@ -184,7 +192,7 @@ class FrontendForm extends \Modularity\Module
             'nonceUrlMissing'          => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
             'nonceRequestSuccess'      => $this->wpService->__('Securing', 'modularity-frontend-form'),
             'nonceRequestFailed'       => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
-            
+
             // wysiwyg
             'bold'              => $this->wpService->__('Bold', 'modularity-frontend-form'),
             'italic'            => $this->wpService->__('Italic', 'modularity-frontend-form'),

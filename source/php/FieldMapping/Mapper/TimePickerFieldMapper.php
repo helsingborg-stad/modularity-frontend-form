@@ -21,6 +21,23 @@ class TimePickerFieldMapper implements FieldMapperInterface
         $mapped['maxTime']                             = $this->field['max_time'] ?? null;
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
+        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $this->lang->errorTime;
+        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $this->lang->errorTime;
+
+        if (!empty($this->field['min_time'])) {
+            $mapped['fieldAttributeList']['data-js-validation-message-range-underflow'] = sprintf(
+                $this->lang->errorTimeRangeUnderflow,
+                $this->field['min_time']
+            );
+        }
+
+        if (!empty($this->field['max_time'])) {
+            $mapped['fieldAttributeList']['data-js-validation-message-range-overflow'] = sprintf(
+                $this->lang->errorTimeRangeOverflow,
+                $this->field['max_time']
+            );
+        }
+
         return $mapped;
     }
 }

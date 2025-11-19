@@ -64,7 +64,7 @@ class FrontendForm extends \Modularity\Module
         $this->formatSteps  = new FormatSteps(
             $this->wpService,
             $this->acfService,
-            new Config($this->wpService, 'modularity-frontend-form'), //TODO: Use a config factory,
+            new Config($this->wpService, 'modularity-frontend-form'),
             $this->getLang()
         );
 

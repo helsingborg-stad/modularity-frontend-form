@@ -1,7 +1,9 @@
 <?php 
 
-if (function_exists('acf_add_local_field_group')) {
-    acf_add_local_field_group(array(
+
+if (function_exists('acf_add_local_field_group')) {
+
+    acf_add_local_field_group(array(
     'key' => 'group_6627a5e16d74c',
     'title' => __('Configure Multistep Form', 'modularity-frontend-form'),
     'fields' => array(
@@ -101,13 +103,7 @@
                         'class' => '',
                         'id' => '',
                     ),
-                    'choices' => array(
-                        'group_57bb00ff522ad' => __('Incident list', 'modularity-frontend-form'),
-                        'group_6627a5e16d74c' => __('Frontend Form: Configure Multistep Form', 'modularity-frontend-form'),
-                        'group_570770ab8f064' => __('Image: Image', 'modularity-frontend-form'),
-                        'group_681dbb34adb91' => __('TestPostType: Example Frontend Form', 'modularity-frontend-form'),
-                        'group_5ad73d947a069' => __('Utmärkelser: Ordning utmärkelser', 'modularity-frontend-form'),
-                    ),
+                    'choices' => array(),
                     'default_value' => array(
                     ),
                     'return_format' => 'value',
@@ -589,4 +585,5 @@
     'acfe_meta' => '',
     'acfe_note' => '',
 ));
-}
+
+}

@@ -98,13 +98,7 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": {
-                        "group_57bb00ff522ad": "Incident list",
-                        "group_6627a5e16d74c": "Frontend Form: Configure Multistep Form",
-                        "group_570770ab8f064": "Image: Image",
-                        "group_681dbb34adb91": "TestPostType: Example Frontend Form",
-                        "group_5ad73d947a069": "Utm\u00e4rkelser: Ordning utm\u00e4rkelser"
-                    },
+                    "choices": {},
                     "default_value": [],
                     "return_format": "value",
                     "multiple": 1,
@@ -584,4 +578,4 @@
     "acfe_meta": "",
     "acfe_note": ""
 }]
-
+

@@ -13,7 +13,7 @@ class GoogleMapFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'googleMap'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'googleMap'))->map();
 
         if ($mapped['required']) {
             $mapped['attributeList']['data-js-required'] = 'true';

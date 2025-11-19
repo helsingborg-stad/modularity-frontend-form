@@ -13,7 +13,7 @@ class TimePickerFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'time'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'time'))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? null;
         $mapped['value']                               = $this->field['default_value'] ?? null;

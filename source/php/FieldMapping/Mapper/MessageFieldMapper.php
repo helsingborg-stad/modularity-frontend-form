@@ -13,7 +13,7 @@ class MessageFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'message'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'message'))->map();
 
         $mapped['message'] = $this->field['message'] ?: '';
 

@@ -13,7 +13,7 @@ class DatePickerFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'date'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'date'))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? null;
         $mapped['value']                               = $this->field['default_value'] ?? null;

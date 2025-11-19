@@ -13,7 +13,7 @@ class ImageFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'image'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'image'))->map();
 
         $mapped['accept'] = !empty($this->field['mime_types'])
             ? str_replace(' ', ',', $this->field['mime_types'])

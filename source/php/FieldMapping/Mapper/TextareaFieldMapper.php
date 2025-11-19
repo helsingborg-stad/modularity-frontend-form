@@ -13,7 +13,7 @@ class TextareaFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'textarea'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, $this->field['type']))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';

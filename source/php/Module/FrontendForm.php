@@ -131,11 +131,9 @@ class FrontendForm extends \Modularity\Module
     private function getLang(): object
     {
         $disclaimer = $this->wpService->__(
-            <<<EOD
-            By submitting this form, you're agreeing to our terms and conditions. 
-            You're also consenting to us processing your personal data in line with GDPR regulations, 
-            and confirming that you have full rights to use all provided content.
-            EOD,
+            "By submitting this form, you're agreeing to our terms and conditions.\n" .
+            "You're also consenting to us processing your personal data in line with GDPR regulations,\n" .
+            "and confirming that you have full rights to use all provided content.",
             'modularity-frontend-form'
         );
 

@@ -35,7 +35,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             'disabled'    => true,
             'attributeList' => $this->createAttributeList($conditionalLogicMapper),
             'fieldAttributeList' => [
-                'data-js-validation-message-value-missing' => 'This field is required.'
+                'data-js-validation-message-value-missing' => $this->lang->errorRequired,
             ],
             'classList' => $this->createClassList(),
         ];

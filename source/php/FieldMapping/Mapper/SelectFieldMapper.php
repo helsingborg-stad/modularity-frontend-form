@@ -19,6 +19,7 @@ class SelectFieldMapper implements FieldMapperInterface
         $mapped['preselected'] = $this->field['default_value'] ?? null;
         $mapped['placeholder'] = $this->field['placeholder']  ?? '';
         $mapped['multiple']    = $this->field['multiple'] ?? false;
+        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $this->lang->errorSelect;
 
         return $mapped;
     }

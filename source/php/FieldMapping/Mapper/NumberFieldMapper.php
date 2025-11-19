@@ -18,8 +18,35 @@ class NumberFieldMapper implements FieldMapperInterface
         $mapped['placeholder']                         = $this->field['placeholder'] ?: '';
         $mapped['value']                               = $this->field['default_value'] ?: '';
         $mapped['moveAttributesListToFieldAttributes'] = false;
-        $mapped['attributeList']['min']                = $this->field['min'] ?? null;
-        $mapped['attributeList']['max']                = $this->field['max'] ?? null;
+
+        $mapped['fieldAttributeList']['step'] = isset($this->field['step']) ? $this->field['step'] : 'any';
+
+        if (!empty($this->field['step'])) {
+            $mapped['fieldAttributeList']['data-js-validation-message-step-mismatch'] = sprintf(
+                $this->lang->errorNumberStepMismatch,
+                $this->field['step']
+            );
+        }
+
+        if (!empty(($this->field['min'])) || $this->field['min'] === 0) {
+            $mapped['fieldAttributeList']['min'] = $this->field['min'];
+            $mapped['fieldAttributeList']['data-js-validation-message-range-underflow'] = sprintf(
+                $this->lang->errorNumberUnderflow,
+                $this->field['min']
+            );
+        }
+
+        if (isset($this->field['max'])) {
+            $mapped['fieldAttributeList']['max'] = $this->field['max'];
+            $mapped['fieldAttributeList']['data-js-validation-message-range-overflow'] = sprintf(
+                $this->lang->errorNumberOverflow,
+                $this->field['max']
+            );
+        }
+
+        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $this->lang->errorNumber;
+        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $this->lang->errorNumber;
+        $mapped['fieldAttributeList']['data-js-validation-message-bad-input'] = $this->lang->errorNumber;
 
         return $mapped;
     }

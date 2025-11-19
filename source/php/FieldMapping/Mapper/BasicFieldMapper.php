@@ -45,10 +45,10 @@ class BasicFieldMapper implements BasicFieldMapperInterface
         $classList[] = 'mod-frontend-form__field';
 
         if (!empty($this->field['wrapper']['width'])) {
-            $classList[] = 'o-layout-grid--col-span-' . $this->calculateColumnSpan((int) $this->field['wrapper']['width']);
-        } else {
-            $classList[] = 'o-layout-grid--col-span-12';
+            $classList[] = 'o-layout-grid--col-span-' . $this->calculateColumnSpan((int) $this->field['wrapper']['width']) . '@cq-lg';
         }
+
+        $classList[] = 'o-layout-grid--col-span-12';
 
         return $classList;
     }

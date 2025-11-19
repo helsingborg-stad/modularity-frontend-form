@@ -2,6 +2,7 @@
     'classList' => [
         'mod-frontend-form',
         'o-layout-grid',
+        'o-layout-grid--cq',
         'o-layout-grid--gap-12',
         'u-level-3',
         'u-padding__y--4',

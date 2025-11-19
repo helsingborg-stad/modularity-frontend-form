@@ -1,6 +1,7 @@
 import { MarkerInterface, CreateMarker, CreateTileLayer, TilesHelper, CreateAttribution, CreateMarkerInterface, MapInterface, PlaceObject, EventData, LatLngObject, CreateMap, CreateSearch, SearchInterface } from '@helsingborg-stad/openstreetmap';
 
 import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
+import CreateFallbackPlaceObject from './createFallbackPlaceObject';
 
 class Openstreetmap implements OpenstreetmapInterface {
     private search!: SearchInterface;
@@ -13,6 +14,7 @@ class Openstreetmap implements OpenstreetmapInterface {
 
     constructor(
         private fetchPlaceFromLatLng: FetchPlaceFromLatLng,
+        private createPlaceFromLatLng: CreateFallbackPlaceObject,
         private modularityFrontendFormData: ModularityFrontendFormData,
         private modularityFrontendFormLang: ModularityFrontendFormLang,
         private parent: HTMLElement,
@@ -150,8 +152,10 @@ class Openstreetmap implements OpenstreetmapInterface {
             if (this.currentPlace) this.callMarkerMovedListeners();
             this.updateSearchInput();
         } catch (error) {
-            this.currentPlace = null;
-            console.error('Failed to fetch place:', error);
+            this.currentPlace = this.createPlaceFromLatLng.create(latLng);
+            this.callMarkerMovedListeners();
+            this.updateSearchInput();
+            console.warn('Failed to fetch place:', error);
         } finally {
             this.fetching = false;
         }

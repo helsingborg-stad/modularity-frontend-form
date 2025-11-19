@@ -1,5 +1,6 @@
 import Openstreetmap from "./openstreetmap";
 import FetchPlaceFromLatLng from "./fetchPlaceFromLatLng";
+import CreateFallbackPlaceObject from "./createFallbackPlaceObject";
 
 class OpenstreetmapFactory {
     public static createOpenstreetmap(
@@ -25,7 +26,17 @@ class OpenstreetmapFactory {
         const lng = map.dataset.jsLng;
 
         if (id && zoom && lat && lng) {
-            return new Openstreetmap(new FetchPlaceFromLatLng(modularityFrontendFormData), modularityFrontendFormData, modularityFrontendFormLang, openstreetmapContainer, id, parseFloat(lat), parseFloat(lng), parseInt(zoom));
+            return new Openstreetmap(
+                new FetchPlaceFromLatLng(modularityFrontendFormData),
+                new CreateFallbackPlaceObject(),
+                modularityFrontendFormData,
+                modularityFrontendFormLang,
+                openstreetmapContainer,
+                id,
+                parseFloat(lat),
+                parseFloat(lng),
+                parseInt(zoom)
+            );
         }
 
         console.error("OpenstreetmapFactory: Missing required data attributes.");

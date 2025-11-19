@@ -13,7 +13,7 @@ class RadioFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'radio'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'radio'))->map();
 
         $mapped['choices'] = [];
         $mapped['attributeList']['role'] = 'radiogroup';

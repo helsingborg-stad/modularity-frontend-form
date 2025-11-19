@@ -13,7 +13,7 @@ class CheckboxFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'checkbox'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'checkbox'))->map();
 
         $mapped['choices'] = [];
         if ($mapped['required']) {

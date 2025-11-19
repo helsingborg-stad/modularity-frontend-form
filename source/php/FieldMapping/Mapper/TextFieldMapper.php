@@ -5,6 +5,7 @@ namespace ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
+
 class TextFieldMapper implements FieldMapperInterface
 {
     use FieldMapperConstruct;
@@ -12,7 +13,7 @@ class TextFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, $this->field['type']))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, $this->field['type']))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';

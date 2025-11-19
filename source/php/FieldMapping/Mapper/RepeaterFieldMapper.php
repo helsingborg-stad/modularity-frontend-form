@@ -36,7 +36,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
             }
         }
 
-        $mapped = (new BasicFieldMapper($this->field, 'repeater'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'repeater'))->map();
 
         if ($mapped['required']) {
             $this->field['min'] = $this->field['min'] ?: 1;

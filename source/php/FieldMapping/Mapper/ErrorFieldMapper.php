@@ -13,7 +13,7 @@ class ErrorFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'error'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'error'))->map();
         $mapped['unsupportedFieldType'] = $this->field['type'];
         return $mapped;
     }

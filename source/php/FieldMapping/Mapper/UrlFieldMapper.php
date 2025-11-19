@@ -13,7 +13,7 @@ class UrlFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'url'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'url'))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';

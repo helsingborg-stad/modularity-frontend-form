@@ -3,15 +3,18 @@
 namespace ModularityFrontendForm\FieldMapping\Mapper;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\BasicFieldMapperInterface;
-use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
 
 class BasicFieldMapper implements BasicFieldMapperInterface
 {
-    public function __construct(protected array $field, private ?string $type = null) {}
+    public function __construct(
+        protected array $field,
+        private object $lang,
+        private ?string $type = null
+    ) {}
 
-    public static function getInstance(array $field, ?string $type = null): self
+    public static function getInstance(array $field, object $lang, ?string $type = null): self
     {
-        return new static($field, $type);
+        return new static($field, $lang, $type);
     }
 
     public function map(): array

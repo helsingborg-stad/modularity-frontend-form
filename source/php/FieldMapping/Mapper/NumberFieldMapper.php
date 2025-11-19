@@ -13,7 +13,7 @@ class NumberFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'number'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'number'))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?: '';
         $mapped['value']                               = $this->field['default_value'] ?: '';

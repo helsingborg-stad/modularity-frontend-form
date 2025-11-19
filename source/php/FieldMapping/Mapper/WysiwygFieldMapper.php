@@ -13,7 +13,7 @@ class WysiwygFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'wysiwyg'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'wysiwyg'))->map();
 
         $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
 

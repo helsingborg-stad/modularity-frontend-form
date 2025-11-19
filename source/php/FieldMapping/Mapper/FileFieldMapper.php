@@ -13,7 +13,7 @@ class FileFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'file'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'file'))->map();
 
         $mapped['accept'] = !empty($this->field['mime_types'])
             ? str_replace(' ', ',', $this->field['mime_types'])

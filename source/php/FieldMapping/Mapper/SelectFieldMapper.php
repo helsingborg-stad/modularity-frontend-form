@@ -13,7 +13,7 @@ class SelectFieldMapper implements FieldMapperInterface
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, 'select'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'select'))->map();
 
         $mapped['options']     = $this->field['choices'] ?: [];
         $mapped['preselected'] = $this->field['default_value'] ?? null;

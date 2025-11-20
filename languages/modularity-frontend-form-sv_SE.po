@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Modularity Frontend Form\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-19 16:04+0100\n"
-"PO-Revision-Date: 2025-11-19 16:05+0100\n"
+"POT-Creation-Date: 2025-11-19 16:00+0100\n"
+"PO-Revision-Date: 2025-11-19 16:00+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -351,232 +351,219 @@ msgstr "Frontendformulär"
 msgid "Module for creating forms."
 msgstr "Modul för att skapa formulär."
 
-#: php/Module/FrontendForm.php:134
-msgid ""
-"By submitting this form, you're agreeing to our terms and conditions.\n"
-"You're also consenting to us processing your personal data in line with GDPR "
-"regulations,\n"
-"and confirming that you have full rights to use all provided content."
-msgstr ""
-"Genom att skicka in detta formulär godkänner du våra villkor. \n"
-"Du samtycker också till att vi behandlar dina personuppgifter i enlighet med "
-"GDPR, \n"
-"och bekräftar att du har fulla rättigheter att använda allt innehåll som "
-"tillhandahålls."
-
-#: php/Module/FrontendForm.php:142
+#: php/Module/FrontendForm.php:144
 msgid "Edit"
 msgstr "Redigera"
 
-#: php/Module/FrontendForm.php:143
+#: php/Module/FrontendForm.php:145
 msgid "Submit"
 msgstr "Skicka"
 
-#: php/Module/FrontendForm.php:144
+#: php/Module/FrontendForm.php:146
 msgid "Previous"
 msgstr "Föregående"
 
-#: php/Module/FrontendForm.php:145
+#: php/Module/FrontendForm.php:147
 msgid "Next"
 msgstr "Nästa"
 
-#: php/Module/FrontendForm.php:146
+#: php/Module/FrontendForm.php:148
 msgid "of"
 msgstr "av"
 
-#: php/Module/FrontendForm.php:147
+#: php/Module/FrontendForm.php:149
 msgid "Step"
 msgstr "Steg"
 
-#: php/Module/FrontendForm.php:148
+#: php/Module/FrontendForm.php:150
 msgid "Completed"
 msgstr "Slutförd"
 
-#: php/Module/FrontendForm.php:149
+#: php/Module/FrontendForm.php:151
 msgid "No results found"
-msgstr "Skickar in"
+msgstr "Inga resultat hittades"
 
-#: php/Module/FrontendForm.php:150
+#: php/Module/FrontendForm.php:152
 msgid "Search location..."
 msgstr "Sök plats..."
 
-#: php/Module/FrontendForm.php:151
+#: php/Module/FrontendForm.php:153
 msgid "Name of the location"
-msgstr "Skickar in"
+msgstr "Platsens namn"
 
-#: php/Module/FrontendForm.php:152
+#: php/Module/FrontendForm.php:154
 msgid "Remove row"
 msgstr "Ta bort rad"
 
-#: php/Module/FrontendForm.php:153
+#: php/Module/FrontendForm.php:155
 msgid "At least one value is required"
 msgstr "Minst ett värde krävs"
 
-#: php/Module/FrontendForm.php:154 php/Module/FrontendForm.php:176
+#: php/Module/FrontendForm.php:156 php/Module/FrontendForm.php:178
 msgid "Loading"
 msgstr "Laddar"
 
-#: php/Module/FrontendForm.php:155
+#: php/Module/FrontendForm.php:157
 msgid "New row"
 msgstr "Ny rad"
 
-#: php/Module/FrontendForm.php:156
+#: php/Module/FrontendForm.php:158
 msgid "The following field is not supported"
 msgstr "Följande fält stöds inte"
 
-#: php/Module/FrontendForm.php:159
+#: php/Module/FrontendForm.php:161
 msgid "This field is required"
 msgstr "Detta fält är obligatoriskt"
 
-#: php/Module/FrontendForm.php:160
+#: php/Module/FrontendForm.php:162
 msgid "Please select an option"
 msgstr "Vänligen välj ett alternativ"
 
-#: php/Module/FrontendForm.php:161
+#: php/Module/FrontendForm.php:163
 #, php-format
 msgid "Please enter a valid email address (ex. %s)"
 msgstr "Vänligen ange en giltig e-postadress (t.ex. %s)"
 
-#: php/Module/FrontendForm.php:162
+#: php/Module/FrontendForm.php:164
 #, php-format
 msgid "Please enter a valid URL (ex. %s)"
 msgstr "Vänligen ange en giltig URL (t.ex. %s)"
 
-#: php/Module/FrontendForm.php:163
+#: php/Module/FrontendForm.php:165
 msgid "Please enter a valid phone number"
 msgstr "Vänligen ange ett giltigt telefonnummer"
 
-#: php/Module/FrontendForm.php:164
+#: php/Module/FrontendForm.php:166
 msgid "Please enter a valid date (ex. yyyy-mm-dd)"
 msgstr "Vänligen ange ett giltigt datum (t.ex. åååå-mm-dd)"
 
-#: php/Module/FrontendForm.php:165
+#: php/Module/FrontendForm.php:167
 #, php-format
 msgid "Please enter a date after %s"
 msgstr "Vänligen ange ett datum efter %s"
 
-#: php/Module/FrontendForm.php:166
+#: php/Module/FrontendForm.php:168
 #, php-format
 msgid "Please enter a date before %s"
 msgstr "Vänligen ange ett datum före %s"
 
-#: php/Module/FrontendForm.php:167
+#: php/Module/FrontendForm.php:169
 msgid "Please enter a valid date and time"
 msgstr "Vänligen ange ett giltigt datum och tid"
 
-#: php/Module/FrontendForm.php:168
+#: php/Module/FrontendForm.php:170
 msgid "Please enter a valid time (ex. hh:mm)"
 msgstr "Vänligen ange en giltig tid (t.ex. tt:mm)"
 
-#: php/Module/FrontendForm.php:169
+#: php/Module/FrontendForm.php:171
 #, php-format
 msgid "Please enter a time after %s"
 msgstr "Vänligen ange en tid efter %s"
 
-#: php/Module/FrontendForm.php:170
+#: php/Module/FrontendForm.php:172
 #, php-format
 msgid "Please enter a time before %s"
 msgstr "Vänligen ange en tid före %s"
 
-#: php/Module/FrontendForm.php:171
+#: php/Module/FrontendForm.php:173
 msgid "Please enter a valid number"
 msgstr "Vänligen ange ett giltigt nummer"
 
-#: php/Module/FrontendForm.php:172
+#: php/Module/FrontendForm.php:174
 #, php-format
 msgid "Please enter a number greater than or equal to %s"
 msgstr "Vänligen ange ett nummer större än eller lika med %s"
 
-#: php/Module/FrontendForm.php:173
+#: php/Module/FrontendForm.php:175
 #, php-format
 msgid "Please enter a number smaller than or equal to %s"
 msgstr "Vänligen ange ett nummer mindre än eller lika med %s"
 
-#: php/Module/FrontendForm.php:174
+#: php/Module/FrontendForm.php:176
 #, php-format
 msgid "Please enter a number in increments of %s"
 msgstr "Vänligen ange ett nummer i steg om %s"
 
-#: php/Module/FrontendForm.php:177
+#: php/Module/FrontendForm.php:179
 msgid "Error"
 msgstr "Fel"
 
-#: php/Module/FrontendForm.php:178
+#: php/Module/FrontendForm.php:180
 msgid "Success"
 msgstr "Framgång"
 
-#: php/Module/FrontendForm.php:179 php/Module/FrontendForm.php:181
+#: php/Module/FrontendForm.php:181 php/Module/FrontendForm.php:183
 msgid "Submitting"
 msgstr "Skickar"
 
-#: php/Module/FrontendForm.php:182
+#: php/Module/FrontendForm.php:184
 msgid "Preparing"
 msgstr "Förbereder"
 
-#: php/Module/FrontendForm.php:183
+#: php/Module/FrontendForm.php:185
 msgid "Form submitted successfully."
 msgstr "Formuläret skickades framgångsrikt."
 
-#: php/Module/FrontendForm.php:184
+#: php/Module/FrontendForm.php:186
 msgid "Form submission failed: Cound not find path."
 msgstr "Formulärinskick misslyckades: kunde inte hitta sökväg."
 
-#: php/Module/FrontendForm.php:185
+#: php/Module/FrontendForm.php:187
 msgid "An error occurred while submitting the form."
 msgstr "Ett fel uppstod vid inskick av formuläret."
 
-#: php/Module/FrontendForm.php:187
+#: php/Module/FrontendForm.php:189
 msgid "Communication error"
 msgstr "Kommunikationsfel"
 
-#: php/Module/FrontendForm.php:189 php/Module/FrontendForm.php:191
+#: php/Module/FrontendForm.php:191 php/Module/FrontendForm.php:193
 msgid "Securing"
 msgstr "Säkrar"
 
-#: php/Module/FrontendForm.php:190
+#: php/Module/FrontendForm.php:192
 msgid "Could not secure connection – link missing."
 msgstr "Kunde inte säkra anslutning – länk saknas."
 
-#: php/Module/FrontendForm.php:192
+#: php/Module/FrontendForm.php:194
 msgid "Could not secure connection – please try again."
 msgstr "Kunde inte säkra anslutning – vänligen försök igen."
 
-#: php/Module/FrontendForm.php:195
+#: php/Module/FrontendForm.php:197
 msgid "Bold"
 msgstr "Fet"
 
-#: php/Module/FrontendForm.php:196
+#: php/Module/FrontendForm.php:198
 msgid "Italic"
 msgstr "Kursiv"
 
-#: php/Module/FrontendForm.php:197
+#: php/Module/FrontendForm.php:199
 msgid "Underline"
 msgstr "Understruken"
 
-#: php/Module/FrontendForm.php:198
-msgid "Strikethrough"
-msgstr "Rubrik"
-
-#: php/Module/FrontendForm.php:199
-msgid "Bullet list"
-msgstr "Underrubrik"
-
 #: php/Module/FrontendForm.php:200
+msgid "Strikethrough"
+msgstr "Genomstruken"
+
+#: php/Module/FrontendForm.php:201
+msgid "Bullet list"
+msgstr "Punktlista"
+
+#: php/Module/FrontendForm.php:202
 msgid "Numbered list"
 msgstr "Numrerad lista"
 
-#: php/Module/FrontendForm.php:201
+#: php/Module/FrontendForm.php:203
 msgid "Link"
 msgstr "Länk"
 
-#: php/Module/FrontendForm.php:202
+#: php/Module/FrontendForm.php:204
 msgid "Blockquote"
 msgstr "Citatblock"
 
-#: php/Module/FrontendForm.php:203
+#: php/Module/FrontendForm.php:205
 msgid "Heading"
 msgstr "Rubrik"
 
-#: php/Module/FrontendForm.php:204
+#: php/Module/FrontendForm.php:206
 msgid "Subheading"
 msgstr "Underrubrik"

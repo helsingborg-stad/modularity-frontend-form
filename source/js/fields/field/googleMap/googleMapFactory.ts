@@ -5,6 +5,7 @@ import GoogleMapConditionsHandler from "./condition/googleMapConditionsHandler";
 import GoogleMapConditionValidator from "./condition/googleMapConditionValidator";
 import GoogleMap from "./googleMap";
 import OpenstreetmapFactory from "./openstreetmap/openstreetmapFactory";
+import MapValidator from "./validation/mapValidator";
 
 class GoogleMapFactory {
     public static create(
@@ -43,7 +44,9 @@ class GoogleMapFactory {
             new GoogleMapConditionsHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
-                []
+                [
+                    new MapValidator(modularityFrontendFormLang)
+                ]
             )
         );
     }

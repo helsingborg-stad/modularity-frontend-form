@@ -27,7 +27,7 @@ class GoogleMapFieldMapper implements FieldMapperInterface
         $mapped['classList'][] = 'openstreetmap';
 
         $mapped['attributeList']['style'] = sprintf(
-            'height: %spx; position: relative',
+            'min-height: %spx; position: relative',
             $mapped['height']
         );
 

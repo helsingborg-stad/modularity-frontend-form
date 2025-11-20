@@ -10,7 +10,7 @@
                 'mod-frontend-form__custom-label'
             ],
         ])
-            {{ $field['label'] }} {!! $field['required'] ? '<span class="u-color__text--danger">*</span>' : '' !!}
+            {{ $field['label'] }} {!! !empty($field['attributeList']['data-js-required']) ? '<span class="u-color__text--danger">*</span>' : '' !!}
         @endtypography
     @endif
     @field([
@@ -18,7 +18,6 @@
         'attributeList' => [
             'data-js-google-map-hidden-field' => true
         ],
-        'required' => $field['required'] ?? false,
         'disabled' => true,
         'name' => $field['name']
     ])

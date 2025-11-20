@@ -7,6 +7,7 @@ import NullFieldFactory from "../nullField/nullFieldFactory";
 import WysiwygConditionValidator from "./condition/wysiwygConditionValidator";
 import WysiwygConditionsHandler from "./condition/wysiwygConditionsHandler";
 import Actions from "./editor/actions";
+import WysiwygValidator from "./validator/wysiwygValidator";
 
 class WysiwygFactory {
     public static create(
@@ -55,7 +56,9 @@ class WysiwygFactory {
             new WysiwygConditionsHandler(unstructuredConditions),
             new FieldValidator(
                 new FieldValidatorUIHandler(notices),
-                []
+                [
+                    new WysiwygValidator(modularityFrontendFormLang)
+                ]
             )
         );
     }

@@ -60,6 +60,7 @@ class Wysiwyg implements WysiwygInterface {
         this.editor.addChangeListeners((html: string) => {
             this.hiddenField.value = html;
             this.conditionsHandler.checkConditions();
+            this.validator.validate();
         });
     }
 }

@@ -60,7 +60,7 @@ class GoogleMap implements GoogleMapInterface {
 
     private listenForMarkerEvents(): void {
         this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject|null) => {
-            this.hiddenField.value = JSON.stringify(placeObject);
+            this.hiddenField.value = placeObject ? JSON.stringify(placeObject) : '';
             this.conditionsHandler.checkConditions();
         });
     }

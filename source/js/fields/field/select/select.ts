@@ -5,7 +5,7 @@ class Select implements SelectInterface {
         private select: HTMLSelectElement,
         private options: NodeListOf<HTMLOptionElement>,
         private name: string,
-        private selectValidator: ConditionValidatorInterface,
+        private conditionValidator: ConditionValidatorInterface,
         private conditionsHandler: ConditionsHandlerInterface,
         private validator: FieldValidatorInterface
     ) {
@@ -14,7 +14,7 @@ class Select implements SelectInterface {
     public init(conditionBuilder: ConditionBuilderInterface): void {
         this.required = this.getField().required;
         this.conditionsHandler.init(this, conditionBuilder);
-        this.selectValidator.init(this);
+        this.conditionValidator.init(this);
         this.validator.init(this);
         this.listenForChanges();
     }
@@ -28,7 +28,7 @@ class Select implements SelectInterface {
     }
 
     public getConditionValidator(): ConditionValidatorInterface {
-        return this.selectValidator;
+        return this.conditionValidator;
     }
 
     public getValidator(): FieldValidatorInterface {

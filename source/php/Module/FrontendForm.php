@@ -157,6 +157,7 @@ class FrontendForm extends \Modularity\Module
 
             // Error Messages for fields
             'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),
+            'errorMap'                 => $this->wpService->__('Please choose a place on the map', 'modularity-frontend-form'),
             'errorSelect'              => $this->wpService->__('Please select an option', 'modularity-frontend-form'),
             'errorEmail'               => $this->wpService->__('Please enter a valid email address (ex. %s)','modularity-frontend-form'),
             'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. %s)', 'modularity-frontend-form'),

@@ -11,6 +11,7 @@ type ModularityFrontendFormLang = {
     submit?: string;
     atLeastOneValueIsRequired?: string;
     loading?: string;
+    errorMap?: string;
 
     submitInit?: string;
     submitUrlError?: string;

@@ -15,6 +15,11 @@ class WysiwygFieldMapper implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, $this->lang, 'wysiwyg'))->map();
 
+        if (!empty($this->field['required'])) {
+            $mapped['attributeList']['data-js-required'] = 'required';
+            unset($mapped['required']);
+        }
+
         $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
 
         return $mapped;

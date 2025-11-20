@@ -24,6 +24,8 @@ class GoogleMapFieldMapper implements FieldMapperInterface
         $mapped['lat'] = $this->field['center_lat'] ?: '59.32932';
         $mapped['lng'] = $this->field['center_lng'] ?: '18.06858';
         $mapped['zoom'] = $this->field['zoom'] ?: '14';
+        $mapped['classList'][] = 'mod-frontend-form__openstreetmap';
+        // openstreetmap class is needed
         $mapped['classList'][] = 'openstreetmap';
 
         $mapped['attributeList']['style'] = sprintf(

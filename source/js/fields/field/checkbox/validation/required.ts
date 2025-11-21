@@ -8,11 +8,7 @@ class Required implements ValidationControlInterface {
     }
 
     public isInvalid(): false|ValidationControlInterface {
-        if (!this.checkbox.getFieldContainer().dataset.jsRequired) {
-            return false;
-        }
-
-        return this.checkbox.getSelectedChoices().length > 0 ? false : this;
+        return this.checkbox.isRequired() && !this.checkbox.hasValue() ? this : false;
     }
 
     public getFailedValidationMessage(): string {

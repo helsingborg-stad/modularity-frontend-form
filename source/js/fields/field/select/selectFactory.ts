@@ -1,10 +1,10 @@
 import FieldValidator from "../../validation/fieldValidator";
 import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
 import BasicConditionsHandler from "../basic/condition/basicConditionHandler";
+import HtmlValidator from "../basic/validation/htmlValidator";
 import NullFieldFactory from "../nullField/nullFieldFactory";
 import SelectConditionValidator from "./condition/selectConditionValidator";
 import Select from "./select";
-import HtmlValidator from "./validation/htmlValidator";
 
 class SelectFactory {
     public static create(

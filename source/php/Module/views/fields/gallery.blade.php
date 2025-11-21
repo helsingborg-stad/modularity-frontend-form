@@ -9,5 +9,6 @@
     'filesMax' => $field['filesMax'],
     'maxSize' => $field['maxSize'],
     'classList' => $field['classList'],
+    'uploadErrorMessage' => $lang->followingFilesCouldNotBeUploaded . ': '
 ])
 @endimageinput

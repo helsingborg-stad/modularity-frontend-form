@@ -8,6 +8,6 @@
     'description' => $field['description'],
     'maxSize' => $field['maxSize'],
     'classList' => $field['classList'],
-    
+    'uploadErrorMessage' => $lang->followingFilesCouldNotBeUploaded . ': '
 ])
 @endimageinput

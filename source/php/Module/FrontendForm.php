@@ -175,6 +175,8 @@ class FrontendForm extends \Modularity\Module
             'errorNumberOverflow'      => $this->wpService->__('Please enter a number smaller than or equal to %s', 'modularity-frontend-form'),
             'errorNumberStepMismatch'  => $this->wpService->__('Please enter a number in increments of %s', 'modularity-frontend-form'),
 
+            'followingFilesCouldNotBeUploaded' => $this->wpService->__('The following files could not be uploaded', 'modularity-frontend-form'),
+
             'statusTitleLoading'       => $this->wpService->__('Loading', 'modularity-frontend-form'),
             'statusTitleError'         => $this->wpService->__('Error', 'modularity-frontend-form'),
             'statusTitleSuccess'       => $this->wpService->__('Success', 'modularity-frontend-form'),

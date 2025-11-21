@@ -18,6 +18,10 @@ class RadioFieldMapper implements FieldMapperInterface
         $mapped['choices'] = [];
         $mapped['attributeList']['role'] = 'radiogroup';
 
+        if ($mapped['required']) {
+            $mapped['attributeList']['data-js-required'] = 'true';
+        }
+
         foreach ($this->field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type'     => $mapped['type'],

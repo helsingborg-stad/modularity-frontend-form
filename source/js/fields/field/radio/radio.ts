@@ -11,7 +11,7 @@ class Radio implements RadioInterface {
     }
 
     public init(conditionBuilder: ConditionBuilderInterface): void {
-        this.required = this.getChoices()[0].required;
+        this.required = this.getFieldContainer().hasAttribute('data-js-required');
         this.conditionsHandler.init(this, conditionBuilder);
         this.radioValidator.init(this);
         this.validator.init(this);
@@ -59,6 +59,7 @@ class Radio implements RadioInterface {
         this.choices.forEach(choice => {
             choice.addEventListener('change', () => {
                 this.conditionsHandler.checkConditions();
+                this.validator.validate();
             });
         });
     }

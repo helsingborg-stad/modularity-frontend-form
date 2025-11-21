@@ -13,6 +13,7 @@ type ModularityFrontendFormLang = {
     loading?: string;
     errorMap?: string;
     errorWysiwyg?: string;
+    errorRequired?: string;
 
     submitInit?: string;
     submitUrlError?: string;

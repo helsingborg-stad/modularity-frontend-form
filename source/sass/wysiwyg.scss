@@ -12,16 +12,15 @@
         align-items: center;
         justify-content: center;
         aspect-ratio: 1 / 1;
-        color: $color-primary-contrasting;
-        background-color: $color-primary;
-        border: none;
+        background-color: $color-primary-contrasting;
+        color: $color-primary;
         cursor: pointer;
         transition: background-color .2s ease-in-out, color .2s ease-in-out, border .2s ease-in-out;
-        border: 2px solid transparent;
+        border: 1px solid $color-primary;
 
         &.mod-frontend-form__wysiwyg-button--selected {
-            background-color: $color-primary-contrasting;
-            color: $color-primary;
+            color: $color-primary-contrasting;
+            background-color: $color-primary;
             border-color: $color-primary;
         }
     }

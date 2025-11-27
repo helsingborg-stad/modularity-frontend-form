@@ -13,7 +13,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
     private array $keyRewrites = [];
-    private string $rowReplaceKey = 'index_replace';
+    private string $rowReplaceKey = 'MOD_FRONTEND_FORM_REPEATER_ROW_INDEX_REPLACE';
 
     public function map(): array
     {

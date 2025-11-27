@@ -98,7 +98,7 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": {},
+                    "choices": [],
                     "default_value": [],
                     "return_format": "value",
                     "multiple": 1,
@@ -222,7 +222,7 @@
                 [
                     {
                         "field": "field_68258f85a4ad6",
-                        "operator": "==contains",
+                        "operator": "==",
                         "value": "WpDbHandler"
                     }
                 ]
@@ -233,8 +233,6 @@
                 "id": ""
             },
             "layout": "block",
-            "acfe_seamless_style": 0,
-            "acfe_group_modal": 0,
             "sub_fields": [
                 {
                     "key": "field_6627a79912426",
@@ -265,7 +263,14 @@
                     "type": "select",
                     "instructions": "The post status to use when a form hasen't been reviewed by the user.",
                     "required": 0,
-                    "conditional_logic": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_68258f85a4ad6",
+                                "operator": "==empty"
+                            }
+                        ]
+                    ],
                     "wrapper": {
                         "width": "50",
                         "class": "",
@@ -283,14 +288,9 @@
                     "allow_null": 0,
                     "ui": 0,
                     "ajax": 0,
-                    "placeholder": "",
-                    "allow_custom": 0,
-                    "search_placeholder": ""
+                    "placeholder": ""
                 }
-            ],
-            "acfe_group_modal_close": 0,
-            "acfe_group_modal_button": "",
-            "acfe_group_modal_size": "large"
+            ]
         },
         {
             "key": "field_6825aeb2d29fb",
@@ -304,7 +304,7 @@
                 [
                     {
                         "field": "field_68258f85a4ad6",
-                        "operator": "==contains",
+                        "operator": "==",
                         "value": "MailHandler"
                     }
                 ]
@@ -315,8 +315,6 @@
                 "id": ""
             },
             "layout": "block",
-            "acfe_seamless_style": 0,
-            "acfe_group_modal": 0,
             "sub_fields": [
                 {
                     "key": "field_6825aed6d29fe",
@@ -363,10 +361,7 @@
                         }
                     ]
                 }
-            ],
-            "acfe_group_modal_close": 0,
-            "acfe_group_modal_button": "",
-            "acfe_group_modal_size": "large"
+            ]
         },
         {
             "key": "field_6825c6bf45c50",
@@ -380,7 +375,7 @@
                 [
                     {
                         "field": "field_68258f85a4ad6",
-                        "operator": "==contains",
+                        "operator": "==",
                         "value": "WebHookHandler"
                     }
                 ]
@@ -391,8 +386,6 @@
                 "id": ""
             },
             "layout": "block",
-            "acfe_seamless_style": 0,
-            "acfe_group_modal": 0,
             "sub_fields": [
                 {
                     "key": "field_6825c72345c53",
@@ -411,10 +404,7 @@
                     "default_value": "",
                     "placeholder": ""
                 }
-            ],
-            "acfe_group_modal_close": 0,
-            "acfe_group_modal_button": "",
-            "acfe_group_modal_size": "large"
+            ]
         },
         {
             "key": "field_662a5230a59a0",
@@ -571,11 +561,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "show_in_rest": 0,
-    "acfe_display_title": "",
-    "acfe_autosync": "",
-    "acfe_form": 0,
-    "acfe_meta": "",
-    "acfe_note": ""
+    "show_in_rest": 0
 }]
-
+

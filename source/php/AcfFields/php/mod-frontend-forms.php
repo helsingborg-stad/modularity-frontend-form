@@ -1,9 +1,7 @@
 <?php 
 
-
-if (function_exists('acf_add_local_field_group')) {
-
-    acf_add_local_field_group(array(
+if (function_exists('acf_add_local_field_group')) {
+    acf_add_local_field_group(array(
     'key' => 'group_6627a5e16d74c',
     'title' => __('Configure Multistep Form', 'modularity-frontend-form'),
     'fields' => array(
@@ -103,7 +101,8 @@ if (function_exists('acf_add_local_field_group')) {
                         'class' => '',
                         'id' => '',
                     ),
-                    'choices' => array(),
+                    'choices' => array(
+                    ),
                     'default_value' => array(
                     ),
                     'return_format' => 'value',
@@ -229,7 +228,7 @@ if (function_exists('acf_add_local_field_group')) {
                 0 => array(
                     0 => array(
                         'field' => 'field_68258f85a4ad6',
-                        'operator' => '==contains',
+                        'operator' => '==',
                         'value' => 'WpDbHandler',
                     ),
                 ),
@@ -240,8 +239,6 @@ if (function_exists('acf_add_local_field_group')) {
                 'id' => '',
             ),
             'layout' => 'block',
-            'acfe_seamless_style' => 0,
-            'acfe_group_modal' => 0,
             'sub_fields' => array(
                 0 => array(
                     'key' => 'field_6627a79912426',
@@ -272,7 +269,14 @@ if (function_exists('acf_add_local_field_group')) {
                     'type' => 'select',
                     'instructions' => __('The post status to use when a form hasen\'t been reviewed by the user.', 'modularity-frontend-form'),
                     'required' => 0,
-                    'conditional_logic' => 0,
+                    'conditional_logic' => array(
+                        0 => array(
+                            0 => array(
+                                'field' => 'field_68258f85a4ad6',
+                                'operator' => '==empty',
+                            ),
+                        ),
+                    ),
                     'wrapper' => array(
                         'width' => '50',
                         'class' => '',
@@ -291,13 +295,8 @@ if (function_exists('acf_add_local_field_group')) {
                     'ui' => 0,
                     'ajax' => 0,
                     'placeholder' => '',
-                    'allow_custom' => 0,
-                    'search_placeholder' => '',
                 ),
             ),
-            'acfe_group_modal_close' => 0,
-            'acfe_group_modal_button' => '',
-            'acfe_group_modal_size' => 'large',
         ),
         6 => array(
             'key' => 'field_6825aeb2d29fb',
@@ -311,7 +310,7 @@ if (function_exists('acf_add_local_field_group')) {
                 0 => array(
                     0 => array(
                         'field' => 'field_68258f85a4ad6',
-                        'operator' => '==contains',
+                        'operator' => '==',
                         'value' => 'MailHandler',
                     ),
                 ),
@@ -322,8 +321,6 @@ if (function_exists('acf_add_local_field_group')) {
                 'id' => '',
             ),
             'layout' => 'block',
-            'acfe_seamless_style' => 0,
-            'acfe_group_modal' => 0,
             'sub_fields' => array(
                 0 => array(
                     'key' => 'field_6825aed6d29fe',
@@ -371,9 +368,6 @@ if (function_exists('acf_add_local_field_group')) {
                     ),
                 ),
             ),
-            'acfe_group_modal_close' => 0,
-            'acfe_group_modal_button' => '',
-            'acfe_group_modal_size' => 'large',
         ),
         7 => array(
             'key' => 'field_6825c6bf45c50',
@@ -387,7 +381,7 @@ if (function_exists('acf_add_local_field_group')) {
                 0 => array(
                     0 => array(
                         'field' => 'field_68258f85a4ad6',
-                        'operator' => '==contains',
+                        'operator' => '==',
                         'value' => 'WebHookHandler',
                     ),
                 ),
@@ -398,8 +392,6 @@ if (function_exists('acf_add_local_field_group')) {
                 'id' => '',
             ),
             'layout' => 'block',
-            'acfe_seamless_style' => 0,
-            'acfe_group_modal' => 0,
             'sub_fields' => array(
                 0 => array(
                     'key' => 'field_6825c72345c53',
@@ -419,9 +411,6 @@ if (function_exists('acf_add_local_field_group')) {
                     'placeholder' => '',
                 ),
             ),
-            'acfe_group_modal_close' => 0,
-            'acfe_group_modal_button' => '',
-            'acfe_group_modal_size' => 'large',
         ),
         8 => array(
             'key' => 'field_662a5230a59a0',
@@ -579,11 +568,5 @@ if (function_exists('acf_add_local_field_group')) {
     'active' => true,
     'description' => '',
     'show_in_rest' => 0,
-    'acfe_display_title' => '',
-    'acfe_autosync' => '',
-    'acfe_form' => 0,
-    'acfe_meta' => '',
-    'acfe_note' => '',
 ));
-
-}
+}

@@ -93,13 +93,26 @@ class FormatSteps {
      */
     private function namespaceFieldNameString(string $name): string
     {
-        $isArray    = str_ends_with($name, '[]');
-        $baseName   = $isArray ? substr($name, 0, -2) : $name;
+        //Assume that the base name is the name itself
+        $baseName = $name;
+
+        // Check if the field is an array (ends with [])
+        $isArray = str_ends_with($name, '[]');
+        if( $isArray ) {
+            $baseName = substr($name, 0, -2);
+        }
+
+        // Check if the field is a repeater (starts and ends with [ ])
+        $isRepeater = str_starts_with($baseName, '[') && str_ends_with($baseName, ']');
+        if ($isRepeater) {
+            $baseName = trim($baseName, '[]');
+        }
+
         return sprintf(
             '%s[%s]%s', 
             $this->config->getFieldNamespace(),
             $baseName, 
-            $isArray ? '[]' : ''
+            $isArray ? '[]' : '' //Add back [] if it was an array
         );
     }
 }

@@ -1,5 +1,5 @@
 class RowBuilder implements RowBuilderInterface {
-    private replacement: string = 'index_replace';
+    private replacement: string = 'MOD_FRONTEND_FORM_REPEATER_ROW_INDEX_REPLACE';
 
     constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}
 

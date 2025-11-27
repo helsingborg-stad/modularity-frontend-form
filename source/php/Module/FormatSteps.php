@@ -62,6 +62,7 @@ class FormatSteps {
 
     /**
      * Namespaces the field array to group form under a module namespace.
+     * This function handles nested fields as well in a recursive manner.
      *
      * @param array $fields The fields to namespace.
      * 
@@ -73,7 +74,12 @@ class FormatSteps {
             if (isset($field['name'])) {
                 $fields[$key]['name'] = $this->namespaceFieldNameString($field['name']);
             }
+
+            if (isset($field['fields']) && is_array($field['fields'])) {
+                $fields[$key]['fields'] = $this->namespaceFieldName($field['fields']);
+            }
         }
+
         return $fields;
     }
 
@@ -87,13 +93,26 @@ class FormatSteps {
      */
     private function namespaceFieldNameString(string $name): string
     {
-        $isArray    = str_ends_with($name, '[]');
-        $baseName   = $isArray ? substr($name, 0, -2) : $name;
+        //Assume that the base name is the name itself
+        $baseName = $name;
+
+        // Check if the field is an array (ends with [])
+        $isArray = str_ends_with($name, '[]');
+        if( $isArray ) {
+            $baseName = substr($name, 0, -2);
+        }
+
+        // Check if the field is a repeater (starts and ends with [ ])
+        $isRepeater = str_starts_with($baseName, '[') && str_ends_with($baseName, ']');
+        if ($isRepeater) {
+            $baseName = trim($baseName, '[]');
+        }
+
         return sprintf(
             '%s[%s]%s', 
             $this->config->getFieldNamespace(),
             $baseName, 
-            $isArray ? '[]' : ''
+            $isArray ? '[]' : '' //Add back [] if it was an array
         );
     }
 }

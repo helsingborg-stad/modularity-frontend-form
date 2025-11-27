@@ -13,14 +13,16 @@ class RepeaterFieldMapper implements FieldMapperInterface
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
     private array $keyRewrites = [];
-    private string $replaceKey = 'index_replace';
+    private string $rowReplaceKey = 'MOD_FRONTEND_FORM_REPEATER_ROW_INDEX_REPLACE';
 
     public function map(): array
     {
         $subfields = [];
 
         foreach ($this->field['sub_fields'] as $subfield) {
-            $this->keyRewrites[$subfield['key']] = $this->field['key'] . '_' . $this->replaceKey . '_' . $subfield['key'];
+            $this->keyRewrites[
+                $subfield['key']
+            ] = '[' . $this->field['key'] . '][' . $this->rowReplaceKey . '][' . $subfield['key'] . ']';
         }
 
         // Subfields in a repeater needs to have unique keys and ids so we rewrite them here

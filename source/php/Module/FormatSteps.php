@@ -62,6 +62,7 @@ class FormatSteps {
 
     /**
      * Namespaces the field array to group form under a module namespace.
+     * This function handles nested fields as well in a recursive manner.
      *
      * @param array $fields The fields to namespace.
      * 
@@ -74,12 +75,11 @@ class FormatSteps {
                 $fields[$key]['name'] = $this->namespaceFieldNameString($field['name']);
             }
 
-            // Handle nested fields (like in repeaters or groups)
             if (isset($field['fields']) && is_array($field['fields'])) {
                 $fields[$key]['fields'] = $this->namespaceFieldName($field['fields']);
             }
         }
-        
+
         return $fields;
     }
 

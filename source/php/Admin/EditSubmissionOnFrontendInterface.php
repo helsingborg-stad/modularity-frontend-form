@@ -34,7 +34,7 @@ class EditSubmissionOnFrontendInterface implements \Municipio\HooksRegistrar\Hoo
         $this->wpService->addAction('admin_notices', function () {
             $postId = $this->wpService->getTheId();
             $this->maybeShowFrontendNotice(
-                $postId, 
+                $postId,
                 $this->constructFrontendUrl($postId)
             );
         });

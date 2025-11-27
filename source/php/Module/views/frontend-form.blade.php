@@ -13,8 +13,8 @@
 ])
 
     @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
-
-    @include('progressbar', ['steps' => $steps])
+    
+    @includeWhen($stepsCount > 1, 'progressbar', ['steps' => $steps])
 
     @form([
         'validation' => false,

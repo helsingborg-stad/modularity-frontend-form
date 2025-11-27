@@ -535,6 +535,94 @@
             "ui": 0,
             "ui_on_text": "",
             "ui_off_text": ""
+        },
+        {
+            "key": "field_69286e466e006",
+            "label": "Legal",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_69287218405e9",
+            "label": "Why are we collecting this data?",
+            "name": "dataProcessingWhy",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Describe why we need to collect this data.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "category",
+            "add_term": 1,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "id",
+            "field_type": "checkbox",
+            "bidirectional": 0,
+            "multiple": 0,
+            "allow_null": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_69287054405e8",
+            "label": "Who will process or have access to the data?",
+            "name": "dataProcessingParts",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "List all entities that will access or process the data, including internal departments as well as any external system providers.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "category",
+            "add_term": 1,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "object",
+            "field_type": "checkbox",
+            "bidirectional": 0,
+            "multiple": 0,
+            "allow_null": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_69286e646e007",
+            "label": "For how long should we keep the data submitted in this form?",
+            "name": "dataProcessingRetentionTime",
+            "aria-label": "",
+            "type": "range",
+            "instructions": "What is the maximum retention period for the data before it is deleted? This function will delete the information completly.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 45,
+            "min": "",
+            "max": 365,
+            "step": "",
+            "prepend": "",
+            "append": "days"
         }
     ],
     "location": [

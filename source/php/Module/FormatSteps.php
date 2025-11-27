@@ -73,7 +73,13 @@ class FormatSteps {
             if (isset($field['name'])) {
                 $fields[$key]['name'] = $this->namespaceFieldNameString($field['name']);
             }
+
+            // Handle nested fields (like in repeaters or groups)
+            if (isset($field['fields']) && is_array($field['fields'])) {
+                $fields[$key]['fields'] = $this->namespaceFieldName($field['fields']);
+            }
         }
+        
         return $fields;
     }
 

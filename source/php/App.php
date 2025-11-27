@@ -46,6 +46,12 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->wpService,
             Api\RestApiEndpointsRegistry::class
         ))->addHooks();
+
+        //Admin interface hooks
+        (new Admin\EditSubmissionOnFrontendInterface(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
     }
 
     /**

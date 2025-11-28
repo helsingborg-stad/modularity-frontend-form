@@ -1,0 +1,32 @@
+.mod-frontend-form__working {
+    transition: all 0.2s ease-in-out;
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--base, 8px) * 4);
+    justify-content: center;
+    align-items: center;
+    padding: calc(var(--base, 8px) * 4);
+    z-index: 6000;
+
+    > * {
+        max-width: 400px;
+    }
+}
+
+.mod-frontend-form__working-progress-bar {
+    .c-progressbar__value {
+        transition: width 0.2s ease-in-out;
+    }
+}
+
+.is-error .mod-frontend-form__working {
+    color: #721c24;
+}

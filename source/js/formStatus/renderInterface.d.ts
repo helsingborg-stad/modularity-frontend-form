@@ -1,6 +1,6 @@
 interface StatusRendererInterface {
-  setup(): StatusRendererInterface;
-  reset(): void;
+	setup(): StatusRendererInterface;
+	reset(): void;
 }
 
 export default StatusRendererInterface;

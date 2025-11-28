@@ -1,4 +1,4 @@
 interface NoticeInterface {
-    getErrorNotice(): HTMLElement;
-    getSuccessNotice(): HTMLElement;
+	getErrorNotice(): HTMLElement;
+	getSuccessNotice(): HTMLElement;
 }

@@ -1,13 +1,15 @@
 class FileConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
-	private parent: BasicInterface|null = null;
+	private parent: BasicInterface | null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
-	constructor(private unstructuredConditions: any) {
-	}
+	constructor(private unstructuredConditions: any) {}
 
-	public init(parent: BasicInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(
+		parent: BasicInterface,
+		conditionsBuilder: ConditionBuilderInterface,
+	): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 	}
@@ -16,8 +18,10 @@ class FileConditionsHandler implements ConditionsHandlerInterface {
 		if (this.parent && this.isDisabled !== disable) {
 			this.isDisabled = disable;
 
-            this.parent.getFieldContainer().classList.toggle('u-display--none', disable);
-            this.parent.getField().disabled = disable;
+			this.parent
+				.getFieldContainer()
+				.classList.toggle("u-display--none", disable);
+			this.parent.getField().disabled = disable;
 
 			this.checkConditions();
 		}
@@ -44,9 +48,9 @@ class FileConditionsHandler implements ConditionsHandlerInterface {
 		return this.conditions;
 	}
 
-    public addValueChangeListener(field: FieldInterface): void {
+	public addValueChangeListener(field: FieldInterface): void {
 		this.fieldsObject[field.getName()] = field;
-    }
+	}
 
 	public checkConditions(): void {
 		for (const fieldName in this.fieldsObject) {

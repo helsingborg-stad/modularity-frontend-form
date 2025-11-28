@@ -2,86 +2,88 @@ import StepNavigator from "./stepNavigator";
 import StepUIManager from "./stepUIManager";
 
 class Steps implements StepsInterface {
-    private editableSteps: {[key: number]: boolean} = {};
+	private editableSteps: { [key: number]: boolean } = {};
 
-    constructor(
-        private steps: StepsObject,
-        private stepNavigator: StepNavigator,
-        private stepUIManager: StepUIManager,
-        private nextButton: HTMLButtonElement,
-        private previousButton: HTMLButtonElement
-    ) {
-    }
+	constructor(
+		private steps: StepsObject,
+		private stepNavigator: StepNavigator,
+		private stepUIManager: StepUIManager,
+		private nextButton: HTMLButtonElement,
+		private previousButton: HTMLButtonElement,
+	) {}
 
-    public init() {
-        this.editableSteps[this.stepNavigator.getActiveStepIndex()] = true;
-        this.setupPrevious();
-        this.setupNext();
-        this.setupEdit();
-    }
+	public init() {
+		this.editableSteps[this.stepNavigator.getActiveStepIndex()] = true;
+		this.setupPrevious();
+		this.setupNext();
+		this.setupEdit();
+	}
 
-    private setupEdit() {
-        for (const step of Object.values(this.steps)) {
-            if (!step.getEditItem()) continue;
-            step.getEditItem()!.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (step.getId() === this.stepNavigator.getActiveStepIndex()) return;
-                if (!this.editableSteps[step.getId()]) return;
-                const currentStep = this.stepNavigator.getActiveStep();
-                const nextStep = this.stepNavigator.goTo(step.getId());
-                this.stepUIManager.handleValidity(currentStep, currentStep.validate());
+	private setupEdit() {
+		for (const step of Object.values(this.steps)) {
+			if (!step.getEditItem()) continue;
+			step.getEditItem()!.addEventListener("click", (e) => {
+				e.preventDefault();
+				if (step.getId() === this.stepNavigator.getActiveStepIndex()) return;
+				if (!this.editableSteps[step.getId()]) return;
+				const currentStep = this.stepNavigator.getActiveStep();
+				const nextStep = this.stepNavigator.goTo(step.getId());
+				this.stepUIManager.handleValidity(currentStep, currentStep.validate());
 
-                if (nextStep) {
-                    this.handleMove(currentStep, nextStep);
-                }
-            });
-        }
-    }
+				if (nextStep) {
+					this.handleMove(currentStep, nextStep);
+				}
+			});
+		}
+	}
 
-    private setupNext() {
-        this.nextButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            const currentStep = this.stepNavigator.getActiveStep();
-            const stepIsValid = currentStep.validate();
+	private setupNext() {
+		this.nextButton.addEventListener("click", (e) => {
+			e.preventDefault();
+			const currentStep = this.stepNavigator.getActiveStep();
+			const stepIsValid = currentStep.validate();
 
-            this.stepUIManager.handleValidity(currentStep, stepIsValid, true);
-            
-            if (!stepIsValid) {
-                this.stepUIManager.triggerErrorAnimation(currentStep);
-                return;
-            }
+			this.stepUIManager.handleValidity(currentStep, stepIsValid, true);
 
-            const nextStep    = this.stepNavigator.goNext();
-            if (nextStep) {
-                this.editableSteps[nextStep.getId()] = true;
-                this.handleMove(currentStep, nextStep);
-            }
-        });
-    }
+			if (!stepIsValid) {
+				this.stepUIManager.triggerErrorAnimation(currentStep);
+				return;
+			}
 
-    private setupPrevious() {
-        this.previousButton.addEventListener('click', (e) => {
-            e.preventDefault();
+			const nextStep = this.stepNavigator.goNext();
+			if (nextStep) {
+				this.editableSteps[nextStep.getId()] = true;
+				this.handleMove(currentStep, nextStep);
+			}
+		});
+	}
 
-            const currentStep = this.stepNavigator.getActiveStep();
-            const nextStep = this.stepNavigator.goPrevious();
-            const stepIsValid = currentStep.validate();
-            this.stepUIManager.handleValidity(currentStep, stepIsValid);
+	private setupPrevious() {
+		this.previousButton.addEventListener("click", (e) => {
+			e.preventDefault();
 
-            if (nextStep) {
-                this.handleMove(currentStep, nextStep);
-            }
-        });
-    }
+			const currentStep = this.stepNavigator.getActiveStep();
+			const nextStep = this.stepNavigator.goPrevious();
+			const stepIsValid = currentStep.validate();
+			this.stepUIManager.handleValidity(currentStep, stepIsValid);
 
-    private handleMove(currentStep: StepInterface, nextStep: StepInterface): void {
-        this.stepUIManager.updateButtonStates(
-            nextStep.getId(),
-            currentStep.getId()
-        );
+			if (nextStep) {
+				this.handleMove(currentStep, nextStep);
+			}
+		});
+	}
 
-        this.stepUIManager.showAndHideSteps(nextStep, currentStep);
-    }
+	private handleMove(
+		currentStep: StepInterface,
+		nextStep: StepInterface,
+	): void {
+		this.stepUIManager.updateButtonStates(
+			nextStep.getId(),
+			currentStep.getId(),
+		);
+
+		this.stepUIManager.showAndHideSteps(nextStep, currentStep);
+	}
 }
 
 export default Steps;

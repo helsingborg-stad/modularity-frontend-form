@@ -1,5 +1,5 @@
 export enum FormMode {
-  Post    = 'post',
-  Update  = 'update'
+	Post = "post",
+	Update = "update",
 }
 export default FormMode;

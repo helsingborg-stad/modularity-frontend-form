@@ -37,7 +37,7 @@ class LegalTaxonomies implements \Municipio\HooksRegistrar\Hookable
 
         $this->wpService->addAction('init', fn() => $this->registerTaxonomy(
             __('Data Categories', 'modularity-frontend-form'),
-            'fe-form-legal-data-categories'
+            'fe-form-data-categories'
         ));
 
         $this->wpService->addAction('init', fn() => $this->registerTaxonomy(

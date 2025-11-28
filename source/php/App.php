@@ -47,17 +47,17 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             Api\RestApiEndpointsRegistry::class
         ))->addHooks();
 
-        //Admin interface hooks
-        (new Admin\EditSubmissionOnFrontendInterface(
-            $this->config,
-            $this->wpService
-        ))->addHooks();
-        
-        (new Admin\PluginOptionsPage(
-            $this->config,
-            $this->wpService,
-            $this->acfService
-        ))->addHooks();
+        // Set up admin interface
+        $this->setUpAdminInterface();
+
+        // Set up taxonomies
+        $this->setUpTaxonomies();
+
+        // Set up post types
+        $this->setUpPostTypes();
+
+        // Set up options pages
+        $this->setUpOptionsPages();
     }
 
     /**
@@ -101,5 +101,41 @@ class App implements \Municipio\HooksRegistrar\Hookable {
         if ($this->wpService->currentAction() === 'rest_api_init') {
             Api\RestApiEndpointsRegistry::register();
         }
+    }
+
+    public function setUpAdminInterface(): void
+    {
+        (new Admin\EditSubmissionOnFrontendInterface(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+    }
+
+    public function setUpTaxonomies(): void
+    {
+        (new Admin\PluginOptionsPage(
+            $this->config,
+            $this->wpService,
+            $this->acfService
+        ))->addHooks();
+    }
+
+    public function setUpPostTypes(): void
+    {
+        (new Admin\LegalTaxonomies(
+            $this->config,
+            $this->wpService,
+            $this->acfService
+        ))->addHooks();
+    }
+
+    public function setUpOptionsPages(): void
+    {
+        (new Admin\SubmissionsPostType(
+            $this->config,
+            $this->wpService,
+            $this->acfService
+        ))->addHooks();
+
     }
 }

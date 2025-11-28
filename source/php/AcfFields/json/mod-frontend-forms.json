@@ -567,7 +567,7 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "category",
+            "taxonomy": "legal-why",
             "add_term": 1,
             "save_terms": 1,
             "load_terms": 1,
@@ -592,7 +592,7 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "category",
+            "taxonomy": "legal-processors",
             "add_term": 1,
             "save_terms": 1,
             "load_terms": 1,

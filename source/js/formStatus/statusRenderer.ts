@@ -92,7 +92,6 @@ class StatusRenderer implements StatusRendererInterface {
 		}
 
 		this.timeoutId = window.setTimeout(() => {
-			console.log("Processing next status in queue...");
 			this.processQueue();
 		}, this.latestStatus!.delay);
 	}

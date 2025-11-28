@@ -7,14 +7,13 @@ use WpService\WpService;
 use AcfService\AcfService;
 
 /**
- * Class EditSubmissionOnFrontendInterface
+ * Class SubmissionsPostTypeRegistrar
  * 
- * This class manages the ability to edit frontend submissions, 
- * by clicking a link in the admin interface.
+ * This class registers the custom post type for frontend form submissions.
  * 
  * @package ModularityFrontendForm\Admin
  */
-class SubmissionsPostType implements \Municipio\HooksRegistrar\Hookable
+class SubmissionsPostTypeRegistrar implements \Municipio\HooksRegistrar\Hookable
 {
     private bool $isEnabled = true;
 

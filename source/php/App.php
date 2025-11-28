@@ -105,8 +105,7 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
     public function setUpAdminInterface(): void
     {
-        //Adds a link to edit submissions on the frontend
-        (new Admin\EditSubmissionOnFrontendInterface(
+        (new Admin\FrontendSubmissionEditLinkInterface(
             $this->config,
             $this->wpService
         ))->addHooks();
@@ -114,16 +113,16 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
     public function setUpTaxonomies(): void
     {
-        (new Admin\LegalTaxonomies(
+        (new Admin\LegalFormDataTaxonomiesRegistrar(
             $this->config,
-            $this->wpService,
+            $this->wpService, 
             $this->acfService
         ))->addHooks();
     }
 
     public function setUpPostTypes(): void
     {
-        (new Admin\SubmissionsPostType(
+        (new Admin\SubmissionsPostTypeRegistrar(
             $this->config,
             $this->wpService,
             $this->acfService
@@ -132,7 +131,7 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
     public function setUpOptionsPages(): void
     {
-        (new Admin\PluginOptionsPage(
+        (new Admin\PluginOptionsPageRegistrar(
             $this->config,
             $this->wpService,
             $this->acfService

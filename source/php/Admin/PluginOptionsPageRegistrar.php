@@ -7,14 +7,13 @@ use WpService\WpService;
 use AcfService\AcfService;
 
 /**
- * Class EditSubmissionOnFrontendInterface
+ * Class PluginOptionsPageRegistrar
  * 
- * This class manages the ability to edit frontend submissions, 
- * by clicking a link in the admin interface.
+ * This class registers the plugin options page in the WordPress admin interface.
  * 
  * @package ModularityFrontendForm\Admin
  */
-class PluginOptionsPage implements \Municipio\HooksRegistrar\Hookable
+class PluginOptionsPageRegistrar implements \Municipio\HooksRegistrar\Hookable
 {
     private bool $isEnabled = true;
 

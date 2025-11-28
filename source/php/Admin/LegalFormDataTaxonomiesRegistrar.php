@@ -7,14 +7,13 @@ use WpService\WpService;
 use AcfService\AcfService;
 
 /**
- * Class EditSubmissionOnFrontendInterface
+ * Class LegalFormDataTaxonomiesRegistrar
  * 
- * This class manages the ability to edit frontend submissions, 
- * by clicking a link in the admin interface.
+ * This class registers the taxonomies used for legal form data processing.
  * 
  * @package ModularityFrontendForm\Admin
  */
-class LegalTaxonomies implements \Municipio\HooksRegistrar\Hookable
+class LegalFormDataTaxonomiesRegistrar implements \Municipio\HooksRegistrar\Hookable
 {
     private bool $isEnabled = true;
 

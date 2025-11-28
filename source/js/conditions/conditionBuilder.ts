@@ -3,57 +3,64 @@ import NullCondition from "./condition/nullCondition";
 import OrCondition from "./condition/orCondition";
 
 class ConditionBuilder implements ConditionBuilderInterface {
-    constructor(private fieldBuilder: FieldBuilderInterface) {}
+	constructor(private fieldBuilder: FieldBuilderInterface) {}
 
-    public build(conditions: any): ConditionInterface[] {
-        if (!Array.isArray(conditions) || conditions.length === 0) {
-            return [new NullCondition()];
-        }
+	public build(conditions: any): ConditionInterface[] {
+		if (!Array.isArray(conditions) || conditions.length === 0) {
+			return [new NullCondition()];
+		}
 
-        let conditionsList: ConditionInterface[] = [];
-        conditions.forEach(conditionSet => {
-            if (!Array.isArray(conditionSet) || conditionSet.length === 0) {
-                conditionsList.push(new NullCondition());
-                return;
-            }
+		let conditionsList: ConditionInterface[] = [];
+		conditions.forEach((conditionSet) => {
+			if (!Array.isArray(conditionSet) || conditionSet.length === 0) {
+				conditionsList.push(new NullCondition());
+				return;
+			}
 
-            if (conditionSet.length === 1) {
-                if (this.checkConditionValidity(conditionSet[0])) {
-                    conditionSet[0].class = this.fieldBuilder.getFieldsObject()[conditionSet[0].field];
-                    conditionsList.push(new OrCondition(conditionSet[0]));
-                }
-            } else {
-                const validConditions = conditionSet
-                    .filter((condition: Condition) => this.checkConditionValidity(condition))
-                    .map((condition: Condition) => ({
-                        ...condition,
-                        class: this.fieldBuilder.getFieldsObject()[condition.field]
-                    }));
+			if (conditionSet.length === 1) {
+				if (this.checkConditionValidity(conditionSet[0])) {
+					conditionSet[0].class =
+						this.fieldBuilder.getFieldsObject()[conditionSet[0].field];
+					conditionsList.push(new OrCondition(conditionSet[0]));
+				}
+			} else {
+				const validConditions = conditionSet
+					.filter((condition: Condition) =>
+						this.checkConditionValidity(condition),
+					)
+					.map((condition: Condition) => ({
+						...condition,
+						class: this.fieldBuilder.getFieldsObject()[condition.field],
+					}));
 
-                if (validConditions.length > 0) {
-                    conditionsList.push(new AndCondition(validConditions));
-                }
-            }
-        });
+				if (validConditions.length > 0) {
+					conditionsList.push(new AndCondition(validConditions));
+				}
+			}
+		});
 
-        if (conditionsList.length > 0) {
-            return conditionsList;
-        }
+		if (conditionsList.length > 0) {
+			return conditionsList;
+		}
 
-        return [new NullCondition()];
-    }
+		return [new NullCondition()];
+	}
 
-    private checkConditionValidity(condition: any): boolean {
-        if (typeof condition !== 'object') {
-            return false;
-        }
+	private checkConditionValidity(condition: any): boolean {
+		if (typeof condition !== "object") {
+			return false;
+		}
 
-        if (!('field' in condition) || !('operator' in condition) || !this.fieldBuilder.getFieldsObject()[condition.field]) {
-            return false;
-        }
+		if (
+			!("field" in condition) ||
+			!("operator" in condition) ||
+			!this.fieldBuilder.getFieldsObject()[condition.field]
+		) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 }
 
 export default ConditionBuilder;

@@ -1,6 +1,6 @@
 export enum SubmitStatus {
-  Loading = "loading",
-  Working = "working",
-  Success = "success",
-  Error = "error"
+	Loading = "loading",
+	Working = "working",
+	Success = "success",
+	Error = "error",
 }

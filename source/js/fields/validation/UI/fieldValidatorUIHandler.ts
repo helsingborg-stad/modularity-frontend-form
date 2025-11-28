@@ -1,57 +1,61 @@
 class FieldValidatorUIHandler implements FieldValidatorUIHandlerInterface {
-    private messageElementTarget: string = '[data-js-frontend-form-notice-message]';
-    private field!: FieldInterface;
-    private activeNotice: HTMLElement|null = null;
-    private invalidClass: string = 'is-invalid';
-    private currentNoticeMessage: string|null = null;
-    private noticeMessageElement: HTMLElement|null = null;
-    private errorNotice!: HTMLElement;
+	private messageElementTarget: string =
+		"[data-js-frontend-form-notice-message]";
+	private field!: FieldInterface;
+	private activeNotice: HTMLElement | null = null;
+	private invalidClass: string = "is-invalid";
+	private currentNoticeMessage: string | null = null;
+	private noticeMessageElement: HTMLElement | null = null;
+	private errorNotice!: HTMLElement;
 
-    constructor(private notices: NoticeInterface) {
-    }
-    
-    public init(field: FieldInterface) {
-        this.errorNotice = this.notices.getErrorNotice();
-        this.noticeMessageElement = this.errorNotice.querySelector(this.messageElementTarget);
-        this.field = field;
-    }
+	constructor(private notices: NoticeInterface) {}
 
-    public addInvalidNotice(message: string): void {
-        if (this.activeNotice) {
-            return;
-        }
+	public init(field: FieldInterface) {
+		this.errorNotice = this.notices.getErrorNotice();
+		this.noticeMessageElement = this.errorNotice.querySelector(
+			this.messageElementTarget,
+		);
+		this.field = field;
+	}
 
-        const messageElement = this.errorNotice.querySelector(this.messageElementTarget);
+	public addInvalidNotice(message: string): void {
+		if (this.activeNotice) {
+			return;
+		}
 
-        if (!messageElement) {
-            console.error("Message element not found in notice");
-            return;
-        }
+		const messageElement = this.errorNotice.querySelector(
+			this.messageElementTarget,
+		);
 
-        this.noticeMessageElement = messageElement as HTMLElement;
-        this.currentNoticeMessage = message;
-        this.noticeMessageElement.innerHTML = message;
-        this.field.getFieldContainer().classList.add(this.invalidClass);
-        this.field.getFieldContainer().append(this.errorNotice);
-        this.activeNotice = this.errorNotice;
-    }
+		if (!messageElement) {
+			console.error("Message element not found in notice");
+			return;
+		}
 
-    public updateInvalidNotice(message: string): void {
-        if (!this.activeNotice || this.currentNoticeMessage === message) {
-            return;
-        }
+		this.noticeMessageElement = messageElement as HTMLElement;
+		this.currentNoticeMessage = message;
+		this.noticeMessageElement.innerHTML = message;
+		this.field.getFieldContainer().classList.add(this.invalidClass);
+		this.field.getFieldContainer().append(this.errorNotice);
+		this.activeNotice = this.errorNotice;
+	}
 
-        this.noticeMessageElement!.innerHTML = message;
-        this.currentNoticeMessage = message;
-    }
+	public updateInvalidNotice(message: string): void {
+		if (!this.activeNotice || this.currentNoticeMessage === message) {
+			return;
+		}
 
-    public removeInvalidNotice(): void {
-        if (this.activeNotice) {
-            this.field.getFieldContainer().classList.remove(this.invalidClass);
-            this.activeNotice.remove();
-            this.activeNotice = null;
-        }
-    }
+		this.noticeMessageElement!.innerHTML = message;
+		this.currentNoticeMessage = message;
+	}
+
+	public removeInvalidNotice(): void {
+		if (this.activeNotice) {
+			this.field.getFieldContainer().classList.remove(this.invalidClass);
+			this.activeNotice.remove();
+			this.activeNotice = null;
+		}
+	}
 }
 
 export default FieldValidatorUIHandler;

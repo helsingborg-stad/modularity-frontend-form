@@ -1,117 +1,120 @@
 interface FieldsInitiatorInterface {
-    init(fieldBuilder: FieldBuilderInterface): void;
-    initializeConditionals(fields: FieldsObject): void;
+	init(fieldBuilder: FieldBuilderInterface): void;
+	initializeConditionals(fields: FieldsObject): void;
 }
 
 interface FieldInterface {
-    init(conditionBuilder: ConditionBuilderInterface): void;
-    getName(): string;
-    getFieldContainer(): HTMLElement;
-    getConditionsHandler(): ConditionsHandlerInterface;
-    getConditionValidator(): ConditionValidatorInterface;
-    getValidator(): FieldValidatorInterface;
-    isRequired(): boolean;
-    hasValue(): boolean;
+	init(conditionBuilder: ConditionBuilderInterface): void;
+	getName(): string;
+	getFieldContainer(): HTMLElement;
+	getConditionsHandler(): ConditionsHandlerInterface;
+	getConditionValidator(): ConditionValidatorInterface;
+	getValidator(): FieldValidatorInterface;
+	isRequired(): boolean;
+	hasValue(): boolean;
 }
 
 interface CheckboxInterface extends FieldInterface {
-    getChoices(): NodeListOf<HTMLInputElement>;
-    getSelectedChoices(): string[];
+	getChoices(): NodeListOf<HTMLInputElement>;
+	getSelectedChoices(): string[];
 }
 
 interface RepeaterInterface extends FieldInterface {
-    getRowCount(): number;
-    getMinRows(): number;
-    getMaxRows(): number;
+	getRowCount(): number;
+	getMinRows(): number;
+	getMaxRows(): number;
 }
 
 interface RadioInterface extends FieldInterface {
-    getChoices(): NodeListOf<HTMLInputElement>;
-    getSelectedChoice(): string;
+	getChoices(): NodeListOf<HTMLInputElement>;
+	getSelectedChoice(): string;
 }
 
 interface BasicInterface extends FieldInterface {
-    getField(): HTMLInputElement;
+	getField(): HTMLInputElement;
 }
 
 interface TextAreaInterface extends FieldInterface {
-    getField(): HTMLTextAreaElement;
+	getField(): HTMLTextAreaElement;
 }
 
 interface GoogleMapInterface extends FieldInterface {
-    getOpenstreetmap(): OpenstreetmapInterface;
-    getHiddenField(): HTMLInputElement;
+	getOpenstreetmap(): OpenstreetmapInterface;
+	getHiddenField(): HTMLInputElement;
 }
 
 interface WysiwygInterface extends FieldInterface {
-    getEditor(): EditorInterface;
-    getHiddenField(): HTMLInputElement;
+	getEditor(): EditorInterface;
+	getHiddenField(): HTMLInputElement;
 }
 
 interface SelectInterface extends FieldInterface {
-    getField(): HTMLSelectElement;
-    getOptions(): NodeListOf<HTMLOptionElement>;
-    getSelectedOptions(): string[];
+	getField(): HTMLSelectElement;
+	getOptions(): NodeListOf<HTMLOptionElement>;
+	getSelectedOptions(): string[];
 }
 
 interface FieldBuilderInterface {
-    build(field: HTMLElement, type: string, step: string): FieldInterface;
-    getFieldsObject(): FieldsObject;
-    getFieldsStepObject(): FieldsStepObject;
-    removeField(name: string, stepId: string): void;
+	build(field: HTMLElement, type: string, step: string): FieldInterface;
+	getFieldsObject(): FieldsObject;
+	getFieldsStepObject(): FieldsStepObject;
+	removeField(name: string, stepId: string): void;
 }
 
 interface StepValidatorInterface {
-    init(builder: FieldBuilderInterface): void;
-    getInvalidSteps(): string[];
-    validateSteps(): boolean;
-    validateStep(stepId: string): boolean;
+	init(builder: FieldBuilderInterface): void;
+	getInvalidSteps(): string[];
+	validateSteps(): boolean;
+	validateStep(stepId: string): boolean;
 }
 
 interface FieldValidatorInterface {
-    init(field: FieldInterface): void;
-    validate(): boolean;
+	init(field: FieldInterface): void;
+	validate(): boolean;
 }
 
 interface FieldValidatorUIHandlerInterface {
-    init(field: FieldInterface): void;
-    addInvalidNotice(message: string): void;
-    removeInvalidNotice(): void;
-    updateInvalidNotice(message: string): void;
+	init(field: FieldInterface): void;
+	addInvalidNotice(message: string): void;
+	removeInvalidNotice(): void;
+	updateInvalidNotice(message: string): void;
 }
 
 interface ValidationControlInterface {
-    init(field: FieldInterface): void;
-    isInvalid(): false|ValidationControlInterface;
-    getFailedValidationMessage(): string;
+	init(field: FieldInterface): void;
+	isInvalid(): false | ValidationControlInterface;
+	getFailedValidationMessage(): string;
 }
 
 interface ConditionsHandlerInterface {
-    init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void;
-    getConditions(): ConditionInterface[];
-    getIsDisabled(): boolean;
-    validate(): void;
-    addValueChangeListener(field: FieldInterface): void;
-    checkConditions(): void;
+	init(
+		parent: FieldInterface,
+		conditionsBuilder: ConditionBuilderInterface,
+	): void;
+	getConditions(): ConditionInterface[];
+	getIsDisabled(): boolean;
+	validate(): void;
+	addValueChangeListener(field: FieldInterface): void;
+	checkConditions(): void;
 }
 
 interface ConditionValidatorInterface {
-    init(parent: FieldInterface): void;
-    validate(condition: Condition): boolean;
+	init(parent: FieldInterface): void;
+	validate(condition: Condition): boolean;
 }
 
 type FieldsObject = {
-    [key: string]: FieldInterface;
-}
+	[key: string]: FieldInterface;
+};
 
 type FieldsStepObject = {
-    [key: string]: {
-        [key: string]: FieldInterface;
-    }
-}
+	[key: string]: {
+		[key: string]: FieldInterface;
+	};
+};
 
 type ValidationFieldsObject = {
-    [key: string]: {
-        [key: string]: FieldValidatorInterface;
-    }
-}
+	[key: string]: {
+		[key: string]: FieldValidatorInterface;
+	};
+};

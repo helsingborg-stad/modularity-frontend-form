@@ -1,5 +1,5 @@
 interface ContentAreaInterface {
-    appendContentArea(): HTMLElement;
-    getElement(): HTMLElement;
-    setupChangeListener(): void;
+	appendContentArea(): HTMLElement;
+	getElement(): HTMLElement;
+	setupChangeListener(): void;
 }

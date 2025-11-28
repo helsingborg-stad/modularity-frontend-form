@@ -5,24 +5,21 @@ import MessageConditionsHandler from "./condition/messageConditionHandler";
 import Message from "./message";
 
 class MessageFactory {
-    public static create(
-        field: HTMLElement,
-        name: string,
-        unstructuredConditions: any,
-        notices: NoticeInterface,
-        stepId: string
-    ): FieldInterface {
-        return new Message(
-            field,
-            name,
-            new NullFieldConditionValidator(),
-            new MessageConditionsHandler(unstructuredConditions),
-            new FieldValidator(
-                new FieldValidatorUIHandler(notices),
-                []
-            )
-        );
-    }
+	public static create(
+		field: HTMLElement,
+		name: string,
+		unstructuredConditions: any,
+		notices: NoticeInterface,
+		stepId: string,
+	): FieldInterface {
+		return new Message(
+			field,
+			name,
+			new NullFieldConditionValidator(),
+			new MessageConditionsHandler(unstructuredConditions),
+			new FieldValidator(new FieldValidatorUIHandler(notices), []),
+		);
+	}
 }
 
 export default MessageFactory;

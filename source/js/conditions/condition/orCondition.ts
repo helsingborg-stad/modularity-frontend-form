@@ -1,26 +1,27 @@
 class OrCondition implements ConditionInterface {
-    constructor(private condition: Condition) {
-    }
+	constructor(private condition: Condition) {}
 
-    public validate(): boolean {
-        if (!this.condition.class) {
-            return true;
-        }
+	public validate(): boolean {
+		if (!this.condition.class) {
+			return true;
+		}
 
-        if (this.condition.class.getConditionsHandler().getIsDisabled()) {
-            return false;
-        }
+		if (this.condition.class.getConditionsHandler().getIsDisabled()) {
+			return false;
+		}
 
-        return this.condition.class.getConditionValidator().validate(this.condition);
-    }
+		return this.condition.class
+			.getConditionValidator()
+			.validate(this.condition);
+	}
 
-    public getConditions(): Condition[] {
-        return [this.condition];
-    }
+	public getConditions(): Condition[] {
+		return [this.condition];
+	}
 
-    public getConditionFieldNames(): string[] {
-        return [this.condition.field];
-    }
+	public getConditionFieldNames(): string[] {
+		return [this.condition.field];
+	}
 }
 
 export default OrCondition;

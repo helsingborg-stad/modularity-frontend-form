@@ -1,3 +1,3 @@
 interface FormActionInterface {
-    retry(): void;
+	retry(): void;
 }

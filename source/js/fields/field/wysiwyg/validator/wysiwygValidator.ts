@@ -1,19 +1,21 @@
 class WysiwygValidator implements ValidationControlInterface {
-    private wysiwyg!: WysiwygInterface;
+	private wysiwyg!: WysiwygInterface;
 
-    constructor(private modularityFrontendFormLang: ModularityFrontendFormLang) {}
+	constructor(private modularityFrontendFormLang: ModularityFrontendFormLang) {}
 
-    public init(parent: WysiwygInterface): void {
-        this.wysiwyg = parent;
-    }
+	public init(parent: WysiwygInterface): void {
+		this.wysiwyg = parent;
+	}
 
-    public isInvalid(): false|ValidationControlInterface {
-        return this.wysiwyg.isRequired() && !this.wysiwyg.hasValue() ? this : false;
-    }
+	public isInvalid(): false | ValidationControlInterface {
+		return this.wysiwyg.isRequired() && !this.wysiwyg.hasValue() ? this : false;
+	}
 
-    public getFailedValidationMessage(): string {
-        return this.modularityFrontendFormLang.errorWysiwyg ?? 'Please add some content';
-    }
+	public getFailedValidationMessage(): string {
+		return (
+			this.modularityFrontendFormLang.errorWysiwyg ?? "Please add some content"
+		);
+	}
 }
 
 export default WysiwygValidator;

@@ -1,50 +1,69 @@
 class RowBuilder implements RowBuilderInterface {
-    private replacement: string = 'MOD_FRONTEND_FORM_REPEATER_ROW_INDEX_REPLACE';
+	private replacement: string = "MOD_FRONTEND_FORM_REPEATER_ROW_INDEX_REPLACE";
 
-    constructor(private template: HTMLTemplateElement, private templateContainer: HTMLElement) {}
+	constructor(
+		private template: HTMLTemplateElement,
+		private templateContainer: HTMLElement,
+	) {}
 
-    public createRow(id: string, includeRemoveRowButton: boolean = true): HTMLElement {
-        let rowHtml = this.template.innerHTML;
-        rowHtml = rowHtml.replaceAll(this.replacement, id);
-        return this.appendRow(rowHtml, includeRemoveRowButton);
-    }
+	public createRow(
+		id: string,
+		includeRemoveRowButton: boolean = true,
+	): HTMLElement {
+		let rowHtml = this.template.innerHTML;
+		rowHtml = rowHtml.replaceAll(this.replacement, id);
+		return this.appendRow(rowHtml, includeRemoveRowButton);
+	}
 
-    private appendRow(rowHtml: string, includeRemoveRowButton: boolean = true): HTMLElement {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = rowHtml;
-        const row = tempDiv.firstElementChild as HTMLElement;
-        
-        this.templateContainer.appendChild(row);
+	private appendRow(
+		rowHtml: string,
+		includeRemoveRowButton: boolean = true,
+	): HTMLElement {
+		const tempDiv = document.createElement("div");
+		tempDiv.innerHTML = rowHtml;
+		const row = tempDiv.firstElementChild as HTMLElement;
 
-        requestAnimationFrame(() => {
-            row.style.maxHeight = !includeRemoveRowButton ? 'unset' : (row.scrollHeight + 48) + 'px';
-        });
+		this.templateContainer.appendChild(row);
 
-        if (!includeRemoveRowButton) {
-            row.classList.add('no-remove');
-            row.classList.add('animate-show');
-        }
-        
-        row.addEventListener('transitionend', () => {
-            row.classList.add('animate-show');
-            row.style.maxHeight = 'unset';
-        }, { once: true });
+		requestAnimationFrame(() => {
+			row.style.maxHeight = !includeRemoveRowButton
+				? "unset"
+				: row.scrollHeight + 48 + "px";
+		});
 
-        return row;
-    }
+		if (!includeRemoveRowButton) {
+			row.classList.add("no-remove");
+			row.classList.add("animate-show");
+		}
 
-    public deleteRow(row: HTMLElement): void {
-        row.style.maxHeight = (row.scrollHeight + 48) + 'px';
-        
-        requestAnimationFrame(() => {
-            row.classList.add('animate-remove');
-            row.style.maxHeight = '0px';
-        });
+		row.addEventListener(
+			"transitionend",
+			() => {
+				row.classList.add("animate-show");
+				row.style.maxHeight = "unset";
+			},
+			{ once: true },
+		);
 
-        row.addEventListener('transitionend', () => {
-            row.remove();
-        }, { once: true });
-    }
+		return row;
+	}
+
+	public deleteRow(row: HTMLElement): void {
+		row.style.maxHeight = row.scrollHeight + 48 + "px";
+
+		requestAnimationFrame(() => {
+			row.classList.add("animate-remove");
+			row.style.maxHeight = "0px";
+		});
+
+		row.addEventListener(
+			"transitionend",
+			() => {
+				row.remove();
+			},
+			{ once: true },
+		);
+	}
 }
 
 export default RowBuilder;

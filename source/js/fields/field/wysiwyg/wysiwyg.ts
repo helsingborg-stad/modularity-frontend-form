@@ -1,68 +1,67 @@
 class Wysiwyg implements WysiwygInterface {
-    private required: boolean = false;
+	private required: boolean = false;
 
-    constructor(
-        private field: HTMLElement,
-        private hiddenField: HTMLInputElement,
-        private name: string,
-        private editor: EditorInterface,
-        private conditionValidator: ConditionValidatorInterface,
-        private conditionsHandler: ConditionsHandlerInterface,
-        private validator: FieldValidatorInterface
-    ) {
-    }
+	constructor(
+		private field: HTMLElement,
+		private hiddenField: HTMLInputElement,
+		private name: string,
+		private editor: EditorInterface,
+		private conditionValidator: ConditionValidatorInterface,
+		private conditionsHandler: ConditionsHandlerInterface,
+		private validator: FieldValidatorInterface,
+	) {}
 
-    public init(conditionBuilder: ConditionBuilderInterface): void {
-        this.required = this.getFieldContainer().hasAttribute('data-js-required');
-        this.conditionsHandler.init(this, conditionBuilder);
-        this.conditionValidator.init(this);
-        this.validator.init(this);
-        this.addChangeListener();
-    }
+	public init(conditionBuilder: ConditionBuilderInterface): void {
+		this.required = this.getFieldContainer().hasAttribute("data-js-required");
+		this.conditionsHandler.init(this, conditionBuilder);
+		this.conditionValidator.init(this);
+		this.validator.init(this);
+		this.addChangeListener();
+	}
 
-    public getName(): string {
-        return this.name;
-    }
+	public getName(): string {
+		return this.name;
+	}
 
-    public getFieldContainer(): HTMLElement {
-        return this.field;
-    }
+	public getFieldContainer(): HTMLElement {
+		return this.field;
+	}
 
-    public getConditionsHandler(): ConditionsHandlerInterface {
-        return this.conditionsHandler;
-    }
+	public getConditionsHandler(): ConditionsHandlerInterface {
+		return this.conditionsHandler;
+	}
 
-    public getConditionValidator(): ConditionValidatorInterface {
-        return this.conditionValidator;
-    }
+	public getConditionValidator(): ConditionValidatorInterface {
+		return this.conditionValidator;
+	}
 
-    public getEditor(): EditorInterface {
-        return this.editor;
-    }
+	public getEditor(): EditorInterface {
+		return this.editor;
+	}
 
-    public getValidator(): FieldValidatorInterface {
-        return this.validator;
-    }
+	public getValidator(): FieldValidatorInterface {
+		return this.validator;
+	}
 
-    public isRequired(): boolean {
-        return this.required;
-    }
+	public isRequired(): boolean {
+		return this.required;
+	}
 
-    public hasValue(): boolean {
-        return this.editor.hasContent();
-    }
+	public hasValue(): boolean {
+		return this.editor.hasContent();
+	}
 
-    public getHiddenField(): HTMLInputElement {
-        return this.hiddenField;
-    }
+	public getHiddenField(): HTMLInputElement {
+		return this.hiddenField;
+	}
 
-    private addChangeListener(): void {
-        this.editor.addChangeListeners((html: string) => {
-            this.hiddenField.value = html;
-            this.conditionsHandler.checkConditions();
-            this.validator.validate();
-        });
-    }
+	private addChangeListener(): void {
+		this.editor.addChangeListeners((html: string) => {
+			this.hiddenField.value = html;
+			this.conditionsHandler.checkConditions();
+			this.validator.validate();
+		});
+	}
 }
 
 export default Wysiwyg;

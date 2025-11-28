@@ -567,11 +567,11 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "legal-why",
+            "taxonomy": "fe-form-data-categories",
             "add_term": 1,
             "save_terms": 1,
             "load_terms": 1,
-            "return_format": "id",
+            "return_format": "object",
             "field_type": "checkbox",
             "bidirectional": 0,
             "multiple": 0,
@@ -592,7 +592,7 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "legal-processors",
+            "taxonomy": "fe-form-data-processors",
             "add_term": 1,
             "save_terms": 1,
             "load_terms": 1,

@@ -76,8 +76,23 @@
 .mod-frontend-form__custom-label {
     color: var(--c-field-label-color, var(--color-darker, #565656));
     font-size: var(--c-field-label-font-size, .75rem);
-    font-weight: var(--c-field-label-font-size, 700);
+    font-weight: var(--c-field-label-font-weight, 700);
     letter-spacing: .05rem;
     margin-bottom: calc(var(--base, 8px) / 2);
     text-transform: var(--c-field-label-text-transform, uppercase);
+}
+
+.mod-frontend-form__disclaimer mark {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+    padding: 4px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+}
+
+.mod-frontend-form__disclaimer {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
+    padding: calc(var(--base, 8px) * 2);
+    margin-left: auto;
 }

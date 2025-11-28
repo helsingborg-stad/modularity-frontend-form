@@ -106,6 +106,11 @@ class FrontendForm extends \Modularity\Module
         //Language
         $data['lang'] = $this->getLang();
 
+        //Disclaimer text
+        $data['disclaimerText'] = $this->createDisclaimerText(
+            $fields
+        );
+
         return $data;
     }
 
@@ -130,15 +135,7 @@ class FrontendForm extends \Modularity\Module
      */
     private function getLang(): object
     {
-        $disclaimer = $this->wpService->__(
-            "By submitting this form, you're agreeing to our terms and conditions.\n" .
-            "You're also consenting to us processing your personal data in line with GDPR regulations,\n" .
-            "and confirming that you have full rights to use all provided content.",
-            'modularity-frontend-form'
-        );
-
         return (object) [
-            'disclaimer'                => $disclaimer,
             'edit'                      => $this->wpService->__('Edit', 'modularity-frontend-form'),
             'submit'                    => $this->wpService->__('Submit', 'modularity-frontend-form'),
             'previous'                  => $this->wpService->__('Previous', 'modularity-frontend-form'),
@@ -207,6 +204,88 @@ class FrontendForm extends \Modularity\Module
             'heading'           => $this->wpService->__('Heading', 'modularity-frontend-form'),
             'subheading'        => $this->wpService->__('Subheading', 'modularity-frontend-form'),
         ];
+    }
+
+    /**
+     * Creates the disclaimer text by replacing placeholders with actual values from the fields.
+     *
+     * @param object|null $fields The fields containing data for replacements.
+     * @return string The constructed disclaimer text.
+     */
+    private function createDisclaimerText(object|null $fields): string
+    {
+        $disclaimer  = $this->wpService->__(
+            "By submitting this form, you agree to our terms and conditions. You also consent to your personal data being processed by <mark>{{data_processors}}</mark> in accordance with GDPR. Additionally, you confirm that you have the full rights to all content you provide. We need to process this data with the following reason(s): <mark>{{data_categories}}</mark>. Your data will be permanently deleted after <mark>{{data_retention_period}}</mark> days, calculated from the date of the last modification or expiration.",
+            'modularity-frontend-form'
+        );
+
+        //Replace placeholders with actual values
+        $dataProcessors = [
+            'replacementKey' => '{{data_processors}}',
+            'fieldName'      => 'dataProcessingParts',
+            'defaultValue'   => $this->wpService->__('us', 'modularity-frontend-form')
+        ];
+
+        $dataCategories = [
+            'replacementKey' => '{{data_categories}}',
+            'fieldName'      => 'dataProcessingWhy',
+            'defaultValue'   => $this->wpService->__('relevant processing requirements', 'modularity-frontend-form')
+        ];
+
+        $dataRetentionPeriod = [
+            'replacementKey' => '{{data_retention_period}}',
+            'fieldName'      => 'dataProcessingRetentionTime',
+            'defaultValue'   => $this->wpService->__('30', 'modularity-frontend-form')
+        ];
+
+        //Array of all replacements
+        $allReplacements = [
+            $dataProcessors,
+            $dataCategories,
+            $dataRetentionPeriod,   
+        ];
+
+        //Perform replacements
+        foreach ($allReplacements as $replacement) {
+            $fieldValue = $fields->{$replacement['fieldName']} ?? null;
+            $fieldValue = $this->reduceTaxonomyToString($fieldValue);
+            $fieldValue = $fieldValue ?: $replacement['defaultValue'];
+            $disclaimer = str_replace(
+                $replacement['replacementKey'],
+                esc_html($fieldValue),
+                $disclaimer
+            );
+        }
+
+        return $disclaimer;
+    }
+
+    /**
+     * Reduces an array of taxonomy terms to a human-readable string.
+     *
+     * @param array $taxonomyTerms The array of taxonomy terms.
+     * @return string The reduced string.
+     */
+    public function reduceTaxonomyToString($taxonomyTerms): string
+    {
+        if(empty($taxonomyTerms)) {
+            return '';
+        }
+
+        if (!is_array($taxonomyTerms)) {
+            return $taxonomyTerms;
+        }
+
+        $and           = $this->wpService->__('and', 'modularity-frontend-form');
+        $names         = array_map(fn($item) => $item->name ?? '', $taxonomyTerms);
+        $numberOfNames = count($names);
+
+        $reducedString = match (true) {
+            $numberOfNames > 1  => implode(', ', array_slice($names, 0, -1)) . ' ' . $and . ' ' . end($names),
+            $numberOfNames === 1 => $names[0],
+            default      => '',
+        };
+        return $reducedString;
     }
 
     public function template(): string

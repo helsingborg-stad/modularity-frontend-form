@@ -56,7 +56,7 @@ class LegalFormDataTaxonomiesRegistrar implements \Municipio\HooksRegistrar\Hook
         $registerResult = $this->wpService->registerTaxonomy($key, ['mod-frontend-form'], [
             'label' => $label,
             'hierarchical' => false,
-            'show_ui' => true,
+            'show_ui' => false,
             'show_admin_column' => true,
             'query_var' => true
         ]);

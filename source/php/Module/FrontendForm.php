@@ -222,13 +222,13 @@ class FrontendForm extends \Modularity\Module
         //Replace placeholders with actual values
         $dataProcessors = [
             'replacementKey' => '{{data_processors}}',
-            'fieldName'      => 'dataProcessingParts',
+            'fieldName'      => 'dataProcessingProcessors',
             'defaultValue'   => $this->wpService->__('us', 'modularity-frontend-form')
         ];
 
         $dataCategories = [
             'replacementKey' => '{{data_categories}}',
-            'fieldName'      => 'dataProcessingWhy',
+            'fieldName'      => 'dataProcessingCategories',
             'defaultValue'   => $this->wpService->__('relevant processing requirements', 'modularity-frontend-form')
         ];
 

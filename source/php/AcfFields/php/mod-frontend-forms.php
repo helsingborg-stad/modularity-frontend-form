@@ -562,7 +562,7 @@
         15 => array(
             'key' => 'field_69287218405e9',
             'label' => __('Why are we collecting this data?', 'modularity-frontend-form'),
-            'name' => 'dataProcessingWhy',
+            'name' => 'dataProcessingCategories',
             'aria-label' => '',
             'type' => 'taxonomy',
             'instructions' => __('Describe why we need to collect this data.', 'modularity-frontend-form'),
@@ -588,7 +588,7 @@
         16 => array(
             'key' => 'field_69287054405e8',
             'label' => __('Who will process or have access to the data?', 'modularity-frontend-form'),
-            'name' => 'dataProcessingParts',
+            'name' => 'dataProcessingProcessors',
             'aria-label' => '',
             'type' => 'taxonomy',
             'instructions' => __('List all entities that will access or process the data, including internal departments as well as any external system providers.', 'modularity-frontend-form'),

@@ -40,6 +40,12 @@ class Actionbar implements ActionbarInterface {
         button.addEventListener('click', () => {
             this.contentAreaInstance.getElement().focus();
             actionButton.result();
+
+            for (const other of ['olist', 'ulist']) {
+                if (other !== name && this.buttonList[other]) {
+                    this.buttonList[other].classList.remove(this.config.getClasses().selected);
+                }
+            }
         });
 
         if (actionButton.state) {

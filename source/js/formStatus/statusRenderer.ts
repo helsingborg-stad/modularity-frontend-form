@@ -6,6 +6,7 @@ class StatusRenderer implements StatusRendererInterface {
 	private messageQueue: MessageStatus[] = [];
 	private isProcessing: boolean = false;
 	private latestStatus: MessageStatus | null = null;
+	private timeoutId: number | null = null;
 
 	constructor(
 		private formContainer: HTMLElement,
@@ -18,6 +19,10 @@ class StatusRenderer implements StatusRendererInterface {
 		this.latestStatus = null;
 		this.isProcessing = false;
 		this.messageQueue = [];
+		if (this.timeoutId) {
+			window.clearTimeout(this.timeoutId);
+			this.timeoutId = null;
+		}
 	}
 
 	/**
@@ -56,6 +61,11 @@ class StatusRenderer implements StatusRendererInterface {
 	 * @param message The message status to process.
 	 */
 	private handleMessage(): void {
+		if (!this.latestStatus) {
+			this.isProcessing = false;
+			return;
+		}
+
 		this.statusRendererOverlayUI.applyStatusClass(this.latestStatus!.status);
 
 		// check showReturn and showTryAgain
@@ -81,7 +91,8 @@ class StatusRenderer implements StatusRendererInterface {
 			return;
 		}
 
-		setTimeout(() => {
+		this.timeoutId = window.setTimeout(() => {
+			console.log("Processing next status in queue...");
 			this.processQueue();
 		}, this.latestStatus!.delay);
 	}

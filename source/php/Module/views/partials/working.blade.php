@@ -1,5 +1,5 @@
 @element(['classList' => [
-    'mod-frontend-form-working',
+    'mod-frontend-form__working',
     'u-rounded--16',
     'u-display--none'
     ],
@@ -12,7 +12,7 @@
         'icon' => 'send',
         'size' => 'xxl',
         'classList' => [
-            'mod-frontend-form-working__icon'
+            'mod-frontend-form__working-icon'
         ],
         'attributeList' => [
             'data-js-frontend-form-working__icon' => 'true'
@@ -22,7 +22,7 @@
 
     @progressBar([
         'classList' => [
-            'mod-frontend-form-working__progress-bar'
+            'mod-frontend-form__working-progress-bar'
         ],
         'attributeList' => [
             'data-js-frontend-form-working__progress' => 'true'
@@ -43,7 +43,7 @@
             'element' => 'div',
             'variant' => 'body',
             'classList' => [
-                'mod-frontend-form-working__title'
+                'mod-frontend-form__working-title'
             ],
             'attributeList' => [
                 'data-js-frontend-form-working__title' => 'true'
@@ -56,7 +56,7 @@
             'element' => 'div',
             'variant' => 'meta',
             'classList' => [
-                'mod-frontend-form-working__description'
+                'mod-frontend-form__working-description'
             ],
             'attributeList' => [
                 'data-js-frontend-form-working__description' => 'true'
@@ -67,7 +67,7 @@
     @endelement
     @element([
         'classList' => [
-            'mod-frontend-form-working__button'
+            'mod-frontend-form__working-button'
         ]
     ])
         @button([

@@ -13,7 +13,7 @@
 ])
 
     @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
-    
+    @include('partials.working')
     @includeWhen($stepsCount > 1, 'progressbar', ['steps' => $steps])
 
     @form([
@@ -32,8 +32,6 @@
                 'mod-frontend-form__steps',
             ]
         ])
-            @include('partials.working')
-
             @foreach($steps as $index => $step)
                 @include('step', ['step' => $step, 'index' => $index])
             @endforeach

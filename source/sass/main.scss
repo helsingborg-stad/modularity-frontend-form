@@ -4,6 +4,7 @@
 @use "./step.scss";
 @use "./progressbar.scss";
 @use "./map.scss";
+@use "./working.scss";
 @import "@helsingborg-stad/openstreetmap/dist/main.css";
 
 .mod-frontend-form form {
@@ -39,38 +40,6 @@
     font-size: .75rem;
     color: $color-danger;
     margin-top: 4px;
-}
-
-.mod-frontend-form-working {
-    transition: all 0.2s ease-in-out;
-    position: absolute !important;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(5px);
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--base, 8px) * 4);
-    justify-content: center;
-    align-items: center;
-    padding: calc(var(--base, 8px) * 4);
-
-    > * {
-        max-width: 400px;
-    }
-}
-
-.mod-frontend-form-working__progress-bar {
-    .c-progressbar__value {
-        transition: width 0.2s ease-in-out;
-    }
-}
-
-.is-error .mod-frontend-form-working {
-    color: #721c24;
 }
 
 .mod-frontend-form__custom-label {

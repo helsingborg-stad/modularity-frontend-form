@@ -36,7 +36,7 @@ class SubmissionsPostType implements \Municipio\HooksRegistrar\Hookable
         }
 
         $this->wpService->addAction('init', function () {
-            $this->wpService->registerPostType('mod-frontend-form-submission', [
+            $registerResult = $this->wpService->registerPostType('mod-form-submission', [
                 'label' => __('Frontend Form Submissions', 'modularity-frontend-form'),
                 'public' => false,
                 'show_ui' => true,
@@ -44,6 +44,14 @@ class SubmissionsPostType implements \Municipio\HooksRegistrar\Hookable
                 'supports' => ['title', 'editor', 'custom-fields'],
                 'menu_icon' => 'dashicons-feedback',
             ]);
+
+            // Handle potential registration errors
+            if($this->wpService->isWpError($registerResult)) {
+              throw new \Exception(
+                'Failed to register post type: ' 
+                . $registerResult->get_error_message()
+              );
+            }
         });
     }
 }

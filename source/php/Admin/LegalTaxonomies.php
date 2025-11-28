@@ -37,12 +37,12 @@ class LegalTaxonomies implements \Municipio\HooksRegistrar\Hookable
 
         $this->wpService->addAction('init', fn() => $this->registerTaxonomy(
             __('Data Categories', 'modularity-frontend-form'),
-            'frontendform-legal-data-categories'
+            'fe-form-legal-data-categories'
         ));
 
         $this->wpService->addAction('init', fn() => $this->registerTaxonomy(
             __('Data Processors', 'modularity-frontend-form'),
-            'frontendform-legal-data-processors'
+            'fe-form-data-processors'
         ));
     }
 
@@ -54,12 +54,20 @@ class LegalTaxonomies implements \Municipio\HooksRegistrar\Hookable
      * @return void
      */
     private function registerTaxonomy($label, $key) {
-        $this->wpService->registerTaxonomy($key, ['mod-frontend-form'], [
+        $registerResult = $this->wpService->registerTaxonomy($key, ['mod-frontend-form'], [
             'label' => $label,
             'hierarchical' => false,
             'show_ui' => true,
             'show_admin_column' => true,
             'query_var' => true
         ]);
+
+        // Handle potential registration errors
+        if($this->wpService->isWpError($registerResult)) {
+            throw new \Exception(
+            'Failed to register taxonomy: ' 
+            . $registerResult->get_error_message()
+            );
+        }
     }
 }

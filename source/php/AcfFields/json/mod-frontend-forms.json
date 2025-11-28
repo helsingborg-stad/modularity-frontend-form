@@ -556,7 +556,7 @@
         {
             "key": "field_69287218405e9",
             "label": "Why are we collecting this data?",
-            "name": "dataProcessingWhy",
+            "name": "dataProcessingCategories",
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "Describe why we need to collect this data.",
@@ -567,11 +567,11 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "category",
+            "taxonomy": "fe-form-data-categories",
             "add_term": 1,
             "save_terms": 1,
             "load_terms": 1,
-            "return_format": "id",
+            "return_format": "object",
             "field_type": "checkbox",
             "bidirectional": 0,
             "multiple": 0,
@@ -581,7 +581,7 @@
         {
             "key": "field_69287054405e8",
             "label": "Who will process or have access to the data?",
-            "name": "dataProcessingParts",
+            "name": "dataProcessingProcessors",
             "aria-label": "",
             "type": "taxonomy",
             "instructions": "List all entities that will access or process the data, including internal departments as well as any external system providers.",
@@ -592,7 +592,7 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "category",
+            "taxonomy": "fe-form-data-processors",
             "add_term": 1,
             "save_terms": 1,
             "load_terms": 1,

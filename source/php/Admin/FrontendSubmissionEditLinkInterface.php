@@ -13,7 +13,7 @@ use WpService\WpService;
  * 
  * @package ModularityFrontendForm\Admin
  */
-class EditSubmissionOnFrontendInterface implements \Municipio\HooksRegistrar\Hookable
+class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\Hookable
 {
     private bool $isEnabled = true;
 

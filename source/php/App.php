@@ -52,6 +52,12 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->config,
             $this->wpService
         ))->addHooks();
+        
+        (new Admin\PluginOptionsPage(
+            $this->config,
+            $this->wpService,
+            $this->acfService
+        ))->addHooks();
     }
 
     /**

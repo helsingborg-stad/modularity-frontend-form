@@ -49,6 +49,11 @@ class ContentArea implements ContentAreaInterface {
 
     private handleKeyDown(event: KeyboardEvent): void {
         if (event.key === "Enter") {
+            const activeActions = this.actions.getActiveActions();
+            if (['olist', 'ulist'].some(action => activeActions.includes(action))) {
+                return;
+            }
+
             setTimeout(() => this.actions.exec("formatBlock", `<${this.defaultParagraphSeparator}>`), 0);
         }
     }

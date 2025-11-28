@@ -6,4 +6,5 @@ interface ActionsInterface {
     queryCommandValue(command: string): string;
     exec(command: string, value?: string): void;
     getDefaultActions(): EditorActions;
+    getActiveActions(): string[];
 }

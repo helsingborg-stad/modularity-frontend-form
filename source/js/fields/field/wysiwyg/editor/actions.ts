@@ -3,6 +3,7 @@ class Actions implements ActionsInterface {
     private defaultActions: EditorActions = {};
     constructor(private modularityFrontend: ModularityFrontendFormLang) {
         this.defaultActions = this.setDefaultActions();
+        
     }
 
     public getDefaultParagraphSeparatorString(): string {
@@ -11,6 +12,19 @@ class Actions implements ActionsInterface {
 
     public getFormatBlock(): string {
         return 'formatBlock';
+    }
+
+    public getActiveActions(): string[] {
+        const active: string[] = [];
+        const actions = this.getDefaultActions();
+
+        for (const key in actions) {
+            if (actions[key].state && actions[key].state()) {
+                active.push(key);
+            }
+        }
+
+        return active;
     }
 
     public createIcon(name: string): string {

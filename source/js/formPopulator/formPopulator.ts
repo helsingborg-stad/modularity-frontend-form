@@ -28,9 +28,13 @@ class FormPopulator implements FormActionInterface {
 		this.formParams = this.extractParamsFromUrl();
 	}
 
-	retry(): void {
+	public retry(): void {
 		this.statusRenderer.reset();
 		this.initialize();
+	}
+
+	public return(): void {
+		this.statusRenderer.reset();
 	}
 
 	/**
@@ -99,7 +103,7 @@ class FormPopulator implements FormActionInterface {
 				"file_open",
 				100,
 				2000,
-				true,
+				this,
 				this,
 			);
 			return null;
@@ -139,7 +143,7 @@ class FormPopulator implements FormActionInterface {
 					"vpn_key_alert",
 					0,
 					10000,
-					true,
+					this,
 					this,
 				);
 				return null;
@@ -162,7 +166,7 @@ class FormPopulator implements FormActionInterface {
 				"link_off",
 				0,
 				10000,
-				true,
+				this,
 				this,
 			);
 			return null;

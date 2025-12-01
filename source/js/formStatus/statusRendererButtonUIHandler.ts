@@ -1,16 +1,24 @@
+import StatusRendererOverlayUI from "./statusRendererOverlayUI";
+
 class StatusRendererButtonUIHandler
 	implements StatusRendererButtonUIHandlerInterface
 {
 	private tryAgainOnclick: FormActionInterface | false = false;
+	private returnOnclick: FormActionInterface | false = false;
 	constructor(
 		private returnButton: HTMLElement,
 		private tryAgainButton: HTMLElement,
+		private statusRendererOverlayUI: StatusRendererOverlayUI,
 	) {
 		this.tryAgainListener();
 		this.returnToFormListener();
 	}
 
-	public toggleReturnButton(shouldShow: boolean = false): void {
+	public toggleReturnButton(
+		shouldShow: FormActionInterface | false = false,
+	): void {
+		this.returnOnclick = shouldShow;
+
 		this.returnButton.classList.toggle("u-display--none", !shouldShow);
 	}
 
@@ -34,7 +42,11 @@ class StatusRendererButtonUIHandler
 
 	private returnToFormListener(): void {
 		this.returnButton.addEventListener("click", () => {
-			window.location.reload();
+			if (this.returnOnclick) {
+				this.returnOnclick.return();
+				this.statusRendererOverlayUI.removeOverlay();
+				this.statusRendererOverlayUI.removeStatusClasses();
+			}
 		});
 	}
 }

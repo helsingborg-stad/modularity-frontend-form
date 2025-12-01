@@ -19,7 +19,7 @@ class StatusHandler implements StatusHandlerInterface {
 		icon: string,
 		progress: number,
 		delay: number = 200,
-		showReturn: boolean = false,
+		showReturn: FormActionInterface | false = false,
 		showTryAgain: FormActionInterface | false = false,
 		hideOverlay: boolean = false,
 	): void {

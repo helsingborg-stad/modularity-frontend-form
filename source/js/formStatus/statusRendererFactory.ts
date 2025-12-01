@@ -44,6 +44,11 @@ class StatusRendererFactory {
 			return null;
 		}
 
+		const statusRendererOverlayUI = new StatusRendererOverlayUI(
+			formContainer,
+			workingOverlay,
+		);
+
 		return new StatusRenderer(
 			formContainer,
 			new StatusRendererMessageUI(
@@ -53,8 +58,12 @@ class StatusRendererFactory {
 				description,
 				progressbar,
 			),
-			new StatusRendererOverlayUI(formContainer, workingOverlay),
-			new StatusRendererButtonUIHandler(returnButton, tryAgainButton),
+			statusRendererOverlayUI,
+			new StatusRendererButtonUIHandler(
+				returnButton,
+				tryAgainButton,
+				statusRendererOverlayUI,
+			),
 		).setup();
 	}
 }

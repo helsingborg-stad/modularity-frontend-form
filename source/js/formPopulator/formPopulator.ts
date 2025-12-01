@@ -83,6 +83,18 @@ class FormPopulator implements FormActionInterface {
 			if (formData) {
 				this.form.mode = FormMode.Update; // Set the form mode to update
 				this.populateForm(formData);
+
+				//Show success message
+				this.statusHandler.setStatus(
+					SubmitStatus.Success,
+					this.modularityFrontendFormLang?.loadingSuccessful ?? "Form loaded successfully!",
+					"celebration",
+					100,
+					2000,
+					false,
+					false,
+					true
+				);
 			}
 		}
 	}

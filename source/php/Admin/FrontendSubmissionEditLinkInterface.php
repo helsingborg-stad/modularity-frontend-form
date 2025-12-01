@@ -4,6 +4,7 @@ namespace ModularityFrontendForm\Admin;
 
 use ModularityFrontendForm\Config\ConfigInterface;
 use WpService\WpService;
+use Modularity\Helper\ModuleUsageById;
 
 /**
  * Class EditSubmissionOnFrontendInterface
@@ -32,10 +33,11 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
         }
 
         $this->wpService->addAction('admin_notices', function () {
-            $postId = $this->wpService->getTheId();
+            $postId             = $this->wpService->getTheId();
+            $postWithFormModule = $this->getPostWithFormModule($postId);
             $this->maybeShowFrontendNotice(
                 $postId,
-                $this->constructFrontendUrl($postId)
+                $this->constructFrontendUrl($postId, $postWithFormModule)
             );
         });
     }
@@ -43,15 +45,24 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
     /**
      * Constructs the frontend URL with token and postId query parameters.
      *
-     * @param int $postId
+     * @param int $submissionPostId             The ID of the submission post
+     * @param object|null $postWithFormModule   The post object containing the form module
      * @return string
      */
-    private function constructFrontendUrl(int $postId): string
+    private function constructFrontendUrl(int $submissionPostId, $postWithFormModule): string
     {
-        $token = $this->getPostPasswordToken($postId);
-        $url = $this->wpService->getPermalink($postId);
+        // Get the token from the post password
+        $token = $this->getPostPasswordToken($submissionPostId);
+        
+        // Get the most appropriate URL to the post with the form module
+        $url = $this->wpService->getPermalink(
+            $postWithFormModule->post_id ?? $submissionPostId
+        );
+
+        // Append token and postId as query parameters
         $url = add_query_arg('token', $token, $url);
-        $url = add_query_arg('postId', $postId, $url);
+        $url = add_query_arg('postId', $submissionPostId, $url);
+
         return $url;
     }
 
@@ -99,5 +110,55 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
                 esc_html__('View on frontend', 'modularity-frontend-form')
             );
         }
+    }
+
+    /**
+     * Get the module ID associated with a post.
+     */
+    private function getModuleIdForPost(int $postId): ?int
+    {
+        $postModuleId = $this->config->getMetaDataNamespace('module_id');
+        $moduleId = $this->wpService->getPostMeta($postId, $postModuleId, true);
+        return $moduleId ?: null;
+    }
+
+    /**
+     * Get all pages that use a given module ID.
+     */
+    private function getPagesWithModule(int $moduleId): array
+    {
+        $moduleUsageById = new ModuleUsageById();
+        return $moduleUsageById->getModuleUsageById($moduleId) ?: [];
+    }
+
+    /**
+     * Find a published page from a list of pages, or return the first private page if none are published.
+     */
+    private function findPublishedOrPrivatePage(array $pages): ?object
+    {
+        $privatePage = null;
+        foreach ($pages as $page) {
+            if ($this->wpService->getPostStatus($page->post_id) === 'publish') {
+                return $page;
+            }
+            $privatePage = $page;
+        }
+        return $privatePage;
+    }
+
+    /**
+     * Get the page containing the form module for a given post.
+     */
+    private function getPostWithFormModule(int $postId)
+    {
+        $moduleId = $this->getModuleIdForPost($postId);
+        if (!$moduleId) {
+            return null;
+        }
+        $pages = $this->getPagesWithModule($moduleId);
+        if (empty($pages)) {
+            return null;
+        }
+        return $this->findPublishedOrPrivatePage($pages);
     }
 }

@@ -197,7 +197,6 @@ class Openstreetmap implements OpenstreetmapInterface {
 
 	// Updates the search input to show the fetched place
 	private updateSearchInput(): void {
-		console.log(this.currentPlace);
 		if (this.search.getInput() && this.currentPlace) {
 			this.search.setSearchListItems(null);
 			this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(

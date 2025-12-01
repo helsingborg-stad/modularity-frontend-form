@@ -141,15 +141,23 @@ class FormHandler {
 			statusRenderer,
 		);
 
+		const stepUIManager = new StepUIManager(
+			steps,
+			modularityFrontendFormLang,
+			nextButton as HTMLButtonElement,
+			previousButton as HTMLButtonElement,
+		);
+
 		new Steps(
 			steps,
-			new StepNavigator(steps, validator, submit),
-			new StepUIManager(
+			new StepNavigator(
 				steps,
-				modularityFrontendFormLang,
-				nextButton as HTMLButtonElement,
-				previousButton as HTMLButtonElement,
+				validator,
+				submit,
+				stepUIManager,
+				this.formContainer,
 			),
+			stepUIManager,
 			nextButton as HTMLButtonElement,
 			previousButton as HTMLButtonElement,
 		).init();

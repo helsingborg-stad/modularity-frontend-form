@@ -20,8 +20,6 @@ class TrueFalseFieldMapper implements FieldMapperInterface
 
         $mapped = (new RadioFieldMapper($this->field, $this->wpService, $this->lang))->map();
 
-        $mapped['attributeList']['style'] = 'display: flex;';
-
         return $mapped;
     }
 }

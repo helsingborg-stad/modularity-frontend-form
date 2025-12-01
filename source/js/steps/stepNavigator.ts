@@ -3,6 +3,8 @@ class StepNavigator implements StepNavigatorInterface {
 		private steps: StepsObject,
 		private validator: StepValidatorInterface,
 		private submit: SubmitInterface,
+		private stepUIManager: StepUIManagerInterface,
+		private formContainer: HTMLElement,
 		private activeStep: number = 0,
 	) {}
 
@@ -60,8 +62,9 @@ class StepNavigator implements StepNavigatorInterface {
 			const invalidStep = this.validator.getInvalidSteps()[0];
 			if (invalidStep && this.steps[Number(invalidStep)]) {
 				const step = this.steps[Number(invalidStep)];
-				// TODO: go to invalid step
-				step.getStepContainer().scrollIntoView({ behavior: "smooth" });
+				this.stepUIManager.showAndHideSteps(step, this.getActiveStep());
+				this.goTo(step.getId());
+				this.formContainer.scrollIntoView({ behavior: "smooth" });
 			}
 
 			return;

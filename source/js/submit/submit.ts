@@ -22,6 +22,10 @@ class Submit implements SubmitInterface {
 		this.submit();
 	}
 
+	public return(): void {
+		this.statusRenderer.reset();
+	}
+
 	/**
 	 * Disable the form submission to prevent default behavior.
 	 */
@@ -71,7 +75,7 @@ class Submit implements SubmitInterface {
 				"link_off",
 				0,
 				4000,
-				true,
+				this,
 				this,
 			);
 			return;
@@ -125,7 +129,7 @@ class Submit implements SubmitInterface {
 						"data_alert",
 						0,
 						2000,
-						true,
+						this,
 						this,
 					);
 					return;
@@ -137,7 +141,7 @@ class Submit implements SubmitInterface {
 					"error",
 					0,
 					3000,
-					true,
+					this,
 					this,
 				);
 				return;
@@ -152,7 +156,7 @@ class Submit implements SubmitInterface {
 					"celebration",
 					100,
 					4000,
-					true,
+					this,
 					false,
 				);
 			}
@@ -166,7 +170,7 @@ class Submit implements SubmitInterface {
 				"error",
 				0,
 				4000,
-				true,
+				this,
 				this,
 			);
 		}

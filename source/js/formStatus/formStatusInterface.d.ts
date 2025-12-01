@@ -4,12 +4,12 @@ type MessageStatus = {
 	icon: string;
 	progress: number;
 	delay?: number;
-	showReturn?: boolean;
+	showReturn?: FormActionInterface | false;
 	showTryAgain?: FormActionInterface | false;
 	hideOverlay?: boolean;
 };
 
 interface StatusRendererButtonUIHandlerInterface {
-	toggleReturnButton(shouldShow?: boolean): void;
+	toggleReturnButton(shouldShow?: FormActionInterface | false): void;
 	toggleTryAgainButton(shouldShow?: FormActionInterface | false): void;
 }

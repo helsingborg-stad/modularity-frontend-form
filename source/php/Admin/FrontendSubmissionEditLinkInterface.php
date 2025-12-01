@@ -99,6 +99,8 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
      *
      * @param int $postId
      * @param string $frontendUrl
+     * 
+     * @return void
      */
     public function maybeShowFrontendNotice(int $postId, string $frontendUrl): void
     {
@@ -114,6 +116,10 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
 
     /**
      * Get the module ID associated with a post.
+     * 
+     * @param int $postId The ID of the post.
+     * 
+     * @return int|null The module ID, or null if not found.
      */
     private function getModuleIdForPost(int $postId): ?int
     {
@@ -124,6 +130,10 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
 
     /**
      * Get all pages that use a given module ID.
+     * 
+     * @param int $moduleId The module ID to search for.
+     * 
+     * @return array An array of page objects that use the module.
      */
     private function getPagesWithModule(int $moduleId): array
     {
@@ -133,6 +143,10 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
 
     /**
      * Find a published page from a list of pages, or return the first private page if none are published.
+     * 
+     * @param array $pages The list of pages to search through.
+     * 
+     * @return object|null The found page object, or null if none found.
      */
     private function findPublishedOrPrivatePage(array $pages): ?object
     {
@@ -148,6 +162,10 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
 
     /**
      * Get the page containing the form module for a given post.
+     * 
+     * @param int $postId The ID of the post to find the form module for.
+     * 
+     * @return object|null The post object containing the form module, or null if not found.
      */
     private function getPostWithFormModule(int $postId)
     {

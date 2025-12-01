@@ -31,7 +31,6 @@ class RadioFactory {
 				stepId,
 			);
 		}
-		// TODO: Validator
 		return new Radio(
 			field,
 			choices,

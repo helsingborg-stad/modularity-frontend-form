@@ -359,6 +359,27 @@ class FrontendForm extends \Modularity\Module
         $this->wpService->wpEnqueueScript($this->getScriptHandle());
     }
 
+    public function adminEnqueue(): void
+    {
+        // Register admin script
+        $this->wpService->wpRegisterScript(
+            $this->getScriptHandle('admin'),
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('js/admin.js')
+        );
+
+        $this->addAttributesToScriptTag($this->getScriptHandle('admin'), [
+            'type' => 'module'
+        ]);
+
+        // Enqueue admin script
+        $this->wpService->wpEnqueueScript(
+            $this->getScriptHandle('admin'),
+            false,
+            ['jquery', 'acf-input']
+        );
+    }
+
     /**
      * Retrieves the script data.
      *

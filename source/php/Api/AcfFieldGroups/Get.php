@@ -12,7 +12,7 @@ use WpService\WpService;
 class Get extends RestApiEndpoint
 {
     public const NAMESPACE = 'modularity-frontend-form/v1';
-    public const ROUTE     = 'acf-field-groups/get';
+    public const ROUTE     = 'acf-field-groups';
     public const KEY       = 'getAcfFieldGroups';
 
     public function __construct(
@@ -60,15 +60,15 @@ class Get extends RestApiEndpoint
         return new WP_REST_Response($this->getStructuredList($this->getAcfGroupsForPostType($postType)), 200);
     }
 
-    private function getStructuredList(array $acfFieldGroups): array
+    private function getStructuredList(array $acfFieldGroups): object
     {
-        $structuredList = [];
+        $structuredList = (object) [];
 
         foreach ($acfFieldGroups as $group) {
             $key = $group['key'] ?? null;
             $title = $group['title'] ?? null;
             if ($key) {
-                $structuredList[$key] = $title;
+                $structuredList->$key = $title;
             }
         }
 

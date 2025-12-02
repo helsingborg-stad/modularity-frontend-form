@@ -25,6 +25,7 @@ use WpService\Contracts\WpRegisterStyle;
 use WpService\Contracts\GetPermalink;
 use WpService\Contracts\GetPostMeta;
 use WpService\Contracts\UpdatePostMeta;
+use WpService\Contracts\ApplyFilters;
 use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use ModularityFrontendForm\Module\FormatSteps;
@@ -361,6 +362,13 @@ class FrontendForm extends \Modularity\Module
 
     public function adminEnqueue(): void
     {
+        $acfGroups = new \ModularityFrontendForm\Module\AcfGroupHelper(
+            $this->wpService,
+            $this->acfService
+        );
+
+        $data = $acfGroups->getAcfGroups();
+
         // Register admin script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle('admin'),
@@ -371,6 +379,13 @@ class FrontendForm extends \Modularity\Module
         $this->addAttributesToScriptTag($this->getScriptHandle('admin'), [
             'type' => 'module'
         ]);
+
+        // Localize admin script
+        $this->wpService->wpLocalizeScript(
+            $this->getScriptHandle('admin'),
+            'modularityFrontendFormAcfGroups',
+            $data
+        );
 
         // Enqueue admin script
         $this->wpService->wpEnqueueScript(

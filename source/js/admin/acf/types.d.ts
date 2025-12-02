@@ -19,6 +19,10 @@ type FieldsStorage = {
 	[id: string]: FieldStorage;
 };
 
-type FieldGroupResponse = {
-	key: string;
+type ModularityFrontendFormAcfGroup = {
+	[id: string]: string;
+};
+
+type ModularityFrontendFormAcfGroups = {
+	[postType: string]: ModularityFrontendFormAcfGroup;
 };

@@ -40,6 +40,17 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
         });
     }
 
+    private function getHoldingPostId(int $postId): ?int
+    {
+        $holdingPostId = $this->wpService->getPostMeta(
+            $postId,
+            $this->config->getMetaDataNamespace('holding_post_id'),
+            true
+        );
+
+        return $holdingPostId ? (int) $holdingPostId : null;
+    }
+
     /**
      * Constructs the frontend URL with token and postId query parameters.
      *
@@ -48,10 +59,16 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
      */
     private function constructFrontendUrl(int $postId): string
     {
+        // Get the post password token and permalink
         $token = $this->getPostPasswordToken($postId);
-        $url = $this->wpService->getPermalink($postId);
-        $url = add_query_arg('token', $token, $url);
-        $url = add_query_arg('postId', $postId, $url);
+        $url   = $this->wpService->getPermalink(
+            $this->getHoldingPostId($postId) ?? $postId
+        );
+
+        // Append query parameters
+        $url   = add_query_arg('token', $token, $url);
+        $url    = add_query_arg('postId', $postId, $url);
+
         return $url;
     }
 

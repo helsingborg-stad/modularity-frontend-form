@@ -21,6 +21,7 @@ class NullHandler implements HandlerInterface {
       private AcfService $acfService,
       private ConfigInterface $config,
       private ModuleConfigInterface $moduleConfigInstance,
+      private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult()
   ) {
   }

@@ -86,8 +86,8 @@ class Update extends RestApiEndpoint
         // Creates the data processor
         $dataProcessor = new DataProcessor(
             $validatorFactory->createInsertValidators($params->moduleId),
-            $handlerFactory->createHandlers($params->moduleId),
-            $handlerFactory->createNullHandler($params->moduleId),
+            $handlerFactory->createHandlers($params),
+            $handlerFactory->createNullHandler($params),
         );
 
         $dataProcessorResult = $dataProcessor->process($data);

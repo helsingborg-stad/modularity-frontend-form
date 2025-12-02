@@ -45,7 +45,7 @@ class Update extends RestApiEndpoint
      */
     public function handleRegisterRestRoute(): bool
     {
-        return register_rest_route(self::NAMESPACE, self::ROUTE, array(
+        return $this->wpService->registerRestRoute(self::NAMESPACE, self::ROUTE, array(
             'methods'             => WP_REST_Server::EDITABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',

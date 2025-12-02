@@ -7,4 +7,5 @@ export interface FormInterface {
 	formElementContainer: HTMLElement;
 	get formId(): number;
 	get formUpdateId(): number | null;
+	get holdingPostId(): number | null;
 }

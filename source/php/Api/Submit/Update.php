@@ -55,6 +55,7 @@ class Update extends RestApiEndpoint
                 RestApiParamEnums::ModuleId,
                 RestApiParamEnums::Nonce,
                 RestApiParamEnums::PostId,
+                RestApiParamEnums::HoldingPostId,
                 RestApiParamEnums::Token
             )
         ));

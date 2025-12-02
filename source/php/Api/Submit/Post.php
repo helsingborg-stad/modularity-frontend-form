@@ -52,6 +52,7 @@ class Post extends RestApiEndpoint
             'args' => (
                 new RestApiParams($this->wpService, $this->config, $this->moduleConfigFactory)
             )->getParamSpecification(
+                RestApiParamEnums::HoldingPostId,
                 RestApiParamEnums::ModuleId,
                 RestApiParamEnums::Nonce,
             )

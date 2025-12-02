@@ -20,6 +20,7 @@
         'validation' => false,
         'attributeList' => [
             'data-js-frontend-form-id' => $moduleId,
+            'data-js-frontend-form-holding-post-id' => $holdingPostId,
         ],
         'classList' => [
             'mod-frontend-form__form',

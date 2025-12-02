@@ -1,3 +1,4 @@
+import FecthGroups from "./acf/fetchGroups";
 import FieldGroupSetup from "./acf/fieldGroupSetup";
 import Store from "./acf/store";
 
@@ -10,7 +11,10 @@ class Admin {
 
 	private initAcfSelects(): void {
 		if (typeof acf !== "undefined") {
-			new FieldGroupSetup(Store.initStore()).init();
+			new FieldGroupSetup(
+				Store.initStore(),
+				FecthGroups.createInstance(),
+			).init();
 		}
 	}
 }

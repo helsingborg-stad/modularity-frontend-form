@@ -4,10 +4,12 @@ import FieldGroupSelect from "./fieldGroupSelect";
 declare const acf: any;
 
 class FieldGroupSetup implements AcfSelectsInterface {
-	private static fieldStorage: FieldsStorage = {};
 	private ACF_GROUP_SELECT_NAME = "formStepGroup";
 
-	public constructor(private store: StoreInterface) {}
+	public constructor(
+		private store: StoreInterface,
+		private fetchGroups: FetchGroupsInterface,
+	) {}
 
 	/**
 	 * Initializes ACF field listeners for loading and appending fields.
@@ -48,20 +50,31 @@ class FieldGroupSetup implements AcfSelectsInterface {
 				return;
 			}
 
-			this.store.set(groupId, {
+			const fieldStorage = this.store.set(groupId, {
 				id: groupId,
-				postTypeSelect: PostTypeSelect.createInstance(
-					this.store,
-					postTypeSelect,
-				),
+				postTypeSelect: null,
 				group: groupElement[0],
 				fields: [],
 			});
+
+			this.store.setPostTypeSelect(
+				fieldStorage.id,
+				PostTypeSelect.createInstance(
+					this.store,
+					postTypeSelect,
+					fieldStorage.id,
+				),
+			);
 		}
 
 		this.store.addFieldToGroup(
 			groupId,
-			FieldGroupSelect.createInstance(this.store, field.$el[0]),
+			FieldGroupSelect.createInstance(
+				this.store,
+				this.fetchGroups,
+				field.$el[0],
+				groupId,
+			),
 		);
 	}
 

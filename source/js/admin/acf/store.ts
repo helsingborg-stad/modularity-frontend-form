@@ -9,8 +9,9 @@ class Store implements StoreInterface {
 	 * @param id
 	 * @param fieldStorage
 	 */
-	public set(id: string, fieldStorage: FieldStorage): void {
+	public set(id: string, fieldStorage: FieldStorage): FieldStorage {
 		Store.fieldStorage[id] = fieldStorage;
+		return Store.fieldStorage[id];
 	}
 
 	/**
@@ -20,6 +21,15 @@ class Store implements StoreInterface {
 	 */
 	public get(id: string): FieldStorage | null {
 		return Store.fieldStorage[id] ? Store.fieldStorage[id] : null;
+	}
+
+	public setPostTypeSelect(
+		id: string,
+		postTypeSelect: PostTypeSelectInterface,
+	): void {
+		if (Store.fieldStorage[id]) {
+			Store.fieldStorage[id].postTypeSelect = postTypeSelect;
+		}
 	}
 
 	/**

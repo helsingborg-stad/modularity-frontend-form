@@ -12,9 +12,13 @@ type FieldStorage = {
 	id: string;
 	group: HTMLElement;
 	fields: FieldGroupSelectInterface[];
-	postTypeSelect: PostTypeSelectInterface;
+	postTypeSelect: PostTypeSelectInterface | null;
 };
 
 type FieldsStorage = {
 	[id: string]: FieldStorage;
+};
+
+type FieldGroupResponse = {
+	key: string;
 };

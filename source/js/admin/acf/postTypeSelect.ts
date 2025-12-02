@@ -1,24 +1,42 @@
 class PostTypeSelect implements PostTypeSelectInterface {
+	private select: HTMLSelectElement;
+
 	private constructor(
 		private store: StoreInterface,
 		private field: HTMLElement,
+		private groupId: string,
 	) {
-		console.log("PostTypeSelect initialized: " + this.field);
+		this.select = this.field.querySelector("select") as HTMLSelectElement;
+
+		if (!this.select) {
+			console.error(
+				`Select element not found in field for group ID: ${this.groupId}`,
+			);
+		} else {
+			this.init();
+		}
 	}
 
-	private init(): this {
-		return this;
+	private init(): void {
+		this.select.addEventListener("change", () => {
+			this.store
+				.get(this.groupId)
+				?.fields.forEach((fieldGroupSelect: FieldGroupSelectInterface) => {
+					fieldGroupSelect.updateOptions();
+				});
+		});
 	}
 
 	public getSelected(): string | null {
-		return null;
+		return this.select.value || null;
 	}
 
 	public static createInstance(
 		store: StoreInterface,
 		field: HTMLElement,
+		groupId: string,
 	): PostTypeSelect {
-		return new PostTypeSelect(store, field).init();
+		return new PostTypeSelect(store, field, groupId);
 	}
 }
 

@@ -105,9 +105,15 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
     public function setUpAdminInterface(): void
     {
-        (new Admin\FrontendSubmissionEditLinkInterface(
+        (new Admin\DisplayEditLinkInterfaceNotice(
             $this->config,
             $this->wpService
+        ))->addHooks();
+
+        (new Admin\HideIrrelevantComponents(
+            $this->config,
+            $this->wpService,
+            $this->acfService
         ))->addHooks();
     }
 

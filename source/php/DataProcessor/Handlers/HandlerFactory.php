@@ -5,6 +5,7 @@ namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use WpService\WpService;
 use AcfService\AcfService;
+use ModularityFrontendForm\Api\RestApiParamsInterface;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
@@ -31,12 +32,12 @@ class HandlerFactory {
      *
      * @return HandlerInterface[] An array of handlers
      */
-    public function createHandlers(int $moduleId): array {
+    public function createHandlers(object $params): array {
         $handlers       = [];
-        $moduleConfig   = $this->getModuleConfigInstance($moduleId);
+        $moduleConfig   = $this->getModuleConfigInstance($params->moduleId);
         $activeHandlers = $moduleConfig->getActivatedHandlers();
 
-        $args = $this->createHandlerInterfaceRequiredArguments($moduleId);
+        $args = $this->createHandlerInterfaceRequiredArguments($params);
 
         foreach ($activeHandlers as $handler) {
             switch ($handler) {
@@ -63,9 +64,9 @@ class HandlerFactory {
      *
      * @return HandlerInterface A null handler
      */
-    public function createNullHandler(int $moduleId): HandlerInterface {
+    public function createNullHandler(object $params): HandlerInterface {
         return new NullHandler(...$this->createHandlerInterfaceRequiredArguments(
-            $moduleId
+            $params
         ));
     }
 
@@ -76,12 +77,13 @@ class HandlerFactory {
      * 
      * @return array An array of arguments
      */
-    private function createHandlerInterfaceRequiredArguments(int $moduleId): array {
+    private function createHandlerInterfaceRequiredArguments(object $params): array {
         return [
             $this->wpService,
             $this->acfService,
             $this->config,
-            $this->getModuleConfigInstance($moduleId),
+            $this->getModuleConfigInstance($params->moduleId),
+            $params
         ];
     }
 }

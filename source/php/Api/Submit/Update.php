@@ -45,7 +45,7 @@ class Update extends RestApiEndpoint
      */
     public function handleRegisterRestRoute(): bool
     {
-        return register_rest_route(self::NAMESPACE, self::ROUTE, array(
+        return $this->wpService->registerRestRoute(self::NAMESPACE, self::ROUTE, array(
             'methods'             => WP_REST_Server::EDITABLE,
             'callback'            => array($this, 'handleRequest'),
             'permission_callback' => '__return_true',
@@ -55,6 +55,7 @@ class Update extends RestApiEndpoint
                 RestApiParamEnums::ModuleId,
                 RestApiParamEnums::Nonce,
                 RestApiParamEnums::PostId,
+                RestApiParamEnums::HoldingPostId,
                 RestApiParamEnums::Token
             )
         ));
@@ -85,8 +86,8 @@ class Update extends RestApiEndpoint
         // Creates the data processor
         $dataProcessor = new DataProcessor(
             $validatorFactory->createInsertValidators($params->moduleId),
-            $handlerFactory->createHandlers($params->moduleId),
-            $handlerFactory->createNullHandler($params->moduleId),
+            $handlerFactory->createHandlers($params),
+            $handlerFactory->createNullHandler($params),
         );
 
         $dataProcessorResult = $dataProcessor->process($data);

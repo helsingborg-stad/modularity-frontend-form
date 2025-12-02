@@ -3,7 +3,8 @@
 namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use WpService\WpService; 
-use AcfService\AcfService; 
+use AcfService\AcfService;
+use ModularityFrontendForm\Api\RestApiParamsInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
@@ -21,6 +22,7 @@ class WpDbHandler implements HandlerInterface {
       private AcfService $acfService,
       private ConfigInterface $config,
       private ModuleConfigInterface $moduleConfigInstance,
+      private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult()
   ) {
   }
@@ -38,12 +40,14 @@ class WpDbHandler implements HandlerInterface {
     if(in_array('post_id', $data) && get_post($data['post_id']) !== null) {
       $this->updatePost(
         $this->moduleConfigInstance->getModuleId(),
-        $data
+        $data,
+        $this->params
       );
     } else {
       $this->insertPost(
         $this->moduleConfigInstance->getModuleId(),
-        $data
+        $data,
+        $this->params
       );
     }
     return $this->handlerResult;
@@ -57,7 +61,7 @@ class WpDbHandler implements HandlerInterface {
    *
    * @return WP_Error|int The result of the post insertion
    */
-  private function insertPost(int $moduleID, array|null $fieldMeta): false|int {
+  private function insertPost(int $moduleID, array|null $fieldMeta, object $params): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
@@ -67,6 +71,9 @@ class WpDbHandler implements HandlerInterface {
         'post_status'   => $moduleConfig->saveToPostTypeStatus,
         'post_password' => $this->createPostPassword(),
         'meta_input'    => [
+          $this->config->getMetaDataNamespace('holding_post_id') => (
+            $this->params->holdingPostId ?? null
+          ),
           $this->config->getMetaDataNamespace('module_id')  => $moduleID,
           $this->config->getMetaDataNamespace('nonce')      => $fieldMeta['nonce'] ?? '',
           $this->config->getMetaDataNamespace('submission') => true
@@ -92,7 +99,7 @@ class WpDbHandler implements HandlerInterface {
     return true;
   }
 
-  private function updatePost(int $moduleID, array|null $fieldMeta): false|int {
+  private function updatePost(int $moduleID, array|null $fieldMeta, object $params): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
@@ -101,6 +108,9 @@ class WpDbHandler implements HandlerInterface {
         'post_title'   => $this->moduleConfigInstance->getModuleTitle(),
         'post_status'  => $moduleConfig->saveToPostTypeStatus,
         'meta_input'   => [
+          $this->config->getMetaDataNamespace('holding_post_id') => (
+            $this->params->holdingPostId ?? null
+          ),
           $this->config->getMetaDataNamespace('module_id') => $moduleID,
           $this->config->getMetaDataNamespace('nonce')     => $fieldMeta['nonce'] ?? '',
           $this->config->getMetaDataNamespace('submission') => true

@@ -33,6 +33,14 @@ export class Form {
 		throw new Error("Form ID not found");
 	}
 
+	get holdingPostId(): number | null {
+		const holdingPostId = this.form.getAttribute("data-js-frontend-form-holding-post-id");
+		if (holdingPostId) {
+			return parseInt(holdingPostId);
+		}
+		return null;
+	}
+
 	get formUpdateId(): number | null {
 		if (this.mode !== FormMode.Update) {
 			return null;

@@ -89,12 +89,22 @@ class Submit implements SubmitInterface {
 		try {
 			const urlWithParams = new URL(url);
 
-			//Params common to all requests
+			//Module ID
 			urlWithParams.searchParams.append(
 				"module-id",
 				this.form.formId.toString(),
 			);
-			urlWithParams.searchParams.append("nonce", nonce?.toString() || "");
+
+			//Nonce
+			urlWithParams.searchParams.append(
+				"nonce", nonce?.toString() || ""
+			);
+
+			//Post ID of current page (holding post)
+			urlWithParams.searchParams.append(
+				"holding-post-id",
+				(this.form.holdingPostId ?? 0).toString(),
+			);
 
 			//If in update mode, append postId & token to the URL
 			if (this.form.mode === FormMode.Update && this.form.formUpdateId) {

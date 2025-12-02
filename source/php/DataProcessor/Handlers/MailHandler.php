@@ -3,7 +3,8 @@
 namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use WpService\WpService; 
-use AcfService\AcfService; 
+use AcfService\AcfService;
+use ModularityFrontendForm\Api\RestApiParamsInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
@@ -21,6 +22,7 @@ class MailHandler implements HandlerInterface {
       private AcfService $acfService,
       private ConfigInterface $config,
       private ModuleConfigInterface $moduleConfigInstance,
+      private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult()
   ) {
   }

@@ -9,6 +9,7 @@ use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
 use ModularityFrontendForm\Api\Submit\Post;
 use ModularityFrontendForm\Api\Submit\Update;
 use ModularityFrontendForm\Api\Read\Get;
+use ModularityFrontendForm\Api\AcfFieldGroups\Get as AcfFieldGroupsGet;
 use ModularityFrontendForm\Config\Config;
 
 use Municipio\HooksRegistrar\Hookable;
@@ -87,6 +88,7 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             new Api\Submit\Update($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Read\Get($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Nonce\Get($this->wpService, $this->config, $this->moduleConfigFactory),
+            new Api\AcfFieldGroups\Get($this->wpService, $this->acfService)
         ];
 
         $this->wpService->applyFilters(

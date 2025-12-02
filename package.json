@@ -35,6 +35,7 @@
         "@helsingborg-stad/openstreetmap": "^0.51.4",
         "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^29.5.14",
+        "@types/jquery": "^3.5.33",
         "cross-env": "^7.0.3",
         "import-glob-loader": "^1.1.0",
         "jest-environment-jsdom": "^29.7.0",

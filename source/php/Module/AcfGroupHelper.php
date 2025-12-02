@@ -12,12 +12,23 @@ class AcfGroupHelper
         private AcfService $acfService
     ) {}
 
+    /**
+     * Get all ACF groups structured by post type
+     * 
+     * @return array Structured list of ACF groups grouped by post type
+     */
     public function getAcfGroups(): array
     {
         $groups = $this->acfService->getFieldGroups();
         return $this->buildPostTypeGroupedList($groups);
     }
 
+    /**
+     * Build a structured list of ACF groups grouped by post type
+     * 
+     * @param array $groups List of ACF groups
+     * @return array Structured list of ACF groups grouped by post type
+     */
     private function buildPostTypeGroupedList(array $groups): array
     {
         $structured = [];

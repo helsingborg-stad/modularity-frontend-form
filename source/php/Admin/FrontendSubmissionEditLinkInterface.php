@@ -110,8 +110,16 @@ class FrontendSubmissionEditLinkInterface implements \Municipio\HooksRegistrar\H
     {
         if ($this->isSubmittedByForm($postId)) {
             printf(
-                '<div class="notice notice-info"><p>%s <a href="%s" target="_blank">%s</a></p></div>',
-                esc_html__('Edit as end user', 'modularity-frontend-form'),
+                '<div class="notice notice-info" style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px 10px 10px; gap: 20px;">
+                    <div>
+                        <h3 style="margin:0 0 5px 0;">%s</h3>%s
+                    </div>
+                    <div>
+                        <a href="%s" target="_blank" class="button button-secondary">%s</a>
+                    </div>
+                </div>',
+                esc_html__('Frontend Submission', 'modularity-frontend-form'),
+                esc_html__('This content was created by a end user, you may edit as a end user by clicking the button.', 'modularity-frontend-form'),
                 esc_url($frontendUrl),
                 esc_html__('View on frontend', 'modularity-frontend-form')
             );

@@ -96,7 +96,15 @@ class ModuleConfig implements ModuleConfigInterface
     if(in_array('WpDbHandler', $this->getActivatedHandlers()) === false) {
       return null;
     }
-    return (object) $this->acfService->getField('WpDbHandlerConfig', $this->getModuleId());
+    $groupData = $this->acfService->getField('WpDbHandlerConfig', $this->getModuleId());
+    if($groupData === null || !is_array($groupData)) {
+      return null;
+    }
+    $groupData['saveToPostType'] = $this->acfService->getField(
+      'saveToPostType',
+      $this->getModuleId()
+    );
+    return (object) $groupData;
   }
 
   /**

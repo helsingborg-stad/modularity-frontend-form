@@ -8,7 +8,7 @@ class FieldGroupSetup implements AcfSelectsInterface {
 
 	public constructor(
 		private store: StoreInterface,
-		private modularityFrontendFormAcfGroups: ModularityFrontendFormAcfGroups,
+		private modularityFrontendFormAdminData: ModularityFrontendFormAdminData
 	) {}
 
 	/**
@@ -57,7 +57,7 @@ class FieldGroupSetup implements AcfSelectsInterface {
 
 		this.store.addFieldToGroup(
 			groupId,
-			FieldGroupSelect.createInstance(this.store, this.modularityFrontendFormAcfGroups, field.$el[0], groupId),
+			FieldGroupSelect.createInstance(this.store, this.modularityFrontendFormAdminData, field.$el[0], groupId),
 		);
 	}
 

@@ -1,7 +1,11 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
-	"rules": {
-		"no-instance-class": ["error", { "allowStaticOnly": true }]
+	"linter": {
+		"rules": {
+			"complexity": {
+				"noStaticOnlyClass": "off"
+			}
+		}
 	},
 	"formatter": {
 		"lineWidth": 120

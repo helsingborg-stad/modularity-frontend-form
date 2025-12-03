@@ -55,6 +55,17 @@ class FieldGroupSetup implements AcfSelectsInterface {
 			);
 		}
 
+		this.getPostTypeSelect(groupElement)
+			?.addEventListener('change', () => {
+				this.store
+					.get(groupId)
+					?.fields.forEach(
+						(fieldGroupSelect: FieldGroupSelectInterface) => {
+							fieldGroupSelect.updateOptions();
+				});
+			});
+
+
 		this.store.addFieldToGroup(
 			groupId,
 			FieldGroupSelect.createInstance(this.store, this.modularityFrontendFormAdminData, field.$el[0], groupId),

@@ -31,6 +31,7 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 
 		this.postTypeKeyToCache = this.postTypeSelect.getSelected();
 		this.updateOptions();
+
 	}
 
 	/**
@@ -48,21 +49,27 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 
 	/**
 	 * Caches the currently selected options for the current post type.
+	 * The sorting part is necessary due to the element not being structured after page reload.
 	 */
 	private setSelectedCache(): void {
-		const selectedOptions = this.select.selectedOptions;
+		if (!this.postTypeKeyToCache) return;
 
-		if (!this.postTypeKeyToCache) {
-			return;
-		}
+		const result = [...this.select.selectedOptions]
+			.map(opt => ({
+				index: opt.dataset.i ? Number(opt.dataset.i) : null,
+				value: opt.value,
+			}))
+			.sort((a, b) => {
+				if (a.index === null && b.index === null) return 0;
+				if (a.index === null) return 1;
+				if (b.index === null) return -1;
+				return a.index - b.index;
+			})
+			.map(x => x.value);
 
-		const selectedValues: string[] = [];
-		[...selectedOptions].forEach((element) => {
-			selectedValues.push(element.value);
-		});
-
-		this.selectedCache[this.postTypeKeyToCache!] = selectedValues;
+		this.selectedCache[this.postTypeKeyToCache] = result;
 	}
+
 
 	/**
 	 * Updates the select markup based on the selected post type.
@@ -73,26 +80,41 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	private updateMarkup(selectedPostType: string | null): void {
 		this.select.length = 0;
 
-		const modularityFrontendFormAcfGroup = selectedPostType
+		const groups = selectedPostType
 			? this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[selectedPostType]
 			: null;
 
-		
-		if (!modularityFrontendFormAcfGroup || Object.keys(modularityFrontendFormAcfGroup).length === 0) {
+			
+		if (!groups) {
 			return;
 		}
+			
+		const keys = Object.keys(groups);
+		const selected = this.selectedCache[selectedPostType!] ?? [];
+		const notSelected = keys.filter(key => !selected.includes(key));
 
-		for (const groupKey in modularityFrontendFormAcfGroup) {
-			const option = document.createElement('option');
-			option.value = groupKey;
-			option.text = modularityFrontendFormAcfGroup[groupKey];
+		const orderedKeyss = [...notSelected, ...selected];
 
-			if (this.selectedCache[selectedPostType!]?.includes(groupKey)) {
-				option.selected = true;
-			}
+		for (const groupKey of orderedKeyss) {
+			const group = groups[groupKey];
+			if (!group) continue;
+
+			const option = this.createOption(
+				groupKey,
+				group,
+				selected.includes(groupKey) || false
+			);
 
 			this.select.add(option);
 		}
+	}
+
+	private createOption(value: string, text: string, selected: boolean): HTMLOptionElement {
+		const option = document.createElement('option');
+		option.value = value;
+		option.text = text;
+		option.selected = selected;
+		return option;
 	}
 
 	public static createInstance(

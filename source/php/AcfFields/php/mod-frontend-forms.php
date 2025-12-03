@@ -21,8 +21,31 @@
             ),
             'placement' => 'top',
             'endpoint' => 0,
+            'selected' => 0,
         ),
         1 => array(
+            'key' => 'field_6627a79912426',
+            'label' => __('Select Post Type', 'modularity-frontend-form'),
+            'name' => 'saveToPostType',
+            'aria-label' => '',
+            'type' => 'posttype_select',
+            'instructions' => __('The post type from which the fields should be retrieved; this setting also determines which post type the submission will be saved to.', 'modularity-frontend-form'),
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+                'class' => '',
+                'id' => '',
+            ),
+            'default_value' => '',
+            'allow_null' => 1,
+            'multiple' => 0,
+            'allow_in_bindings' => 1,
+            'placeholder' => '',
+            'disabled' => 0,
+            'readonly' => 0,
+        ),
+        2 => array(
             'key' => 'field_6627a5e312422',
             'label' => __('Add Form Step', 'modularity-frontend-form'),
             'name' => 'formSteps',
@@ -102,6 +125,75 @@
                         'id' => '',
                     ),
                     'choices' => array(
+                        'group_66d0837591221' => __('Audio module', 'modularity-frontend-form'),
+                        'group_56a89f42b432b' => __('BookingFields', 'modularity-frontend-form'),
+                        'group_5e1d8f163f200' => __('Contact banner: Modularity Contact Banner', 'modularity-frontend-form'),
+                        'group_5805e5dc0a3be' => __('Contacts v2: Contacts', 'modularity-frontend-form'),
+                        'group_609b788ad04bb' => __('Curator Social Media: Curator Social Media', 'modularity-frontend-form'),
+                        'group_62816d604ae46' => __('Divider: Divider', 'modularity-frontend-form'),
+                        'group_65b3a530b28a9' => __('Dynamic guide: Dynamic Guides', 'modularity-frontend-form'),
+                        'group_641c51b765f4b' => __('Email Subscribe: Email Subscribe', 'modularity-frontend-form'),
+                        'group_5c599a27e446a' => __('Event form v2: Event form', 'modularity-frontend-form'),
+                        'group_68d28f55ef8cf' => __('Event: Audience & Category', 'modularity-frontend-form'),
+                        'group_583fe4ee88439' => __('Event: Display events', 'modularity-frontend-form'),
+                        'group_68d28e231bbaa' => __('Event: Organizer', 'modularity-frontend-form'),
+                        'group_68d28e8bc6408' => __('Event: Presentation', 'modularity-frontend-form'),
+                        'group_68d28f0c82ff4' => __('Event: Time & Place', 'modularity-frontend-form'),
+                        'group_646c5d26e3359' => __('Exclude title from Google Translate', 'modularity-frontend-form'),
+                        'group_5729fc6e03367' => __('Feedback: Feedback data', 'modularity-frontend-form'),
+                        'group_5756ce3e48783' => __('Files: Files', 'modularity-frontend-form'),
+                        'group_58eb301ecb36a' => __('Form', 'modularity-frontend-form'),
+                        'group_6627a5e16d74c' => __('Frontend Form: Configure Multistep Form', 'modularity-frontend-form'),
+                        'group_5666af6d26b7c' => __('Gallery: Gallery', 'modularity-frontend-form'),
+                        'group_614b3f1a751bf' => __('Hero: Hero', 'modularity-frontend-form'),
+                        'group_671241997f07d' => __('Hidden Post Status Condition', 'modularity-frontend-form'),
+                        'group_654a2a57e6897' => __('Hidden validation', 'modularity-frontend-form'),
+                        'group_56c47016ea9d5' => __('Iframe: Iframe settings', 'modularity-frontend-form'),
+                        'group_570770ab8f064' => __('Image: Image', 'modularity-frontend-form'),
+                        'group_569ceab2c16ee' => __('Index: Index', 'modularity-frontend-form'),
+                        'group_569e054a7f9c2' => __('Inlay List: List', 'modularity-frontend-form'),
+                        'group_67a6218f4b8a6' => __('Interactive map: Interactive Map', 'modularity-frontend-form'),
+                        'group_63e9fb49ad0f4' => __('Liked posts: Liked posts', 'modularity-frontend-form'),
+                        'group_5948e8bc3bf75' => __('Location', 'modularity-frontend-form'),
+                        'group_61bc951d73494' => __('Logotype grid: Logotype grid', 'modularity-frontend-form'),
+                        'group_64ff22b117e2c' => __('Manual Input: Manual Input Data', 'modularity-frontend-form'),
+                        'group_602400d904b59' => __('Map: Map', 'modularity-frontend-form'),
+                        'group_67506ac21d132' => __('Markdown', 'modularity-frontend-form'),
+                        'group_66c34c64b8d10' => __('Menu: Menu Module', 'modularity-frontend-form'),
+                        'group_68d545b18c491' => __('Mod Frontend Form Title', 'modularity-frontend-form'),
+                        'group_64a29154aa972' => __('Modal: Modal', 'modularity-frontend-form'),
+                        'group_56d83cff12bb3' => __('Navigation settings', 'modularity-frontend-form'),
+                        'group_56c33cf1470dc' => __('Notice: Display settings', 'modularity-frontend-form'),
+                        'group_591c10ab88d77' => __('Notice: Feedback forwarding', 'modularity-frontend-form'),
+                        'group_575a842dd1283' => __('Notice: Notice settings', 'modularity-frontend-form'),
+                        'group_64219abb0caec' => __('OpenStreetMap: OpenStreetMap', 'modularity-frontend-form'),
+                        'group_6784bb5c51d70' => __('Post Icon', 'modularity-frontend-form'),
+                        'group_56a8b4fd3567b' => __('Post or page', 'modularity-frontend-form'),
+                        'group_571dfd3c07a77' => __('Posts: Data display', 'modularity-frontend-form'),
+                        'group_571e045dd555d' => __('Posts: Data filtering', 'modularity-frontend-form'),
+                        'group_571dffc63090c' => __('Posts: Data sorting', 'modularity-frontend-form'),
+                        'group_571dfaabc3fc5' => __('Posts: Datakälla', 'modularity-frontend-form'),
+                        'group_630645d822841' => __('Posts: Taxonomies to display', 'modularity-frontend-form'),
+                        'group_62a30b29785f0' => __('Products: Products module', 'modularity-frontend-form'),
+                        'group_64227d79a7f57' => __('Quicklinks', 'modularity-frontend-form'),
+                        'group_59535d940706c' => __('RSS: RSS', 'modularity-frontend-form'),
+                        'group_61ea7a87e8e9f' => __('Recommend: Recommendations', 'modularity-frontend-form'),
+                        'group_56a8b9eddfced' => __('Script: Embed', 'modularity-frontend-form'),
+                        'group_66dffe0be28c1' => __('Search Module', 'modularity-frontend-form'),
+                        'group_63ff1e1238bd3' => __('Section card: Card Section Settings', 'modularity-frontend-form'),
+                        'group_6154339331c4e' => __('Section full: Full Width Section Settings', 'modularity-frontend-form'),
+                        'group_599fddb1da69a' => __('Section split: Split Section Settings', 'modularity-frontend-form'),
+                        'group_57060b2076f48' => __('Shortlink: Redirect method', 'modularity-frontend-form'),
+                        'group_57051862c4890' => __('Shortlink: Shortlink', 'modularity-frontend-form'),
+                        'group_58ecb6b6330f4' => __('Sites: Sites', 'modularity-frontend-form'),
+                        'group_56a5e99108991' => __('Slider: Slider', 'modularity-frontend-form'),
+                        'group_611cffa40276a' => __('Spacer: Whitespace', 'modularity-frontend-form'),
+                        'group_5666a2a71d806' => __('Table: Table Editor', 'modularity-frontend-form'),
+                        'group_59f2e69948a47' => __('Testimonial Cards: Testimonial Cards', 'modularity-frontend-form'),
+                        'group_5891b49127038' => __('Text: Text options', 'modularity-frontend-form'),
+                        'group_59ede2f88a7b5' => __('Timeline: Timeline', 'modularity-frontend-form'),
+                        'group_57454ae7b0e9a' => __('Video: Video', 'modularity-frontend-form'),
+                        'group_5729f4d3e7c7a' => __('Wordpress Widgets: Wordpress Widget', 'modularity-frontend-form'),
                     ),
                     'default_value' => array(
                     ),
@@ -114,6 +206,8 @@
                     'ajax' => 0,
                     'search_placeholder' => '',
                     'parent_repeater' => 'field_6627a5e312422',
+                    'create_options' => 0,
+                    'save_options' => 0,
                 ),
                 3 => array(
                     'key' => 'field_664dea524e1e2',
@@ -138,7 +232,7 @@
                 ),
             ),
         ),
-        2 => array(
+        3 => array(
             'key' => 'field_662a5218a599f',
             'label' => __('Submission Configuration', 'modularity-frontend-form'),
             'name' => '',
@@ -154,8 +248,9 @@
             ),
             'placement' => 'top',
             'endpoint' => 0,
+            'selected' => 0,
         ),
-        3 => array(
+        4 => array(
             'key' => 'field_68258f85a4ad6',
             'label' => __('Submit to', 'modularity-frontend-form'),
             'name' => 'activeHandlers',
@@ -183,7 +278,7 @@
             'save_custom' => 0,
             'custom_choice_button_text' => 'Add new choice',
         ),
-        4 => array(
+        5 => array(
             'key' => 'field_6825e3a7d04ee',
             'label' => __('Data Protection Information', 'modularity-frontend-form'),
             'name' => '',
@@ -216,7 +311,7 @@
             'new_lines' => 'wpautop',
             'esc_html' => 0,
         ),
-        5 => array(
+        6 => array(
             'key' => 'field_6825a840a064b',
             'label' => __('Database', 'modularity-frontend-form'),
             'name' => 'WpDbHandlerConfig',
@@ -239,29 +334,13 @@
                 'id' => '',
             ),
             'layout' => 'block',
+            'acfe_seamless_style' => 0,
+            'acfe_group_modal' => 0,
+            'acfe_group_modal_close' => 0,
+            'acfe_group_modal_button' => '',
+            'acfe_group_modal_size' => 'large',
             'sub_fields' => array(
                 0 => array(
-                    'key' => 'field_6627a79912426',
-                    'label' => __('Select Post Type', 'modularity-frontend-form'),
-                    'name' => 'saveToPostType',
-                    'aria-label' => '',
-                    'type' => 'posttype_select',
-                    'instructions' => __('The post type that the user should be able to add to or modify.', 'modularity-frontend-form'),
-                    'required' => 0,
-                    'conditional_logic' => 0,
-                    'wrapper' => array(
-                        'width' => '50',
-                        'class' => '',
-                        'id' => '',
-                    ),
-                    'default_value' => '',
-                    'allow_null' => 0,
-                    'multiple' => 0,
-                    'placeholder' => '',
-                    'disabled' => 0,
-                    'readonly' => 0,
-                ),
-                1 => array(
                     'key' => 'field_662a4f4d25fe6',
                     'label' => __('Save as Post Status', 'modularity-frontend-form'),
                     'name' => 'saveToPostTypeStatus',
@@ -269,14 +348,7 @@
                     'type' => 'select',
                     'instructions' => __('The post status to use when a form hasen\'t been reviewed by the user.', 'modularity-frontend-form'),
                     'required' => 0,
-                    'conditional_logic' => array(
-                        0 => array(
-                            0 => array(
-                                'field' => 'field_68258f85a4ad6',
-                                'operator' => '==empty',
-                            ),
-                        ),
-                    ),
+                    'conditional_logic' => 0,
                     'wrapper' => array(
                         'width' => '50',
                         'class' => '',
@@ -292,13 +364,18 @@
                     'return_format' => 'value',
                     'multiple' => 0,
                     'allow_null' => 0,
+                    'allow_in_bindings' => 1,
                     'ui' => 0,
                     'ajax' => 0,
                     'placeholder' => '',
+                    'create_options' => 0,
+                    'save_options' => 0,
+                    'allow_custom' => 0,
+                    'search_placeholder' => '',
                 ),
             ),
         ),
-        6 => array(
+        7 => array(
             'key' => 'field_6825aeb2d29fb',
             'label' => __('Email', 'modularity-frontend-form'),
             'name' => 'MailHandlerConfig',
@@ -321,6 +398,11 @@
                 'id' => '',
             ),
             'layout' => 'block',
+            'acfe_seamless_style' => 0,
+            'acfe_group_modal' => 0,
+            'acfe_group_modal_close' => 0,
+            'acfe_group_modal_button' => '',
+            'acfe_group_modal_size' => 'large',
             'sub_fields' => array(
                 0 => array(
                     'key' => 'field_6825aed6d29fe',
@@ -369,7 +451,7 @@
                 ),
             ),
         ),
-        7 => array(
+        8 => array(
             'key' => 'field_6825c6bf45c50',
             'label' => __('Webhook', 'modularity-frontend-form'),
             'name' => 'WebHookHandlerConfig',
@@ -392,6 +474,11 @@
                 'id' => '',
             ),
             'layout' => 'block',
+            'acfe_seamless_style' => 0,
+            'acfe_group_modal' => 0,
+            'acfe_group_modal_close' => 0,
+            'acfe_group_modal_button' => '',
+            'acfe_group_modal_size' => 'large',
             'sub_fields' => array(
                 0 => array(
                     'key' => 'field_6825c72345c53',
@@ -412,7 +499,7 @@
                 ),
             ),
         ),
-        8 => array(
+        9 => array(
             'key' => 'field_662a5230a59a0',
             'label' => __('Form Completion', 'modularity-frontend-form'),
             'name' => '',
@@ -428,8 +515,9 @@
             ),
             'placement' => 'top',
             'endpoint' => 0,
+            'selected' => 0,
         ),
-        9 => array(
+        10 => array(
             'key' => 'field_664de6eb4fffd',
             'label' => __('Enable summary', 'modularity-frontend-form'),
             'name' => 'hasSummaryStep',
@@ -449,7 +537,7 @@
             'ui_on_text' => '',
             'ui_off_text' => '',
         ),
-        10 => array(
+        11 => array(
             'key' => 'field_664de74a4fffe',
             'label' => __('Summary Title', 'modularity-frontend-form'),
             'name' => 'summaryTitle',
@@ -477,7 +565,7 @@
             'prepend' => '',
             'append' => '',
         ),
-        11 => array(
+        12 => array(
             'key' => 'field_664de76b4ffff',
             'label' => __('Summary Lead', 'modularity-frontend-form'),
             'name' => 'summaryLead',
@@ -505,7 +593,7 @@
             'media_upload' => 1,
             'delay' => 0,
         ),
-        12 => array(
+        13 => array(
             'key' => 'field_662a6546a687a',
             'label' => __('Security', 'modularity-frontend-form'),
             'name' => '',
@@ -521,8 +609,9 @@
             ),
             'placement' => 'top',
             'endpoint' => 0,
+            'selected' => 0,
         ),
-        13 => array(
+        14 => array(
             'key' => 'field_662a6557a687b',
             'label' => __('Public Access', 'modularity-frontend-form'),
             'name' => 'isPublicForm',
@@ -542,7 +631,7 @@
             'ui_on_text' => '',
             'ui_off_text' => '',
         ),
-        14 => array(
+        15 => array(
             'key' => 'field_69286e466e006',
             'label' => __('Legal', 'modularity-frontend-form'),
             'name' => '',
@@ -558,8 +647,9 @@
             ),
             'placement' => 'top',
             'endpoint' => 0,
+            'selected' => 0,
         ),
-        15 => array(
+        16 => array(
             'key' => 'field_69287218405e9',
             'label' => __('Why are we collecting this data?', 'modularity-frontend-form'),
             'name' => 'dataProcessingCategories',
@@ -585,7 +675,7 @@
             'bidirectional_target' => array(
             ),
         ),
-        16 => array(
+        17 => array(
             'key' => 'field_69287054405e8',
             'label' => __('Who will process or have access to the data?', 'modularity-frontend-form'),
             'name' => 'dataProcessingProcessors',
@@ -611,7 +701,7 @@
             'bidirectional_target' => array(
             ),
         ),
-        17 => array(
+        18 => array(
             'key' => 'field_69286e646e007',
             'label' => __('For how long should we keep the data submitted in this form?', 'modularity-frontend-form'),
             'name' => 'dataProcessingRetentionTime',
@@ -658,5 +748,10 @@
     'active' => true,
     'description' => '',
     'show_in_rest' => 0,
+    'acfe_display_title' => '',
+    'acfe_autosync' => '',
+    'acfe_form' => 0,
+    'acfe_meta' => '',
+    'acfe_note' => '',
 ));
 }

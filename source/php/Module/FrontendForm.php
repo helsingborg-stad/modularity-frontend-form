@@ -25,6 +25,7 @@ use WpService\Contracts\WpRegisterStyle;
 use WpService\Contracts\GetPermalink;
 use WpService\Contracts\GetPostMeta;
 use WpService\Contracts\UpdatePostMeta;
+use WpService\Contracts\ApplyFilters;
 use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use ModularityFrontendForm\Module\FormatSteps;
@@ -69,10 +70,6 @@ class FrontendForm extends \Modularity\Module
         );
 
         $this->cacheBust    = new CacheBust();
-
-        //Form admin service
-        $formAdmin = new FormAdmin($this->wpService, $this->acfService, 'formStepGroup');
-        $formAdmin->addHooks();
 
         //Set module properties
         $this->nameSingular = $this->wpService->__('Frontend Form', 'modularity-frontend-form');
@@ -360,6 +357,38 @@ class FrontendForm extends \Modularity\Module
 
         // Enqueue the script
         $this->wpService->wpEnqueueScript($this->getScriptHandle());
+    }
+
+    public function adminEnqueue(): void
+    {
+        $data = (new \ModularityFrontendForm\Module\AcfGroupHelper(
+            $this->acfService
+        ))->getAcfGroups();
+
+        // Register admin script
+        $this->wpService->wpRegisterScript(
+            $this->getScriptHandle('admin'),
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('js/admin.js')
+        );
+
+        $this->addAttributesToScriptTag($this->getScriptHandle('admin'), [
+            'type' => 'module'
+        ]);
+
+        // Localize admin script
+        $this->wpService->wpLocalizeScript(
+            $this->getScriptHandle('admin'),
+            'modularityFrontendFormAcfGroups',
+            $data
+        );
+
+        // Enqueue admin script
+        $this->wpService->wpEnqueueScript(
+            $this->getScriptHandle('admin'),
+            false,
+            ['jquery', 'acf-input']
+        );
     }
 
     /**

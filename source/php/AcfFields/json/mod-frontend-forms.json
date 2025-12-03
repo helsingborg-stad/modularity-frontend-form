@@ -1,655 +1,750 @@
-[
-	{
-		"key": "group_6627a5e16d74c",
-		"title": "Configure Multistep Form",
-		"fields": [
-			{
-				"key": "field_662a51f8a599e",
-				"label": "Form Steps",
-				"name": "",
-				"aria-label": "",
-				"type": "tab",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"placement": "top",
-				"endpoint": 0
-			},
-			{
-				"key": "field_6627a5e312422",
-				"label": "Add Form Step",
-				"name": "formSteps",
-				"aria-label": "",
-				"type": "repeater",
-				"instructions": "Add the steps that should be displayed in this form.",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"acfe_repeater_stylised_button": 0,
-				"layout": "row",
-				"pagination": 0,
-				"min": 0,
-				"max": 0,
-				"collapsed": "field_6627a6b312423",
-				"button_label": "Add Step",
-				"rows_per_page": 20,
-				"sub_fields": [
-					{
-						"key": "field_6627a6b312423",
-						"label": "Form Step Title",
-						"name": "formStepTitle",
-						"aria-label": "",
-						"type": "text",
-						"instructions": "By leaving this blank, the configuration of the fieldgroup will be used.",
-						"required": 1,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "",
-							"class": "",
-							"id": ""
-						},
-						"default_value": "",
-						"maxlength": "",
-						"placeholder": "",
-						"prepend": "",
-						"append": "",
-						"parent_repeater": "field_6627a5e312422"
-					},
-					{
-						"key": "field_6627a6e112424",
-						"label": "From Step Content",
-						"name": "formStepContent",
-						"aria-label": "",
-						"type": "wysiwyg",
-						"instructions": "By leaving this blank, the configuration of the fieldgroup will be used.",
-						"required": 0,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "",
-							"class": "",
-							"id": ""
-						},
-						"default_value": "",
-						"tabs": "all",
-						"toolbar": "basic",
-						"media_upload": 0,
-						"delay": 0,
-						"parent_repeater": "field_6627a5e312422"
-					},
-					{
-						"key": "field_6627a6f212425",
-						"label": "Form Step Group",
-						"name": "formStepGroup",
-						"aria-label": "",
-						"type": "select",
-						"instructions": "",
-						"required": 1,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "",
-							"class": "",
-							"id": ""
-						},
-						"choices": [],
-						"default_value": [],
-						"return_format": "value",
-						"multiple": 1,
-						"allow_custom": 0,
-						"placeholder": "",
-						"allow_null": 0,
-						"ui": 1,
-						"ajax": 0,
-						"search_placeholder": "",
-						"parent_repeater": "field_6627a5e312422"
-					},
-					{
-						"key": "field_664dea524e1e2",
-						"label": "Display Post title",
-						"name": "formStepIncludesPostTitle",
-						"aria-label": "",
-						"type": "true_false",
-						"instructions": "",
-						"required": 0,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "",
-							"class": "",
-							"id": ""
-						},
-						"message": "If this step should include a field for the posts title",
-						"default_value": 0,
-						"ui": 0,
-						"ui_on_text": "",
-						"ui_off_text": "",
-						"parent_repeater": "field_6627a5e312422"
-					}
-				]
-			},
-			{
-				"key": "field_662a5218a599f",
-				"label": "Submission Configuration",
-				"name": "",
-				"aria-label": "",
-				"type": "tab",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"placement": "top",
-				"endpoint": 0
-			},
-			{
-				"key": "field_68258f85a4ad6",
-				"label": "Submit to",
-				"name": "activeHandlers",
-				"aria-label": "",
-				"type": "checkbox",
-				"instructions": "Select where you want the submissions to be stored or sent to.",
-				"required": 1,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"choices": {
-					"WpDbHandler": "Database",
-					"MailHandler": "E-Mail",
-					"WebHookHandler": "Webhook"
-				},
-				"default_value": [],
-				"return_format": "value",
-				"allow_custom": 0,
-				"layout": "horizontal",
-				"toggle": 0,
-				"save_custom": 0,
-				"custom_choice_button_text": "Add new choice"
-			},
-			{
-				"key": "field_6825e3a7d04ee",
-				"label": "Data Protection Information",
-				"name": "",
-				"aria-label": "",
-				"type": "message",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": [
-					[
-						{
-							"field": "field_68258f85a4ad6",
-							"operator": "==",
-							"value": "MailHandler"
-						}
-					],
-					[
-						{
-							"field": "field_68258f85a4ad6",
-							"operator": "==",
-							"value": "WebHookHandler"
-						}
-					]
-				],
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"message": "<mark>Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.<\/mark>",
-				"new_lines": "wpautop",
-				"esc_html": 0
-			},
-			{
-				"key": "field_6825a840a064b",
-				"label": "Database",
-				"name": "WpDbHandlerConfig",
-				"aria-label": "",
-				"type": "group",
-				"instructions": "Select where we should store the answers on this form, and with what default status.",
-				"required": 0,
-				"conditional_logic": [
-					[
-						{
-							"field": "field_68258f85a4ad6",
-							"operator": "==",
-							"value": "WpDbHandler"
-						}
-					]
-				],
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"layout": "block",
-				"sub_fields": [
-					{
-						"key": "field_6627a79912426",
-						"label": "Select Post Type",
-						"name": "saveToPostType",
-						"aria-label": "",
-						"type": "posttype_select",
-						"instructions": "The post type that the user should be able to add to or modify.",
-						"required": 0,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "50",
-							"class": "",
-							"id": ""
-						},
-						"default_value": "",
-						"allow_null": 0,
-						"multiple": 0,
-						"placeholder": "",
-						"disabled": 0,
-						"readonly": 0
-					},
-					{
-						"key": "field_662a4f4d25fe6",
-						"label": "Save as Post Status",
-						"name": "saveToPostTypeStatus",
-						"aria-label": "",
-						"type": "select",
-						"instructions": "The post status to use when a form hasen't been reviewed by the user.",
-						"required": 0,
-						"conditional_logic": [
-							[
-								{
-									"field": "field_68258f85a4ad6",
-									"operator": "==empty"
-								}
-							]
-						],
-						"wrapper": {
-							"width": "50",
-							"class": "",
-							"id": ""
-						},
-						"choices": {
-							"draft": "Draft",
-							"pending": "Pending Review",
-							"private": "Private",
-							"publish": "Published"
-						},
-						"default_value": "draft",
-						"return_format": "value",
-						"multiple": 0,
-						"allow_null": 0,
-						"ui": 0,
-						"ajax": 0,
-						"placeholder": ""
-					}
-				]
-			},
-			{
-				"key": "field_6825aeb2d29fb",
-				"label": "Email",
-				"name": "MailHandlerConfig",
-				"aria-label": "",
-				"type": "group",
-				"instructions": "Configure the email adresses that should recive the form submission automatically.",
-				"required": 0,
-				"conditional_logic": [
-					[
-						{
-							"field": "field_68258f85a4ad6",
-							"operator": "==",
-							"value": "MailHandler"
-						}
-					]
-				],
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"layout": "block",
-				"sub_fields": [
-					{
-						"key": "field_6825aed6d29fe",
-						"label": "Add Reciver",
-						"name": "Recivers",
-						"aria-label": "",
-						"type": "repeater",
-						"instructions": "",
-						"required": 1,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "",
-							"class": "",
-							"id": ""
-						},
-						"acfe_repeater_stylised_button": 0,
-						"layout": "row",
-						"pagination": 0,
-						"min": 1,
-						"max": 15,
-						"collapsed": "field_6825af0bd29ff",
-						"button_label": "Add Reciver",
-						"rows_per_page": 20,
-						"sub_fields": [
-							{
-								"key": "field_6825af0bd29ff",
-								"label": "Email",
-								"name": "Email",
-								"aria-label": "",
-								"type": "email",
-								"instructions": "",
-								"required": 1,
-								"conditional_logic": 0,
-								"wrapper": {
-									"width": "",
-									"class": "",
-									"id": ""
-								},
-								"default_value": "",
-								"placeholder": "",
-								"prepend": "",
-								"append": "",
-								"parent_repeater": "field_6825aed6d29fe"
-							}
-						]
-					}
-				]
-			},
-			{
-				"key": "field_6825c6bf45c50",
-				"label": "Webhook",
-				"name": "WebHookHandlerConfig",
-				"aria-label": "",
-				"type": "group",
-				"instructions": "Configure a web adress that can recive post data.",
-				"required": 0,
-				"conditional_logic": [
-					[
-						{
-							"field": "field_68258f85a4ad6",
-							"operator": "==",
-							"value": "WebHookHandler"
-						}
-					]
-				],
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"layout": "block",
-				"sub_fields": [
-					{
-						"key": "field_6825c72345c53",
-						"label": "Callback URL",
-						"name": "callbackUrl",
-						"aria-label": "",
-						"type": "url",
-						"instructions": "",
-						"required": 1,
-						"conditional_logic": 0,
-						"wrapper": {
-							"width": "",
-							"class": "",
-							"id": ""
-						},
-						"default_value": "",
-						"placeholder": ""
-					}
-				]
-			},
-			{
-				"key": "field_662a5230a59a0",
-				"label": "Form Completion",
-				"name": "",
-				"aria-label": "",
-				"type": "tab",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"placement": "top",
-				"endpoint": 0
-			},
-			{
-				"key": "field_664de6eb4fffd",
-				"label": "Enable summary",
-				"name": "hasSummaryStep",
-				"aria-label": "",
-				"type": "true_false",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"message": "Wheter this form should include a summary step before acquiring the final post status.",
-				"default_value": 1,
-				"ui": 0,
-				"ui_on_text": "",
-				"ui_off_text": ""
-			},
-			{
-				"key": "field_664de74a4fffe",
-				"label": "Summary Title",
-				"name": "summaryTitle",
-				"aria-label": "",
-				"type": "text",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": [
-					[
-						{
-							"field": "field_664de6eb4fffd",
-							"operator": "==",
-							"value": "1"
-						}
-					]
-				],
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"default_value": "",
-				"maxlength": "",
-				"placeholder": "",
-				"prepend": "",
-				"append": ""
-			},
-			{
-				"key": "field_664de76b4ffff",
-				"label": "Summary Lead",
-				"name": "summaryLead",
-				"aria-label": "",
-				"type": "wysiwyg",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": [
-					[
-						{
-							"field": "field_664de6eb4fffd",
-							"operator": "==",
-							"value": "1"
-						}
-					]
-				],
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"default_value": "",
-				"tabs": "all",
-				"toolbar": "full",
-				"media_upload": 1,
-				"delay": 0
-			},
-			{
-				"key": "field_662a6546a687a",
-				"label": "Security",
-				"name": "",
-				"aria-label": "",
-				"type": "tab",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"placement": "top",
-				"endpoint": 0
-			},
-			{
-				"key": "field_662a6557a687b",
-				"label": "Public Access",
-				"name": "isPublicForm",
-				"aria-label": "",
-				"type": "true_false",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"message": "This form may be used by unauthenticated visitors",
-				"default_value": 1,
-				"ui": 0,
-				"ui_on_text": "",
-				"ui_off_text": ""
-			},
-			{
-				"key": "field_69286e466e006",
-				"label": "Legal",
-				"name": "",
-				"aria-label": "",
-				"type": "tab",
-				"instructions": "",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"placement": "top",
-				"endpoint": 0
-			},
-			{
-				"key": "field_69287218405e9",
-				"label": "Why are we collecting this data?",
-				"name": "dataProcessingCategories",
-				"aria-label": "",
-				"type": "taxonomy",
-				"instructions": "Describe why we need to collect this data.",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"taxonomy": "fe-form-data-categories",
-				"add_term": 1,
-				"save_terms": 1,
-				"load_terms": 1,
-				"return_format": "object",
-				"field_type": "checkbox",
-				"bidirectional": 0,
-				"multiple": 0,
-				"allow_null": 0,
-				"bidirectional_target": []
-			},
-			{
-				"key": "field_69287054405e8",
-				"label": "Who will process or have access to the data?",
-				"name": "dataProcessingProcessors",
-				"aria-label": "",
-				"type": "taxonomy",
-				"instructions": "List all entities that will access or process the data, including internal departments as well as any external system providers.",
-				"required": 1,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"taxonomy": "fe-form-data-processors",
-				"add_term": 1,
-				"save_terms": 1,
-				"load_terms": 1,
-				"return_format": "object",
-				"field_type": "checkbox",
-				"bidirectional": 0,
-				"multiple": 0,
-				"allow_null": 0,
-				"bidirectional_target": []
-			},
-			{
-				"key": "field_69286e646e007",
-				"label": "For how long should we keep the data submitted in this form?",
-				"name": "dataProcessingRetentionTime",
-				"aria-label": "",
-				"type": "range",
-				"instructions": "What is the maximum retention period for the data before it is deleted? This function will delete the information completly.",
-				"required": 0,
-				"conditional_logic": 0,
-				"wrapper": {
-					"width": "",
-					"class": "",
-					"id": ""
-				},
-				"default_value": 45,
-				"min": "",
-				"max": 365,
-				"step": "",
-				"prepend": "",
-				"append": "days"
-			}
-		],
-		"location": [
-			[
-				{
-					"param": "post_type",
-					"operator": "==",
-					"value": "mod-frontend-form"
-				}
-			],
-			[
-				{
-					"param": "block",
-					"operator": "==",
-					"value": "acf\/frontend-form"
-				}
-			]
-		],
-		"menu_order": 0,
-		"position": "normal",
-		"style": "default",
-		"label_placement": "top",
-		"instruction_placement": "label",
-		"hide_on_screen": "",
-		"active": true,
-		"description": "",
-		"show_in_rest": 0
-	}
-]
+[{
+    "key": "group_6627a5e16d74c",
+    "title": "Configure Multistep Form",
+    "fields": [
+        {
+            "key": "field_662a51f8a599e",
+            "label": "Form Steps",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_6627a79912426",
+            "label": "Select Post Type",
+            "name": "saveToPostType",
+            "aria-label": "",
+            "type": "posttype_select",
+            "instructions": "The post type from which the fields should be retrieved; this setting also determines which post type the submission will be saved to.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "allow_null": 1,
+            "multiple": 0,
+            "allow_in_bindings": 1,
+            "placeholder": "",
+            "disabled": 0,
+            "readonly": 0
+        },
+        {
+            "key": "field_6627a5e312422",
+            "label": "Add Form Step",
+            "name": "formSteps",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add the steps that should be displayed in this form.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_repeater_stylised_button": 0,
+            "layout": "row",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "field_6627a6b312423",
+            "button_label": "Add Step",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_6627a6b312423",
+                    "label": "Form Step Title",
+                    "name": "formStepTitle",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "By leaving this blank, the configuration of the fieldgroup will be used.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_6627a5e312422"
+                },
+                {
+                    "key": "field_6627a6e112424",
+                    "label": "From Step Content",
+                    "name": "formStepContent",
+                    "aria-label": "",
+                    "type": "wysiwyg",
+                    "instructions": "By leaving this blank, the configuration of the fieldgroup will be used.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "delay": 0,
+                    "parent_repeater": "field_6627a5e312422"
+                },
+                {
+                    "key": "field_6627a6f212425",
+                    "label": "Form Step Group",
+                    "name": "formStepGroup",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "group_66d0837591221": "Audio module",
+                        "group_56a89f42b432b": "BookingFields",
+                        "group_5e1d8f163f200": "Contact banner: Modularity Contact Banner",
+                        "group_5805e5dc0a3be": "Contacts v2: Contacts",
+                        "group_609b788ad04bb": "Curator Social Media: Curator Social Media",
+                        "group_62816d604ae46": "Divider: Divider",
+                        "group_65b3a530b28a9": "Dynamic guide: Dynamic Guides",
+                        "group_641c51b765f4b": "Email Subscribe: Email Subscribe",
+                        "group_5c599a27e446a": "Event form v2: Event form",
+                        "group_68d28f55ef8cf": "Event: Audience & Category",
+                        "group_583fe4ee88439": "Event: Display events",
+                        "group_68d28e231bbaa": "Event: Organizer",
+                        "group_68d28e8bc6408": "Event: Presentation",
+                        "group_68d28f0c82ff4": "Event: Time & Place",
+                        "group_646c5d26e3359": "Exclude title from Google Translate",
+                        "group_5729fc6e03367": "Feedback: Feedback data",
+                        "group_5756ce3e48783": "Files: Files",
+                        "group_58eb301ecb36a": "Form",
+                        "group_6627a5e16d74c": "Frontend Form: Configure Multistep Form",
+                        "group_5666af6d26b7c": "Gallery: Gallery",
+                        "group_614b3f1a751bf": "Hero: Hero",
+                        "group_671241997f07d": "Hidden Post Status Condition",
+                        "group_654a2a57e6897": "Hidden validation",
+                        "group_56c47016ea9d5": "Iframe: Iframe settings",
+                        "group_570770ab8f064": "Image: Image",
+                        "group_569ceab2c16ee": "Index: Index",
+                        "group_569e054a7f9c2": "Inlay List: List",
+                        "group_67a6218f4b8a6": "Interactive map: Interactive Map",
+                        "group_63e9fb49ad0f4": "Liked posts: Liked posts",
+                        "group_5948e8bc3bf75": "Location",
+                        "group_61bc951d73494": "Logotype grid: Logotype grid",
+                        "group_64ff22b117e2c": "Manual Input: Manual Input Data",
+                        "group_602400d904b59": "Map: Map",
+                        "group_67506ac21d132": "Markdown",
+                        "group_66c34c64b8d10": "Menu: Menu Module",
+                        "group_68d545b18c491": "Mod Frontend Form Title",
+                        "group_64a29154aa972": "Modal: Modal",
+                        "group_56d83cff12bb3": "Navigation settings",
+                        "group_56c33cf1470dc": "Notice: Display settings",
+                        "group_591c10ab88d77": "Notice: Feedback forwarding",
+                        "group_575a842dd1283": "Notice: Notice settings",
+                        "group_64219abb0caec": "OpenStreetMap: OpenStreetMap",
+                        "group_6784bb5c51d70": "Post Icon",
+                        "group_56a8b4fd3567b": "Post or page",
+                        "group_571dfd3c07a77": "Posts: Data display",
+                        "group_571e045dd555d": "Posts: Data filtering",
+                        "group_571dffc63090c": "Posts: Data sorting",
+                        "group_571dfaabc3fc5": "Posts: Datak\u00e4lla",
+                        "group_630645d822841": "Posts: Taxonomies to display",
+                        "group_62a30b29785f0": "Products: Products module",
+                        "group_64227d79a7f57": "Quicklinks",
+                        "group_59535d940706c": "RSS: RSS",
+                        "group_61ea7a87e8e9f": "Recommend: Recommendations",
+                        "group_56a8b9eddfced": "Script: Embed",
+                        "group_66dffe0be28c1": "Search Module",
+                        "group_63ff1e1238bd3": "Section card: Card Section Settings",
+                        "group_6154339331c4e": "Section full: Full Width Section Settings",
+                        "group_599fddb1da69a": "Section split: Split Section Settings",
+                        "group_57060b2076f48": "Shortlink: Redirect method",
+                        "group_57051862c4890": "Shortlink: Shortlink",
+                        "group_58ecb6b6330f4": "Sites: Sites",
+                        "group_56a5e99108991": "Slider: Slider",
+                        "group_611cffa40276a": "Spacer: Whitespace",
+                        "group_5666a2a71d806": "Table: Table Editor",
+                        "group_59f2e69948a47": "Testimonial Cards: Testimonial Cards",
+                        "group_5891b49127038": "Text: Text options",
+                        "group_59ede2f88a7b5": "Timeline: Timeline",
+                        "group_57454ae7b0e9a": "Video: Video",
+                        "group_5729f4d3e7c7a": "Wordpress Widgets: Wordpress Widget"
+                    },
+                    "default_value": [],
+                    "return_format": "value",
+                    "multiple": 1,
+                    "allow_custom": 0,
+                    "placeholder": "",
+                    "allow_null": 0,
+                    "ui": 1,
+                    "ajax": 0,
+                    "search_placeholder": "",
+                    "parent_repeater": "field_6627a5e312422",
+                    "create_options": 0,
+                    "save_options": 0
+                },
+                {
+                    "key": "field_664dea524e1e2",
+                    "label": "Display Post title",
+                    "name": "formStepIncludesPostTitle",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "If this step should include a field for the posts title",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "parent_repeater": "field_6627a5e312422"
+                }
+            ]
+        },
+        {
+            "key": "field_662a5218a599f",
+            "label": "Submission Configuration",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_68258f85a4ad6",
+            "label": "Submit to",
+            "name": "activeHandlers",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "Select where you want the submissions to be stored or sent to.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "WpDbHandler": "Database",
+                "MailHandler": "E-Mail",
+                "WebHookHandler": "Webhook"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "layout": "horizontal",
+            "toggle": 0,
+            "save_custom": 0,
+            "custom_choice_button_text": "Add new choice"
+        },
+        {
+            "key": "field_6825e3a7d04ee",
+            "label": "Data Protection Information",
+            "name": "",
+            "aria-label": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "MailHandler"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "WebHookHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "<mark>Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.<\/mark>",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_6825a840a064b",
+            "label": "Database",
+            "name": "WpDbHandlerConfig",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Select where we should store the answers on this form, and with what default status.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "WpDbHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large",
+            "sub_fields": [
+                {
+                    "key": "field_662a4f4d25fe6",
+                    "label": "Save as Post Status",
+                    "name": "saveToPostTypeStatus",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "The post status to use when a form hasen't been reviewed by the user.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "draft": "Draft",
+                        "pending": "Pending Review",
+                        "private": "Private",
+                        "publish": "Published"
+                    },
+                    "default_value": "draft",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 1,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "allow_custom": 0,
+                    "search_placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_6825aeb2d29fb",
+            "label": "Email",
+            "name": "MailHandlerConfig",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Configure the email adresses that should recive the form submission automatically.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "MailHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large",
+            "sub_fields": [
+                {
+                    "key": "field_6825aed6d29fe",
+                    "label": "Add Reciver",
+                    "name": "Recivers",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "acfe_repeater_stylised_button": 0,
+                    "layout": "row",
+                    "pagination": 0,
+                    "min": 1,
+                    "max": 15,
+                    "collapsed": "field_6825af0bd29ff",
+                    "button_label": "Add Reciver",
+                    "rows_per_page": 20,
+                    "sub_fields": [
+                        {
+                            "key": "field_6825af0bd29ff",
+                            "label": "Email",
+                            "name": "Email",
+                            "aria-label": "",
+                            "type": "email",
+                            "instructions": "",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_6825aed6d29fe"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "field_6825c6bf45c50",
+            "label": "Webhook",
+            "name": "WebHookHandlerConfig",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Configure a web adress that can recive post data.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68258f85a4ad6",
+                        "operator": "==",
+                        "value": "WebHookHandler"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "acfe_group_modal_close": 0,
+            "acfe_group_modal_button": "",
+            "acfe_group_modal_size": "large",
+            "sub_fields": [
+                {
+                    "key": "field_6825c72345c53",
+                    "label": "Callback URL",
+                    "name": "callbackUrl",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_662a5230a59a0",
+            "label": "Form Completion",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_664de6eb4fffd",
+            "label": "Enable summary",
+            "name": "hasSummaryStep",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "Wheter this form should include a summary step before acquiring the final post status.",
+            "default_value": 1,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_664de74a4fffe",
+            "label": "Summary Title",
+            "name": "summaryTitle",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_664de6eb4fffd",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_664de76b4ffff",
+            "label": "Summary Lead",
+            "name": "summaryLead",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_664de6eb4fffd",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
+            "key": "field_662a6546a687a",
+            "label": "Security",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_662a6557a687b",
+            "label": "Public Access",
+            "name": "isPublicForm",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "This form may be used by unauthenticated visitors",
+            "default_value": 1,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_69286e466e006",
+            "label": "Legal",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_69287218405e9",
+            "label": "Why are we collecting this data?",
+            "name": "dataProcessingCategories",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "Describe why we need to collect this data.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "fe-form-data-categories",
+            "add_term": 1,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "object",
+            "field_type": "checkbox",
+            "bidirectional": 0,
+            "multiple": 0,
+            "allow_null": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_69287054405e8",
+            "label": "Who will process or have access to the data?",
+            "name": "dataProcessingProcessors",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "List all entities that will access or process the data, including internal departments as well as any external system providers.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "fe-form-data-processors",
+            "add_term": 1,
+            "save_terms": 1,
+            "load_terms": 1,
+            "return_format": "object",
+            "field_type": "checkbox",
+            "bidirectional": 0,
+            "multiple": 0,
+            "allow_null": 0,
+            "bidirectional_target": []
+        },
+        {
+            "key": "field_69286e646e007",
+            "label": "For how long should we keep the data submitted in this form?",
+            "name": "dataProcessingRetentionTime",
+            "aria-label": "",
+            "type": "range",
+            "instructions": "What is the maximum retention period for the data before it is deleted? This function will delete the information completly.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 45,
+            "min": "",
+            "max": 365,
+            "step": "",
+            "prepend": "",
+            "append": "days"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "mod-frontend-form"
+            }
+        ],
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/frontend-form"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "acfe_display_title": "",
+    "acfe_autosync": "",
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": ""
+}]
+

@@ -1,6 +1,7 @@
 import FieldGroupSelect from './fieldGroupSelect';
 import PostTypeSelect from './postTypeSelect';
 declare const acf: any;
+declare const wp: any;
 
 class FieldGroupSetup implements AcfSelectsInterface {
 	private ACF_GROUP_SELECT_NAME = 'formStepGroup';
@@ -89,9 +90,10 @@ class FieldGroupSetup implements AcfSelectsInterface {
 			return null;
 		}
 
-		const fieldGroupElement = field.$el.closest('[id^="acf-group_"]');
+		const selector = typeof wp !== 'undefined' && wp.blocks ? '.wp-block[id^="block-"]' : '[id^="acf-group_"]';
+		const fieldGroupElement = field.$el.closest(selector)
 
-		if (!fieldGroupElement) {
+		if (!fieldGroupElement || fieldGroupElement.length === 0) {
 			console.error('ACF field group not found.');
 			return null;
 		}

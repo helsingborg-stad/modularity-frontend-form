@@ -49,9 +49,10 @@ class FrontendForm extends \Modularity\Module
     public $cacheTtl = 0;
     public CacheBust $cacheBust;
 
-    private $formStepQueryParam  = 'step'; // The query parameter for the form steps.
-    private $formIdQueryParam    = 'formid'; // The query parameter for the form id.
-    private $formTokenQueryParam = 'token';  // The query parameter for the form token.
+    private $formStepQueryParam         = 'step'; // The query parameter for the form steps.
+    private $formIdQueryParam           = 'formid'; // The query parameter for the form id.
+    private $formTokenQueryParam        = 'token';  // The query parameter for the form token.
+    private $wordpressStandardFieldsKey = 'wp-standard-fields';
 
     private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl&WpRegisterScript&WpRegisterStyle&WpEnqueueScript $wpService;
     private AcfService $acfService;
@@ -360,9 +361,12 @@ class FrontendForm extends \Modularity\Module
 
     public function adminEnqueue(): void
     {
+        // TODO: Do we want to filter this further before adding it?
         $data = (new \ModularityFrontendForm\Module\AcfGroupHelper(
             $this->acfService
         ))->getAcfGroups();
+
+        $data = $this->addBasicWordpressFields($data);
 
         // Register admin script
         $this->wpService->wpRegisterScript(
@@ -378,8 +382,11 @@ class FrontendForm extends \Modularity\Module
         // Localize admin script
         $this->wpService->wpLocalizeScript(
             $this->getScriptHandle('admin'),
-            'modularityFrontendFormAcfGroups',
-            $data
+            'modularityFrontendFormAdminData',
+            [
+                'modularityFrontendFormAcfGroups'          => $data,
+                'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
+            ]
         );
 
         // Enqueue admin script
@@ -388,6 +395,16 @@ class FrontendForm extends \Modularity\Module
             false,
             ['jquery', 'acf-input']
         );
+    }
+
+    private function addBasicWordpressFields(array $data): array
+    {
+        $data[$this->wordpressStandardFieldsKey] = [
+            'post_title'    => $this->wpService->__('Post title', 'modularity-frontend-form'),
+            'post_content'  => $this->wpService->__('Post content', 'modularity-frontend-form')
+        ];
+
+        return $data;
     }
 
     /**

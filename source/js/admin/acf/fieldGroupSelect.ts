@@ -6,7 +6,7 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	private postTypeKeyToCache: string | null = null;
 	private constructor(
 		private store: StoreInterface,
-		private modularityFrontendFormAcfGroups: ModularityFrontendFormAcfGroups,
+		private modularityFrontendFormAdminData: ModularityFrontendFormAdminData,
 		private field: HTMLElement,
 		private groupId: string,
 	) {
@@ -74,9 +74,10 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 		this.select.length = 0;
 
 		const modularityFrontendFormAcfGroup = selectedPostType
-			? this.modularityFrontendFormAcfGroups[selectedPostType]
+			? this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[selectedPostType]
 			: null;
 
+		
 		if (!modularityFrontendFormAcfGroup || Object.keys(modularityFrontendFormAcfGroup).length === 0) {
 			return;
 		}
@@ -96,11 +97,11 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 
 	public static createInstance(
 		store: StoreInterface,
-		modularityFrontendFormAcfGroups: ModularityFrontendFormAcfGroups,
+		modularityFrontendFormAdminData: ModularityFrontendFormAdminData,
 		field: HTMLElement,
 		groupId: string,
 	): FieldGroupSelect {
-		return new FieldGroupSelect(store, modularityFrontendFormAcfGroups, field, groupId);
+		return new FieldGroupSelect(store, modularityFrontendFormAdminData, field, groupId);
 	}
 }
 

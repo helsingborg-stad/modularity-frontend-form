@@ -99,8 +99,7 @@ class FrontendForm extends \Modularity\Module
         //Current post id (the page where the form is displayed)
         $data['holdingPostId'] = $this->wpService->getQueriedObjectId();
 
-        //Steps
-        $data['steps'] = $this->formatSteps->formatSteps($fields->formSteps ?? []);
+        $data['steps'] = $this->formatSteps->formatSteps(($fields->formSteps ?? []) ?: []);
         $data['stepsCount'] = count($data['steps']);
 
         //Language

@@ -38,7 +38,7 @@
                 'id' => '',
             ),
             'default_value' => '',
-            'allow_null' => 1,
+            'allow_null' => 0,
             'multiple' => 0,
             'allow_in_bindings' => 1,
             'placeholder' => '',

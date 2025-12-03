@@ -54,6 +54,7 @@ class FrontendForm extends \Modularity\Module
     private $formIdQueryParam           = 'formid'; // The query parameter for the form id.
     private $formTokenQueryParam        = 'token';  // The query parameter for the form token.
     private $wordpressStandardFieldsKey = 'wp-standard-fields';
+    private AcfGroupHelper|null $acfGroupHelper = null;
 
     private array $fieldGroups = [];
 
@@ -73,6 +74,13 @@ class FrontendForm extends \Modularity\Module
             $this->getLang()
         );
 
+        if ($this->wpService->isAdmin()) {
+            $this->acfGroupHelper = new AcfGroupHelper(
+                $this->acfService,
+                $this->wpService
+            );
+        }
+
         $this->cacheBust    = new CacheBust();
 
         //Set module properties
@@ -80,12 +88,8 @@ class FrontendForm extends \Modularity\Module
         $this->namePlural   = $this->wpService->__('Frontend Forms', 'modularity-frontend-form');
         $this->description  = $this->wpService->__('Module for creating forms.', 'modularity-frontend-form');
 
-        if ($this->wpService->isAdmin()) {
-            $this->fieldGroups = $this->getFieldGroups();
-        }
-
         $this->wpService->addFilter('acf/load_field/name=formStepGroup', function ($field) {
-            $field['choices'] = $this->fieldGroups;
+            $field['choices'] = $this->acfGroupHelper?->getFlatAcfGroups();
 
             return $field;
         });
@@ -391,7 +395,7 @@ class FrontendForm extends \Modularity\Module
             $this->getScriptHandle('admin'),
             'modularityFrontendFormAdminData',
             [
-                'modularityFrontendFormAcfGroups'          => $this->fieldGroups,
+                'modularityFrontendFormAcfGroups'          => $this->acfGroupHelper?->getAcfGroups() ?? [],
                 'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
             ]
         );
@@ -402,27 +406,6 @@ class FrontendForm extends \Modularity\Module
             false,
             ['jquery', 'acf-input']
         );
-    }
-
-    private function getFieldGroups(): array
-    {
-        $groups = (new \ModularityFrontendForm\Module\AcfGroupHelper(
-            $this->acfService
-        ))->getAcfGroups();
-
-        $groups = $this->addBasicWordpressFields($groups);
-
-        return $groups;
-    }
-
-    private function addBasicWordpressFields(array $data): array
-    {
-        $data[$this->wordpressStandardFieldsKey] = [
-            'post_title'    => $this->wpService->__('Post title', 'modularity-frontend-form'),
-            'post_content'  => $this->wpService->__('Post content', 'modularity-frontend-form')
-        ];
-
-        return $data;
     }
 
     /**

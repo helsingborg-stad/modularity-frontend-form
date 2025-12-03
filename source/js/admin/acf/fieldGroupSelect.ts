@@ -4,6 +4,8 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	private select!: HTMLSelectElement;
 	private selectedCache: { [key: string]: string[] } = {};
 	private postTypeKeyToCache: string | null = null;
+	private wordpressDefaultFields: { [key: string]: string } = {};
+
 	private constructor(
 		private store: StoreInterface,
 		private modularityFrontendFormAdminData: ModularityFrontendFormAdminData,
@@ -12,6 +14,12 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	) {
 		this.group = this.store.get(this.groupId) as FieldStorage;
 		this.select = this.field.querySelector('select') as HTMLSelectElement;
+		this.wordpressDefaultFields =
+			this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[
+				this.modularityFrontendFormAdminData.modularityFrontendFormWordpressFieldsKey
+			] || {};
+
+		console.log(this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups);
 
 		if (this.group?.postTypeSelect || !this.select) {
 			this.postTypeSelect = this.group.postTypeSelect as PostTypeSelectInterface;
@@ -31,7 +39,6 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 
 		this.postTypeKeyToCache = this.postTypeSelect.getSelected();
 		this.updateOptions();
-
 	}
 
 	/**
@@ -55,7 +62,7 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 		if (!this.postTypeKeyToCache) return;
 
 		const result = [...this.select.selectedOptions]
-			.map(opt => ({
+			.map((opt) => ({
 				index: opt.dataset.i ? Number(opt.dataset.i) : null,
 				value: opt.value,
 			}))
@@ -65,11 +72,10 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 				if (b.index === null) return -1;
 				return a.index - b.index;
 			})
-			.map(x => x.value);
+			.map((x) => x.value);
 
 		this.selectedCache[this.postTypeKeyToCache] = result;
 	}
-
 
 	/**
 	 * Updates the select markup based on the selected post type.
@@ -80,18 +86,19 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	private updateMarkup(selectedPostType: string | null): void {
 		this.select.length = 0;
 
-		const groups = selectedPostType
+		let groups = selectedPostType
 			? this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[selectedPostType]
-			: null;
+			: {};
 
-			
+		groups = { ...groups, ...this.wordpressDefaultFields };
+
 		if (!groups) {
 			return;
 		}
-			
+
 		const keys = Object.keys(groups);
 		const selected = this.selectedCache[selectedPostType!] ?? [];
-		const notSelected = keys.filter(key => !selected.includes(key));
+		const notSelected = keys.filter((key) => !selected.includes(key));
 
 		const orderedKeyss = [...notSelected, ...selected];
 
@@ -99,11 +106,7 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 			const group = groups[groupKey];
 			if (!group) continue;
 
-			const option = this.createOption(
-				groupKey,
-				group,
-				selected.includes(groupKey) || false
-			);
+			const option = this.createOption(groupKey, group, selected.includes(groupKey) || false);
 
 			this.select.add(option);
 		}

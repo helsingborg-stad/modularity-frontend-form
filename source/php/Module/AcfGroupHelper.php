@@ -3,12 +3,10 @@
 namespace ModularityFrontendForm\Module;
 
 use AcfService\AcfService;
-use WpService\WpService;
 
 class AcfGroupHelper
 {
     public function __construct(
-        private WpService $wpService,
         private AcfService $acfService
     ) {}
 

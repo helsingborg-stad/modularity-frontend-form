@@ -71,10 +71,6 @@ class FrontendForm extends \Modularity\Module
 
         $this->cacheBust    = new CacheBust();
 
-        //Form admin service
-        $formAdmin = new FormAdmin($this->wpService, $this->acfService, 'formStepGroup');
-        $formAdmin->addHooks();
-
         //Set module properties
         $this->nameSingular = $this->wpService->__('Frontend Form', 'modularity-frontend-form');
         $this->namePlural   = $this->wpService->__('Frontend Forms', 'modularity-frontend-form');
@@ -362,12 +358,9 @@ class FrontendForm extends \Modularity\Module
 
     public function adminEnqueue(): void
     {
-        $acfGroups = new \ModularityFrontendForm\Module\AcfGroupHelper(
-            $this->wpService,
+        $data = (new \ModularityFrontendForm\Module\AcfGroupHelper(
             $this->acfService
-        );
-
-        $data = $acfGroups->getAcfGroups();
+        ))->getAcfGroups();
 
         // Register admin script
         $this->wpService->wpRegisterScript(

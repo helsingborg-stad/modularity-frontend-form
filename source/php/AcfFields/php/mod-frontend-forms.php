@@ -1,7 +1,9 @@
 <?php 
 
-if (function_exists('acf_add_local_field_group')) {
-    acf_add_local_field_group(array(
+
+if (function_exists('acf_add_local_field_group')) {
+
+    acf_add_local_field_group(array(
     'key' => 'group_6627a5e16d74c',
     'title' => __('Configure Multistep Form', 'modularity-frontend-form'),
     'fields' => array(
@@ -124,77 +126,7 @@
                         'class' => '',
                         'id' => '',
                     ),
-                    'choices' => array(
-                        'group_66d0837591221' => __('Audio module', 'modularity-frontend-form'),
-                        'group_56a89f42b432b' => __('BookingFields', 'modularity-frontend-form'),
-                        'group_5e1d8f163f200' => __('Contact banner: Modularity Contact Banner', 'modularity-frontend-form'),
-                        'group_5805e5dc0a3be' => __('Contacts v2: Contacts', 'modularity-frontend-form'),
-                        'group_609b788ad04bb' => __('Curator Social Media: Curator Social Media', 'modularity-frontend-form'),
-                        'group_62816d604ae46' => __('Divider: Divider', 'modularity-frontend-form'),
-                        'group_65b3a530b28a9' => __('Dynamic guide: Dynamic Guides', 'modularity-frontend-form'),
-                        'group_641c51b765f4b' => __('Email Subscribe: Email Subscribe', 'modularity-frontend-form'),
-                        'group_5c599a27e446a' => __('Event form v2: Event form', 'modularity-frontend-form'),
-                        'group_68d28f55ef8cf' => __('Event: Audience & Category', 'modularity-frontend-form'),
-                        'group_583fe4ee88439' => __('Event: Display events', 'modularity-frontend-form'),
-                        'group_68d28e231bbaa' => __('Event: Organizer', 'modularity-frontend-form'),
-                        'group_68d28e8bc6408' => __('Event: Presentation', 'modularity-frontend-form'),
-                        'group_68d28f0c82ff4' => __('Event: Time & Place', 'modularity-frontend-form'),
-                        'group_646c5d26e3359' => __('Exclude title from Google Translate', 'modularity-frontend-form'),
-                        'group_5729fc6e03367' => __('Feedback: Feedback data', 'modularity-frontend-form'),
-                        'group_5756ce3e48783' => __('Files: Files', 'modularity-frontend-form'),
-                        'group_58eb301ecb36a' => __('Form', 'modularity-frontend-form'),
-                        'group_6627a5e16d74c' => __('Frontend Form: Configure Multistep Form', 'modularity-frontend-form'),
-                        'group_5666af6d26b7c' => __('Gallery: Gallery', 'modularity-frontend-form'),
-                        'group_614b3f1a751bf' => __('Hero: Hero', 'modularity-frontend-form'),
-                        'group_671241997f07d' => __('Hidden Post Status Condition', 'modularity-frontend-form'),
-                        'group_654a2a57e6897' => __('Hidden validation', 'modularity-frontend-form'),
-                        'group_56c47016ea9d5' => __('Iframe: Iframe settings', 'modularity-frontend-form'),
-                        'group_570770ab8f064' => __('Image: Image', 'modularity-frontend-form'),
-                        'group_569ceab2c16ee' => __('Index: Index', 'modularity-frontend-form'),
-                        'group_569e054a7f9c2' => __('Inlay List: List', 'modularity-frontend-form'),
-                        'group_67a6218f4b8a6' => __('Interactive map: Interactive Map', 'modularity-frontend-form'),
-                        'group_63e9fb49ad0f4' => __('Liked posts: Liked posts', 'modularity-frontend-form'),
-                        'group_5948e8bc3bf75' => __('Location', 'modularity-frontend-form'),
-                        'group_61bc951d73494' => __('Logotype grid: Logotype grid', 'modularity-frontend-form'),
-                        'group_64ff22b117e2c' => __('Manual Input: Manual Input Data', 'modularity-frontend-form'),
-                        'group_602400d904b59' => __('Map: Map', 'modularity-frontend-form'),
-                        'group_67506ac21d132' => __('Markdown', 'modularity-frontend-form'),
-                        'group_66c34c64b8d10' => __('Menu: Menu Module', 'modularity-frontend-form'),
-                        'group_68d545b18c491' => __('Mod Frontend Form Title', 'modularity-frontend-form'),
-                        'group_64a29154aa972' => __('Modal: Modal', 'modularity-frontend-form'),
-                        'group_56d83cff12bb3' => __('Navigation settings', 'modularity-frontend-form'),
-                        'group_56c33cf1470dc' => __('Notice: Display settings', 'modularity-frontend-form'),
-                        'group_591c10ab88d77' => __('Notice: Feedback forwarding', 'modularity-frontend-form'),
-                        'group_575a842dd1283' => __('Notice: Notice settings', 'modularity-frontend-form'),
-                        'group_64219abb0caec' => __('OpenStreetMap: OpenStreetMap', 'modularity-frontend-form'),
-                        'group_6784bb5c51d70' => __('Post Icon', 'modularity-frontend-form'),
-                        'group_56a8b4fd3567b' => __('Post or page', 'modularity-frontend-form'),
-                        'group_571dfd3c07a77' => __('Posts: Data display', 'modularity-frontend-form'),
-                        'group_571e045dd555d' => __('Posts: Data filtering', 'modularity-frontend-form'),
-                        'group_571dffc63090c' => __('Posts: Data sorting', 'modularity-frontend-form'),
-                        'group_571dfaabc3fc5' => __('Posts: Datakälla', 'modularity-frontend-form'),
-                        'group_630645d822841' => __('Posts: Taxonomies to display', 'modularity-frontend-form'),
-                        'group_62a30b29785f0' => __('Products: Products module', 'modularity-frontend-form'),
-                        'group_64227d79a7f57' => __('Quicklinks', 'modularity-frontend-form'),
-                        'group_59535d940706c' => __('RSS: RSS', 'modularity-frontend-form'),
-                        'group_61ea7a87e8e9f' => __('Recommend: Recommendations', 'modularity-frontend-form'),
-                        'group_56a8b9eddfced' => __('Script: Embed', 'modularity-frontend-form'),
-                        'group_66dffe0be28c1' => __('Search Module', 'modularity-frontend-form'),
-                        'group_63ff1e1238bd3' => __('Section card: Card Section Settings', 'modularity-frontend-form'),
-                        'group_6154339331c4e' => __('Section full: Full Width Section Settings', 'modularity-frontend-form'),
-                        'group_599fddb1da69a' => __('Section split: Split Section Settings', 'modularity-frontend-form'),
-                        'group_57060b2076f48' => __('Shortlink: Redirect method', 'modularity-frontend-form'),
-                        'group_57051862c4890' => __('Shortlink: Shortlink', 'modularity-frontend-form'),
-                        'group_58ecb6b6330f4' => __('Sites: Sites', 'modularity-frontend-form'),
-                        'group_56a5e99108991' => __('Slider: Slider', 'modularity-frontend-form'),
-                        'group_611cffa40276a' => __('Spacer: Whitespace', 'modularity-frontend-form'),
-                        'group_5666a2a71d806' => __('Table: Table Editor', 'modularity-frontend-form'),
-                        'group_59f2e69948a47' => __('Testimonial Cards: Testimonial Cards', 'modularity-frontend-form'),
-                        'group_5891b49127038' => __('Text: Text options', 'modularity-frontend-form'),
-                        'group_59ede2f88a7b5' => __('Timeline: Timeline', 'modularity-frontend-form'),
-                        'group_57454ae7b0e9a' => __('Video: Video', 'modularity-frontend-form'),
-                        'group_5729f4d3e7c7a' => __('Wordpress Widgets: Wordpress Widget', 'modularity-frontend-form'),
-                    ),
+                    'choices' => array(),
                     'default_value' => array(
                     ),
                     'return_format' => 'value',
@@ -754,4 +686,5 @@
     'acfe_meta' => '',
     'acfe_note' => '',
 ));
-}
+
+}

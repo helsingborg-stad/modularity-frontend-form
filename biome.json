@@ -4,6 +4,9 @@
 		"rules": {
 			"complexity": {
 				"noStaticOnlyClass": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off"
 			}
 		}
 	},

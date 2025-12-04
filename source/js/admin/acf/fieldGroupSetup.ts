@@ -8,7 +8,7 @@ class FieldGroupSetup implements AcfSelectsInterface {
 
 	public constructor(
 		private store: StoreInterface,
-		private modularityFrontendFormAdminData: ModularityFrontendFormAdminData
+		private modularityFrontendFormAdminData: ModularityFrontendFormAdminData,
 	) {}
 
 	/**
@@ -55,16 +55,11 @@ class FieldGroupSetup implements AcfSelectsInterface {
 			);
 		}
 
-		this.getPostTypeSelect(groupElement)
-			?.addEventListener('change', () => {
-				this.store
-					.get(groupId)
-					?.fields.forEach(
-						(fieldGroupSelect: FieldGroupSelectInterface) => {
-							fieldGroupSelect.updateOptions();
-				});
+		this.getPostTypeSelect(groupElement)?.addEventListener('change', () => {
+			this.store.get(groupId)?.fields.forEach((fieldGroupSelect: FieldGroupSelectInterface) => {
+				fieldGroupSelect.updateOptions();
 			});
-
+		});
 
 		this.store.addFieldToGroup(
 			groupId,
@@ -84,9 +79,7 @@ class FieldGroupSetup implements AcfSelectsInterface {
 			parent: groupElement,
 		});
 
-		return postTypeSelect && postTypeSelect.length > 0 && postTypeSelect[0].$el[0]
-			? postTypeSelect[0].$el[0]
-			: null;
+		return postTypeSelect && postTypeSelect.length > 0 && postTypeSelect[0].$el[0] ? postTypeSelect[0].$el[0] : null;
 	}
 
 	/**
@@ -101,8 +94,8 @@ class FieldGroupSetup implements AcfSelectsInterface {
 			return null;
 		}
 
-		const selector = typeof wp !== 'undefined' && wp.blocks ? '.wp-block[id^="block-"]' : '[id^="acf-group_"]';
-		const fieldGroupElement = field.$el.closest(selector)
+		const selector = wp?.blocks ? '.wp-block[id^="block-"]' : '[id^="acf-group_"]';
+		const fieldGroupElement = field.$el.closest(selector);
 
 		if (!fieldGroupElement || fieldGroupElement.length === 0) {
 			console.error('ACF field group not found.');

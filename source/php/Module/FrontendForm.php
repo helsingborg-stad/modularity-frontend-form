@@ -26,14 +26,15 @@ use WpService\Contracts\GetPermalink;
 use WpService\Contracts\GetPostMeta;
 use WpService\Contracts\UpdatePostMeta;
 use WpService\Contracts\ApplyFilters;
+use WpService\Contracts\GetRestUrl;
+use WpService\Contracts\IsAdmin;
+use WpService\Contracts\WpLocalizeScript;
 use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use ModularityFrontendForm\Module\FormatSteps;
 use ModularityFrontendForm\Config\Config;
 
 use ModularityFrontendForm\Helper\CacheBust;
-use WpService\Contracts\GetRestUrl;
-use WpService\Contracts\WpLocalizeScript;
 
 /**
  * @property string $description
@@ -49,11 +50,15 @@ class FrontendForm extends \Modularity\Module
     public $cacheTtl = 0;
     public CacheBust $cacheBust;
 
-    private $formStepQueryParam  = 'step'; // The query parameter for the form steps.
-    private $formIdQueryParam    = 'formid'; // The query parameter for the form id.
-    private $formTokenQueryParam = 'token';  // The query parameter for the form token.
+    private $formStepQueryParam         = 'step'; // The query parameter for the form steps.
+    private $formIdQueryParam           = 'formid'; // The query parameter for the form id.
+    private $formTokenQueryParam        = 'token';  // The query parameter for the form token.
+    private $wordpressStandardFieldsKey = 'wp-standard-fields';
+    private AcfGroupHelper|null $acfGroupHelper = null;
 
-    private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl&WpRegisterScript&WpRegisterStyle&WpEnqueueScript $wpService;
+    private array $fieldGroups = [];
+
+    private IsAdmin&WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl&WpRegisterScript&WpRegisterStyle&WpEnqueueScript $wpService;
     private AcfService $acfService;
 
     private FormatSteps $formatSteps;
@@ -69,12 +74,25 @@ class FrontendForm extends \Modularity\Module
             $this->getLang()
         );
 
+        if ($this->wpService->isAdmin()) {
+            $this->acfGroupHelper = new AcfGroupHelper(
+                $this->acfService,
+                $this->wpService
+            );
+        }
+
         $this->cacheBust    = new CacheBust();
 
         //Set module properties
         $this->nameSingular = $this->wpService->__('Frontend Form', 'modularity-frontend-form');
         $this->namePlural   = $this->wpService->__('Frontend Forms', 'modularity-frontend-form');
         $this->description  = $this->wpService->__('Module for creating forms.', 'modularity-frontend-form');
+
+        $this->wpService->addFilter('acf/load_field/name=formStepGroup', function ($field) {
+            $field['choices'] = $this->acfGroupHelper?->getFlatAcfGroups();
+
+            return $field;
+        });
 
         //Add query vars that should be allowed in context.
         $this->wpService->addFilter('query_vars', [$this, 'registerFormQueryVars']);
@@ -327,6 +345,7 @@ class FrontendForm extends \Modularity\Module
         if (!$this->hasModule()) {
             return;
         }
+
         // Register the script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle(),
@@ -360,10 +379,6 @@ class FrontendForm extends \Modularity\Module
 
     public function adminEnqueue(): void
     {
-        $data = (new \ModularityFrontendForm\Module\AcfGroupHelper(
-            $this->acfService
-        ))->getAcfGroups();
-
         // Register admin script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle('admin'),
@@ -378,8 +393,11 @@ class FrontendForm extends \Modularity\Module
         // Localize admin script
         $this->wpService->wpLocalizeScript(
             $this->getScriptHandle('admin'),
-            'modularityFrontendFormAcfGroups',
-            $data
+            'modularityFrontendFormAdminData',
+            [
+                'modularityFrontendFormAcfGroups'          => $this->acfGroupHelper?->getAcfGroups() ?? [],
+                'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
+            ]
         );
 
         // Enqueue admin script

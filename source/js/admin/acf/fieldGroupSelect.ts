@@ -19,8 +19,6 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 				this.modularityFrontendFormAdminData.modularityFrontendFormWordpressFieldsKey
 			] || {};
 
-		console.log(this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups);
-
 		if (this.group?.postTypeSelect || !this.select) {
 			this.postTypeSelect = this.group.postTypeSelect as PostTypeSelectInterface;
 			this.init();

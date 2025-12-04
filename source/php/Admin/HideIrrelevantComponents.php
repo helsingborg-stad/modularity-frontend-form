@@ -144,7 +144,7 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
     {
         $postId = $this->wpService->getTheId();
         if(empty($postId)) {
-            $postId = $_GET['post'] ?? intval($_POST['post_ID']) ?? null;
+            $postId = $_GET['post'] ?? (isset($_POST['post_ID']) ? intval($_POST['post_ID']) : null);
         }
         if(empty($postId)) {
             global $post;

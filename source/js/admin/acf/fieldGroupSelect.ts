@@ -90,12 +90,12 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 
 		groups = { ...groups, ...this.wordpressDefaultFields };
 
-		if (!groups) {
+		if (!groups || !selectedPostType) {
 			return;
 		}
 
 		const keys = Object.keys(groups);
-		const selected = this.selectedCache[selectedPostType!] ?? [];
+		const selected = this.selectedCache[selectedPostType] ?? [];
 		const notSelected = keys.filter((key) => !selected.includes(key));
 
 		const orderedKeyss = [...notSelected, ...selected];

@@ -4,14 +4,20 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	private select!: HTMLSelectElement;
 	private selectedCache: { [key: string]: string[] } = {};
 	private postTypeKeyToCache: string | null = null;
+	private wordpressDefaultFields: { [key: string]: string } = {};
+
 	private constructor(
 		private store: StoreInterface,
-		private modularityFrontendFormAcfGroups: ModularityFrontendFormAcfGroups,
+		private modularityFrontendFormAdminData: ModularityFrontendFormAdminData,
 		private field: HTMLElement,
 		private groupId: string,
 	) {
 		this.group = this.store.get(this.groupId) as FieldStorage;
 		this.select = this.field.querySelector('select') as HTMLSelectElement;
+		this.wordpressDefaultFields =
+			this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[
+				this.modularityFrontendFormAdminData.modularityFrontendFormWordpressFieldsKey
+			] || {};
 
 		if (this.group?.postTypeSelect || !this.select) {
 			this.postTypeSelect = this.group.postTypeSelect as PostTypeSelectInterface;
@@ -48,20 +54,25 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 
 	/**
 	 * Caches the currently selected options for the current post type.
+	 * The sorting part is necessary due to the element not being structured after page reload.
 	 */
 	private setSelectedCache(): void {
-		const selectedOptions = this.select.selectedOptions;
+		if (!this.postTypeKeyToCache) return;
 
-		if (!this.postTypeKeyToCache) {
-			return;
-		}
+		const result = [...this.select.selectedOptions]
+			.map((opt) => ({
+				index: opt.dataset.i ? Number(opt.dataset.i) : null,
+				value: opt.value,
+			}))
+			.sort((a, b) => {
+				if (a.index === null && b.index === null) return 0;
+				if (a.index === null) return 1;
+				if (b.index === null) return -1;
+				return a.index - b.index;
+			})
+			.map((x) => x.value);
 
-		const selectedValues: string[] = [];
-		[...selectedOptions].forEach((element) => {
-			selectedValues.push(element.value);
-		});
-
-		this.selectedCache[this.postTypeKeyToCache!] = selectedValues;
+		this.selectedCache[this.postTypeKeyToCache] = result;
 	}
 
 	/**
@@ -73,34 +84,47 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 	private updateMarkup(selectedPostType: string | null): void {
 		this.select.length = 0;
 
-		const modularityFrontendFormAcfGroup = selectedPostType
-			? this.modularityFrontendFormAcfGroups[selectedPostType]
-			: null;
+		let groups = selectedPostType
+			? this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[selectedPostType]
+			: {};
 
-		if (!modularityFrontendFormAcfGroup || Object.keys(modularityFrontendFormAcfGroup).length === 0) {
+		groups = { ...groups, ...this.wordpressDefaultFields };
+
+		if (!groups || !selectedPostType) {
 			return;
 		}
 
-		for (const groupKey in modularityFrontendFormAcfGroup) {
-			const option = document.createElement('option');
-			option.value = groupKey;
-			option.text = modularityFrontendFormAcfGroup[groupKey];
+		const keys = Object.keys(groups);
+		const selected = this.selectedCache[selectedPostType] ?? [];
+		const notSelected = keys.filter((key) => !selected.includes(key));
 
-			if (this.selectedCache[selectedPostType!]?.includes(groupKey)) {
-				option.selected = true;
-			}
+		const orderedKeyss = [...notSelected, ...selected];
+
+		for (const groupKey of orderedKeyss) {
+			const group = groups[groupKey];
+			if (!group) continue;
+
+			const option = this.createOption(groupKey, group, selected.includes(groupKey) || false);
 
 			this.select.add(option);
 		}
 	}
 
+	private createOption(value: string, text: string, selected: boolean): HTMLOptionElement {
+		const option = document.createElement('option');
+		option.value = value;
+		option.text = text;
+		option.selected = selected;
+		return option;
+	}
+
 	public static createInstance(
 		store: StoreInterface,
-		modularityFrontendFormAcfGroups: ModularityFrontendFormAcfGroups,
+		modularityFrontendFormAdminData: ModularityFrontendFormAdminData,
 		field: HTMLElement,
 		groupId: string,
 	): FieldGroupSelect {
-		return new FieldGroupSelect(store, modularityFrontendFormAcfGroups, field, groupId);
+		return new FieldGroupSelect(store, modularityFrontendFormAdminData, field, groupId);
 	}
 }
 

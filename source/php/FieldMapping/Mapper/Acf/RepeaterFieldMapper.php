@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
@@ -31,7 +31,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
             $subfield['conditional_logic'] =  $this->rewriteConditionalLogic($subfield['conditional_logic']) ?? null;
             $subfield['wrapper']['id']  = $subfield['key'] . '_' . $index;
 
-            $mappedSubfield = (new Mapper($subfield, $this->wpService, $this->lang))->map();
+            $mappedSubfield = (new Mapper($this->wpService, $this->lang))->map($subfield);
 
             if(!is_null($mappedSubfield)) {
                 $subfields[] = $mappedSubfield;

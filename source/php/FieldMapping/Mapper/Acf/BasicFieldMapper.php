@@ -1,21 +1,15 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\BasicFieldMapperInterface;
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\BasicFieldMapperGetInstance;
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\BasicFieldMapperConstruct;
 
 class BasicFieldMapper implements BasicFieldMapperInterface
 {
-    public function __construct(
-        protected array $field,
-        private object $lang,
-        private ?string $type = null
-    ) {}
-
-    public static function getInstance(array $field, object $lang, ?string $type = null): self
-    {
-        return new static($field, $lang, $type);
-    }
+    use BasicFieldMapperConstruct;
+    use BasicFieldMapperGetInstance;
 
     public function map(): array
     {
@@ -71,7 +65,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             $span = 1;
         }
 
-        return min($span, 123);
+        return min($span, 12);
     }
 
     /**

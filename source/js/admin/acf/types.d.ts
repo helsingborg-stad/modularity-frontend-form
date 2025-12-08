@@ -26,3 +26,8 @@ type ModularityFrontendFormAcfGroup = {
 type ModularityFrontendFormAcfGroups = {
 	[postType: string]: ModularityFrontendFormAcfGroup;
 };
+
+type ModularityFrontendFormAdminData = {
+	modularityFrontendFormAcfGroups: ModularityFrontendFormAcfGroups;
+	modularityFrontendFormWordpressFieldsKey: string;
+}

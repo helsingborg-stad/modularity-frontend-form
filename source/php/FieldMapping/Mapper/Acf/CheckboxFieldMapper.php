@@ -1,23 +1,21 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
 
-class RadioFieldMapper implements FieldMapperInterface
+class CheckboxFieldMapper implements FieldMapperInterface
 {
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'radio'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'checkbox'))->map();
 
         $mapped['choices'] = [];
-        $mapped['attributeList']['role'] = 'radiogroup';
-
         if ($mapped['required']) {
             $mapped['attributeList']['data-js-required'] = 'true';
         }
@@ -25,12 +23,10 @@ class RadioFieldMapper implements FieldMapperInterface
         foreach ($this->field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type'     => $mapped['type'],
-                'id'       => $mapped['id'] . '-' . $key,
                 'label'    => $value,
-                'required' => $mapped['required'] ?: false,
                 'name'     => $this->field['key'],
                 'value'    => $key,
-                'checked'  => ($this->field['default_value'] ?? '') === $key,
+                'checked'  => in_array($key, $this->field['default_value'] ?? [], true),
             ];
         }
 

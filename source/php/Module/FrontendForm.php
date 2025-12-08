@@ -386,7 +386,7 @@ class FrontendForm extends \Modularity\Module
             $this->getScriptHandle('admin'),
             'modularityFrontendFormAdminData',
             [
-                'modularityFrontendFormAcfGroups'          => $this->acfGroupHelper?->getGroups() ?? [],
+                'modularityFrontendFormAcfGroups'          => $this->groupHelper?->getGroups() ?? [],
                 'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
             ]
         );

@@ -15,11 +15,11 @@ class GroupHelper
     ) {}
 
     /**
-     * Get all ACF groups structured by post type
+     * Get all groups
      * 
      * @return array Structured list of ACF groups grouped by post type
      */
-    public function getAcfGroups(): array
+    public function getGroups(): array
     {
         static $groups = null;
 

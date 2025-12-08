@@ -13,20 +13,11 @@ class PostContent implements FieldMapperInterface
 
     public function map(): array
     {
-        static $index = 0;
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'wysiwyg'))->map();
+        $mapped['label'] = $this->wpService->__('Post Content', 'modularity-frontend-form');
+        $mapped['attributeList']['data-js-required'] = 'required';
+        $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
 
-        $field = [
-            'type' => 'wysiwyg',
-            'view' => 'wysiwyg',
-            'label' => $this->wpService->__('Post Content', 'modularity-frontend-form'),
-            'id' => 'post_content',
-            'name' => 'post_content',
-            'classList' => ['mod-frontend-form__wysiwyg', 'mod-frontend-form__field', 'o-layout-grid--col-span-12'],
-            'attributeList' => []
-        ];
-
-        $index++;
-        echo '<pre>' . print_r( $field, true ) . '</pre>';
-        return $field;
+        return $mapped;
     }
 }

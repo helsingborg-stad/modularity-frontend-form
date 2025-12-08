@@ -21,7 +21,7 @@ class WysiwygFieldMapper implements FieldMapperInterface
         }
 
         $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
-        echo '<pre>' . print_r( $mapped, true ) . '</pre>';die;
+
         return $mapped;
     }
 }

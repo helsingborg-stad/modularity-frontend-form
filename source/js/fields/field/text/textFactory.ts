@@ -1,10 +1,10 @@
-import FieldValidator from "../../validation/fieldValidator";
-import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
-import Basic from "../basic/basic";
-import BasicConditionsHandler from "../basic/condition/basicConditionHandler";
-import BasicConditionValidator from "../basic/condition/basicConditionValidator";
-import HtmlValidator from "../basic/validation/htmlValidator";
-import NullFieldFactory from "../nullField/nullFieldFactory";
+import FieldValidator from '../../validation/fieldValidator'
+import FieldValidatorUIHandler from '../../validation/UI/fieldValidatorUIHandler'
+import Basic from '../basic/basic'
+import BasicConditionsHandler from '../basic/condition/basicConditionHandler'
+import BasicConditionValidator from '../basic/condition/basicConditionValidator'
+import HtmlValidator from '../basic/validation/htmlValidator'
+import NullFieldFactory from '../nullField/nullFieldFactory'
 
 class TextFactory {
 	static create(
@@ -14,18 +14,11 @@ class TextFactory {
 		notices: NoticeInterface,
 		stepId: string,
 	): FieldInterface {
-		const input = field.querySelector(`input[type="text"]`) as HTMLInputElement;
+		const input = field.querySelector(`input[type="text"]`) as HTMLInputElement
 
 		if (!input) {
-			console.error("Text field is missing input element.");
-			return NullFieldFactory.create(
-				field,
-				"text",
-				name,
-				unstructuredConditions,
-				notices,
-				stepId,
-			);
+			console.error('Text field is missing input element.')
+			return NullFieldFactory.create(field, 'text', name, unstructuredConditions, notices, stepId)
 		}
 
 		return new Basic(
@@ -34,11 +27,9 @@ class TextFactory {
 			name,
 			new BasicConditionValidator(),
 			new BasicConditionsHandler(unstructuredConditions),
-			new FieldValidator(new FieldValidatorUIHandler(notices), [
-				new HtmlValidator(),
-			]),
-		);
+			new FieldValidator(new FieldValidatorUIHandler(notices), [new HtmlValidator()]),
+		)
 	}
 }
 
-export default TextFactory;
+export default TextFactory

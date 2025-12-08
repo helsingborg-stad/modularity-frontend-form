@@ -13,16 +13,15 @@ class PostTitle implements FieldMapperInterface
 
     public function map(): array
     {
-        return [
-            'type' => 'text',
-            'view' => 'text',
-            'label' => $this->wpService->__('Post Title', 'modularity-frontend-form'),
-            'name' => 'post_title',
-            'required' => true,
-            'fieldAttributeList' => [
-                'data-js-validation-message-value-missing' => $this->lang->errorRequired,
-            ],
-            'classList' => ['o-layout-grid--col-span-12'],
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'text'))->map();
+
+        $mapped['label'] = $this->wpService->__('Post Title', 'modularity-frontend-form');
+        $mapped['required'] = true;
+        $mapped['moveAttributesListToFieldAttributes'] = false;
+        $mapped['fieldAttributeList'] = [
+            'data-js-validation-message-value-missing' => $this->lang->errorRequired,
         ];
+
+        return $mapped;
     }
 }

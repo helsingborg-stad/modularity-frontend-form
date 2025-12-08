@@ -2,6 +2,7 @@ import FieldGroupSelect from './fieldGroupSelect';
 import PostTypeSelect from './postTypeSelect';
 declare const acf: any;
 declare const wp: any;
+declare const pagenow: string;
 
 class FieldGroupSetup implements AcfSelectsInterface {
 	private ACF_GROUP_SELECT_NAME = 'formStepGroup';
@@ -94,7 +95,8 @@ class FieldGroupSetup implements AcfSelectsInterface {
 			return null;
 		}
 
-		const selector = wp?.blocks ? '.wp-block[id^="block-"]' : '[id^="acf-group_"]';
+		const selector = pagenow === 'mod-frontend-form' ? '[id^="acf-group_"]' : '.wp-block[id^="block-"]';
+
 		const fieldGroupElement = field.$el.closest(selector);
 
 		if (!fieldGroupElement || fieldGroupElement.length === 0) {

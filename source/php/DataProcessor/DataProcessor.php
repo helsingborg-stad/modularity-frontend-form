@@ -27,6 +27,9 @@ class DataProcessor implements DataProcessorInterface {
      */
     public function process(array $data): bool {
 
+        var_dump($data);
+        die;
+
         //1. Validate the data
         foreach ($this->validators as $validator) {
             $validationResult = $validator->validate($data);

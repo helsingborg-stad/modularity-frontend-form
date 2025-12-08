@@ -4,6 +4,7 @@ namespace ModularityFrontendForm\Module\FieldFormatterResolvers;
 
 use ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\Module\GroupHelper;
+use ModularityFrontendForm\Module\NamespaceHelper;
 
 class WordpressFields implements FieldFormatterResolverInterface
 {
@@ -11,9 +12,15 @@ class WordpressFields implements FieldFormatterResolverInterface
 
     public function __construct(
         private GroupHelper $groupHelper,
+        private NamespaceHelper $namespaceHelper,
         private Mapper $mapper,
     ) {
         $this->wordpressFields = $this->groupHelper->getBasicWordpressFields();
+        $formattedGroup = $this->namespaceHelper->namespaceFieldName(
+            $this->wordpressFields
+        );
+
+        var_dump($formattedGroup);
     }
 
     /**

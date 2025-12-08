@@ -1,4 +1,3 @@
-
 @element([
     'attributeList' => $field['attributeList'],
     'id' => $field['id'],

@@ -9,32 +9,18 @@
 namespace ModularityFrontendForm\Module;
 
 use AcfService\Implementations\NativeAcfService;
-
-use WpService\Contracts\WpEnqueueStyle;
+use ModularityFrontendForm\Module\GroupHelper;
 use WpService\Implementations\NativeWpService;
-use WpService\Contracts\__;
-use WpService\Contracts\AddFilter;
-use WpService\Contracts\AddAction;
-use WpService\Contracts\IsUserLoggedIn;
-use WpService\Contracts\GetQueryVar;
-use WpService\Contracts\GetPostType;
-use WpService\Contracts\GetPostTypeObject;
-use WpService\Contracts\WpRegisterScript;
-use WpService\Contracts\WpEnqueueScript;
-use WpService\Contracts\WpRegisterStyle;
-use WpService\Contracts\GetPermalink;
-use WpService\Contracts\GetPostMeta;
-use WpService\Contracts\UpdatePostMeta;
-use WpService\Contracts\ApplyFilters;
-use WpService\Contracts\GetRestUrl;
-use WpService\Contracts\IsAdmin;
-use WpService\Contracts\WpLocalizeScript;
 use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use ModularityFrontendForm\Module\FormatSteps;
 use ModularityFrontendForm\Config\Config;
-
+use ModularityFrontendForm\FieldMapping\Director\WordpressMappingDirector;
+use ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\Helper\CacheBust;
+use ModularityFrontendForm\Module\FieldFormatterResolvers\AcfGroupFields;
+use ModularityFrontendForm\Module\FieldFormatterResolvers\WordpressFields;
+use WpService\WpService;
 
 /**
  * @property string $description
@@ -54,11 +40,9 @@ class FrontendForm extends \Modularity\Module
     private $formIdQueryParam           = 'formid'; // The query parameter for the form id.
     private $formTokenQueryParam        = 'token';  // The query parameter for the form token.
     private $wordpressStandardFieldsKey = 'wp-standard-fields';
-    private AcfGroupHelper|null $acfGroupHelper = null;
+    private GroupHelper $groupHelper;
 
-    private array $fieldGroups = [];
-
-    private IsAdmin&WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl&WpRegisterScript&WpRegisterStyle&WpEnqueueScript $wpService;
+    private WpService $wpService;
     private AcfService $acfService;
 
     private FormatSteps $formatSteps;
@@ -67,19 +51,25 @@ class FrontendForm extends \Modularity\Module
     {
         $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService   = new NativeAcfService();
-        $this->formatSteps  = new FormatSteps(
-            $this->wpService,
-            $this->acfService,
-            new Config($this->wpService, 'modularity-frontend-form'),
-            $this->getLang()
-        );
+        $this->groupHelper = new GroupHelper($this->acfService, $this->wpService);
 
-        if ($this->wpService->isAdmin()) {
-            $this->acfGroupHelper = new AcfGroupHelper(
-                $this->acfService,
-                $this->wpService
-            );
-        }
+        $this->formatSteps  = new FormatSteps(
+            [
+                new WordpressFields($this->groupHelper, new Mapper(
+                    $this->wpService,
+                    $this->getLang(),
+                    new WordpressMappingDirector($this->wpService, $this->getLang())
+                )),
+                new AcfGroupFields(
+                    $this->acfService,
+                    new Config($this->wpService,'modularity-frontend-form'),
+                    new Mapper(
+                        $this->wpService,
+                        $this->getLang()
+                    ),
+                    $this->getLang())
+            ]
+        );
 
         $this->cacheBust    = new CacheBust();
 
@@ -89,7 +79,7 @@ class FrontendForm extends \Modularity\Module
         $this->description  = $this->wpService->__('Module for creating forms.', 'modularity-frontend-form');
 
         $this->wpService->addFilter('acf/load_field/name=formStepGroup', function ($field) {
-            $field['choices'] = $this->acfGroupHelper?->getFlatAcfGroups();
+            $field['choices'] = $this->groupHelper?->getFlatGroups();
 
             return $field;
         });
@@ -113,11 +103,12 @@ class FrontendForm extends \Modularity\Module
 
         //The module id
         $data['moduleId'] = $this->ID;
-        
+
         //Current post id (the page where the form is displayed)
         $data['holdingPostId'] = $this->wpService->getQueriedObjectId();
 
         $data['steps'] = $this->formatSteps->formatSteps(($fields->formSteps ?? []) ?: []);
+
         $data['stepsCount'] = count($data['steps']);
 
         //Language
@@ -175,7 +166,7 @@ class FrontendForm extends \Modularity\Module
             'errorMap'                 => $this->wpService->__('Please choose a place on the map', 'modularity-frontend-form'),
             'errorWysiwyg'             => $this->wpService->__('Please add some content', 'modularity-frontend-form'),
             'errorSelect'              => $this->wpService->__('Please select an option', 'modularity-frontend-form'),
-            'errorEmail'               => $this->wpService->__('Please enter a valid email address (ex. %s)','modularity-frontend-form'),
+            'errorEmail'               => $this->wpService->__('Please enter a valid email address (ex. %s)', 'modularity-frontend-form'),
             'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. %s)', 'modularity-frontend-form'),
             'errorPhone'               => $this->wpService->__('Please enter a valid phone number', 'modularity-frontend-form'),
             'errorDate'                => $this->wpService->__('Please enter a valid date (ex. yyyy-mm-dd)', 'modularity-frontend-form'),
@@ -260,7 +251,7 @@ class FrontendForm extends \Modularity\Module
         $allReplacements = [
             $dataProcessors,
             $dataCategories,
-            $dataRetentionPeriod,   
+            $dataRetentionPeriod,
         ];
 
         //Perform replacements
@@ -286,7 +277,7 @@ class FrontendForm extends \Modularity\Module
      */
     public function reduceTaxonomyToString($taxonomyTerms): string
     {
-        if(empty($taxonomyTerms)) {
+        if (empty($taxonomyTerms)) {
             return '';
         }
 
@@ -395,7 +386,7 @@ class FrontendForm extends \Modularity\Module
             $this->getScriptHandle('admin'),
             'modularityFrontendFormAdminData',
             [
-                'modularityFrontendFormAcfGroups'          => $this->acfGroupHelper?->getAcfGroups() ?? [],
+                'modularityFrontendFormAcfGroups'          => $this->acfGroupHelper?->getGroups() ?? [],
                 'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
             ]
         );

@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;

@@ -1,32 +1,26 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
 
-class UrlFieldMapper implements FieldMapperInterface
+class TextareaFieldMapper implements FieldMapperInterface
 {
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
 
     public function map(): array
     {
-        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'url'))->map();
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, $this->field['type']))->map();
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';
-
-        $errorMessage = sprintf(
-            $this->lang->errorUrl,
-            'https://website.com'
-        );
-
-        $mapped['fieldAttributeList']['data-js-validation-message-type-mismatch'] = $errorMessage;
-        $mapped['fieldAttributeList']['data-js-validation-message-value-missing'] = $errorMessage;
+        $mapped['rows']                                = $this->field['rows'] ?: 5;
+        $mapped['multiline']                           = $mapped['rows'];
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
-        return $mapped ?? null;
+        return $mapped;
     }
 }

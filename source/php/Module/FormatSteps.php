@@ -5,16 +5,19 @@ namespace ModularityFrontendForm\Module;
 use AcfService\AcfService;
 use WpService\WpService;
 
-use ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\Config\ConfigInterface;
 
 class FormatSteps {
 
+    /**
+     * Constructor
+     * @param WpService $wpService
+     * @param AcfService $acfService
+     * @param ConfigInterface $config
+     * @param FieldFormatterResolverInterface[] $FieldFormatterResolverInterfaces
+     */
     public function __construct(
-        private WpService $wpService, 
-        private AcfService $acfService,
-        private ConfigInterface $config,
-        private object $lang
+        private array $fieldFormatterResolver
     ){}
 
     /**
@@ -43,76 +46,21 @@ class FormatSteps {
      * 
      * @return array The formatted step.
      */
-    public function formatStep(array $unformattedStep) 
+    public function formatStep(array $unformattedStep): array
     {
         $fieldGroups = $unformattedStep['formStepGroup'] ?? [];
 
         $formattedStep = [];
         foreach ($fieldGroups as $fieldGroup) {
-            $fields = $this->acfService->acfGetFields($fieldGroup);
-            foreach ($fields as $field) {
-                $formattedStep[] = (new Mapper($field, $this->wpService, $this->lang))->map();
+            foreach ($this->fieldFormatterResolver as $resolver) {
+                $result = $resolver->resolve($fieldGroup);
+                if ($result) {
+                    $formattedStep = array_merge($formattedStep, $result);
+                    break;
+                }
             }
-
-            $formattedStep = $this->namespaceFieldName($formattedStep);
         }
 
         return $formattedStep;
-    }
-
-    /**
-     * Namespaces the field array to group form under a module namespace.
-     * This function handles nested fields as well in a recursive manner.
-     *
-     * @param array $fields The fields to namespace.
-     * 
-     * @return array The namespaced fields.
-     */
-    private function namespaceFieldName(array $fields): array
-    {
-        foreach ($fields as $key => $field) {
-            if (isset($field['name'])) {
-                $fields[$key]['name'] = $this->namespaceFieldNameString($field['name']);
-            }
-
-            if (isset($field['fields']) && is_array($field['fields'])) {
-                $fields[$key]['fields'] = $this->namespaceFieldName($field['fields']);
-            }
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Namespaces the field name to group form under a module namespace.
-     * This function handles single field names, and array field names.
-     *
-     * @param string $name The field name.
-     * 
-     * @return string The namespaced field name.
-     */
-    private function namespaceFieldNameString(string $name): string
-    {
-        //Assume that the base name is the name itself
-        $baseName = $name;
-
-        // Check if the field is an array (ends with [])
-        $isArray = str_ends_with($name, '[]');
-        if( $isArray ) {
-            $baseName = substr($name, 0, -2);
-        }
-
-        // Check if the field is a repeater (starts and ends with [ ])
-        $isRepeater = str_starts_with($baseName, '[') && str_ends_with($baseName, ']');
-        if ($isRepeater) {
-            $baseName = trim($baseName, '[]');
-        }
-
-        return sprintf(
-            '%s[%s]%s', 
-            $this->config->getFieldNamespace(),
-            $baseName, 
-            $isArray ? '[]' : '' //Add back [] if it was an array
-        );
     }
 }

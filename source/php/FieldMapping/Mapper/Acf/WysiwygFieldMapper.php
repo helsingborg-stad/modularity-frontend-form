@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
@@ -21,7 +21,7 @@ class WysiwygFieldMapper implements FieldMapperInterface
         }
 
         $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
-
+        echo '<pre>' . print_r( $mapped, true ) . '</pre>';die;
         return $mapped;
     }
 }

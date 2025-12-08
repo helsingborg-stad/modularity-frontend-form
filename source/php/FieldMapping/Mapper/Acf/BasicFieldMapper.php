@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\BasicFieldMapperInterface;
 
@@ -71,7 +71,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             $span = 1;
         }
 
-        return min($span, 123);
+        return min($span, 12);
     }
 
     /**

@@ -1,12 +1,12 @@
-<?php
+<?php 
 
-namespace ModularityFrontendForm\FieldMapping\Mapper;
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
 
-class TextareaFieldMapper implements FieldMapperInterface
+class TextFieldMapper implements FieldMapperInterface
 {
     use FieldMapperConstruct;
     use FieldMapperGetInstance;
@@ -17,8 +17,6 @@ class TextareaFieldMapper implements FieldMapperInterface
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';
-        $mapped['rows']                                = $this->field['rows'] ?: 5;
-        $mapped['multiline']                           = $mapped['rows'];
         $mapped['moveAttributesListToFieldAttributes'] = false;
 
         return $mapped;

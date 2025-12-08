@@ -5,7 +5,7 @@ namespace ModularityFrontendForm\Module;
 use AcfService\AcfService;
 use WpService\WpService;
 
-class AcfGroupHelper
+class GroupHelper
 {
     private $wordpressStandardFieldsKey = 'wp-standard-fields';
 
@@ -27,9 +27,9 @@ class AcfGroupHelper
             return $groups;
         }
 
-        $groups = $this->getAcfFieldGroups();
+        $groups = $this->getFieldGroups();
         $groups = $this->buildPostTypeGroupedList($groups);
-        $groups = $this->addBasicWordpressFields($groups);
+        $groups[$this->wordpressStandardFieldsKey] = $this->getBasicWordpressFields();
 
         return $groups;
     }
@@ -39,7 +39,7 @@ class AcfGroupHelper
      * 
      * @return array Flat list of ACF groups with key as group key and value as group title
      */
-    public function getFlatAcfGroups(): array
+    public function getFlatGroups(): array
     {
         static $flatList = null;
 
@@ -47,7 +47,7 @@ class AcfGroupHelper
             return $flatList;
         }
 
-        $groups = $this->getAcfFieldGroups();
+        $groups = $this->getFieldGroups();
 
         $flatList = [];
         foreach ($groups as $group) {
@@ -56,27 +56,25 @@ class AcfGroupHelper
             }
         }
 
-        foreach ($this->addBasicWordpressFields([])[$this->wordpressStandardFieldsKey] as $key => $value) {
+        foreach ($this->getBasicWordpressFields() as $key => $value) {
             $flatList[$key] = $value;
         }
 
         return $flatList;
     }
 
-    private function addBasicWordpressFields(array $data): array
+    public function getBasicWordpressFields(): array
     {
-        $data[$this->wordpressStandardFieldsKey] = [
+        return [
             'post_title'    => $this->wpService->__('Post title', 'modularity-frontend-form'),
             'post_content'  => $this->wpService->__('Post content', 'modularity-frontend-form')
         ];
-
-        return $data;
     }
     /**
-     * Build a structured list of ACF groups grouped by post type
+     * Build a structured list of groups grouped by post type
      * 
-     * @param array $groups List of ACF groups
-     * @return array Structured list of ACF groups grouped by post type
+     * @param array $groups List of groups
+     * @return array Structured list of groups grouped by post type
      */
     private function buildPostTypeGroupedList(array $groups): array
     {
@@ -97,7 +95,7 @@ class AcfGroupHelper
         return $structured;
     }
 
-    private function getAcfFieldGroups(): array 
+    private function getFieldGroups(): array 
     {
         static $groups = null;
 

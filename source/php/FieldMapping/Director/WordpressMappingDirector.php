@@ -2,6 +2,7 @@
 
 namespace ModularityFrontendForm\FieldMapping\Director;
 
+use ModularityFrontendForm\Config\Config;
 use WpService\WpService;
 
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
@@ -18,6 +19,7 @@ class WordpressMappingDirector implements FieldMappingDirectorInterface
     public function __construct(
         protected WpService $wpService,
         protected object $lang,
+        protected Config $config
     ) {
     }
 
@@ -43,6 +45,6 @@ class WordpressMappingDirector implements FieldMappingDirectorInterface
             throw new \RuntimeException("Mapper class for field type '{$field}' is not valid.");
         }
 
-        return $mapperClass::getInstance($field, $this->wpService, $this->lang);
+        return $mapperClass::getInstance($field, $this->wpService, $this->lang, $this->config);
     }
 }

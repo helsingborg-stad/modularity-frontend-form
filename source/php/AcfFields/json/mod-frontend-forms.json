@@ -121,7 +121,7 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": {},
+                    "choices": [],
                     "default_value": [],
                     "return_format": "value",
                     "multiple": 1,
@@ -134,27 +134,6 @@
                     "parent_repeater": "field_6627a5e312422",
                     "create_options": 0,
                     "save_options": 0
-                },
-                {
-                    "key": "field_664dea524e1e2",
-                    "label": "Display Post title",
-                    "name": "formStepIncludesPostTitle",
-                    "aria-label": "",
-                    "type": "true_false",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "message": "If this step should include a field for the posts title",
-                    "default_value": 0,
-                    "ui": 0,
-                    "ui_on_text": "",
-                    "ui_off_text": "",
-                    "parent_repeater": "field_6627a5e312422"
                 }
             ]
         },
@@ -670,11 +649,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "show_in_rest": 0,
-    "acfe_display_title": "",
-    "acfe_autosync": "",
-    "acfe_form": 0,
-    "acfe_meta": "",
-    "acfe_note": ""
+    "show_in_rest": 0
 }]
-
+

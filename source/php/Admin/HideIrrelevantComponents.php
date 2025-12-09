@@ -2,7 +2,9 @@
 
 namespace ModularityFrontendForm\Admin;
 
+use AcfService\AcfService;
 use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigFactory;
 use WpService\WpService;
 
 /**
@@ -16,6 +18,8 @@ use WpService\WpService;
 class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
 {
     private bool $isEnabled = true;
+
+    private $moduleConfig;
 
     //Define meta boxes and post features that should 
     //never be available for frontend submitted posts
@@ -38,7 +42,11 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
         'title',
     ];
 
-    public function __construct(private ConfigInterface $config, private WpService $wpService)
+    public function __construct(
+        private ConfigInterface $config, 
+        private WpService $wpService, 
+        private ModuleConfigFactory $moduleConfigFactory
+    )
     {
     }
 
@@ -52,55 +60,58 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
             return;
         }
 
-        // Get current post type
+        //Get module config instance
+        $this->moduleConfig = $this->moduleConfigFactory->create(
+            $this->getFormModuleId(
+                $this->getPostId()
+            ) ?? 0
+        );
+
+        //Get current post type
         $currentPostType = $this->getCurrentPostType();
 
-        // Remove never supported post features
         $this->wpService->addAction('add_meta_boxes', function () use ($currentPostType) {
-            foreach (self::NEVER_SUPPORTED_META_BOXES as $metaBox) {
-                $this->wpService->removeMetaBox($metaBox, $currentPostType, 'normal');
-                $this->wpService->removeMetaBox($metaBox, $currentPostType, 'side');
-                $this->wpService->removeMetaBox($metaBox, $currentPostType, 'advanced');
-            }
+           $this->removeNeverSupportedMetaBoxes($currentPostType);
         }, 600);
+        $this->wpService->addAction('init', function () use ($currentPostType) {
+            $this->dynamicPostFeatures($currentPostType);
+        }, 600);
+    }
 
-        // Remove post features conditionally
+    /**
+     * Remove post features that are not enabled
+     * for frontend submitted posts.
+     * 
+     * @param string $currentPostType
+     * 
+     * @return void
+     */
+    public function dynamicPostFeatures(string $currentPostType): void
+    {
+        $dynamicPostFeatures = $this->moduleConfig->getDynamicPostFeatures() ?? [];
         foreach (self::POST_FEATURES as $postFeature) {
-
-            if($postFeature === 'editor' && $this->formHasContentFieldSupport()) {
+            if(in_array($postFeature, $dynamicPostFeatures)) {
                 continue;
             }
-
-            if($postFeature === 'title' && $this->formHasTitleFieldSupport()) {
-                continue;
-            }
-
-            $this->wpService->addAction('init', function () use ($currentPostType, $postFeature) {
-                $this->wpService->removePostTypeSupport($currentPostType, $postFeature);
-            }, 600);
+            $this->wpService->removePostTypeSupport($currentPostType, $postFeature);
         }
     }
 
     /**
-     * Checks if the form has content field support.
-     * TODO: Implement dynamic check based on form configuration.
+     * Remove meta boxes that are never supported
+     * for frontend submitted posts.
      * 
-     * @return bool
-     */
-    private function formHasContentFieldSupport(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Checks if the form has title field support.
-     * TODO: Implement dynamic check based on form configuration.
+     * @param string $currentPostType
      * 
-     * @return bool
+     * @return void
      */
-    private function formHasTitleFieldSupport(): bool
+    public function removeNeverSupportedMetaBoxes(string $currentPostType) : void
     {
-        return true;
+        foreach (self::NEVER_SUPPORTED_META_BOXES as $metaBox) {
+            $this->wpService->removeMetaBox($metaBox, $currentPostType, 'normal');
+            $this->wpService->removeMetaBox($metaBox, $currentPostType, 'side');
+            $this->wpService->removeMetaBox($metaBox, $currentPostType, 'advanced');
+        }
     }
 
     /**
@@ -127,12 +138,26 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
      */
     private function isExternallySubmitted(int $postId) : bool
     {
-        $hasModuleId = $this->wpService->getPostMeta(
+        return $this->getFormModuleId($postId) !== null;
+    }
+    
+    /**
+     * Get the form module ID from post meta data.
+     * 
+     * @param int $postId
+     * @return null|int
+     */
+    private function getFormModuleId(int $postId) : ?int
+    {
+        $moduleId = $this->wpService->getPostMeta(
             $postId,
             $this->config->getMetaDataNamespace('module_id'),
             true
         );
-        return !empty($hasModuleId);
+        if(empty($moduleId)) {
+            return null;
+        }
+        return intval($moduleId);
     }
 
     /**
@@ -155,7 +180,10 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
         if(empty($postId)) {
             return null;
         }
-        return $postId;
+        if(is_numeric($postId)) {
+            return intval($postId);
+        }
+        return null;
     }
 
     /**

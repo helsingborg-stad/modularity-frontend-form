@@ -5,9 +5,9 @@ namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
 use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
-use ModularityFrontendForm\FieldMapping\Mapper\CheckboxFieldMapper;
-use ModularityFrontendForm\FieldMapping\Mapper\SelectFieldMapper;
-use ModularityFrontendForm\FieldMapping\Mapper\RadioFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\Acf\CheckboxFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\Acf\SelectFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\Acf\RadioFieldMapper;
 
 class TaxonomyFieldMapper implements FieldMapperInterface
 {

@@ -17,5 +17,6 @@ interface ConfigInterface
     public function getFilterPrefix(): string;
     public function getUnprintableKeys(): array;
     public function getKeysToBypass(): array;
+    public function getAllowedHtmlTags(): array;
     public function createFilterKey(string $filter = ""): string;
 }

@@ -27,4 +27,6 @@ interface ModuleConfigInterface
     public function getWpDbHandlerConfig(): ?object;
     public function getMailHandlerConfig(): ?object;
     public function getWebHookHandlerConfig(): ?object;
+
+    public function getDynamicPostFeatures(): ?array;
 }

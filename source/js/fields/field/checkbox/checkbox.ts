@@ -1,3 +1,5 @@
+import CheckboxValueLoader from './load/checkboxValueLoader';
+
 class Checkbox implements CheckboxInterface {
 	private required: boolean = false;
 	constructor(

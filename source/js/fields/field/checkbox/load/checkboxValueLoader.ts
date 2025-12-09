@@ -9,3 +9,5 @@ class CheckboxValueLoader implements CheckboxValueLoaderInterface {
 		// TODO: Implement loading logic for checkbox values
 	}
 }
+
+export default CheckboxValueLoader;

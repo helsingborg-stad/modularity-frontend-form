@@ -1,10 +1,10 @@
-import FieldValidator from "../../validation/fieldValidator";
-import FieldValidatorUIHandler from "../../validation/UI/fieldValidatorUIHandler";
-import NullFieldFactory from "../nullField/nullFieldFactory";
-import Checkbox from "./checkbox";
-import CheckboxConditionsHandler from "./condition/checkboxConditionsHandler";
-import CheckboxConditionValidator from "./condition/checkboxConditionValidator";
-import Required from "./validation/required";
+import FieldValidator from '../../validation/fieldValidator';
+import FieldValidatorUIHandler from '../../validation/UI/fieldValidatorUIHandler';
+import NullFieldFactory from '../nullField/nullFieldFactory';
+import Checkbox from './checkbox';
+import CheckboxConditionsHandler from './condition/checkboxConditionsHandler';
+import CheckboxConditionValidator from './condition/checkboxConditionValidator';
+import Required from './validation/required';
 
 class CheckboxFactory {
 	public static create(
@@ -15,20 +15,11 @@ class CheckboxFactory {
 		stepId: string,
 		modularityFrontendFormLang: ModularityFrontendFormLang,
 	): FieldInterface {
-		const choices = field.querySelectorAll(
-			'input[type="checkbox"]',
-		) as NodeListOf<HTMLInputElement>;
+		const choices = field.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
 
 		if (choices.length === 0) {
-			console.error("Checkbox field is missing input elements");
-			return NullFieldFactory.create(
-				field,
-				"checkbox",
-				name,
-				unstructuredConditions,
-				notices,
-				stepId,
-			);
+			console.error('Checkbox field is missing input elements');
+			return NullFieldFactory.create(field, 'checkbox', name, unstructuredConditions, notices, stepId);
 		}
 
 		return new Checkbox(
@@ -37,9 +28,7 @@ class CheckboxFactory {
 			name,
 			new CheckboxConditionValidator(),
 			new CheckboxConditionsHandler(unstructuredConditions),
-			new FieldValidator(new FieldValidatorUIHandler(notices), [
-				new Required(modularityFrontendFormLang),
-			]),
+			new FieldValidator(new FieldValidatorUIHandler(notices), [new Required(modularityFrontendFormLang)]),
 		);
 	}
 }

@@ -66,8 +66,7 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
         'google_map'    => GoogleMapFieldMapper::class,
         'taxonomy'      => TaxonomyFieldMapper::class,
         'gallery'       => GalleryFieldMapper::class,
-        'wysiwyg'       => WysiwygFieldMapper::class,
-        // 'wpPostTitle'   => 
+        'wysiwyg'       => WysiwygFieldMapper::class
     ];
 
     /**

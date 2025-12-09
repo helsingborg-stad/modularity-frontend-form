@@ -113,7 +113,7 @@ class App implements \Municipio\HooksRegistrar\Hookable {
         (new Admin\HideIrrelevantComponents(
             $this->config,
             $this->wpService,
-            $this->acfService
+            $this->moduleConfigFactory
         ))->addHooks();
     }
 

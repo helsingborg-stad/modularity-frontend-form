@@ -91,6 +91,34 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
+  public function getDynamicPostFeatures(): array
+  {
+    //If key existance, correspond to capability
+    $dynamicCapabilityMapper = [
+      'post_title'    => 'title',
+      'post_content'  => 'editor'
+    ];
+    $dynamicCapabilities = [];
+
+    $steps = $this->acfService->getField('formSteps', $this->getModuleId());
+
+    if (is_countable($steps) === false || count($steps) === 0) {
+      return [];
+    }
+
+    foreach($steps as $step) {
+      foreach ($dynamicCapabilityMapper as $field => $capability) {
+        if (in_array($field, $step['formStepGroup'] ?? [])) {
+          $dynamicCapabilities[] = $capability;
+        }
+      }
+    }
+    return array_values(array_unique($dynamicCapabilities));
+  }
+
+  /**
+   * @inheritdoc
+   */
   public function getWpDbHandlerConfig(): ?object
   {
     if(in_array('WpDbHandler', $this->getActivatedHandlers()) === false) {

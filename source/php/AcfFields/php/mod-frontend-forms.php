@@ -1,9 +1,7 @@
 <?php 
 
-
-if (function_exists('acf_add_local_field_group')) {
-
-    acf_add_local_field_group(array(
+if (function_exists('acf_add_local_field_group')) {
+    acf_add_local_field_group(array(
     'key' => 'group_6627a5e16d74c',
     'title' => __('Configure Multistep Form', 'modularity-frontend-form'),
     'fields' => array(
@@ -126,7 +124,8 @@ if (function_exists('acf_add_local_field_group')) {
                         'class' => '',
                         'id' => '',
                     ),
-                    'choices' => array(),
+                    'choices' => array(
+                    ),
                     'default_value' => array(
                     ),
                     'return_format' => 'value',
@@ -140,27 +139,6 @@ if (function_exists('acf_add_local_field_group')) {
                     'parent_repeater' => 'field_6627a5e312422',
                     'create_options' => 0,
                     'save_options' => 0,
-                ),
-                3 => array(
-                    'key' => 'field_664dea524e1e2',
-                    'label' => __('Display Post title', 'modularity-frontend-form'),
-                    'name' => 'formStepIncludesPostTitle',
-                    'aria-label' => '',
-                    'type' => 'true_false',
-                    'instructions' => '',
-                    'required' => 0,
-                    'conditional_logic' => 0,
-                    'wrapper' => array(
-                        'width' => '',
-                        'class' => '',
-                        'id' => '',
-                    ),
-                    'message' => __('If this step should include a field for the posts title', 'modularity-frontend-form'),
-                    'default_value' => 0,
-                    'ui' => 0,
-                    'ui_on_text' => '',
-                    'ui_off_text' => '',
-                    'parent_repeater' => 'field_6627a5e312422',
                 ),
             ),
         ),
@@ -680,11 +658,5 @@ if (function_exists('acf_add_local_field_group')) {
     'active' => true,
     'description' => '',
     'show_in_rest' => 0,
-    'acfe_display_title' => '',
-    'acfe_autosync' => '',
-    'acfe_form' => 0,
-    'acfe_meta' => '',
-    'acfe_note' => '',
 ));
-
-}
+}

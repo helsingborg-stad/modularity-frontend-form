@@ -92,8 +92,11 @@ class FrontendForm extends \Modularity\Module
         $this->description  = $this->wpService->__('Module for creating forms.', 'modularity-frontend-form');
 
         $this->wpService->addFilter('acf/load_field/name=formStepGroup', function ($field) {
+            //Do not filter groups in acf editor screen
+            if ($this->wpService->getCurrentScreen()?->id === 'acf-field-group') {
+                return $field;
+            }
             $field['choices'] = $this->groupHelper?->getFlatGroups();
-
             return $field;
         });
 

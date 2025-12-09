@@ -6,7 +6,7 @@ class SelectValueLoader implements SelectValueLoaderInterface {
 	}
 
 	public load(value: any): void {
-		// TODO: Implement select value loading logic
+		console.log(value);
 		return;
 	}
 }

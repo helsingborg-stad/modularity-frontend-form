@@ -180,7 +180,10 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
         if(empty($postId)) {
             return null;
         }
-        return $postId;
+        if(is_numeric($postId)) {
+            return intval($postId);
+        }
+        return null;
     }
 
     /**

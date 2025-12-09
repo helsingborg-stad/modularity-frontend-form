@@ -34,7 +34,7 @@ class TaxonomyFieldMapper implements FieldMapperInterface
             $this->field['multiple'] = true;
         }
 
-        return (new $mapper($this->field, $this->wpService, $this->lang))->map();
+        return (new $mapper($this->field, $this->wpService, $this->lang, $this->config))->map();
     }
 
     /**

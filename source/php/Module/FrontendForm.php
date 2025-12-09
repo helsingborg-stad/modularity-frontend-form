@@ -47,27 +47,40 @@ class FrontendForm extends \Modularity\Module
 
     private FormatSteps $formatSteps;
 
+    private Config $config;
+
     public function init(): void
     {
-        $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
-        $this->acfService   = new NativeAcfService();
+        $this->wpService   = new WpServiceWithTypecastedReturns(new NativeWpService());
+        $this->acfService  = new NativeAcfService();
         $this->groupHelper = new GroupHelper($this->acfService, $this->wpService);
+        $this->config      = new Config($this->wpService,'modularity-frontend-form');
 
         $this->formatSteps  = new FormatSteps(
             [
-                new WordpressFields($this->groupHelper, new Mapper(
-                    $this->wpService,
-                    $this->getLang(),
-                    new WordpressMappingDirector($this->wpService, $this->getLang())
-                )),
+                new WordpressFields(
+                    $this->groupHelper, 
+                    new Mapper(
+                        $this->wpService,
+                        $this->getLang(),
+                        $this->config,
+                        new WordpressMappingDirector(
+                            $this->wpService,
+                            $this->getLang(),
+                            $this->config
+                        )
+                    )
+                ),
                 new AcfGroupFields(
                     $this->acfService,
                     new Config($this->wpService,'modularity-frontend-form'),
                     new Mapper(
                         $this->wpService,
-                        $this->getLang()
+                        $this->getLang(),
+                        $this->config
                     ),
-                    $this->getLang())
+                    $this->getLang()
+                )
             ]
         );
 

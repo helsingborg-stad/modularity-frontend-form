@@ -48,12 +48,13 @@ class Config implements ConfigInterface
    * 
    * @return string
    */
-  public function getFieldNamespace(): string
+  public function getFieldNamespace(null|string $fieldName = null): string
   {
-    return $this->wpService->applyFilters(
+    $namespace = $this->wpService->applyFilters(
       $this->createFilterKey(__FUNCTION__), 
       'mod-frontend-form'
     );
+    return $fieldName ? "{$namespace}[{$fieldName}]" : $namespace;
   }
 
   /**
@@ -78,8 +79,48 @@ class Config implements ConfigInterface
     return $this->wpService->applyFilters(
       $this->createFilterKey(__FUNCTION__), 
       [
+        //General keys
         'postId',
-        'nonce'
+        'nonce',
+
+        //WordPress native post keys
+        'post_title',
+        'post_content',
+      ]
+    );
+  }
+
+  /**
+   * Get allowed HTML tags for user input.
+   * 
+   * @return array
+   */
+  public function getAllowedHtmlTags(): array
+  {
+    return $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      [
+        'a' => [
+          'href' => true,
+          'title' => true,
+          'target' => true,
+          'rel' => true,
+        ],
+        'br' => [],
+        'em' => [],
+        'strong' => [],
+        'b' => [],
+        'p' => [],
+        'ul' => [],
+        'ol' => [],
+        'li' => [],
+        'h1'  => [],
+        'h2' => [],
+        'h3' => [],
+        'blockquote' => [],
+        'u' => [],
+        's' => [],
+        'strike' => []
       ]
     );
   }

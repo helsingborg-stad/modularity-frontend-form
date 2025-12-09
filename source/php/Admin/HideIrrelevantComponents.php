@@ -2,7 +2,9 @@
 
 namespace ModularityFrontendForm\Admin;
 
+use AcfService\AcfService;
 use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigFactory;
 use WpService\WpService;
 
 /**
@@ -16,6 +18,8 @@ use WpService\WpService;
 class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
 {
     private bool $isEnabled = true;
+
+    private $moduleConfig;
 
     //Define meta boxes and post features that should 
     //never be available for frontend submitted posts
@@ -38,7 +42,11 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
         'title',
     ];
 
-    public function __construct(private ConfigInterface $config, private WpService $wpService)
+    public function __construct(
+        private ConfigInterface $config, 
+        private WpService $wpService, 
+        private ModuleConfigFactory $moduleConfigFactory
+    )
     {
     }
 
@@ -51,6 +59,13 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
         if (!$this->isEnabled()) {
             return;
         }
+
+        //Get module config instance
+        $this->moduleConfig = $this->moduleConfigFactory->create(
+            $this->getFormModuleId(
+                $this->getPostId()
+            ) ?? 0
+        );
 
         // Get current post type
         $currentPostType = $this->getCurrentPostType();
@@ -65,42 +80,15 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
         }, 600);
 
         // Remove post features conditionally
-        foreach (self::POST_FEATURES as $postFeature) {
-
-            if($postFeature === 'editor' && $this->formHasContentFieldSupport()) {
-                continue;
-            }
-
-            if($postFeature === 'title' && $this->formHasTitleFieldSupport()) {
-                continue;
-            }
-
-            $this->wpService->addAction('init', function () use ($currentPostType, $postFeature) {
+        $this->wpService->addAction('init', function () use ($currentPostType, $postFeature) {
+            $dynamicPostFeatures = $this->moduleConfig->getDynamicPostFeatures() ?? [];
+            foreach (self::POST_FEATURES as $postFeature) {
+                if(in_array($postFeature, $dynamicPostFeatures)) {
+                    continue;
+                }
                 $this->wpService->removePostTypeSupport($currentPostType, $postFeature);
-            }, 600);
-        }
-    }
-
-    /**
-     * Checks if the form has content field support.
-     * TODO: Implement dynamic check based on form configuration.
-     * 
-     * @return bool
-     */
-    private function formHasContentFieldSupport(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Checks if the form has title field support.
-     * TODO: Implement dynamic check based on form configuration.
-     * 
-     * @return bool
-     */
-    private function formHasTitleFieldSupport(): bool
-    {
-        return true;
+            }
+        }, 600);
     }
 
     /**
@@ -127,12 +115,26 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
      */
     private function isExternallySubmitted(int $postId) : bool
     {
-        $hasModuleId = $this->wpService->getPostMeta(
+        return $this->getFormModuleId($postId) !== null;
+    }
+    
+    /**
+     * Get the form module ID from post meta data.
+     * 
+     * @param int $postId
+     * @return null|int
+     */
+    private function getFormModuleId(int $postId) : ?int
+    {
+        $moduleId = $this->wpService->getPostMeta(
             $postId,
             $this->config->getMetaDataNamespace('module_id'),
             true
         );
-        return !empty($hasModuleId);
+        if(empty($moduleId)) {
+            return null;
+        }
+        return intval($moduleId);
     }
 
     /**

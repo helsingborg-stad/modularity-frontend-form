@@ -37,17 +37,30 @@ class WpDbHandler implements HandlerInterface {
    */
   public function handle(array $data): ?HandlerResultInterface
   {
+    //Get post title from meta data
+    [
+      'plucked' => [
+        'post_title'    => $postTitle, 
+        'post_content'  => $postContent
+      ], 
+      'fieldMeta' => $data
+    ] = $this->pluckFromMetaData($data, ['post_title', 'post_content']);
+
     if(in_array('post_id', $data) && get_post($data['post_id']) !== null) {
       $this->updatePost(
         $this->moduleConfigInstance->getModuleId(),
         $data,
-        $this->params
+        $this->params,
+        $this->sanitizePostTitle($postTitle),
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
       );
     } else {
       $this->insertPost(
         $this->moduleConfigInstance->getModuleId(),
         $data,
-        $this->params
+        $this->params,
+        $this->sanitizePostTitle($postTitle),
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
       );
     }
     return $this->handlerResult;
@@ -61,12 +74,19 @@ class WpDbHandler implements HandlerInterface {
    *
    * @return WP_Error|int The result of the post insertion
    */
-  private function insertPost(int $moduleID, array|null $fieldMeta, object $params): false|int {
+  private function insertPost(
+    int $moduleID, 
+    array|null $fieldMeta, 
+    object $params, 
+    null|string $postTitle = null, 
+    null|string $postContent = null
+  ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpInsertPost([
-        'post_title'    => $this->moduleConfigInstance->getModuleTitle(),
+        'post_title'    => $postTitle   ?? $this->moduleConfigInstance->getModuleTitle(),
+        'post_content'  => $postContent ?? '',
         'post_type'     => $moduleConfig->saveToPostType,
         'post_status'   => $moduleConfig->saveToPostTypeStatus,
         'post_password' => $this->createPostPassword(),
@@ -87,9 +107,9 @@ class WpDbHandler implements HandlerInterface {
           RestApiResponseStatusEnums::HandlerError->value,
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
           [
-            'post_type' => $moduleConfig->saveToPostType,
+            'post_type'   => $moduleConfig->saveToPostType,
             'post_status' => $moduleConfig->saveToPostTypeStatus,
-            'post_id'   => $result->get_error_data(),
+            'post_id'     => $result->get_error_data(),
           ]
         )
       );
@@ -99,13 +119,20 @@ class WpDbHandler implements HandlerInterface {
     return true;
   }
 
-  private function updatePost(int $moduleID, array|null $fieldMeta, object $params): false|int {
+  private function updatePost(
+    int $moduleID, 
+    array|null $fieldMeta, 
+    object $params, 
+    null|string $postTitle = null, 
+    null|string $postContent = null
+  ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpUpdatePost([
         'ID'           => $fieldMeta['post_id'],
-        'post_title'   => $this->moduleConfigInstance->getModuleTitle(),
+        'post_title'   => $postTitle   ?? $this->moduleConfigInstance->getModuleTitle(),
+        'post_content' => $postContent ?? '',
         'post_status'  => $moduleConfig->saveToPostTypeStatus,
         'meta_input'   => [
           $this->config->getMetaDataNamespace('holding_post_id') => (
@@ -124,9 +151,9 @@ class WpDbHandler implements HandlerInterface {
           RestApiResponseStatusEnums::HandlerError->value,
           $this->wpService->__('Could not update post.', 'modularity-frontend-form'),
           [
-            'post_type' => $moduleConfig->saveToPostType,
+            'post_type'   => $moduleConfig->saveToPostType,
             'post_status' => $moduleConfig->saveToPostTypeStatus,
-            'post_id'   => $result->get_error_data(),
+            'post_id'     => $result->get_error_data(),
           ]
         )
       );
@@ -181,5 +208,60 @@ class WpDbHandler implements HandlerInterface {
       false,
       false
     );
+  }
+
+  /**
+   * Plucks a value from the meta data array
+   *
+   * @param array $fieldMeta The field meta data
+   * @param string $key The key to pluck
+   *
+   * @return array The plucked value and the remaining meta data
+   */
+  /**
+   * Plucks one or more values from the meta data array
+   *
+   * @param array $fieldMeta The field meta data
+   * @param array $keys The keys to pluck
+   *
+   * @return array ['plucked' => array, 'fieldMeta' => array]
+   */
+  private function pluckFromMetaData(array $fieldMeta, array $keys): array
+  {
+    $plucked = [];
+    foreach ($keys as $key) {
+      $plucked[$key] = $fieldMeta[$key] ?? null;
+      unset($fieldMeta[$key]);
+    }
+    return [
+      'plucked' => $plucked,
+      'fieldMeta' => $fieldMeta
+    ];
+  }
+
+  /**
+   * Sanitizes the post title
+   *
+   * @param string|null $postTitle The post title
+   *
+   * @return string The sanitized post title
+   */  private function sanitizePostTitle(?string $postTitle): string
+  {
+    return $this->wpService->sanitizeTextField($postTitle ?? '');
+  }
+
+  /**
+   * Sanitizes the post content
+   *
+   * @param string|null $postContent The post content
+   *
+   * @return string The sanitized post content
+   */
+  private function sanitizePostContent(?string $postContent, null|array $allowedTags = null): string
+  {
+    if($allowedTags === null || empty($allowedTags)) {
+      return $this->wpService->sanitizeTextField($postContent ?? '');
+    }
+    return $this->wpService->wpKses($postContent ?? '', $allowedTags);
   }
 }

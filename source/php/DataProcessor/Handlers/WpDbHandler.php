@@ -262,8 +262,6 @@ class WpDbHandler implements HandlerInterface {
     if($allowedTags === null || empty($allowedTags)) {
       return $this->wpService->sanitizeTextField($postContent ?? '');
     }
-
-    // Use wp_kses to allow only specified tags
     return $this->wpService->wpKses($postContent ?? '', $allowedTags);
   }
 }

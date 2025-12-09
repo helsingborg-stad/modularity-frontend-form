@@ -89,7 +89,7 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
      */
     private function formHasContentFieldSupport(): bool
     {
-        return false;
+        return true;
     }
 
     /**

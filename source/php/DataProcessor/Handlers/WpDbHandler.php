@@ -52,7 +52,7 @@ class WpDbHandler implements HandlerInterface {
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent)
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
       );
     } else {
       $this->insertPost(
@@ -60,7 +60,7 @@ class WpDbHandler implements HandlerInterface {
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent)
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
       );
     }
     return $this->handlerResult;

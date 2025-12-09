@@ -109,10 +109,18 @@ class Config implements ConfigInterface
         'br' => [],
         'em' => [],
         'strong' => [],
+        'b' => [],
         'p' => [],
         'ul' => [],
         'ol' => [],
         'li' => [],
+        'h1'  => [],
+        'h2' => [],
+        'h3' => [],
+        'blockquote' => [],
+        'u' => [],
+        's' => [],
+        'strike' => []
       ]
     );
   }

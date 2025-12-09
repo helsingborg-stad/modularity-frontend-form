@@ -67,28 +67,51 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
             ) ?? 0
         );
 
-        // Get current post type
+        //Get current post type
         $currentPostType = $this->getCurrentPostType();
 
-        // Remove never supported post features
         $this->wpService->addAction('add_meta_boxes', function () use ($currentPostType) {
-            foreach (self::NEVER_SUPPORTED_META_BOXES as $metaBox) {
-                $this->wpService->removeMetaBox($metaBox, $currentPostType, 'normal');
-                $this->wpService->removeMetaBox($metaBox, $currentPostType, 'side');
-                $this->wpService->removeMetaBox($metaBox, $currentPostType, 'advanced');
-            }
+           $this->removeNeverSupportedMetaBoxes($currentPostType);
         }, 600);
+        $this->wpService->addAction('init', function () use ($currentPostType) {
+            $this->dynamicPostFeatures($currentPostType);
+        }, 600);
+    }
 
-        // Remove post features conditionally
-        $this->wpService->addAction('init', function () use ($currentPostType, $postFeature) {
-            $dynamicPostFeatures = $this->moduleConfig->getDynamicPostFeatures() ?? [];
-            foreach (self::POST_FEATURES as $postFeature) {
-                if(in_array($postFeature, $dynamicPostFeatures)) {
-                    continue;
-                }
-                $this->wpService->removePostTypeSupport($currentPostType, $postFeature);
+    /**
+     * Remove post features that are not enabled
+     * for frontend submitted posts.
+     * 
+     * @param string $currentPostType
+     * 
+     * @return void
+     */
+    public function dynamicPostFeatures(string $currentPostType): void
+    {
+        $dynamicPostFeatures = $this->moduleConfig->getDynamicPostFeatures() ?? [];
+        foreach (self::POST_FEATURES as $postFeature) {
+            if(in_array($postFeature, $dynamicPostFeatures)) {
+                continue;
             }
-        }, 600);
+            $this->wpService->removePostTypeSupport($currentPostType, $postFeature);
+        }
+    }
+
+    /**
+     * Remove meta boxes that are never supported
+     * for frontend submitted posts.
+     * 
+     * @param string $currentPostType
+     * 
+     * @return void
+     */
+    public function removeNeverSupportedMetaBoxes(string $currentPostType) : void
+    {
+        foreach (self::NEVER_SUPPORTED_META_BOXES as $metaBox) {
+            $this->wpService->removeMetaBox($metaBox, $currentPostType, 'normal');
+            $this->wpService->removeMetaBox($metaBox, $currentPostType, 'side');
+            $this->wpService->removeMetaBox($metaBox, $currentPostType, 'advanced');
+        }
     }
 
     /**

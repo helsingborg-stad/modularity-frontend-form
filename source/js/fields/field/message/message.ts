@@ -1,3 +1,5 @@
+import MessageValueLoader from './load/messageValueLoader';
+
 class Message implements FieldInterface {
 	constructor(
 		private field: HTMLElement,
@@ -5,6 +7,7 @@ class Message implements FieldInterface {
 		private conditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: FieldValueLoaderInterface = new MessageValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
@@ -35,6 +38,10 @@ class Message implements FieldInterface {
 
 	public isRequired(): boolean {
 		return false;
+	}
+
+	public getValueLoader(): FieldValueLoaderInterface {
+		return this.loader;
 	}
 
 	public getFieldContainer(): HTMLElement {

@@ -1,101 +1,62 @@
-import AsyncNonce from "../asyncNonce/asyncNonce";
-import StatusHandler from "../formStatus/handler";
-import StatusRenderer from "../formStatus/statusRenderer";
-import { SubmitStatus } from "../formStatus/enum";
-import FormMode from "../form/formModeEnum";
-import Form from "../form/form";
-import StatusRendererInterface from "../formStatus/renderInterface";
+import AsyncNonce from '../asyncNonce/asyncNonce';
+import StatusHandler from '../formStatus/handler';
+import { SubmitStatus } from '../formStatus/enum';
+import FormMode from '../form/formModeEnum';
+import Form from '../form/form';
+import StatusRendererInterface from '../formStatus/renderInterface';
 
-type Token32 = string & { __lengthBrand: 32 };
-
-interface FormParams {
-	moduleId: number;
-	postId: number;
-	token: Token32;
-}
-
-class FormPopulator implements FormActionInterface {
-	private formParams: FormParams | null = null;
-
+class FormDataFetcher implements FormActionInterface {
+	private formDataListeners: Array<(data: FetchedFormData) => void> = [];
 	constructor(
 		private form: Form,
+		private formParams: FormParams,
 		private modularityFrontendFormData: ModularityFrontendFormData,
 		private modularityFrontendFormLang: ModularityFrontendFormLang,
 		private asyncNonce: AsyncNonce,
 		private statusHandler: StatusHandler,
 		private statusRenderer: StatusRendererInterface,
-	) {
-		this.formParams = this.extractParamsFromUrl();
-	}
+	) {}
 
 	public retry(): void {
 		this.statusRenderer.reset();
-		this.initialize();
+		this.tryFetchFormData();
 	}
 
 	public return(): void {
 		this.statusRenderer.reset();
 	}
 
-	/**
-	 * Extracts the form parameters from the URL.
-	 * @returns An object containing the module ID, post ID, and token, or null if not found.
-	 */
-	private extractParamsFromUrl(): FormParams | null {
-		const params = new URLSearchParams(window.location.search);
-		const postIdRaw = params.get("postId");
-		const tokenRaw = params.get("token");
-		const postId = Number(postIdRaw);
-		const moduleId = Number(
-			this.form.formElement.getAttribute("data-js-frontend-form-id") || "",
-		);
-
-		if (!isNaN(postId) && tokenRaw && tokenRaw.length === 32) {
-			return {
-				moduleId: moduleId as number,
-				postId: postId as number,
-				token: tokenRaw as Token32,
-			};
-		}
-		return null;
+	public subscribeToFetchedFormData(callback: (data: FetchedFormData) => void): void {
+		this.formDataListeners.push(callback);
 	}
 
 	/**
 	 * Initializes the form populator by fetching and populating the form data.
 	 */
-	public async initialize(): Promise<void> {
-		// Render the submit status when changed
+	public async tryFetchFormData(): Promise<void> {
+		// Set the initial status to working
+		this.statusHandler.setStatus(SubmitStatus.Loading, 'Loading form data...', 'file_open', 0, 1000);
 
-		if (this.formParams) {
-			// Set the initial status to working
+		const formData = await this.get(this.formParams.postId, this.formParams.token);
+		if (formData) {
+			this.form.mode = FormMode.Update; // Set the form mode to update
+
+			//Show success message
 			this.statusHandler.setStatus(
-				SubmitStatus.Loading,
-				"Loading form data...",
-				"file_open",
-				0,
-				1000,
+				SubmitStatus.Success,
+				this.modularityFrontendFormLang?.loadingSuccessful ?? 'Form loaded successfully!',
+				'celebration',
+				100,
+				2000,
+				false,
+				false,
+				true,
 			);
 
-			const formData = await this.get(
-				this.formParams.postId,
-				this.formParams.token,
-			);
-			if (formData) {
-				this.form.mode = FormMode.Update; // Set the form mode to update
-				this.populateForm(formData);
-
-				//Show success message
-				this.statusHandler.setStatus(
-					SubmitStatus.Success,
-					this.modularityFrontendFormLang?.loadingSuccessful ?? "Form loaded successfully!",
-					"celebration",
-					100,
-					2000,
-					false,
-					false,
-					true
-				);
-			}
+			// this.populateForm(formData);
+			this.formDataListeners.forEach((listener) => {
+				listener(formData);
+			});
 		}
 	}
 
@@ -105,36 +66,24 @@ class FormPopulator implements FormActionInterface {
 	 * @param token The security validation key.
 	 * @returns The form data as a string or null if not found.
 	 */
-	public async get(postId: number, token: Token32): Promise<string | null> {
+	public async get(postId: number, token: Token32): Promise<FetchedFormData | null> {
 		let url = this.modularityFrontendFormData?.apiRoutes?.getForm;
 
 		if (!url) {
-			this.statusHandler.setStatus(
-				SubmitStatus.Loading,
-				"Could not find url.",
-				"file_open",
-				100,
-				2000,
-				this,
-				this,
-			);
+			this.statusHandler.setStatus(SubmitStatus.Loading, 'Could not find url.', 'file_open', 100, 2000, this, this);
 			return null;
 		}
 
-		const nonce = await this.asyncNonce.get(
-			this.statusHandler,
-			this.form.formId,
-		);
+		const nonce = await this.asyncNonce.get(this.statusHandler, this.form.formId);
 
 		url = (() => {
 			const { form } = this;
 			const urlBuilder = new URL(url);
 			const params = new URLSearchParams({
-				"post-id": postId.toString(),
+				'post-id': postId.toString(),
 				token: token,
-				"module-id":
-					form.formElement?.getAttribute("data-js-frontend-form-id") || "",
-				nonce: nonce?.toString() || "",
+				'module-id': form.formElement?.getAttribute('data-js-frontend-form-id') || '',
+				nonce: nonce?.toString() || '',
 			});
 
 			urlBuilder.search = params.toString();
@@ -149,10 +98,8 @@ class FormPopulator implements FormActionInterface {
 			if (!response.ok) {
 				this.statusHandler.setStatus(
 					SubmitStatus.Error,
-					json.message ??
-						this.modularityFrontendFormLang?.communicationError ??
-						"Communication error.",
-					"vpn_key_alert",
+					json.message ?? this.modularityFrontendFormLang?.communicationError ?? 'Communication error.',
+					'vpn_key_alert',
 					0,
 					10000,
 					this,
@@ -161,21 +108,14 @@ class FormPopulator implements FormActionInterface {
 				return null;
 			}
 
-			this.statusHandler.setStatus(
-				SubmitStatus.Loading,
-				"Loading form data...",
-				"file_open",
-				100,
-				500,
-			);
+			this.statusHandler.setStatus(SubmitStatus.Loading, 'Loading form data...', 'file_open', 100, 500);
 
 			return json?.data ?? null;
 		} catch (error: any) {
 			this.statusHandler.setStatus(
 				SubmitStatus.Error,
-				this.modularityFrontendFormLang?.communicationError ??
-					"Communication error.",
-				"link_off",
+				this.modularityFrontendFormLang?.communicationError ?? 'Communication error.',
+				'link_off',
 				0,
 				10000,
 				this,
@@ -194,7 +134,7 @@ class FormPopulator implements FormActionInterface {
 			return false;
 		}
 		for (const fieldName in formData) {
-			this.populateField(fieldName, formData[fieldName] ?? "");
+			this.populateField(fieldName, formData[fieldName] ?? '');
 		}
 		return true;
 	}
@@ -218,10 +158,10 @@ class FormPopulator implements FormActionInterface {
 		}
 
 		switch (true) {
-			case field instanceof HTMLInputElement && field.type === "checkbox":
+			case field instanceof HTMLInputElement && field.type === 'checkbox':
 				this.populateCheckbox(field, value);
 				break;
-			case field instanceof HTMLInputElement && field.type === "radio":
+			case field instanceof HTMLInputElement && field.type === 'radio':
 				this.populateRadio(fieldName, value);
 				break;
 			case field instanceof HTMLInputElement:
@@ -261,9 +201,7 @@ class FormPopulator implements FormActionInterface {
 	 */
 	private populateRadio(fieldName: string, value: any): void {
 		const selector = `[name="mod-frontend-form[${fieldName}]"][value="${value}"]`;
-		const radio = this.form.formElement.querySelector(
-			selector,
-		) as HTMLInputElement | null;
+		const radio = this.form.formElement.querySelector(selector) as HTMLInputElement | null;
 
 		if (radio) {
 			radio.checked = true;
@@ -289,4 +227,4 @@ class FormPopulator implements FormActionInterface {
 	}
 }
 
-export default FormPopulator;
+export default FormDataFetcher;

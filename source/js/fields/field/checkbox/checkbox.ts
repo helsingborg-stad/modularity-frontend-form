@@ -7,13 +7,15 @@ class Checkbox implements CheckboxInterface {
 		private conditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: CheckboxValueLoaderInterface = new CheckboxValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
-		this.required = this.getFieldContainer().hasAttribute("data-js-required");
+		this.required = this.getFieldContainer().hasAttribute('data-js-required');
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.conditionValidator.init(this);
 		this.validator.init(this);
+		this.loader.init(this);
 		this.listenForChanges();
 	}
 
@@ -45,10 +47,12 @@ class Checkbox implements CheckboxInterface {
 		return this.getSelectedChoices().length > 0;
 	}
 
+	public getValueLoader(): CheckboxValueLoaderInterface {
+		return this.loader;
+	}
+
 	public getSelectedChoices(): string[] {
-		return [...this.getChoices()]
-			.filter((choice) => choice.checked)
-			.map((choice) => choice.value);
+		return [...this.getChoices()].filter((choice) => choice.checked).map((choice) => choice.value);
 	}
 
 	public getFieldContainer(): HTMLElement {
@@ -57,7 +61,7 @@ class Checkbox implements CheckboxInterface {
 
 	private listenForChanges(): void {
 		this.choices.forEach((choice) => {
-			choice.addEventListener("change", () => {
+			choice.addEventListener('change', () => {
 				this.conditionsHandler.checkConditions();
 				this.validator.validate();
 			});

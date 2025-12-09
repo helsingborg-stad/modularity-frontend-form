@@ -1,3 +1,5 @@
+import SelectValueLoader from './load/selectValueLoader';
+
 class Select implements SelectInterface {
 	private required: boolean = false;
 	constructor(
@@ -8,6 +10,7 @@ class Select implements SelectInterface {
 		private conditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: SelectValueLoaderInterface = new SelectValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
@@ -15,6 +18,7 @@ class Select implements SelectInterface {
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.conditionValidator.init(this);
 		this.validator.init(this);
+		this.loader.init(this);
 		this.listenForChanges();
 	}
 
@@ -55,18 +59,20 @@ class Select implements SelectInterface {
 	}
 
 	public getSelectedOptions(): string[] {
-		return [...this.getOptions()]
-			.filter((option) => option.selected)
-			.map((option) => option.value);
+		return [...this.getOptions()].filter((option) => option.selected).map((option) => option.value);
+	}
+
+	public getValueLoader(): SelectValueLoaderInterface {
+		return this.loader;
 	}
 
 	public listenForChanges(): void {
-		this.getField().addEventListener("change", () => {
+		this.getField().addEventListener('change', () => {
 			this.getValidator().validate();
 			this.conditionsHandler.checkConditions();
 		});
 
-		this.getField().addEventListener("blur", () => {
+		this.getField().addEventListener('blur', () => {
 			this.getValidator().validate();
 		});
 	}

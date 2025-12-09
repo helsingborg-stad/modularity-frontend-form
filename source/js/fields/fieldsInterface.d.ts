@@ -11,6 +11,7 @@ interface FieldInterface {
 	getConditionValidator(): ConditionValidatorInterface;
 	getValidator(): FieldValidatorInterface;
 	isRequired(): boolean;
+	getValueLoader(): FieldValueLoaderInterface;
 	hasValue(): boolean;
 }
 
@@ -68,6 +69,42 @@ interface StepValidatorInterface {
 	validateStep(stepId: string): boolean;
 }
 
+interface BasicValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: BasicInterface): void;
+}
+
+interface CheckboxValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: CheckboxInterface): void;
+}
+
+interface RadioValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: RadioInterface): void;
+}
+
+interface GoogleMapValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: GoogleMapInterface): void;
+}
+
+interface RepeaterValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: RepeaterInterface): void;
+}
+
+interface SelectValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: SelectInterface): void;
+}
+
+interface TextAreaValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: TextAreaInterface): void;
+}
+
+interface WysiwygValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: WysiwygInterface): void;
+}
+
+interface FieldValueLoaderInterface {
+	load(value: any): void;
+}
+
 interface FieldValidatorInterface {
 	init(field: FieldInterface): void;
 	validate(): boolean;
@@ -87,10 +124,7 @@ interface ValidationControlInterface {
 }
 
 interface ConditionsHandlerInterface {
-	init(
-		parent: FieldInterface,
-		conditionsBuilder: ConditionBuilderInterface,
-	): void;
+	init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void;
 	getConditions(): ConditionInterface[];
 	getIsDisabled(): boolean;
 	validate(): void;

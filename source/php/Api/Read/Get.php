@@ -80,6 +80,8 @@ class Get extends RestApiEndpoint
         $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
         //Add post title
+        //TODO: Control that the post_title option is activated in the module
+        //TODO: Prepend post_content if option is selected in the module
         $fieldData       = $this->prependPostTitleToFieldData($fieldData, $params->postId);
 
         if ($fieldData !== false) {

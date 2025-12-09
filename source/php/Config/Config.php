@@ -79,8 +79,13 @@ class Config implements ConfigInterface
     return $this->wpService->applyFilters(
       $this->createFilterKey(__FUNCTION__), 
       [
+        //General keys
         'postId',
-        'nonce'
+        'nonce',
+
+        //WordPress native post keys
+        'post_title',
+        'post_content',
       ]
     );
   }

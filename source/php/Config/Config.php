@@ -101,10 +101,10 @@ class Config implements ConfigInterface
       $this->createFilterKey(__FUNCTION__), 
       [
         'a' => [
-          'href' => [],
-          'title' => [],
-          'target' => [],
-          'rel' => [],
+          'href' => true,
+          'title' => true,
+          'target' => true,
+          'rel' => true,
         ],
         'br' => [],
         'em' => [],

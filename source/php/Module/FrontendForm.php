@@ -96,7 +96,7 @@ class FrontendForm extends \Modularity\Module
             if ($this->wpService->getCurrentScreen()?->id === 'acf-field-group') {
                 return $field;
             }
-            $field['choices'] = $this->groupHelper?->getFlatGroups();
+            $field['choices'] = $this->groupHelper->getFlatGroups();
             return $field;
         });
 
@@ -402,7 +402,7 @@ class FrontendForm extends \Modularity\Module
             $this->getScriptHandle('admin'),
             'modularityFrontendFormAdminData',
             [
-                'modularityFrontendFormAcfGroups'          => $this->groupHelper?->getGroups() ?? [],
+                'modularityFrontendFormAcfGroups'          => $this->groupHelper->getGroups() ?? [],
                 'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
             ]
         );

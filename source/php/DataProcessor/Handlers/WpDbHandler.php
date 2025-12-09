@@ -78,14 +78,14 @@ class WpDbHandler implements HandlerInterface {
     int $moduleID, 
     array|null $fieldMeta, 
     object $params, 
-    string $postTitle = null, 
-    string $postContent = null
+    null|string $postTitle = null, 
+    null|string $postContent = null
   ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpInsertPost([
-        'post_title'    => $postTitle ?? $this->moduleConfigInstance->getModuleTitle(),
+        'post_title'    => $postTitle   ?? $this->moduleConfigInstance->getModuleTitle(),
         'post_content'  => $postContent ?? '',
         'post_type'     => $moduleConfig->saveToPostType,
         'post_status'   => $moduleConfig->saveToPostTypeStatus,
@@ -107,9 +107,9 @@ class WpDbHandler implements HandlerInterface {
           RestApiResponseStatusEnums::HandlerError->value,
           $this->wpService->__('Could not insert post.', 'modularity-frontend-form'),
           [
-            'post_type' => $moduleConfig->saveToPostType,
+            'post_type'   => $moduleConfig->saveToPostType,
             'post_status' => $moduleConfig->saveToPostTypeStatus,
-            'post_id'   => $result->get_error_data(),
+            'post_id'     => $result->get_error_data(),
           ]
         )
       );
@@ -123,15 +123,15 @@ class WpDbHandler implements HandlerInterface {
     int $moduleID, 
     array|null $fieldMeta, 
     object $params, 
-    string $postTitle = null, 
-    string $postContent = null
+    null|string $postTitle = null, 
+    null|string $postContent = null
   ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpUpdatePost([
         'ID'           => $fieldMeta['post_id'],
-        'post_title'   => $postTitle ?? $this->moduleConfigInstance->getModuleTitle(),
+        'post_title'   => $postTitle   ?? $this->moduleConfigInstance->getModuleTitle(),
         'post_content' => $postContent ?? '',
         'post_status'  => $moduleConfig->saveToPostTypeStatus,
         'meta_input'   => [
@@ -151,9 +151,9 @@ class WpDbHandler implements HandlerInterface {
           RestApiResponseStatusEnums::HandlerError->value,
           $this->wpService->__('Could not update post.', 'modularity-frontend-form'),
           [
-            'post_type' => $moduleConfig->saveToPostType,
+            'post_type'   => $moduleConfig->saveToPostType,
             'post_status' => $moduleConfig->saveToPostTypeStatus,
-            'post_id'   => $result->get_error_data(),
+            'post_id'     => $result->get_error_data(),
           ]
         )
       );
@@ -257,8 +257,13 @@ class WpDbHandler implements HandlerInterface {
    *
    * @return string The sanitized post content
    */
-  private function sanitizePostContent(?string $postContent): string
+  private function sanitizePostContent(?string $postContent, null|array $allowedTags = null): string
   {
-    return $this->wpService->sanitizeTextField($postContent ?? '');
+    if($allowedTags === null || empty($allowedTags)) {
+      return $this->wpService->sanitizeTextField($postContent ?? '');
+    }
+
+    // Use wp_kses to allow only specified tags
+    return $this->wpService->wpKses($postContent ?? '', $allowedTags);
   }
 }

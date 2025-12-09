@@ -31,7 +31,7 @@ class RepeaterFieldMapper implements FieldMapperInterface
             $subfield['conditional_logic'] =  $this->rewriteConditionalLogic($subfield['conditional_logic']) ?? null;
             $subfield['wrapper']['id']  = $subfield['key'] . '_' . $index;
 
-            $mappedSubfield = (new Mapper($this->wpService, $this->lang))->map($subfield);
+            $mappedSubfield = (new Mapper($this->wpService, $this->lang, $this->config))->map($subfield);
 
             if(!is_null($mappedSubfield)) {
                 $subfields[] = $mappedSubfield;

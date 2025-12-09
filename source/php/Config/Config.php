@@ -48,12 +48,13 @@ class Config implements ConfigInterface
    * 
    * @return string
    */
-  public function getFieldNamespace(): string
+  public function getFieldNamespace(null|string $fieldName = null): string
   {
-    return $this->wpService->applyFilters(
+    $namespace = $this->wpService->applyFilters(
       $this->createFilterKey(__FUNCTION__), 
       'mod-frontend-form'
     );
+    return $fieldName ? "{$namespace}[{$fieldName}]" : $namespace;
   }
 
   /**

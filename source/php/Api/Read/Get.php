@@ -68,6 +68,8 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
+        $this->addAcfTaxonomyFieldFilter();
+
         $params = (new RestApiParams(
             $this->wpService, 
             $this->config, 
@@ -98,6 +100,17 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    /**
+     * Adds a filter to ACF taxonomy fields to always return IDs
+     */
+    private function addAcfTaxonomyFieldFilter(): void
+    {
+        $this->wpService->addFilter('acf/load_field/type=taxonomy', function ($field) {
+            $field['return_format'] = 'id';
+            return $field;
+        });
     }
 
     /**

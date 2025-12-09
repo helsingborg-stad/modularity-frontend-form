@@ -91,6 +91,33 @@ class Config implements ConfigInterface
   }
 
   /**
+   * Get allowed HTML tags for user input.
+   * 
+   * @return array
+   */
+  public function getAllowedHtmlTags(): array
+  {
+    return $this->wpService->applyFilters(
+      $this->createFilterKey(__FUNCTION__), 
+      [
+        'a' => [
+          'href' => [],
+          'title' => [],
+          'target' => [],
+          'rel' => [],
+        ],
+        'br' => [],
+        'em' => [],
+        'strong' => [],
+        'p' => [],
+        'ul' => [],
+        'ol' => [],
+        'li' => [],
+      ]
+    );
+  }
+
+  /**
    * Get the filter prefix.
    * 
    * @return string

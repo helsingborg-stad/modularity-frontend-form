@@ -12,7 +12,6 @@ class RadioValueLoader implements RadioValueLoaderInterface {
 		}
 
 		const choices = this.parent.getChoices();
-		const defaultSelected = this.parent.getSelectedChoice();
 
 		choices.forEach((choice) => {
 			if (choice.value === sanitizedValue) {

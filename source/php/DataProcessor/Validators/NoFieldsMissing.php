@@ -39,16 +39,16 @@ class NoFieldsMissing implements ValidatorInterface
      */
     public function validate($data): ?ValidationResultInterface
     {
-
       $requiredFieldsInRequest = $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields('key');
 
       foreach($requiredFieldsInRequest as $fieldKey ) {
-        if(!array_key_exists($fieldKey, $data)) {
+        if (!$this->array_key_exists_recursive($fieldKey, $data)) {
           $this->validationResult->setError(
             new WP_Error(
               RestApiResponseStatusEnums::ValidationError->value, 
               $this->wpService->__(
                 'Form is missing required fields',
+                'modularity-frontend-form'
               ), 
               [
                 'fields' => [
@@ -62,4 +62,26 @@ class NoFieldsMissing implements ValidatorInterface
       return $this->validationResult;
     }
 
+    /**
+     * Recursively checks if a key exists in a multi-dimensional array
+     *
+     * @param string $key The key to search for
+     * @param array $array The array to search in
+     *
+     * @return bool True if the key exists, false otherwise
+     */
+    private function array_key_exists_recursive($key, $array): bool
+    {
+      foreach ($array as $k => $value) {
+        if ($k === $key) {
+          return true;
+        }
+        if (is_array($value)) {
+          if ($this->array_key_exists_recursive($key, $value)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
 }

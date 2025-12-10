@@ -5,7 +5,8 @@ class FieldsPopulator {
 		private form: Form,
 		private fieldsObject: FieldsObject,
 	) {}
-	tryPopulateFields(data: FetchedFormData): void {
+
+	public tryPopulateFields(data: FetchedFormData): void {
 		for (const fieldName in data) {
 			if (this.fieldsObject.hasOwnProperty(fieldName)) {
 				this.fieldsObject[fieldName].getValueLoader().load(data[fieldName]);

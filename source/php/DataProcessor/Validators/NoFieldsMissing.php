@@ -39,7 +39,9 @@ class NoFieldsMissing implements ValidatorInterface
      */
     public function validate($data): ?ValidationResultInterface
     {
-      $requiredFieldsInRequest = $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields('key');
+      $requiredFieldsInRequest = $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields(
+        'key', false
+      );
 
       foreach($requiredFieldsInRequest as $fieldKey ) {
         if (!$this->array_key_exists_recursive($fieldKey, $data)) {

@@ -160,7 +160,7 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getFieldKeysRegisteredAsFormFields(string $property = 'key'): ?array
+  public function getFieldKeysRegisteredAsFormFields(string $property = 'key', bool $includeConditionalFields = true): ?array
   {
     $steps = $this->acfService->getField('formSteps', $this->getModuleId());
     if ($steps === null) {
@@ -177,6 +177,12 @@ class ModuleConfig implements ModuleConfigInterface
             $fields = [];
           }
           $fields = array_merge($fields, acf_get_fields($group));
+        }
+
+        if (!$includeConditionalFields) {
+            $fields = array_filter($fields, function ($field) {
+                return empty($field['conditional_logic']) || $field['conditional_logic'] === 0;
+            });
         }
 
         if (!is_array($fields)) {

@@ -10,7 +10,6 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
 use ModularityFrontendForm\Api\RestApiParams;
 use ModularityFrontendForm\Api\RestApiParamEnums;
-use WP;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
@@ -19,10 +18,8 @@ use WP_REST_Server;
 use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
-use function AcfService\Implementations\get_fields;
+use ModularityFrontendForm\Api\Read\GetReturnTypeEnum;
 
 class Get extends RestApiEndpoint
 {

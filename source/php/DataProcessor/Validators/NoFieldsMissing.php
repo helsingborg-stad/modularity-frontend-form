@@ -40,38 +40,26 @@ class NoFieldsMissing implements ValidatorInterface
     public function validate($data): ?ValidationResultInterface
     {
 
-      $x = $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields();
+      $requiredFieldsInRequest = $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields('key');
 
-      //var_dump($x);
-      //die;
-
-/*
-      foreach ($data as $key => $value) {
-
-          // Check if the field key is in the bypass list
-          if(in_array($key, $this->bypassValidationForKeys)) {
-            continue;
-          }
-
-          if(acf_get_field($key) === false) { //TODO: Add to acf service
-            $this->validationResult->setError(
-              new WP_Error(
-                RestApiResponseStatusEnums::ValidationError->value, 
-                $this->wpService->__(
-                  'Form contains fields that do not exist',
-                ), 
-                [
-                  'fields' => [
-                    'key' => $key
-                  ],
-                ]
-              )
-            );
-          }
+      foreach($requiredFieldsInRequest as $fieldKey ) {
+        if(!array_key_exists($fieldKey, $data)) {
+          $this->validationResult->setError(
+            new WP_Error(
+              RestApiResponseStatusEnums::ValidationError->value, 
+              $this->wpService->__(
+                'Form is missing required fields',
+              ), 
+              [
+                'fields' => [
+                  'key' => $fieldKey
+                ],
+              ]
+            )
+          );
         }
-          */
-        
-        return $this->validationResult;
+      }
+      return $this->validationResult;
     }
 
 }

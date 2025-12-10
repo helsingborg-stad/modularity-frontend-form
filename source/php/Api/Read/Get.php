@@ -10,7 +10,6 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
 use ModularityFrontendForm\Api\RestApiParams;
 use ModularityFrontendForm\Api\RestApiParamEnums;
-use WP;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
@@ -19,10 +18,8 @@ use WP_REST_Server;
 use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
-use function AcfService\Implementations\get_fields;
+use ModularityFrontendForm\Api\Read\GetReturnTypeEnum;
 
 class Get extends RestApiEndpoint
 {
@@ -68,7 +65,7 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        $this->addAcfTaxonomyFieldFilter();
+        $this->filterReturnTypeSetting();
 
         $params = (new RestApiParams(
             $this->wpService, 
@@ -107,10 +104,16 @@ class Get extends RestApiEndpoint
     /**
      * Adds a filter to ACF taxonomy fields to always return IDs
      */
-    private function addAcfTaxonomyFieldFilter(): void
+    private function filterReturnTypeSetting(): void
     {
-        $this->wpService->addFilter('acf/load_field/type=taxonomy', function ($field) {
-            $field['return_format'] = 'id';
+        $this->wpService->addFilter('acf/load_field', function ($field) {
+            switch ($field['type']) {
+                case 'taxonomy':
+                    $field['return_format'] = GetReturnTypeEnum::ID->value;
+                    break;
+                default:
+                    return $field;
+            }
             return $field;
         });
     }

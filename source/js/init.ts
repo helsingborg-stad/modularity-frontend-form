@@ -9,7 +9,6 @@ import StatusHandler from './formStatus/handler';
 import FieldsInitiator from './fields/fieldsInitiator';
 import Notice from './fields/notice/notice';
 import ValidateForm from './validation/validateForm';
-import FormPopulator from './formPopulator/formDataFetcher';
 import Form from './form/form';
 import FormMode from './form/formModeEnum';
 import StepsFactory from './steps/stepsFactory';

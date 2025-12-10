@@ -10,6 +10,7 @@ use ModularityFrontendForm\DataProcessor\Validators\FieldsExistsOnPostType;
 use ModularityFrontendForm\DataProcessor\Validators\FieldValidationWithAcf;
 use ModularityFrontendForm\DataProcessor\Validators\NonceValidator;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
+use ModularityFrontendForm\DataProcessor\Validators\NoFieldsMissing;
 class ValidatorFactory {
 
   use GetModuleConfigInstanceTrait;
@@ -72,6 +73,7 @@ class ValidatorFactory {
       $config = $this->getModuleConfigInstance($moduleId);
 
       //Feature toggles
+      $useNoFieldMissing          = true;
       $useFieldValidationWithAcf  = true;
 
       //Check if the module is configured to use the WPDB handler
@@ -87,6 +89,7 @@ class ValidatorFactory {
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
 
       return array_filter([
+          $useNoFieldMissing          ? new NoFieldsMissing(...$args) : null,
           $useFieldsExistsOnPostType  ? new FieldsExistsOnPostType(...$args) : null,
           $useFieldsExists            ? new FieldsExists(...$args) : null,
           $useFieldValidationWithAcf  ? new FieldValidationWithAcf(...$args) : null,

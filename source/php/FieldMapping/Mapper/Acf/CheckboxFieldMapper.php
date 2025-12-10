@@ -24,7 +24,7 @@ class CheckboxFieldMapper implements FieldMapperInterface
             $mapped['choices'][$key] = [
                 'type'     => $mapped['type'],
                 'label'    => $value,
-                'name'     => $this->field['key'],
+                'name'     => $this->config->getFieldNamespace($this->field['key']).'[]',
                 'value'    => $key,
                 'checked'  => in_array($key, $this->field['default_value'] ?? [], true),
             ];

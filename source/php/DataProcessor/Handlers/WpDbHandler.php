@@ -46,6 +46,7 @@ class WpDbHandler implements HandlerInterface {
       'fieldMeta' => $data
     ] = $this->pluckFromMetaData($data, ['post_title', 'post_content']);
 
+    // TODO: use wpService
     if(in_array('post_id', $data) && get_post($data['post_id']) !== null) {
       $this->updatePost(
         $this->moduleConfigInstance->getModuleId(),

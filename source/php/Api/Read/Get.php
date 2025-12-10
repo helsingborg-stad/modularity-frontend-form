@@ -10,7 +10,6 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
 use ModularityFrontendForm\Api\RestApiParams;
 use ModularityFrontendForm\Api\RestApiParamEnums;
-use WP;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
@@ -19,10 +18,8 @@ use WP_REST_Server;
 use WpService\WpService;
 
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
-use function AcfService\Implementations\get_fields;
+use ModularityFrontendForm\Api\Read\GetReturnTypeEnum;
 
 class Get extends RestApiEndpoint
 {
@@ -68,6 +65,8 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
+        $this->filterReturnTypeSetting();
+
         $params = (new RestApiParams(
             $this->wpService, 
             $this->config, 
@@ -80,6 +79,8 @@ class Get extends RestApiEndpoint
         $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
         //Add post title
+        //TODO: Control that the post_title option is activated in the module
+        //TODO: Prepend post_content if option is selected in the module
         $fieldData       = $this->prependPostTitleToFieldData($fieldData, $params->postId);
 
         if ($fieldData !== false) {
@@ -98,6 +99,23 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    /**
+     * Adds a filter to ACF taxonomy fields to always return IDs
+     */
+    private function filterReturnTypeSetting(): void
+    {
+        $this->wpService->addFilter('acf/load_field', function ($field) {
+            switch ($field['type']) {
+                case 'taxonomy':
+                    $field['return_format'] = GetReturnTypeEnum::ID->value;
+                    break;
+                default:
+                    return $field;
+            }
+            return $field;
+        });
     }
 
     /**

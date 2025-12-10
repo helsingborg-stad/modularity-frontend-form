@@ -5,7 +5,34 @@ class RadioValueLoader implements RadioValueLoaderInterface {
 	}
 
 	public load(value: any): void {
-		// TODO: Implement loading logic for radio values
+		const sanitizedValue = this.extractValue(value);
+
+		if (sanitizedValue === null) {
+			return;
+		}
+
+		const choices = this.parent.getChoices();
+		const defaultSelected = this.parent.getSelectedChoice();
+
+		choices.forEach((choice) => {
+			if (choice.value === sanitizedValue) {
+				choice.checked = true;
+			} else {
+				choice.checked = false;
+			}
+		});
+	}
+
+	private extractValue(value: any): string | null {
+		if (value === null || value === undefined) {
+			return null;
+		}
+
+		if (typeof value === 'boolean') {
+			return String(+value);
+		}
+
+		return String(value);
 	}
 }
 

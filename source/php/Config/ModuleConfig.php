@@ -181,7 +181,9 @@ class ModuleConfig implements ModuleConfigInterface
 
         if (!$includeConditionalFields) {
             $fields = array_filter($fields, function ($field) {
-                return empty($field['conditional_logic']) || $field['conditional_logic'] === 0;
+                $hasConditionalLogic   = (empty($field['conditional_logic']) || $field['conditional_logic'] === 0) ? false : true;
+                $isNotRequiredRepeater = (!$field['required'] && $field['type'] !== 'repeater');
+                return $hasConditionalLogic && $isNotRequiredRepeater;
             });
         }
 

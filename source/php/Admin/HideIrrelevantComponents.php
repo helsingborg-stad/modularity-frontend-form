@@ -24,16 +24,7 @@ class HideIrrelevantComponents implements \Municipio\HooksRegistrar\Hookable
     //Define meta boxes and post features that should 
     //never be available for frontend submitted posts
     private const NEVER_SUPPORTED_META_BOXES = [
-        'pageparentdiv',
-        'customer-feedback-summary-meta',
-        'slugdiv',
-        'tsf-inpost-box',
-        'acf-group_636e424039120', // Screen reader language
-        'acf-group_56c33cf1470dc', // Display settings
-        'acf-group_56d83cff12bb3', // Navigation settings
-        'acf-group_646c5d26e3359', // Google translate settings
-        'acf-group_6784bb5c51d70', // Post Icon settings
-        'acf-group_64227d79a7f57', // Quicklinks settings
+        'slugdiv'
     ];
 
     //Define post features that may be conditionally removed

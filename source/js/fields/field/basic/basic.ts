@@ -1,5 +1,7 @@
 // TODO: This should probably be renamed to input.ts since it is used for all input types
 
+import BasicValueLoader from './load/basicValueLoader';
+
 class Basic implements BasicInterface {
 	private required: boolean = false;
 	private hasBeenFilled: boolean = false;
@@ -10,14 +12,15 @@ class Basic implements BasicInterface {
 		private conditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: BasicValueLoaderInterface = new BasicValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
-		this.required = this.getField().hasAttribute("required");
+		this.required = this.getField().hasAttribute('required');
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.conditionValidator.init(this);
 		this.validator.init(this);
-
+		this.loader.init(this);
 		this.listenForChanges();
 	}
 
@@ -53,14 +56,18 @@ class Basic implements BasicInterface {
 		return this.input;
 	}
 
+	public getValueLoader(): FieldValueLoaderInterface {
+		return this.loader;
+	}
+
 	private listenForChanges(): void {
-		this.getField().addEventListener("input", () => {
+		this.getField().addEventListener('input', () => {
 			this.getConditionsHandler().checkConditions();
 
 			this.hasBeenFilled && this.getValidator().validate();
 		});
 
-		this.getField().addEventListener("blur", () => {
+		this.getField().addEventListener('blur', () => {
 			this.hasBeenFilled = true;
 			this.getValidator().validate();
 		});

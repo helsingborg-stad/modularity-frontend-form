@@ -1,3 +1,5 @@
+import RepeaterValueLoader from './load/repeaterValueLoader';
+
 class Repeater implements RepeaterInterface {
 	private required: boolean = false;
 	private minRows: number = 0;
@@ -10,18 +12,18 @@ class Repeater implements RepeaterInterface {
 		private conditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: RepeaterValueLoaderInterface = new RepeaterValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
-		this.required = this.field.hasAttribute("data-js-required");
-		this.minRows = parseInt(this.field.getAttribute("data-js-min-rows") ?? "0");
-		this.maxRows = parseInt(
-			this.field.getAttribute("data-js-max-rows") ?? "100",
-		);
+		this.required = this.field.hasAttribute('data-js-required');
+		this.minRows = parseInt(this.field.getAttribute('data-js-min-rows') ?? '0');
+		this.maxRows = parseInt(this.field.getAttribute('data-js-max-rows') ?? '100');
 		this.repeaterUI.init(this, conditionBuilder);
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.conditionValidator.init(this);
 		this.validator.init(this);
+		this.loader.init(this);
 		this.listenForChanges();
 	}
 
@@ -63,6 +65,10 @@ class Repeater implements RepeaterInterface {
 
 	public getFieldContainer(): HTMLElement {
 		return this.field;
+	}
+
+	public getValueLoader(): RepeaterValueLoaderInterface {
+		return this.loader;
 	}
 
 	private listenForChanges(): void {

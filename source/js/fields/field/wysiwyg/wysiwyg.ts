@@ -1,3 +1,5 @@
+import WysiwygValueLoader from './load/wysiwygValueLoader';
+
 class Wysiwyg implements WysiwygInterface {
 	private required: boolean = false;
 
@@ -9,13 +11,15 @@ class Wysiwyg implements WysiwygInterface {
 		private conditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: WysiwygValueLoaderInterface = new WysiwygValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
-		this.required = this.getFieldContainer().hasAttribute("data-js-required");
+		this.required = this.getFieldContainer().hasAttribute('data-js-required');
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.conditionValidator.init(this);
 		this.validator.init(this);
+		this.loader.init(this);
 		this.addChangeListener();
 	}
 
@@ -53,6 +57,10 @@ class Wysiwyg implements WysiwygInterface {
 
 	public getHiddenField(): HTMLInputElement {
 		return this.hiddenField;
+	}
+
+	public getValueLoader(): WysiwygValueLoaderInterface {
+		return this.loader;
 	}
 
 	private addChangeListener(): void {

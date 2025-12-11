@@ -1,3 +1,5 @@
+import RadioValueLoader from './load/radioValueLoader';
+
 class Radio implements RadioInterface {
 	private required: boolean = false;
 	constructor(
@@ -7,13 +9,15 @@ class Radio implements RadioInterface {
 		private radioValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: RadioValueLoaderInterface = new RadioValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
-		this.required = this.getFieldContainer().hasAttribute("data-js-required");
+		this.required = this.getFieldContainer().hasAttribute('data-js-required');
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.radioValidator.init(this);
 		this.validator.init(this);
+		this.loader.init(this);
 		this.listenForChanges();
 	}
 
@@ -45,11 +49,13 @@ class Radio implements RadioInterface {
 		return this.required;
 	}
 
+	public getValueLoader(): RadioValueLoaderInterface {
+		return this.loader;
+	}
+
 	public getSelectedChoice(): string {
-		const selectedChoice = [...this.getChoices()].find(
-			(choice) => choice.checked,
-		);
-		return selectedChoice ? selectedChoice.value : "";
+		const selectedChoice = [...this.getChoices()].find((choice) => choice.checked);
+		return selectedChoice ? selectedChoice.value : '';
 	}
 
 	public getFieldContainer(): HTMLElement {
@@ -58,7 +64,7 @@ class Radio implements RadioInterface {
 
 	private listenForChanges(): void {
 		this.choices.forEach((choice) => {
-			choice.addEventListener("change", () => {
+			choice.addEventListener('change', () => {
 				this.conditionsHandler.checkConditions();
 				this.validator.validate();
 			});

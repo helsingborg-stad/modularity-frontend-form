@@ -1,4 +1,5 @@
-import { PlaceObject } from "@helsingborg-stad/openstreetmap";
+import { PlaceObject } from '@helsingborg-stad/openstreetmap';
+import GoogleMapValueLoader from './load/googleMapValueLoader';
 
 class GoogleMap implements GoogleMapInterface {
 	private required: boolean = false;
@@ -10,14 +11,16 @@ class GoogleMap implements GoogleMapInterface {
 		private googleMapValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: GoogleMapValueLoaderInterface = new GoogleMapValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
-		this.required = this.getFieldContainer().hasAttribute("data-js-required");
+		this.required = this.getFieldContainer().hasAttribute('data-js-required');
 		this.conditionsHandler.init(this, conditionBuilder);
 		this.googleMapValidator.init(this);
 		this.openstreetmapInstance.init();
 		this.validator.init(this);
+		this.loader.init(this);
 		this.listenForMarkerEvents();
 	}
 
@@ -57,14 +60,16 @@ class GoogleMap implements GoogleMapInterface {
 		return this.hiddenField;
 	}
 
+	public getValueLoader(): GoogleMapValueLoaderInterface {
+		return this.loader;
+	}
+
 	private listenForMarkerEvents(): void {
-		this.openstreetmapInstance.addMarkerMovedListener(
-			(placeObject: PlaceObject | null) => {
-				this.hiddenField.value = placeObject ? JSON.stringify(placeObject) : "";
-				this.conditionsHandler.checkConditions();
-				this.validator.validate();
-			},
-		);
+		this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject | null) => {
+			this.hiddenField.value = placeObject ? JSON.stringify(placeObject) : '';
+			this.conditionsHandler.checkConditions();
+			this.validator.validate();
+		});
 	}
 }
 

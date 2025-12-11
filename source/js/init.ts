@@ -1,21 +1,23 @@
-import Steps from "./steps/steps";
-import StepUIManager from "./steps/stepUIManager";
-import StepNavigator from "./steps/stepNavigator";
-import Submit from "./submit/submit";
-import FieldBuilder from "./fields/fieldBuilder";
-import ConditionBuilder from "./conditions/conditionBuilder";
-import AsyncNonce from "./asyncNonce/asyncNonce";
-import StatusHandler from "./formStatus/handler";
-import FieldsInitiator from "./fields/fieldsInitiator";
-import Notice from "./fields/notice/notice";
-import ValidateForm from "./validation/validateForm";
-import FormPopulator from "./formPopulator/formPopulator";
-import Form from "./form/form";
-import FormMode from "./form/formModeEnum";
-import StepsFactory from "./steps/stepsFactory";
-import StepValidator from "./fields/validation/stepValidator";
-import StatusRendererFactory from "./formStatus/statusRendererFactory";
-import StatusRendererInterface from "./formStatus/renderInterface";
+import Steps from './steps/steps';
+import StepUIManager from './steps/stepUIManager';
+import StepNavigator from './steps/stepNavigator';
+import Submit from './submit/submit';
+import FieldBuilder from './fields/fieldBuilder';
+import ConditionBuilder from './conditions/conditionBuilder';
+import AsyncNonce from './asyncNonce/asyncNonce';
+import StatusHandler from './formStatus/handler';
+import FieldsInitiator from './fields/fieldsInitiator';
+import Notice from './fields/notice/notice';
+import ValidateForm from './validation/validateForm';
+import Form from './form/form';
+import FormMode from './form/formModeEnum';
+import StepsFactory from './steps/stepsFactory';
+import StepValidator from './fields/validation/stepValidator';
+import StatusRendererFactory from './formStatus/statusRendererFactory';
+import StatusRendererInterface from './formStatus/renderInterface';
+import FormParamExtractor from './formPopulator/formParamExtractor';
+import FormDataFetcher from './formPopulator/formDataFetcher';
+import FieldsPopulator from './formPopulator/fieldsPopulator';
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -33,13 +35,10 @@ class FormHandler {
 
 	private init(): void {
 		new ValidateForm();
-		const statusRenderer = StatusRendererFactory.create(
-			this.formContainer,
-			modularityFrontendFormLang,
-		);
+		const statusRenderer = StatusRendererFactory.create(this.formContainer, modularityFrontendFormLang);
 
 		if (!statusRenderer) {
-			console.error("StatusRenderer could not be created.");
+			console.error('StatusRenderer could not be created.');
 			return;
 		}
 
@@ -47,7 +46,7 @@ class FormHandler {
 		const stepsObject = this.setupSteps(stepValidator, statusRenderer);
 
 		if (!stepsObject) {
-			console.error("No steps were found");
+			console.error('No steps were found');
 			return;
 		}
 
@@ -59,24 +58,38 @@ class FormHandler {
 		this.setupFields(stepsObject, builder, conditionBuilder);
 		fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
 		this.removeLoader(stepsObject);
-		this.setupFormPopulator(statusRenderer);
+		this.setupFormPopulator(statusRenderer, builder.getFieldsObject());
 	}
 
-	private setupFormPopulator(statusRenderer: StatusRendererInterface): void {
-		const formPopulator = new FormPopulator(
+	private setupFormPopulator(statusRenderer: StatusRendererInterface, fieldsObject: FieldsObject): void {
+		const formParams = new FormParamExtractor(this.form.formElement).tryExtractFormParams();
+
+		// Exit early if no form parameters are found
+		if (!formParams) {
+			return;
+		}
+
+		const formDataFetcher = new FormDataFetcher(
 			this.form,
+			formParams,
 			modularityFrontendFormData,
 			modularityFrontendFormLang,
 			new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
 			new StatusHandler(this.form.formElementContainer),
 			statusRenderer,
 		);
-		formPopulator.initialize();
+
+		const fieldPopulator = new FieldsPopulator(this.form, fieldsObject);
+
+		formDataFetcher.subscribeToFetchedFormData((data: FetchedFormData) => {
+			fieldPopulator.tryPopulateFields(data);
+		});
+
+		// Start fetching the form data
+		formDataFetcher.tryFetchFormData();
 	}
 
-	private createBuilder(
-		fieldsInitiatorInstance: FieldsInitiatorInterface,
-	): FieldBuilderInterface {
+	private createBuilder(fieldsInitiatorInstance: FieldsInitiatorInterface): FieldBuilderInterface {
 		const builder = new FieldBuilder(
 			fieldsInitiatorInstance,
 			new Notice(this.form.formElementContainer),
@@ -96,13 +109,9 @@ class FormHandler {
 			const step = stepsObject[stepId];
 			step
 				.getStepContainer()
-				.querySelectorAll("[data-js-field]")
+				.querySelectorAll('[data-js-field]')
 				.forEach((element) => {
-					builder.build(
-						element as HTMLElement,
-						element.getAttribute("data-js-field") ?? "",
-						stepId,
-					);
+					builder.build(element as HTMLElement, element.getAttribute('data-js-field') ?? '', stepId);
 				});
 		}
 
@@ -111,26 +120,16 @@ class FormHandler {
 		}
 	}
 
-	private setupSteps(
-		validator: StepValidatorInterface,
-		statusRenderer: StatusRendererInterface,
-	): StepsObject | null {
-		const nextButton = this.formContainer.querySelector(
-			"[data-js-frontend-form-next-step]",
-		);
-		const previousButton = this.formContainer.querySelector(
-			"[data-js-frontend-form-previous-step]",
-		);
+	private setupSteps(validator: StepValidatorInterface, statusRenderer: StatusRendererInterface): StepsObject | null {
+		const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
+		const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
 		if (!nextButton || !previousButton) {
-			console.error("Missing next or previous button");
+			console.error('Missing next or previous button');
 			return null;
 		}
 
-		const steps = StepsFactory.create(
-			this.form.formElementContainer,
-			validator,
-		);
+		const steps = StepsFactory.create(this.form.formElementContainer, validator);
 
 		const submit = new Submit(
 			this.form,
@@ -150,13 +149,7 @@ class FormHandler {
 
 		new Steps(
 			steps,
-			new StepNavigator(
-				steps,
-				validator,
-				submit,
-				stepUIManager,
-				this.formContainer,
-			),
+			new StepNavigator(steps, validator, submit, stepUIManager, this.formContainer),
 			stepUIManager,
 			nextButton as HTMLButtonElement,
 			previousButton as HTMLButtonElement,
@@ -166,18 +159,16 @@ class FormHandler {
 	}
 
 	private removeLoader(stepsObject: StepsObject): void {
-		stepsObject[0].getStepContainer().classList.remove("is-loading");
+		stepsObject[0].getStepContainer().classList.remove('is-loading');
 	}
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-	document
-		.querySelectorAll("[data-js-frontend-form]")
-		.forEach((formContainer) => {
-			const form = formContainer.querySelector("form");
+document.addEventListener('DOMContentLoaded', function () {
+	document.querySelectorAll('[data-js-frontend-form]').forEach((formContainer) => {
+		const form = formContainer.querySelector('form');
 
-			if (form) {
-				new FormHandler(formContainer as HTMLElement, form as HTMLFormElement);
-			}
-		});
+		if (form) {
+			new FormHandler(formContainer as HTMLElement, form as HTMLFormElement);
+		}
+	});
 });

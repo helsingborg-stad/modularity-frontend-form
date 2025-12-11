@@ -1,11 +1,10 @@
 interface RepeaterUIInterface {
-	init(
-		repeater: RepeaterInterface,
-		conditionBuilder: ConditionBuilderInterface,
-	): void;
+	init(repeater: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void;
 	getRowCount(): number;
 	getRowIndex(): number;
 	addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void;
+	buildRow(includeRemoveRowButton?: boolean, focusNewRow?: boolean): void;
+	getRows(): RowFieldsObject;
 }
 
 interface RowBuilderInterface {

@@ -1,4 +1,4 @@
-import RowBuilder from "./rowBuilder";
+import RowBuilder from './rowBuilder';
 
 class RepeaterUI implements RepeaterUIInterface {
 	private rowIndex: number = 0;
@@ -18,18 +18,13 @@ class RepeaterUI implements RepeaterUIInterface {
 		private stepId: string,
 	) {}
 
-	public init(
-		repeaterField: RepeaterInterface,
-		conditionBuilder: ConditionBuilderInterface,
-	): void {
+	public init(repeaterField: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void {
 		this.repeaterField = repeaterField;
 		this.conditionBuilder = conditionBuilder;
-		this.rowCountElement = this.repeaterField
-			.getFieldContainer()
-			.querySelector("[data-js-repeater-row-counter]");
+		this.rowCountElement = this.repeaterField.getFieldContainer().querySelector('[data-js-repeater-row-counter]');
 
 		if (!this.repeaterField || !this.conditionBuilder) {
-			console.error("Repeater field or condition builder is not set");
+			console.error('Repeater field or condition builder is not set');
 			return;
 		}
 
@@ -48,9 +43,11 @@ class RepeaterUI implements RepeaterUIInterface {
 		return this.rowCount;
 	}
 
-	public addRowChangeListener(
-		rowCountChangeListener: RowCountChangeListener,
-	): void {
+	public getRows(): RowFieldsObject {
+		return this.rowFieldsObject;
+	}
+
+	public addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void {
 		this.rowChangeListeners.push(rowCountChangeListener);
 	}
 
@@ -59,7 +56,7 @@ class RepeaterUI implements RepeaterUIInterface {
 	}
 
 	private setupListeners() {
-		this.addRowButton.addEventListener("click", (e) => {
+		this.addRowButton.addEventListener('click', (e) => {
 			e.preventDefault();
 			this.buildRow();
 		});
@@ -81,23 +78,21 @@ class RepeaterUI implements RepeaterUIInterface {
 		}
 	}
 
-	private buildRow(includeRemoveRowButton: boolean = true): void {
+	public buildRow(includeRemoveRowButton: boolean = true, focusNewRow = true): void {
 		const rowId = this.rowIndex.toString();
 		const row = this.rowBuilder.createRow(rowId, includeRemoveRowButton);
 		const builtRow = this.buildAddedFields(row);
 		this.rowFieldsObject[rowId] = builtRow;
 
-		row
-			.querySelector("[data-js-repeater-remove-row]")
-			?.addEventListener("click", (e) => {
-				e.preventDefault();
-				this.rowBuilder.deleteRow(row);
-				this.removeRow(rowId);
-				this.rowCountChanged(--this.rowCount);
-			});
+		row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
+			e.preventDefault();
+			this.rowBuilder.deleteRow(row);
+			this.removeRow(rowId);
+			this.rowCountChanged(--this.rowCount);
+		});
 
 		// Only focus if the row is not auto generated
-		if (includeRemoveRowButton) {
+		if (includeRemoveRowButton && focusNewRow) {
 			this.focusOnNewRow(row);
 		}
 
@@ -108,7 +103,7 @@ class RepeaterUI implements RepeaterUIInterface {
 	// Focus on the first focusable element in the new row
 	private focusOnNewRow(row: HTMLElement): void {
 		const firstFocusable = row.querySelector<HTMLElement>(
-			":not(.u-display--none) input, :not(.u-display--none) select, :not(.u-display--none) textarea, :not(.u-display--none) fieldset",
+			':not(.u-display--none) input, :not(.u-display--none) select, :not(.u-display--none) textarea, :not(.u-display--none) fieldset',
 		);
 
 		if (!firstFocusable) {
@@ -121,16 +116,10 @@ class RepeaterUI implements RepeaterUIInterface {
 	private buildAddedFields(row: HTMLElement): FieldsObject {
 		const newFieldsObject: FieldsObject = {};
 
-		[...row.querySelectorAll<HTMLElement>("[data-js-field]")].forEach(
-			(field) => {
-				const builtField = this.fieldBuilder.build(
-					field,
-					field.dataset.jsField!,
-					this.stepId,
-				);
-				newFieldsObject[builtField.getName()] = builtField;
-			},
-		);
+		[...row.querySelectorAll<HTMLElement>('[data-js-field]')].forEach((field) => {
+			const builtField = this.fieldBuilder.build(field, field.dataset.jsField!, this.stepId);
+			newFieldsObject[builtField.getName()] = builtField;
+		});
 
 		for (const fieldName in newFieldsObject) {
 			newFieldsObject[fieldName].init(this.conditionBuilder);

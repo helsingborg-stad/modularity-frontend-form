@@ -1,3 +1,5 @@
+import NullFieldValueLoader from './load/nullFieldValueLoader';
+
 class NullField implements FieldInterface {
 	constructor(
 		private field: HTMLElement,
@@ -6,6 +8,7 @@ class NullField implements FieldInterface {
 		private nullFieldConditionValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
+		private loader: FieldValueLoaderInterface = new NullFieldValueLoader(),
 	) {
 		console.error(`Field type "${type}" is not implemented.`);
 	}
@@ -34,6 +37,10 @@ class NullField implements FieldInterface {
 
 	public hasValue(): boolean {
 		return true;
+	}
+
+	public getValueLoader(): FieldValueLoaderInterface {
+		return this.loader;
 	}
 
 	public getConditionValidator(): ConditionValidatorInterface {

@@ -1,6 +1,6 @@
 @imageinput([
     'label'    => $field['label'],
-    'name'     => $field['name'],
+    'name'     => $field['name'] . '[]',
     'id'       => $field['id'],
     'required' => $field['required'],
     'accept'   => $field['accept'],

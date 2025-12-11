@@ -73,7 +73,9 @@ class Post extends RestApiEndpoint
             $this->config, 
             $this->moduleConfigFactory)
         )->getValuesFromRequest($request);
+        var_dump($_FILES);
 
+die;
         // Data to be submitted
         $data = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
 
@@ -87,6 +89,8 @@ class Post extends RestApiEndpoint
             $handlerFactory->createHandlers($params),
             $handlerFactory->createNullHandler($params),
         );
+
+
 
         $dataProcessorResult = $dataProcessor->process($data);
 

@@ -37,6 +37,8 @@ class WpDbHandler implements HandlerInterface {
    */
   public function handle(array $data): ?HandlerResultInterface
   {
+
+    
     //Get post title from meta data
     [
       'plucked' => [
@@ -100,6 +102,7 @@ class WpDbHandler implements HandlerInterface {
           $this->config->getMetaDataNamespace('submission') => true
         ],
     ]);
+    $this->storeAttachments($fieldMeta, $result);
 
     // Set error 
     if ($this->wpService->isWpError($result)) {
@@ -116,6 +119,8 @@ class WpDbHandler implements HandlerInterface {
       );
       return false;
     }
+
+    
     $this->storeFields($fieldMeta, $result);
     return true;
   }
@@ -238,6 +243,25 @@ class WpDbHandler implements HandlerInterface {
       'plucked' => $plucked,
       'fieldMeta' => $fieldMeta
     ];
+  }
+
+  /**
+   * Stores the attachments in the database/on disk
+   *
+   * @param array $fields The fields to store
+   * @param int $postId The ID of the post to store the attachments for
+   */
+  private function storeAttachments(array $fields, int $postId): bool
+  {
+    var_dump($_POST);
+    var_dump('Storing attachments not implemented yet');
+
+    var_dump($fields);
+
+    die("abc");
+
+
+    return true;
   }
 
   /**

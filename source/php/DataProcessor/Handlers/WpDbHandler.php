@@ -86,8 +86,8 @@ class WpDbHandler implements HandlerInterface {
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
     $result = $this->wpService->wpInsertPost([
-        'post_title'    => $postTitle   ?? $this->moduleConfigInstance->getModuleTitle(),
-        'post_content'  => $postContent ?? '',
+        'post_title'    => $postTitle   ?: $this->moduleConfigInstance->getModuleTitle(),
+        'post_content'  => $postContent ?: '',
         'post_type'     => $moduleConfig->saveToPostType,
         'post_status'   => $moduleConfig->saveToPostTypeStatus,
         'post_password' => $this->createPostPassword(),
@@ -130,10 +130,11 @@ class WpDbHandler implements HandlerInterface {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
+ 
     $result = $this->wpService->wpUpdatePost([
         'ID'           => $fieldMeta['post_id'],
-        'post_title'   => $postTitle   ?? $this->moduleConfigInstance->getModuleTitle(),
-        'post_content' => $postContent ?? '',
+        'post_title'   => $postTitle   ?: $this->moduleConfigInstance->getModuleTitle(),
+        'post_content' => $postContent ?: '',
         'post_status'  => $moduleConfig->saveToPostTypeStatus,
         'meta_input'   => [
           $this->config->getMetaDataNamespace('holding_post_id') => (

@@ -1,11 +1,10 @@
-import StatusRendererOverlayUI from "./statusRendererOverlayUI";
+import StatusRendererOverlayUI from './statusRendererOverlayUI';
 
-class StatusRendererButtonUIHandler
-	implements StatusRendererButtonUIHandlerInterface
-{
+class StatusRendererButtonUIHandler implements StatusRendererButtonUIHandlerInterface {
 	private tryAgainOnclick: FormActionInterface | false = false;
 	private returnOnclick: FormActionInterface | false = false;
 	constructor(
+		private formContainer: HTMLElement,
 		private returnButton: HTMLElement,
 		private tryAgainButton: HTMLElement,
 		private statusRendererOverlayUI: StatusRendererOverlayUI,
@@ -14,24 +13,20 @@ class StatusRendererButtonUIHandler
 		this.returnToFormListener();
 	}
 
-	public toggleReturnButton(
-		shouldShow: FormActionInterface | false = false,
-	): void {
+	public toggleReturnButton(shouldShow: FormActionInterface | false = false): void {
 		this.returnOnclick = shouldShow;
 
-		this.returnButton.classList.toggle("u-display--none", !shouldShow);
+		this.returnButton.classList.toggle('u-display--none', !shouldShow);
 	}
 
-	public toggleTryAgainButton(
-		shouldShow: FormActionInterface | false = false,
-	): void {
+	public toggleTryAgainButton(shouldShow: FormActionInterface | false = false): void {
 		this.tryAgainOnclick = shouldShow;
 
-		this.tryAgainButton.classList.toggle("u-display--none", !shouldShow);
+		this.tryAgainButton.classList.toggle('u-display--none', !shouldShow);
 	}
 
 	private tryAgainListener(): void {
-		this.tryAgainButton.addEventListener("click", (e) => {
+		this.tryAgainButton.addEventListener('click', (e) => {
 			e.preventDefault();
 
 			if (this.tryAgainOnclick) {
@@ -41,8 +36,10 @@ class StatusRendererButtonUIHandler
 	}
 
 	private returnToFormListener(): void {
-		this.returnButton.addEventListener("click", () => {
-			if (this.returnOnclick) {
+		this.returnButton.addEventListener('click', () => {
+			if (this.formContainer.dataset.jsFormStatus === 'success') {
+				window.location.reload();
+			} else if (this.returnOnclick) {
 				this.returnOnclick.return();
 				this.statusRendererOverlayUI.removeOverlay();
 				this.statusRendererOverlayUI.removeStatusClasses();

@@ -160,7 +160,7 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getFieldKeysRegisteredAsFormFields(): ?array
+  public function getFieldKeysRegisteredAsFormFields(string $property = 'key', bool $includeConditionalFields = true): ?array
   {
     $steps = $this->acfService->getField('formSteps', $this->getModuleId());
     if ($steps === null) {
@@ -172,12 +172,27 @@ class ModuleConfig implements ModuleConfigInterface
             continue;
         }
 
-        $fields = acf_get_fields($step['formStepGroup'][0]); //TODO: Implement in acfService
+        foreach($step['formStepGroup'] as $group) {
+          if(!isset($fields)) {
+            $fields = [];
+          }
+          $fields = array_merge($fields, acf_get_fields($group));
+        }
+
+        if (!$includeConditionalFields) {
+            $fields = array_filter($fields, function ($field) {
+                $hasConditionalLogic   = (empty($field['conditional_logic']) || $field['conditional_logic'] === 0) ? false : true;
+                $isNotRequiredRepeater = (!$field['required'] && $field['type'] !== 'repeater');
+                return $hasConditionalLogic && $isNotRequiredRepeater;
+            });
+        }
+
         if (!is_array($fields)) {
             continue;
         }
+
         foreach ($fields as $field) {
-            $fieldKeys = array_merge($fieldKeys, $this->getFieldKeysRecursive($field));
+            $fieldKeys = array_merge($fieldKeys, $this->getFieldKeysRecursive($field, $property));
         }
     }
 
@@ -191,21 +206,21 @@ class ModuleConfig implements ModuleConfigInterface
    *
    * @return array The field keys
    */
-  private function getFieldKeysRecursive(array $field): array
+  private function getFieldKeysRecursive(array $field, string $property = 'key'): array
   {
-    $keys = [];
+    $items = [];
 
-    if (isset($field['key']) && str_starts_with($field['key'], 'field_')) {
-        $keys[] = $field['key'];
+    if (isset($field[$property]) && str_starts_with($field['key'], 'field_')) {
+        $items[] = $field[$property];
     }
 
     if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
         foreach ($field['sub_fields'] as $subField) {
-            $keys = array_merge($keys, $this->getFieldKeysRecursive($subField));
+            $items = array_merge($items, $this->getFieldKeysRecursive($subField, $property));
         }
     }
 
-    return $keys;
+    return $items;
   }
 
   /**

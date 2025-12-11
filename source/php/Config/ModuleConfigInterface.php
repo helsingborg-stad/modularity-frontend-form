@@ -21,7 +21,7 @@ interface ModuleConfigInterface
     public function getModuleIsEditable(): bool;
     public function getNonceKey(): string;
 
-    public function getFieldKeysRegisteredAsFormFields(): ?array;
+    public function getFieldKeysRegisteredAsFormFields(string $property = 'key', bool $includeConditionalFields = true): ?array;
 
     public function getActivatedHandlers(): array;
     public function getWpDbHandlerConfig(): ?object;

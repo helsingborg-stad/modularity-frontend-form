@@ -74,7 +74,7 @@ class Get extends RestApiEndpoint
         )->getValuesFromRequest($request);
 
         //Get fields from post id 
-        $fieldData       = $this->acfService->getFields($params->postId, true, false);
+        $fieldData       = $this->acfService->getFields($params->postId, false, false);
         $fieldData       = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
         $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
@@ -142,7 +142,6 @@ class Get extends RestApiEndpoint
     private function translateFieldNamesToFieldKeys(int $postId, array $fields): array
     {
         $translatedFields = [];
-
         foreach($fields as $key => $fieldValue) {
             $translatedFields[$this->translateFieldNameToFieldKey($postId, $key)] = $fieldValue;
         }

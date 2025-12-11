@@ -19,7 +19,7 @@ class FileFieldMapper implements FieldMapperInterface
             ? str_replace(' ', ',', $this->field['mime_types'])
             : 'audio/*,video/*,image/*';
 
-        $mapped['uploadErrorMessage'] = $this->lang->followingFilesCouldNotBeUploaded . ': ';
+        $mapped['maxSize'] = $this->fields['max_size'] ?? null;
 
         return $mapped;
     }

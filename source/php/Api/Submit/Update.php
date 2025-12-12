@@ -90,7 +90,7 @@ class Update extends RestApiEndpoint
             $handlerFactory->createNullHandler($params),
         );
 
-        $dataProcessorResult = $dataProcessor->process($data);
+        $dataProcessorResult = $dataProcessor->process($data, $request);
 
         if($dataProcessorResult !== true) {
             return $this->wpService->restEnsureResponse(

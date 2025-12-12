@@ -11,9 +11,9 @@ use WpService\WpService;
 class NullFileHandler implements FileHandlerInterface {
 
     public function __construct(
-      Config $config, 
-      ModuleConfigInterface $moduleConfig,
-      WpService $wpService
+      private Config $config, 
+      private ModuleConfigInterface $moduleConfig,
+      private WpService $wpService
     )
     {}
 

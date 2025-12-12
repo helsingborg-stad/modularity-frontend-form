@@ -25,11 +25,14 @@ class MailHandler implements HandlerInterface {
       private ModuleConfigInterface $moduleConfigInstance,
       private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult(),
-      private FileHandlerInterface $fileHandler = new NullFileHandler()
+      private ?FileHandlerInterface $fileHandler = null
   ) {
+    if($this->fileHandler === null) {
+      $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
+    }
   }
 
-  public function handle(array $data): ?HandlerResultInterface
+  public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
   {
     $config = $this->moduleConfigInstance->getMailHandlerConfig();
 

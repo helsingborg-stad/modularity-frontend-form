@@ -2,6 +2,7 @@
 
 namespace ModularityFrontendForm\DataProcessor;
 
+use WP_REST_Request;
 use WP_Error;
 
 interface DataProcessorInterface
@@ -12,7 +13,7 @@ interface DataProcessorInterface
    * @param array $data The data to process.
    * @return bool True if the submission succeeded, otherwise false.
    */
-  public function process(array $data): bool;
+  public function process(array $data, WP_REST_Request $request): bool;
 
   /**
    * Get the first error.

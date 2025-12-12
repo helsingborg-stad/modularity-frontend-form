@@ -11,25 +11,16 @@ use WP_Error;
 class WpDbFileHandler implements FileHandlerInterface {
 
     public function __construct(
-      Config $config, 
-      ModuleConfigInterface $moduleConfig,
-      WpService $wpService
+      private Config $config, 
+      private ModuleConfigInterface $moduleConfig,
+      private WpService $wpService
     )
     {}
 
     public function handle(WP_REST_Request $request) {
 
-        $files = $request->get_file_params()['mod-frontend-form'] ?? null;
-
-        if (!$files || !is_array($files)) {
-            return new WP_Error(
-                'no_file_uploaded',
-                __('No file was uploaded.'),
-                ['status' => 400]
-            );
-        }
-
-        // Flatten the nested structure: [name][field_key][0]
+        $files = $request->get_file_params()[$this->config->getFieldNamespace()] ?? null;
+        
         $fieldKeys = array_keys($files['name'] ?? []);
         $results = [];
 

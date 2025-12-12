@@ -12,7 +12,9 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
+use WP;
 use WP_Error;
+use WP_REST_Request;
 
 class WpDbHandler implements HandlerInterface {
 
@@ -25,8 +27,11 @@ class WpDbHandler implements HandlerInterface {
       private ModuleConfigInterface $moduleConfigInstance,
       private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult(),
-      private FileHandlerInterface $fileHandler = new NullFileHandler()
+      private ?FileHandlerInterface $fileHandler = null
   ) {
+    if($this->fileHandler === null) {
+      $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
+    }
   }
 
   /**
@@ -37,9 +42,8 @@ class WpDbHandler implements HandlerInterface {
    * 
    * @return HandlerResultInterface|null The result of the handler
    */
-  public function handle(array $data): ?HandlerResultInterface
+  public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
   {
-    //Get post title from meta data
     [
       'plucked' => [
         'post_title'    => $postTitle, 
@@ -48,14 +52,14 @@ class WpDbHandler implements HandlerInterface {
       'fieldMeta' => $data
     ] = $this->pluckFromMetaData($data, ['post_title', 'post_content']);
 
-    // TODO: use wpService
-    if(in_array('post_id', $data) && get_post($data['post_id']) !== null) {
+    if(in_array('post_id', $data) && $this->wpService->getPost($data['post_id']) !== null) {
       $this->updatePost(
         $this->moduleConfigInstance->getModuleId(),
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags()),
+        $request
       );
     } else {
       $this->insertPost(
@@ -63,9 +67,11 @@ class WpDbHandler implements HandlerInterface {
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags()),
+        $request
       );
     }
+
     return $this->handlerResult;
   }
 
@@ -82,7 +88,8 @@ class WpDbHandler implements HandlerInterface {
     array|null $fieldMeta, 
     object $params, 
     null|string $postTitle = null, 
-    null|string $postContent = null
+    null|string $postContent = null,
+    WP_REST_Request $request
   ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
@@ -119,6 +126,12 @@ class WpDbHandler implements HandlerInterface {
       return false;
     }
     $this->storeFields($fieldMeta, $result);
+    $attachedFiles = $this->fileHandler->handle($request);
+
+    foreach ($attachedFiles->get() as $file) {
+      var_dump($file);
+    }
+
     return true;
   }
 
@@ -127,12 +140,12 @@ class WpDbHandler implements HandlerInterface {
     array|null $fieldMeta, 
     object $params, 
     null|string $postTitle = null, 
-    null|string $postContent = null
+    null|string $postContent = null,
+    WP_REST_Request $request
   ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
- 
     $result = $this->wpService->wpUpdatePost([
         'ID'           => $fieldMeta['post_id'],
         'post_title'   => $postTitle   ?: $this->moduleConfigInstance->getModuleTitle(),
@@ -164,6 +177,7 @@ class WpDbHandler implements HandlerInterface {
       return false;
     }
     $this->storeFields($fieldMeta, $result);
+    $this->fileHandler->handle($request);
     return true;
   }
 

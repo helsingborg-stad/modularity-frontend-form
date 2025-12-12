@@ -11,6 +11,8 @@ use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
+use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
 use WP_Error;
 
 class WebHookHandler implements HandlerInterface {
@@ -23,7 +25,8 @@ class WebHookHandler implements HandlerInterface {
       private ConfigInterface $config,
       private ModuleConfigInterface $moduleConfigInstance,
       private object $params,
-      private HandlerResultInterface $handlerResult = new HandlerResult()
+      private HandlerResultInterface $handlerResult = new HandlerResult(),
+      private FileHandlerInterface $fileHandler = new NullFileHandler()
   ) {
   }
 

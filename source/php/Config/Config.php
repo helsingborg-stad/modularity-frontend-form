@@ -82,6 +82,9 @@ class Config implements ConfigInterface
         //General keys
         'postId',
         'nonce',
+        'holding-post-id',
+        'mod-frontend-form',
+        'module-id',
 
         //WordPress native post keys
         'post_title',

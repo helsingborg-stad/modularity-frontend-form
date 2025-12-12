@@ -86,11 +86,11 @@ class Update extends RestApiEndpoint
         // Creates the data processor
         $dataProcessor = new DataProcessor(
             $validatorFactory->createInsertValidators($params->moduleId),
-            $handlerFactory->createHandlers($params),
+            $handlerFactory->createHandlers($params, $request),
             $handlerFactory->createNullHandler($params),
         );
 
-        $dataProcessorResult = $dataProcessor->process($data);
+        $dataProcessorResult = $dataProcessor->process($data, $request);
 
         if($dataProcessorResult !== true) {
             return $this->wpService->restEnsureResponse(

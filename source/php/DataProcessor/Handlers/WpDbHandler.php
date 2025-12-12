@@ -4,7 +4,6 @@ namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use WpService\WpService; 
 use AcfService\AcfService;
-use ModularityFrontendForm\Api\RestApiParamsInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;

@@ -2,13 +2,16 @@
 
 namespace ModularityFrontendForm\DataProcessor\FileHandlers;
 
+use ModularityFrontendForm\Config\Config;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use WP_REST_Request;
+use WpService\WpService;
 interface FileHandlerInterface {
-    /**
-     * Handles file attachments
-     * 
-     * @param array $files The files to handle
-     * 
-     * @return void
-     */
-    public function handle(array $files): void;
+    public function __construct(
+      Config $config, 
+      ModuleConfigInterface $moduleConfig,
+      WpService $wpService
+    );
+
+    public function handle(WP_REST_Request $request);
 }

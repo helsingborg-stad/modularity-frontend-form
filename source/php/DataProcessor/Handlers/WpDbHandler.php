@@ -125,17 +125,15 @@ class WpDbHandler implements HandlerInterface {
       );
       return false;
     }
+
+    //Decorates fields with sideloaded attachment IDs
+    $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
+      $fieldMeta, 
+      $this->fileHandler->handle($request)
+    );
+
+    //Store fields
     $this->storeFields($fieldMeta, $result);
-    $attachedFiles = $this->fileHandler->handle($request);
-
-    foreach ($attachedFiles as $file) {
-
-      //TODO: Get all ACF Gallery fields and attach the files to them
-      //Galler Field takes an array of file IDs
-      //We migth need to do this before storeFields if we want to attach to ACF fields
-      //
-      var_dump($file);
-    }
 
     return true;
   }
@@ -181,9 +179,41 @@ class WpDbHandler implements HandlerInterface {
       );
       return false;
     }
+
+    $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
+      $fieldMeta, 
+      $this->fileHandler->handle($request)
+    );
+
     $this->storeFields($fieldMeta, $result);
-    $this->fileHandler->handle($request);
+
     return true;
+  }
+
+  /**
+   * Prepares fields by replacing file fields with sideloaded attachment IDs
+   *
+   * @param array $fields The fields to prepare
+   * @param array $sideloadedAttachments The sideloaded attachments
+   * 
+   * @return array The prepared fields
+   */
+  private function prepareFieldsWithSideloadedAttachments(array $fields, array $sideloadedAttachments): array
+  {
+    $reducedSideloadedAttachments = [];
+    foreach ($sideloadedAttachments as $fieldKey => $item) {
+        $reducedSideloadedAttachments[$fieldKey][] = $item['id'];
+    }
+
+    foreach($reducedSideloadedAttachments as $fieldKey => $attachmentData) {
+      array_walk($fields, function (&$value, $key) use ($fieldKey, $attachmentData) {
+        if ($key === $fieldKey) {
+          $value = $attachmentData ?? null;
+        }
+      });
+    }
+
+    return $fields;
   }
 
   /**

@@ -20,7 +20,6 @@ class WpDbFileHandler implements FileHandlerInterface {
     public function handle(WP_REST_Request $request) {
 
         $files = $request->get_file_params()[$this->config->getFieldNamespace()] ?? null;
-        
         $fieldKeys = array_keys($files['name'] ?? []);
         $results = [];
 

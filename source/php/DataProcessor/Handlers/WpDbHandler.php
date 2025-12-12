@@ -128,7 +128,7 @@ class WpDbHandler implements HandlerInterface {
     $this->storeFields($fieldMeta, $result);
     $attachedFiles = $this->fileHandler->handle($request);
 
-    foreach ($attachedFiles->get() as $file) {
+    foreach ($attachedFiles as $file) {
       var_dump($file);
     }
 

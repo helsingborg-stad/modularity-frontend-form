@@ -13,6 +13,7 @@ use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
 use WP_Error;
+use WP_REST_Request;
 
 class MailHandler implements HandlerInterface {
 

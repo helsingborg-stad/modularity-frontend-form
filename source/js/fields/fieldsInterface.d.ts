@@ -77,6 +77,10 @@ interface CheckboxValueLoaderInterface extends FieldValueLoaderInterface {
 	init(field: CheckboxInterface): void;
 }
 
+interface FileValueLoaderInterface extends FieldValueLoaderInterface {
+	init(field: FileInterface): void;
+}
+
 interface RadioValueLoaderInterface extends FieldValueLoaderInterface {
 	init(field: RadioInterface): void;
 }

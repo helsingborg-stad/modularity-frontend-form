@@ -66,17 +66,18 @@ class Get extends RestApiEndpoint
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
         $this->filterReturnTypeSetting();
-
+    
         $params = (new RestApiParams(
-            $this->wpService, 
-            $this->config, 
-            $this->moduleConfigFactory)
-        )->getValuesFromRequest($request);
+            $this->wpService,
+            $this->config,
+            $this->moduleConfigFactory
+        ))->getValuesFromRequest($request);
 
         //Get fields from post id 
-        $fieldData       = $this->acfService->getFields($params->postId, false, false);
-        $fieldData       = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
-        $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
+        $fieldData = $this->acfService->getFields($params->postId, false, false);
+        $fieldData = $this->rewriteGalleryFieldsValues($params->postId, $fieldData);
+        $fieldData = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
+        $fieldData = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
         //Add post title
         //TODO: Control that the post_title option is activated in the module
@@ -101,6 +102,12 @@ class Get extends RestApiEndpoint
         );
     }
 
+    private function rewriteGalleryFieldsValues(int $postId, array $fieldData): array {
+        $fieldSettings = $this->getModuleConfigInstance($postId)->getGroupFieldsFromModule();
+        var_dump($fieldSettings);die;
+        return $fieldData;
+    }
+
     /**
      * Adds a filter to ACF taxonomy fields to always return IDs
      */
@@ -111,6 +118,8 @@ class Get extends RestApiEndpoint
                 case 'taxonomy':
                     $field['return_format'] = GetReturnTypeEnum::ID->value;
                     break;
+                case 'gallery':
+                    $field['return_format'] = GetReturnTypeEnum::ARRAY->value;
                 default:
                     return $field;
             }
@@ -142,7 +151,7 @@ class Get extends RestApiEndpoint
     private function translateFieldNamesToFieldKeys(int $postId, array $fields): array
     {
         $translatedFields = [];
-        foreach($fields as $key => $fieldValue) {
+        foreach ($fields as $key => $fieldValue) {
             $translatedFields[$this->translateFieldNameToFieldKey($postId, $key)] = $fieldValue;
         }
         return $translatedFields;
@@ -168,9 +177,9 @@ class Get extends RestApiEndpoint
      * @param string $postType The post type to check against
      * @param array $defaultKeys The default keys to include, if any.
      */
-    private function filterUnmappedFieldKeysForPostType($moduleId, $fieldData): array
+    private function filterUnmappedFieldKeysForPostType(int $postId, $fieldData): array
     {
-        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($moduleId)->getFieldKeysRegisteredAsFormFields();
+        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($postId)->getFieldKeysRegisteredAsFormFields();
 
         $fieldData = array_intersect_key(
             $fieldData,

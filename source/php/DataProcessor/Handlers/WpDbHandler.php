@@ -129,6 +129,11 @@ class WpDbHandler implements HandlerInterface {
     $attachedFiles = $this->fileHandler->handle($request);
 
     foreach ($attachedFiles as $file) {
+
+      //TODO: Get all ACF Gallery fields and attach the files to them
+      //Galler Field takes an array of file IDs
+      //We migth need to do this before storeFields if we want to attach to ACF fields
+      //
       var_dump($file);
     }
 

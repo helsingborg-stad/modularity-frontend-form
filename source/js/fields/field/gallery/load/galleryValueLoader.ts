@@ -32,8 +32,6 @@ class GalleryValueLoader implements BasicValueLoaderInterface {
 				this.parent.getField(),
 			);
 		});
-
-		console.log(this.parent.getField().files);
 	}
 }
 

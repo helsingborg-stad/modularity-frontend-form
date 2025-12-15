@@ -66,7 +66,7 @@ class Get extends RestApiEndpoint
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
         $this->filterReturnTypeSetting();
-    
+
         $params = (new RestApiParams(
             $this->wpService,
             $this->config,
@@ -74,8 +74,8 @@ class Get extends RestApiEndpoint
         ))->getValuesFromRequest($request);
 
         //Get fields from post id 
-        $fieldData = $this->acfService->getFields($params->postId, false, false);
-        $fieldData = $this->rewriteGalleryFieldsValues($params->postId, $fieldData);
+        $fieldData = get_field_objects($params->postId, false);
+        $fieldData = $this->retrieveValues($fieldData);
         $fieldData = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
         $fieldData = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
@@ -102,10 +102,43 @@ class Get extends RestApiEndpoint
         );
     }
 
-    private function rewriteGalleryFieldsValues(int $postId, array $fieldData): array {
-        $fieldSettings = $this->getModuleConfigInstance($postId)->getGroupFieldsFromModule();
-        var_dump($fieldSettings);die;
-        return $fieldData;
+    private function retrieveValues(array $fieldData): array
+    {
+        $fields = [];
+        foreach ($fieldData as $field) {
+            switch ($field['type']) {
+                case 'gallery':
+                    $fields[$field['name']] = $this->retrieveValuesFromGalleryField($field);
+                    break;
+                default:
+                    $fields[$field['name']] = $field['value'];
+                    break;
+            }
+        }
+
+        return $fields;
+    }
+
+    private function retrieveValuesFromGalleryField(array $field): array
+    {
+        $values = [];
+        if (empty($field['value'])) {
+            return $values;
+        }
+        foreach ($field['value'] as $imageId) {
+
+            $attachment = $this->wpService->wpPrepareAttachmentForJs($imageId);
+
+            $values[] = [
+                'id' => $imageId,
+                'url' => $attachment['url'],
+                'type' => $attachment['mime'] ?? 'image/jpeg',
+                'size' => $attachment['filesizeInBytes'] ?? "0",
+                'name' => $attachment['filename'] ?? '',
+            ];
+        }
+
+        return $values;
     }
 
     /**

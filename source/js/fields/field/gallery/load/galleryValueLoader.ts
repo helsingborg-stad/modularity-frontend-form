@@ -1,3 +1,9 @@
+declare global {
+	interface Window {
+		addFakeFileToInput: any;
+	}
+}
+
 class GalleryValueLoader implements BasicValueLoaderInterface {
 	private parent!: BasicInterface;
 
@@ -6,7 +12,28 @@ class GalleryValueLoader implements BasicValueLoaderInterface {
 	}
 
 	public load(value: any): void {
-		console.log(value);
+		if (!value || Array.isArray(value) === false || value.length === 0) {
+			return;
+		}
+
+		value.forEach((item: FakeFile) => {
+			if (!item.id || !item.url) {
+				return;
+			}
+
+			window.addFakeFileToInput(
+				{
+					name: item.name || '',
+					type: item.type || 'image/jpeg',
+					id: item.id,
+					url: item.url,
+					size: item.size || 0,
+				},
+				this.parent.getField(),
+			);
+		});
+
+		console.log(this.parent.getField().files);
 	}
 }
 

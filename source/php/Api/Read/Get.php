@@ -108,7 +108,9 @@ class Get extends RestApiEndpoint
         foreach ($fieldData as $field) {
             switch ($field['type']) {
                 case 'gallery':
-                    $fields[$field['name']] = $this->retrieveValuesFromGalleryField($field);
+                case 'file':
+                case 'image':
+                    $fields[$field['name']] = $this->retrieveValuesFileField($field);
                     break;
                 default:
                     $fields[$field['name']] = $field['value'];
@@ -119,14 +121,19 @@ class Get extends RestApiEndpoint
         return $fields;
     }
 
-    private function retrieveValuesFromGalleryField(array $field): array
+    private function retrieveValuesFileField(array $field): array
     {
         $values = [];
+
         if (empty($field['value'])) {
             return $values;
         }
-        foreach ($field['value'] as $imageId) {
 
+        if (!is_array($field['value'])) {
+            $field['value'] = [$field['value']];
+        }
+
+        foreach ($field['value'] as $imageId) {
             $attachment = $this->wpService->wpPrepareAttachmentForJs($imageId);
 
             $values[] = [

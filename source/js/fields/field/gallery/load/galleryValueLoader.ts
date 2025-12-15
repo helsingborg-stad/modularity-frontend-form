@@ -1,6 +1,6 @@
 declare global {
 	interface Window {
-		addFakeFileToInput: any;
+		addFakeFileToInput: (file: FakeFile, input: HTMLInputElement) => void;
 	}
 }
 

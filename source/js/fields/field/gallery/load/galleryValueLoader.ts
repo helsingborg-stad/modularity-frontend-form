@@ -11,7 +11,7 @@ class GalleryValueLoader implements BasicValueLoaderInterface {
 		this.parent = parent;
 	}
 
-	public load(value: any): void {
+	public load(value: FakeFile[]): void {
 		if (!value || Array.isArray(value) === false || value.length === 0) {
 			return;
 		}
@@ -23,11 +23,11 @@ class GalleryValueLoader implements BasicValueLoaderInterface {
 
 			window.addFakeFileToInput(
 				{
-					name: item.name || '',
+					name: item.name,
 					type: item.type || 'image/jpeg',
 					id: item.id,
 					url: item.url,
-					size: item.size || 0,
+					size: item.size,
 				},
 				this.parent.getField(),
 			);

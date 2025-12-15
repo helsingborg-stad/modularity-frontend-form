@@ -151,8 +151,6 @@ class Get extends RestApiEndpoint
                 case 'taxonomy':
                     $field['return_format'] = GetReturnTypeEnum::ID->value;
                     break;
-                case 'gallery':
-                    $field['return_format'] = GetReturnTypeEnum::ARRAY->value;
                 default:
                     return $field;
             }

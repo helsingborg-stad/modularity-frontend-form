@@ -30,7 +30,11 @@ class WpDbHandler implements HandlerInterface {
       private ?FileHandlerInterface $fileHandler = null
   ) {
     if($this->fileHandler === null) {
-      $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
+      $this->fileHandler = new NullFileHandler(
+        $this->config, 
+        $this->moduleConfigInstance, 
+        $this->wpService
+      );
     }
   }
 
@@ -129,8 +133,11 @@ class WpDbHandler implements HandlerInterface {
     //Decorates fields with sideloaded attachment IDs
     $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
       $fieldMeta, 
-      $this->fileHandler->handle($request)
+      $fileMeta = $this->fileHandler->handle($request)
     );
+
+    var_dump($fieldMeta, $fileMeta);
+    die;
 
     //Store fields
     $this->storeFields($fieldMeta, $result);
@@ -202,15 +209,19 @@ class WpDbHandler implements HandlerInterface {
   {
     $reducedSideloadedAttachments = [];
     foreach ($sideloadedAttachments as $fieldKey => $item) {
+      if (isset($item['id'])) {
         $reducedSideloadedAttachments[$fieldKey][] = $item['id'];
+      } elseif (is_array($item)) {
+        foreach ($item as $subItem) {
+          if (isset($subItem['id'])) {
+            $reducedSideloadedAttachments[$fieldKey][] = $subItem['id'];
+          }
+        }
+      }
     }
 
-    foreach($reducedSideloadedAttachments as $fieldKey => $attachmentData) {
-      array_walk($fields, function (&$value, $key) use ($fieldKey, $attachmentData) {
-        if ($key === $fieldKey) {
-          $value = $attachmentData ?? null;
-        }
-      });
+    foreach ($reducedSideloadedAttachments as $fieldKey => $attachmentIds) {
+      $fields[$fieldKey] = $attachmentIds;
     }
 
     return $fields;

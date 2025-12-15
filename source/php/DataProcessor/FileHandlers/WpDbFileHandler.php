@@ -38,6 +38,10 @@ class WpDbFileHandler implements FileHandlerInterface {
                 ];
 
                 if (empty($fileArray['name']) || $fileArray['error'] !== UPLOAD_ERR_OK) {
+                    $errors[$fieldKey][] = new WP_Error(
+                      RestApiResponseStatusEnums::FileError->value, 
+                      $this->wpService->__('File upload error.', 'modularity-frontend-form')
+                    );
                     continue;
                 }
 

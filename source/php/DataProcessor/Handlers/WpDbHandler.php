@@ -106,7 +106,7 @@ class WpDbHandler implements HandlerInterface {
         'post_password' => $this->createPostPassword(),
         'meta_input'    => [
           $this->config->getMetaDataNamespace('holding_post_id') => (
-            $this->params->holdingPostId ?? null
+            $params->holdingPostId ?? null
           ),
           $this->config->getMetaDataNamespace('module_id')  => $moduleID,
           $this->config->getMetaDataNamespace('nonce')      => $fieldMeta['nonce'] ?? '',
@@ -175,7 +175,7 @@ class WpDbHandler implements HandlerInterface {
         'post_status'  => $moduleConfig->saveToPostTypeStatus,
         'meta_input'   => [
           $this->config->getMetaDataNamespace('holding_post_id') => (
-            $this->params->holdingPostId ?? null
+            $params->holdingPostId ?? null
           ),
           $this->config->getMetaDataNamespace('module_id') => $moduleID,
           $this->config->getMetaDataNamespace('nonce')     => $fieldMeta['nonce'] ?? '',

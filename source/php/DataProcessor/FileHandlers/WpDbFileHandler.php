@@ -7,6 +7,7 @@ use ModularityFrontendForm\Config\ModuleConfigInterface;
 use WP_REST_Request;
 use WpService\WpService;
 use WP_Error;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
 class WpDbFileHandler implements FileHandlerInterface {
 
@@ -17,14 +18,14 @@ class WpDbFileHandler implements FileHandlerInterface {
     )
     {}
 
-    public function handle(WP_REST_Request $request) {
+    public function handle(WP_REST_Request $request, ?int $postId = null) {
 
         $files = $request->get_file_params()[$this->config->getFieldNamespace()] ?? null;
         $fieldKeys = array_keys($files['name'] ?? []);
         $results = [];
+        $errors = [];
 
         foreach ($fieldKeys as $fieldKey) {
-            // Support multiple files per field (array of files)
             $fileCount = is_array($files['name'][$fieldKey]) ? count($files['name'][$fieldKey]) : 0;
 
             for ($i = 0; $i < $fileCount; $i++) {
@@ -45,18 +46,31 @@ class WpDbFileHandler implements FileHandlerInterface {
                 require_once ABSPATH . 'wp-admin/includes/media.php';
                 require_once ABSPATH . 'wp-admin/includes/image.php';
 
-                $attachment_id = media_handle_sideload($fileArray, 0);
+                $attachmentIdOrWpError = $this->wpService->mediaHandleSideload(
+                  $fileArray,
+                  $postId ?? 0
+                );
 
-                if (is_wp_error($attachment_id)) {
-                    $results[$fieldKey][] = $attachment_id;
+                if ($this->wpService->isWpError($attachmentIdOrWpError)) {
+                    $errors[$fieldKey][] = $attachmentIdOrWpError;
                 } else {
                     $results[$fieldKey][] = [
-                        'id'   => $attachment_id,
-                        'url'  => wp_get_attachment_url($attachment_id),
-                        'type' => get_post_mime_type($attachment_id),
+                        'id'   => $attachmentIdOrWpError,
+                        'url'  => wp_get_attachment_url($attachmentIdOrWpError),
+                        'type' => get_post_mime_type($attachmentIdOrWpError),
                     ];
                 }
             }
+        }
+
+        if(!empty($errors)) {
+            return new WP_Error(
+              RestApiResponseStatusEnums::FileError->value, 
+              $this->wpService->__('One or more files failed to upload.', 'modularity-frontend-form'),
+              [
+                'errors' => $errors
+              ]
+          );
         }
 
         return $results;

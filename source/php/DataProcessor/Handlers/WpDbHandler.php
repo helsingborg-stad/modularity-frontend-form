@@ -130,14 +130,18 @@ class WpDbHandler implements HandlerInterface {
       return false;
     }
 
-    //Decorates fields with sideloaded attachment IDs
+    // Handle file uploads, if error occurs, set error and return false
+    $fileHandlerResult = $this->fileHandler->handle($request, $result ?? null);
+    if($this->wpService->isWpError($fileHandlerResult)) {
+      $this->handlerResult->setError($fileHandlerResult);
+      return false;
+    }
+
+    // Prepare fields with sideloaded attachments
     $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
       $fieldMeta, 
-      $fileMeta = $this->fileHandler->handle($request)
+      $fileHandlerResult
     );
-
-    var_dump($fieldMeta, $fileMeta);
-    die;
 
     //Store fields
     $this->storeFields($fieldMeta, $result);
@@ -145,6 +149,14 @@ class WpDbHandler implements HandlerInterface {
     return true;
   }
 
+  /**
+   * Handles the request to update a post
+   *
+   * @param int|null $moduleID The module ID
+   * @param array|null $fieldMeta The field meta data
+   *
+   * @return WP_Error|int The result of the post update
+   */
   private function updatePost(
     int $moduleID, 
     array|null $fieldMeta, 
@@ -187,9 +199,17 @@ class WpDbHandler implements HandlerInterface {
       return false;
     }
 
+    // Handle file uploads, if error occurs, set error and return false
+    $fileHandlerResult = $this->fileHandler->handle($request, $result ?? null);
+    if($this->wpService->isWpError($fileHandlerResult)) {
+      $this->handlerResult->setError($fileHandlerResult);
+      return false;
+    }
+
+    // Prepare fields with sideloaded attachments
     $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
       $fieldMeta, 
-      $this->fileHandler->handle($request)
+      $fileHandlerResult
     );
 
     $this->storeFields($fieldMeta, $result);
@@ -299,7 +319,7 @@ class WpDbHandler implements HandlerInterface {
     }
     return [
       'plucked' => $plucked,
-      'fieldMeta' => $fieldMeta
+      'fieldMeta' => $fieldMeta[$this->config->getFieldNamespace()] ?? []
     ];
   }
 

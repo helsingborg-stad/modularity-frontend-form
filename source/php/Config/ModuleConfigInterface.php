@@ -72,6 +72,12 @@ interface ModuleConfigInterface
      * @return array The activated handlers
      */
     public function getActivatedHandlers(): array;
+
+    /**
+     * Gets the WP DB handler config
+     *
+     * @return object|null The WP DB handler config or null if none is found
+     */
     public function getWpDbHandlerConfig(): ?object;
 
     /**

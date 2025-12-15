@@ -68,15 +68,16 @@ class Get extends RestApiEndpoint
         $this->filterReturnTypeSetting();
 
         $params = (new RestApiParams(
-            $this->wpService, 
-            $this->config, 
-            $this->moduleConfigFactory)
-        )->getValuesFromRequest($request);
+            $this->wpService,
+            $this->config,
+            $this->moduleConfigFactory
+        ))->getValuesFromRequest($request);
 
         //Get fields from post id 
-        $fieldData       = $this->acfService->getFields($params->postId, false, false);
-        $fieldData       = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
-        $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
+        $fieldData = get_field_objects($params->postId, false);
+        $fieldData = $this->retrieveValues($fieldData);
+        $fieldData = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
+        $fieldData = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
         //Add post title
         //TODO: Control that the post_title option is activated in the module
@@ -99,6 +100,45 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    private function retrieveValues(array $fieldData): array
+    {
+        $fields = [];
+        foreach ($fieldData as $field) {
+            switch ($field['type']) {
+                case 'gallery':
+                    $fields[$field['name']] = $this->retrieveValuesFromGalleryField($field);
+                    break;
+                default:
+                    $fields[$field['name']] = $field['value'];
+                    break;
+            }
+        }
+
+        return $fields;
+    }
+
+    private function retrieveValuesFromGalleryField(array $field): array
+    {
+        $values = [];
+        if (empty($field['value'])) {
+            return $values;
+        }
+        foreach ($field['value'] as $imageId) {
+
+            $attachment = $this->wpService->wpPrepareAttachmentForJs($imageId);
+
+            $values[] = [
+                'id' => $imageId,
+                'url' => $attachment['url'],
+                'type' => $attachment['mime'] ?? 'image/jpeg',
+                'size' => $attachment['filesizeInBytes'] ?? "0",
+                'name' => $attachment['filename'] ?? '',
+            ];
+        }
+
+        return $values;
     }
 
     /**
@@ -142,7 +182,7 @@ class Get extends RestApiEndpoint
     private function translateFieldNamesToFieldKeys(int $postId, array $fields): array
     {
         $translatedFields = [];
-        foreach($fields as $key => $fieldValue) {
+        foreach ($fields as $key => $fieldValue) {
             $translatedFields[$this->translateFieldNameToFieldKey($postId, $key)] = $fieldValue;
         }
         return $translatedFields;
@@ -168,9 +208,9 @@ class Get extends RestApiEndpoint
      * @param string $postType The post type to check against
      * @param array $defaultKeys The default keys to include, if any.
      */
-    private function filterUnmappedFieldKeysForPostType($moduleId, $fieldData): array
+    private function filterUnmappedFieldKeysForPostType(int $postId, $fieldData): array
     {
-        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($moduleId)->getFieldKeysRegisteredAsFormFields();
+        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($postId)->getFieldKeysRegisteredAsFormFields();
 
         $fieldData = array_intersect_key(
             $fieldData,

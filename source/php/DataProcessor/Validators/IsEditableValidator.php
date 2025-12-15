@@ -11,7 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-
+use WP_REST_Request;
 class IsEditableValidator implements ValidatorInterface
 {
     use GetModuleConfigInstanceTrait;
@@ -28,7 +28,7 @@ class IsEditableValidator implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
         // Check if the module is editable
         if(!$this->moduleHasEditingEnabled()) {

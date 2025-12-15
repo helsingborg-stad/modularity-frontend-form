@@ -76,11 +76,6 @@ class Post extends RestApiEndpoint
 
         $data = $request->get_params();
 
-        /*$sideloaded = $this->handleSideloadedFiles($request);
-        
-        var_dump($sideloaded); // For debugging purposes
-            die;
-*/
         // Handler factories
         $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
         $handlerFactory     = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);

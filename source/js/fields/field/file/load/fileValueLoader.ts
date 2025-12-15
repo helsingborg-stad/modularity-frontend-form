@@ -1,3 +1,5 @@
+import createFileInputFakeFile from '../../../helper/createFileInputFakeFile';
+
 class FileValueLoader implements BasicValueLoaderInterface {
 	private parent!: BasicInterface;
 
@@ -5,8 +7,18 @@ class FileValueLoader implements BasicValueLoaderInterface {
 		this.parent = parent;
 	}
 
-	public load(value: any): void {
-		console.log(value);
+	public load(value: FakeFile[]): void {
+		if (!value || Array.isArray(value) === false || value.length === 0) {
+			return;
+		}
+
+		value.forEach((item: FakeFile) => {
+			if (!item.id || !item.url) {
+				return;
+			}
+
+			createFileInputFakeFile(item, this.parent.getField());
+		});
 	}
 }
 

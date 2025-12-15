@@ -1,8 +1,4 @@
-declare global {
-	interface Window {
-		addFakeFileToInput: (file: FakeFile, input: HTMLInputElement) => void;
-	}
-}
+import createFileInputFakeFile from '../../../helper/createFileInputFakeFile';
 
 class GalleryValueLoader implements BasicValueLoaderInterface {
 	private parent!: BasicInterface;
@@ -21,16 +17,7 @@ class GalleryValueLoader implements BasicValueLoaderInterface {
 				return;
 			}
 
-			window.addFakeFileToInput(
-				{
-					name: item.name,
-					type: item.type || 'image/jpeg',
-					id: item.id,
-					url: item.url,
-					size: item.size,
-				},
-				this.parent.getField(),
-			);
+			createFileInputFakeFile(item, this.parent.getField());
 		});
 	}
 }

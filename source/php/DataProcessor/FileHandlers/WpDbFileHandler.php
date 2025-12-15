@@ -20,10 +20,10 @@ class WpDbFileHandler implements FileHandlerInterface {
 
     public function handle(WP_REST_Request $request, ?int $postId = null) {
 
-        $files = $request->get_file_params()[$this->config->getFieldNamespace()] ?? null;
+        $files     = $request->get_file_params()[$this->config->getFieldNamespace()] ?? null;
         $fieldKeys = array_keys($files['name'] ?? []);
-        $results = [];
-        $errors = [];
+        $results   = [];
+        $errors    = [];
 
         foreach ($fieldKeys as $fieldKey) {
             $fileCount = is_array($files['name'][$fieldKey]) ? count($files['name'][$fieldKey]) : 0;
@@ -78,5 +78,22 @@ class WpDbFileHandler implements FileHandlerInterface {
         }
 
         return $results;
+    }
+
+    /**
+     * Delete files that have been removed from the submission
+     * TODO: Implement.
+     *
+     * @param array $existingFileIds The existing file IDs
+     * @param array $newFileIds The new file IDs
+     * 
+     * @return void
+     */
+    private function deleteRemovedFiles(array $existingFileIds, array $newFileIds): void {
+        $fileIdsToDelete = array_diff($existingFileIds, $newFileIds);
+
+        foreach ($fileIdsToDelete as $fileId) {
+            $this->wpService->wpDeleteAttachment($fileId, true);
+        }
     }
 }

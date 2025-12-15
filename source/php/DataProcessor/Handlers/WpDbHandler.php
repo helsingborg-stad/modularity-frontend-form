@@ -4,14 +4,17 @@ namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use WpService\WpService; 
 use AcfService\AcfService;
-use ModularityFrontendForm\Api\RestApiParamsInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
+use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
+use WP;
 use WP_Error;
+use WP_REST_Request;
 
 class WpDbHandler implements HandlerInterface {
 
@@ -23,8 +26,16 @@ class WpDbHandler implements HandlerInterface {
       private ConfigInterface $config,
       private ModuleConfigInterface $moduleConfigInstance,
       private object $params,
-      private HandlerResultInterface $handlerResult = new HandlerResult()
+      private HandlerResultInterface $handlerResult = new HandlerResult(),
+      private ?FileHandlerInterface $fileHandler = null
   ) {
+    if($this->fileHandler === null) {
+      $this->fileHandler = new NullFileHandler(
+        $this->config, 
+        $this->moduleConfigInstance, 
+        $this->wpService
+      );
+    }
   }
 
   /**
@@ -35,9 +46,8 @@ class WpDbHandler implements HandlerInterface {
    * 
    * @return HandlerResultInterface|null The result of the handler
    */
-  public function handle(array $data): ?HandlerResultInterface
+  public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
   {
-    //Get post title from meta data
     [
       'plucked' => [
         'post_title'    => $postTitle, 
@@ -46,14 +56,14 @@ class WpDbHandler implements HandlerInterface {
       'fieldMeta' => $data
     ] = $this->pluckFromMetaData($data, ['post_title', 'post_content']);
 
-    // TODO: use wpService
-    if(in_array('post_id', $data) && get_post($data['post_id']) !== null) {
+    if(in_array('post_id', $data) && $this->wpService->getPost($data['post_id']) !== null) {
       $this->updatePost(
         $this->moduleConfigInstance->getModuleId(),
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags()),
+        $request
       );
     } else {
       $this->insertPost(
@@ -61,9 +71,11 @@ class WpDbHandler implements HandlerInterface {
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags())
+        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags()),
+        $request
       );
     }
+
     return $this->handlerResult;
   }
 
@@ -80,7 +92,8 @@ class WpDbHandler implements HandlerInterface {
     array|null $fieldMeta, 
     object $params, 
     null|string $postTitle = null, 
-    null|string $postContent = null
+    null|string $postContent = null,
+    WP_REST_Request $request
   ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
@@ -93,7 +106,7 @@ class WpDbHandler implements HandlerInterface {
         'post_password' => $this->createPostPassword(),
         'meta_input'    => [
           $this->config->getMetaDataNamespace('holding_post_id') => (
-            $this->params->holdingPostId ?? null
+            $params->holdingPostId ?? null
           ),
           $this->config->getMetaDataNamespace('module_id')  => $moduleID,
           $this->config->getMetaDataNamespace('nonce')      => $fieldMeta['nonce'] ?? '',
@@ -116,21 +129,45 @@ class WpDbHandler implements HandlerInterface {
       );
       return false;
     }
+
+    // Handle file uploads, if error occurs, set error and return false
+    $fileHandlerResult = $this->fileHandler->handle($request, $result ?? null);
+    if($this->wpService->isWpError($fileHandlerResult)) {
+      $this->handlerResult->setError($fileHandlerResult);
+      return false;
+    }
+
+    // Prepare fields with sideloaded attachments
+    $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
+      $fieldMeta, 
+      $fileHandlerResult
+    );
+
+    //Store fields
     $this->storeFields($fieldMeta, $result);
+
     return true;
   }
 
+  /**
+   * Handles the request to update a post
+   *
+   * @param int|null $moduleID The module ID
+   * @param array|null $fieldMeta The field meta data
+   *
+   * @return WP_Error|int The result of the post update
+   */
   private function updatePost(
     int $moduleID, 
     array|null $fieldMeta, 
     object $params, 
     null|string $postTitle = null, 
-    null|string $postContent = null
+    null|string $postContent = null,
+    WP_REST_Request $request
   ): false|int {
 
     $moduleConfig = $this->moduleConfigInstance->getWpDbHandlerConfig();
 
- 
     $result = $this->wpService->wpUpdatePost([
         'ID'           => $fieldMeta['post_id'],
         'post_title'   => $postTitle   ?: $this->moduleConfigInstance->getModuleTitle(),
@@ -138,7 +175,7 @@ class WpDbHandler implements HandlerInterface {
         'post_status'  => $moduleConfig->saveToPostTypeStatus,
         'meta_input'   => [
           $this->config->getMetaDataNamespace('holding_post_id') => (
-            $this->params->holdingPostId ?? null
+            $params->holdingPostId ?? null
           ),
           $this->config->getMetaDataNamespace('module_id') => $moduleID,
           $this->config->getMetaDataNamespace('nonce')     => $fieldMeta['nonce'] ?? '',
@@ -161,8 +198,53 @@ class WpDbHandler implements HandlerInterface {
       );
       return false;
     }
+
+    // Handle file uploads, if error occurs, set error and return false
+    $fileHandlerResult = $this->fileHandler->handle($request, $result ?? null);
+    if($this->wpService->isWpError($fileHandlerResult)) {
+      $this->handlerResult->setError($fileHandlerResult);
+      return false;
+    }
+
+    // Prepare fields with sideloaded attachments
+    $fieldMeta = $this->prepareFieldsWithSideloadedAttachments(
+      $fieldMeta, 
+      $fileHandlerResult
+    );
+
     $this->storeFields($fieldMeta, $result);
+
     return true;
+  }
+
+  /**
+   * Prepares fields by replacing file fields with sideloaded attachment IDs
+   *
+   * @param array $fields The fields to prepare
+   * @param array $sideloadedAttachments The sideloaded attachments
+   * 
+   * @return array The prepared fields
+   */
+  private function prepareFieldsWithSideloadedAttachments(array $fields, array $sideloadedAttachments): array
+  {
+    $reducedSideloadedAttachments = [];
+    foreach ($sideloadedAttachments as $fieldKey => $item) {
+      if (isset($item['id'])) {
+        $reducedSideloadedAttachments[$fieldKey][] = $item['id'];
+      } elseif (is_array($item)) {
+        foreach ($item as $subItem) {
+          if (isset($subItem['id'])) {
+            $reducedSideloadedAttachments[$fieldKey][] = $subItem['id'];
+          }
+        }
+      }
+    }
+
+    foreach ($reducedSideloadedAttachments as $fieldKey => $attachmentIds) {
+      $fields[$fieldKey] = $attachmentIds;
+    }
+
+    return $fields;
   }
 
   /**
@@ -237,7 +319,7 @@ class WpDbHandler implements HandlerInterface {
     }
     return [
       'plucked' => $plucked,
-      'fieldMeta' => $fieldMeta
+      'fieldMeta' => $fieldMeta[$this->config->getFieldNamespace()] ?? []
     ];
   }
 

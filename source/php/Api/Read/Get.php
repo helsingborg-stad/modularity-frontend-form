@@ -16,6 +16,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use WpService\WpService;
+use Municipio\Schema\Schema;
 
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 
@@ -112,6 +113,9 @@ class Get extends RestApiEndpoint
                 case 'image':
                     $fields[$field['name']] = $this->retrieveValuesFileField($field);
                     break;
+                case 'google_map':
+                    $fields[$field['name']] = $this->convertGoogleMapFieldValueToSchema($field);
+                    break;
                 default:
                     $fields[$field['name']] = $field['value'];
                     break;
@@ -119,6 +123,40 @@ class Get extends RestApiEndpoint
         }
 
         return $fields;
+    }
+
+    private function convertGoogleMapFieldValueToSchema(array $field): ?\Municipio\Schema\Place
+    {
+        if (empty($field['value']) || !is_array($field['value'])) {
+            return null;
+        }
+
+        $value = $field['value'];
+        $streetAddress = $value['street_name'] . ' ' . ($value['street_number'] ?? '');
+        $name = trim(implode(', ', array_filter([
+            $streetAddress,
+            ($value['post_code'] ?? '') . ' ' . ($value['city'] ?? ''),
+            ($value['country'] ?? '')
+        ])));
+
+        $postalAddress = Schema::postalAddress();
+        $postalAddress->addressCountry($value['country'] ?? null);
+        $postalAddress->addressLocality($value['city'] ?? null);
+        $postalAddress->streetAddress(!empty(trim($streetAddress)) ? $streetAddress : null);
+        $postalAddress->postalCode($value['post_code'] ?? null);
+        $postalAddress->addressRegion($value['state'] ?? null);
+        $postalAddress->name($name);
+        $postalAddress->toArray();
+
+        $place = Schema::place();
+        $place->latitude($value['lat'] ?? null);
+        $place->longitude($value['lng'] ?? null);
+        $place->address($postalAddress);
+        $place->name($name);
+
+        $place->toArray();
+
+        return $place;
     }
 
     private function retrieveValuesFileField(array $field): array

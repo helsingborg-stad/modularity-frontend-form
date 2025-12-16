@@ -11,7 +11,7 @@ class GoogleMap implements GoogleMapInterface {
 		private googleMapValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
-		private loader: GoogleMapValueLoaderInterface = new GoogleMapValueLoader(),
+		private loader: GoogleMapValueLoaderInterface = new GoogleMapValueLoader(openstreetmapInstance),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
@@ -66,6 +66,7 @@ class GoogleMap implements GoogleMapInterface {
 
 	private listenForMarkerEvents(): void {
 		this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject | null) => {
+			console.log(placeObject);
 			this.hiddenField.value = placeObject ? JSON.stringify(placeObject) : '';
 			this.conditionsHandler.checkConditions();
 			this.validator.validate();

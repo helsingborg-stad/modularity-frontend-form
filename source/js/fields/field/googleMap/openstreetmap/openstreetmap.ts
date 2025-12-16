@@ -12,10 +12,10 @@ import {
 	CreateMap,
 	CreateSearch,
 	SearchInterface,
-} from "@helsingborg-stad/openstreetmap";
+} from '@helsingborg-stad/openstreetmap';
 
-import FetchPlaceFromLatLng from "./fetchPlaceFromLatLng";
-import CreateFallbackPlaceObject from "./createFallbackPlaceObject";
+import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
+import CreateFallbackPlaceObject from './createFallbackPlaceObject';
 
 class Openstreetmap implements OpenstreetmapInterface {
 	private search!: SearchInterface;
@@ -50,22 +50,16 @@ class Openstreetmap implements OpenstreetmapInterface {
 
 		this.createMarker = new CreateMarker();
 
-		const tiles = new TilesHelper().getDefaultTiles("default");
-		new CreateAttribution()
-			.create()
-			.setPrefix(tiles.attribution)
-			.addTo(this.map);
+		const tiles = new TilesHelper().getDefaultTiles('default');
+		new CreateAttribution().create().setPrefix(tiles.attribution).addTo(this.map);
 		new CreateTileLayer().create().setUrl(tiles.url).addTo(this.map);
 		this.search = new CreateSearch()
 			.create({
-				noResultsText:
-					this.modularityFrontendFormLang.noResultsFound ?? "No items found.",
-				placeholder:
-					this.modularityFrontendFormLang.searchPlaceholder ??
-					"Search location...",
+				noResultsText: this.modularityFrontendFormLang.noResultsFound ?? 'No items found.',
+				placeholder: this.modularityFrontendFormLang.searchPlaceholder ?? 'Search location...',
 			})
 			.setApiUrl(this.modularityFrontendFormData.placeSearchApiUrl)
-			.setSearchParam("q")
+			.setSearchParam('q')
 			.addTo(this.map)
 			.addListItemListener((e) => this.handleListItemClick(e));
 
@@ -74,7 +68,7 @@ class Openstreetmap implements OpenstreetmapInterface {
 			this.map.invalidateSize();
 		}, 100);
 
-		this.map.addListener("click", (e) => this.handleClick(e));
+		this.map.addListener('click', (e) => this.handleClick(e));
 		this.setResetButtonClickListener();
 	}
 
@@ -90,35 +84,28 @@ class Openstreetmap implements OpenstreetmapInterface {
 		return this.fetching;
 	}
 
-	public addMarkerMovedListener(
-		callback: (event: PlaceObject | null) => void,
-	): void {
+	public addMarkerMovedListener(callback: (event: PlaceObject | null) => void): void {
 		this.markerMovedListeners.push(callback);
 	}
 
 	private handleClick(e: EventData): void {
 		if (!e.latLng) {
-			console.error("No latLng found in event data");
+			console.error('No latLng found in event data');
 			return;
 		}
 
 		if (!e.originalEvent) {
-			console.error("No originalEvent found in event data");
+			console.error('No originalEvent found in event data');
 			return;
 		}
 
-		if (
-			e.originalEvent.target &&
-			e.originalEvent.target.classList.contains(
-				"mod-frontend-form__openstreetmap",
-			)
-		) {
+		if (e.originalEvent.target && e.originalEvent.target.classList.contains('mod-frontend-form__openstreetmap')) {
 			this.addOrMoveMarker(e.latLng);
 		}
 	}
 
 	private setResetButtonClickListener(): void {
-		this.search.getResetButton()?.addEventListener("click", () => {
+		this.search.getResetButton()?.addEventListener('click', () => {
 			this.marker?.removeMarker();
 			this.marker = null;
 			this.currentPlace = null;
@@ -136,10 +123,7 @@ class Openstreetmap implements OpenstreetmapInterface {
 		this.map.flyTo(latLng, 15);
 	}
 
-	private addOrMoveMarker(
-		latLng: LatLngObject,
-		placeObject: PlaceObject | null = null,
-	): void {
+	private addOrMoveMarker(latLng: LatLngObject, placeObject: PlaceObject | null = null): void {
 		if (this.marker) {
 			this.marker.setPosition(latLng);
 		} else {
@@ -160,10 +144,7 @@ class Openstreetmap implements OpenstreetmapInterface {
 		});
 	}
 
-	private async maybeFetchPlace(
-		latLng: LatLngObject,
-		placeObject: PlaceObject | null = null,
-	): Promise<void> {
+	private async maybeFetchPlace(latLng: LatLngObject, placeObject: PlaceObject | null = null): Promise<void> {
 		if (placeObject) {
 			this.currentPlace = placeObject;
 			this.callMarkerMovedListeners();
@@ -172,24 +153,19 @@ class Openstreetmap implements OpenstreetmapInterface {
 
 		this.fetching = true;
 		if (this.search.getInput()) {
-			this.search.setValue(
-				(this.modularityFrontendFormLang.loading ?? "Loading") + "...",
-			);
+			this.search.setValue((this.modularityFrontendFormLang.loading ?? 'Loading') + '...');
 			this.search.showSpinner();
 		}
 
 		try {
-			this.currentPlace = await this.fetchPlaceFromLatLng.fetch(
-				latLng.lat,
-				latLng.lng,
-			);
+			this.currentPlace = await this.fetchPlaceFromLatLng.fetch(latLng.lat, latLng.lng);
 			if (this.currentPlace) this.callMarkerMovedListeners();
 			this.updateSearchInput();
 		} catch (error) {
 			this.currentPlace = this.createPlaceFromLatLng.create(latLng);
 			this.callMarkerMovedListeners();
 			this.updateSearchInput();
-			console.warn("Failed to fetch place:", error);
+			console.warn('Failed to fetch place:', error);
 		} finally {
 			this.fetching = false;
 		}
@@ -199,12 +175,10 @@ class Openstreetmap implements OpenstreetmapInterface {
 	private updateSearchInput(): void {
 		if (this.search.getInput() && this.currentPlace) {
 			this.search.setSearchListItems(null);
-			this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(
-				this.currentPlace,
-			);
+			this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(this.currentPlace);
 			this.search.showResetButton();
 			this.search.hideSpinner();
-			this.search.getInput()!.focus();
+			console.log('Updated search input with place:', this.currentPlace);
 
 			setTimeout(() => {
 				this.search.getInput()!.scrollLeft = 0;

@@ -1,5 +1,3 @@
-// TODO: This should probably be renamed to input.ts since it is used for all input types
-
 import BasicValueLoader from './load/basicValueLoader';
 
 class Basic implements BasicInterface {

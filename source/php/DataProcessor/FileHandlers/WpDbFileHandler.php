@@ -33,6 +33,10 @@ class WpDbFileHandler implements FileHandlerInterface {
         $results   = [];
         $errors    = [];
 
+        $files = array_filter($files, function($fileGroup) {
+            return ($fileGroup['tmp_name'] ?? '') !== '' && ($fileGroup['size'] ?? 0) > 0;
+        });
+
         foreach ($fieldKeys as $fieldKey) {
             $fileCount = is_array($files['name'][$fieldKey]) ? count($files['name'][$fieldKey]) : 0;
 

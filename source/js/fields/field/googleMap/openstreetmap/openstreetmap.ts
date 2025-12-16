@@ -16,6 +16,7 @@ import {
 
 import FetchPlaceFromLatLng from './fetchPlaceFromLatLng';
 import CreateFallbackPlaceObject from './createFallbackPlaceObject';
+import { MarkerChangedCallback, OpenstreetmapInterface } from './openstreetmapInterface';
 
 class Openstreetmap implements OpenstreetmapInterface {
 	private search!: SearchInterface;
@@ -72,6 +73,10 @@ class Openstreetmap implements OpenstreetmapInterface {
 		this.setResetButtonClickListener();
 	}
 
+	public getMap(): MapInterface {
+		return this.map;
+	}
+
 	public hasPlaceData(): boolean {
 		return this.currentPlace !== null;
 	}
@@ -123,7 +128,7 @@ class Openstreetmap implements OpenstreetmapInterface {
 		this.map.flyTo(latLng, 15);
 	}
 
-	private addOrMoveMarker(latLng: LatLngObject, placeObject: PlaceObject | null = null): void {
+	public addOrMoveMarker(latLng: LatLngObject, placeObject: PlaceObject | null = null): void {
 		if (this.marker) {
 			this.marker.setPosition(latLng);
 		} else {
@@ -148,6 +153,8 @@ class Openstreetmap implements OpenstreetmapInterface {
 		if (placeObject) {
 			this.currentPlace = placeObject;
 			this.callMarkerMovedListeners();
+			this.updateSearchInput();
+
 			return;
 		}
 
@@ -178,7 +185,6 @@ class Openstreetmap implements OpenstreetmapInterface {
 			this.search.getInput()!.value = this.search.getTitleFromPlaceSchema(this.currentPlace);
 			this.search.showResetButton();
 			this.search.hideSpinner();
-			console.log('Updated search input with place:', this.currentPlace);
 
 			setTimeout(() => {
 				this.search.getInput()!.scrollLeft = 0;

@@ -1,5 +1,6 @@
 import { PlaceObject } from '@helsingborg-stad/openstreetmap';
 import GoogleMapValueLoader from './load/googleMapValueLoader';
+import { OpenstreetmapInterface } from './openstreetmap/openstreetmapInterface';
 
 class GoogleMap implements GoogleMapInterface {
 	private required: boolean = false;
@@ -11,7 +12,7 @@ class GoogleMap implements GoogleMapInterface {
 		private googleMapValidator: ConditionValidatorInterface,
 		private conditionsHandler: ConditionsHandlerInterface,
 		private validator: FieldValidatorInterface,
-		private loader: GoogleMapValueLoaderInterface = new GoogleMapValueLoader(openstreetmapInstance),
+		private loader: GoogleMapValueLoaderInterface = new GoogleMapValueLoader(),
 	) {}
 
 	public init(conditionBuilder: ConditionBuilderInterface): void {
@@ -66,7 +67,6 @@ class GoogleMap implements GoogleMapInterface {
 
 	private listenForMarkerEvents(): void {
 		this.openstreetmapInstance.addMarkerMovedListener((placeObject: PlaceObject | null) => {
-			console.log(placeObject);
 			this.hiddenField.value = placeObject ? JSON.stringify(placeObject) : '';
 			this.conditionsHandler.checkConditions();
 			this.validator.validate();

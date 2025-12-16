@@ -1,40 +1,43 @@
-import { PlaceObject } from '@helsingborg-stad/openstreetmap';
+import { LatLngObject, PlaceObject } from '@helsingborg-stad/openstreetmap';
 
 class GoogleMapValueLoader implements GoogleMapValueLoaderInterface {
 	private parent!: GoogleMapInterface;
-
-	constructor(private openstreetmapInstance: OpenstreetmapInterface) {}
 
 	public init(parent: GoogleMapInterface): void {
 		this.parent = parent;
 	}
 
 	public load(value: any): void {
-		const placeObject = this.tryToConvertValueToPlaceObject(value);
-		console.log(placeObject);
-		// TODO: implement value loading
-	}
-
-	private tryToConvertValueToPlaceObject(value: any): PlaceObject | null {
-		if (typeof value !== 'object') {
-			return null;
-		}
-
 		if (this.isNotAValidPlaceObject(value)) {
-			// return null;
+			console.error('Invalid place object provided to GoogleMapValueLoader:', value);
+			return;
 		}
 
-		const placeObject: PlaceObject = {
-			'@type': 'Place',
-		};
+		this.parent.getOpenstreetmap().addOrMoveMarker(
+			{
+				lat: value.latitude,
+				lng: value.longitude,
+			} as LatLngObject,
+			value,
+		);
 
-		return value;
+		this.parent
+			.getOpenstreetmap()
+			.getMap()
+			.setView(
+				{
+					lat: value.latitude,
+					lng: value.longitude,
+				} as LatLngObject,
+				14,
+			);
 	}
 
 	private isNotAValidPlaceObject(value: any): boolean {
-		if (typeof value !== 'object' || !value.lat || !value.lng || !value.country || !value.postal_code) {
+		if (typeof value !== 'object' || !value.address || !value.latitude || !value.longitude || !value.name) {
 			return true;
 		}
+
 		return false;
 	}
 }

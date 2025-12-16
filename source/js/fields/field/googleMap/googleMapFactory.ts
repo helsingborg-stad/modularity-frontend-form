@@ -44,7 +44,7 @@ class GoogleMapFactory {
 			new GoogleMapConditionValidator(),
 			new GoogleMapConditionsHandler(unstructuredConditions),
 			new FieldValidator(new FieldValidatorUIHandler(notices), [new MapValidator(modularityFrontendFormLang)]),
-			new GoogleMapValueLoader(openstreetmapInstance),
+			new GoogleMapValueLoader(),
 		);
 	}
 }

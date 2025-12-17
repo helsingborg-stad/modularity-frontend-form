@@ -1,3 +1,5 @@
+import { LatLngObject, PlaceObject } from '@helsingborg-stad/openstreetmap';
+
 class GoogleMapValueLoader implements GoogleMapValueLoaderInterface {
 	private parent!: GoogleMapInterface;
 
@@ -6,7 +8,37 @@ class GoogleMapValueLoader implements GoogleMapValueLoaderInterface {
 	}
 
 	public load(value: any): void {
-		// TODO: implement value loading
+		if (this.isNotAValidPlaceObject(value)) {
+			console.error('Invalid place object provided to GoogleMapValueLoader:', value);
+			return;
+		}
+
+		this.parent.getOpenstreetmap().addOrMoveMarker(
+			{
+				lat: value.latitude,
+				lng: value.longitude,
+			} as LatLngObject,
+			value,
+		);
+
+		this.parent
+			.getOpenstreetmap()
+			.getMap()
+			.setView(
+				{
+					lat: value.latitude,
+					lng: value.longitude,
+				} as LatLngObject,
+				14,
+			);
+	}
+
+	private isNotAValidPlaceObject(value: any): boolean {
+		if (typeof value !== 'object' || !value.address || !value.latitude || !value.longitude || !value.name) {
+			return true;
+		}
+
+		return false;
 	}
 }
 

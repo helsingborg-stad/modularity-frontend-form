@@ -1,5 +1,6 @@
 import { PlaceObject } from '@helsingborg-stad/openstreetmap';
 import GoogleMapValueLoader from './load/googleMapValueLoader';
+import { OpenstreetmapInterface } from './openstreetmap/openstreetmapInterface';
 
 class GoogleMap implements GoogleMapInterface {
 	private required: boolean = false;

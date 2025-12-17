@@ -32,18 +32,7 @@ class WpDbFileHandler implements FileHandlerInterface {
         $fieldKeys = array_keys($files['name'] ?? []);
         $results   = [];
         $errors    = [];
-
-        foreach ($fieldKeys as $fieldKey) {
-            $tmpNames = $files['tmp_name'][$fieldKey] ?? [];
-            if (!is_array($tmpNames)) {
-              $tmpNames = [$tmpNames];
-            }
-            if (count(array_filter($tmpNames, fn($v) => !empty($v))) === 0) {
-              foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $attr) {
-                  unset($files[$attr][$fieldKey]);
-              }
-            }
-        }
+        $files     = $this->filterEmptyFieldKeys($fieldKeys, $files);
 
         foreach ($fieldKeys as $fieldKey) {
             $fileCount = is_array($files['name'][$fieldKey]) ? count($files['name'][$fieldKey]) : 0;
@@ -98,6 +87,27 @@ class WpDbFileHandler implements FileHandlerInterface {
         }
 
         return $results;
+    }
+
+    /**
+     * Filter out field keys that have no files uploaded.
+     *
+     * @param array $fieldKeys The field keys to check.
+     * @return array The filtered field keys.
+     */
+    private function filterEmptyFieldKeys(array $fieldKeys, array $files): array {
+        foreach ($fieldKeys as $fieldKey) {
+            $tmpNames = $files['tmp_name'][$fieldKey] ?? [];
+            if (!is_array($tmpNames)) {
+              $tmpNames = [$tmpNames];
+            }
+            if (count(array_filter($tmpNames, fn($v) => !empty($v))) === 0) {
+              foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $attr) {
+                  unset($files[$attr][$fieldKey]);
+              }
+            }
+        }
+        return $files;
     }
 
     /**

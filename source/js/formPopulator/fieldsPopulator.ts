@@ -1,6 +1,3 @@
-import Form from '../form/form';
-import StatusHandlerInterface from '../formStatus/handlerInterface';
-
 class FieldsPopulator {
 	constructor(private fieldsObject: FieldsObject) {}
 

@@ -79,10 +79,10 @@ class FormHandler {
 			statusRenderer,
 		);
 
-		const fieldPopulator = new FieldsPopulator(this.form, fieldsObject);
+		const fieldPopulator = new FieldsPopulator(fieldsObject);
 
 		formDataFetcher.subscribeToFetchedFormData((data: FetchedFormData) => {
-			fieldPopulator.tryPopulateFields(data);
+			return fieldPopulator.tryPopulateFields(data);
 		});
 
 		// Start fetching the form data
@@ -163,7 +163,7 @@ class FormHandler {
 	}
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('[data-js-frontend-form]').forEach((formContainer) => {
 		const form = formContainer.querySelector('form');
 

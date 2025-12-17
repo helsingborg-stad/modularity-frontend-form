@@ -22,6 +22,8 @@ type ModularityFrontendFormLang = {
 	submitError?: string;
 	submitSuccess?: string;
 
+	populateError?: string;
+
 	communicationError?: string;
 
 	nonceRequest?: string;

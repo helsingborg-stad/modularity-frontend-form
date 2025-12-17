@@ -210,6 +210,7 @@ class FrontendForm extends \Modularity\Module
             'submitSuccess'            => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
             'submitUrlError'           => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
             'submitError'              => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
+            'submitError'              => $this->wpService->__('An error occured as the field definition has been changed.', 'modularity-frontend-form'),
 
             'communicationError'       => $this->wpService->__('Communication error', 'modularity-frontend-form'),
 

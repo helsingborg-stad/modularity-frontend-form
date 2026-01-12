@@ -6,7 +6,7 @@ import Form from '../form/form';
 import StatusRendererInterface from '../formStatus/renderInterface';
 
 class FormDataFetcher implements FormActionInterface {
-	private formDataListeners: Array<(data: FetchedFormData) => void> = [];
+	private formDataListeners: Array<(data: FetchedFormData) => boolean> = [];
 	constructor(
 		private form: Form,
 		private formParams: FormParams,
@@ -26,7 +26,7 @@ class FormDataFetcher implements FormActionInterface {
 		this.statusRenderer.reset();
 	}
 
-	public subscribeToFetchedFormData(callback: (data: FetchedFormData) => void): void {
+	public subscribeToFetchedFormData(callback: (data: FetchedFormData) => boolean): void {
 		this.formDataListeners.push(callback);
 	}
 
@@ -41,6 +41,21 @@ class FormDataFetcher implements FormActionInterface {
 		if (formData) {
 			this.form.mode = FormMode.Update; // Set the form mode to update
 
+			const wasSuccessful = this.formDataListeners.map((listener) => listener(formData));
+
+			if (wasSuccessful.includes(false)) {
+				this.statusHandler.setStatus(
+					SubmitStatus.Error,
+					this.modularityFrontendFormLang?.submitError ?? 'Error loading form data.',
+					'error',
+					0,
+					10000,
+					false,
+					this,
+				);
+				return;
+			}
+
 			//Show success message
 			this.statusHandler.setStatus(
 				SubmitStatus.Success,
@@ -52,11 +67,6 @@ class FormDataFetcher implements FormActionInterface {
 				false,
 				true,
 			);
-
-			// this.populateForm(formData);
-			this.formDataListeners.forEach((listener) => {
-				listener(formData);
-			});
 		}
 	}
 

@@ -22,7 +22,7 @@ jobs:
         uses: helsingborg-stad/release-wp-plugin-action@main
         with:
           php-version: 8.2
-          node-version: 24.3.0
+          node-version: 20.6.0
           skip-release: true  # custom flag you added
 
       - name: Pull latest main with bumped version
@@ -44,42 +44,25 @@ jobs:
         with:
           php-version: "8.2"
 
-      - name: Configure npm for GitHub Packages in root
+      - name: Configure npm for GitHub Packages
         run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc
-          echo "@helsingborg-stad:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+          echo "@helsingborg-stad:registry=https://npm.pkg.github.com" >> ~/.npmrc
 
       - name: Run PHP build script
         run: php build.php --no-composer --cleanup --release
 
       - name: Overwrite .gitignore for release branch
         run: |
-          cat > .gitignore <<'EOF'
-          /*
-          !screenshot.png
-          !.gitignore
-          !/dist
-          !/dist/**
-          !/source/php
-          !/source/php/**
-          !/assets
-          !/assets/**
-          !/languages
-          !/languages/**
-          !/composer.json
-          !/modularity-frontend-form.php
-          EOF
-
+          printf "/*\n!/dist\n!/dist/**\n!/source/php\n!/source/php/**\n!/assets\n!/assets/**" > .gitignore
 
       # --- Release Branch Commit ---
       - name: Commit and push release branch
         run: |
           git config user.name "CI Release Bot"
           git config user.email "ci@helsingborg.se"
-          git branch -D release
-          git checkout --orphan release
-          git reset    # optional, clears index without touching working tree
-          git add .
+          git checkout -B release
+          git add -A
           git commit -m "Release build from $GITHUB_SHA" || echo "No changes to commit"
           git push origin release --force
 

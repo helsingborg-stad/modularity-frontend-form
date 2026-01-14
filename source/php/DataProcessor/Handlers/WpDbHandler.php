@@ -62,7 +62,10 @@ class WpDbHandler implements HandlerInterface {
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags()),
+        $this->sanitizePostContent(
+          $postContent, 
+          $this->config->getAllowedHtmlTags()
+        ),
         $request
       );
     } else {
@@ -71,7 +74,10 @@ class WpDbHandler implements HandlerInterface {
         $data,
         $this->params,
         $this->sanitizePostTitle($postTitle),
-        $this->sanitizePostContent($postContent, $this->config->getAllowedHtmlTags()),
+        $this->sanitizePostContent(
+          $postContent, 
+          $this->config->getAllowedHtmlTags()
+        ),
         $request
       );
     }
@@ -314,9 +320,10 @@ class WpDbHandler implements HandlerInterface {
   {
     $plucked = [];
     foreach ($keys as $key) {
-      $plucked[$key] = $fieldMeta[$key] ?? null;
-      unset($fieldMeta[$key]);
+      $plucked[$key] = $fieldMeta[$this->config->getFieldNamespace()][$key] ?? null;
+      unset($fieldMeta[$this->config->getFieldNamespace()][$key]);
     }
+
     return [
       'plucked' => $plucked,
       'fieldMeta' => $fieldMeta[$this->config->getFieldNamespace()] ?? []

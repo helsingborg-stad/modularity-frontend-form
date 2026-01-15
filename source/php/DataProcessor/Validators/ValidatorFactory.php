@@ -73,9 +73,10 @@ class ValidatorFactory {
       $config = $this->getModuleConfigInstance($moduleId);
 
       //Feature toggles
-      $useNoFieldMissing                    = true;
-      $useFieldValidationWithAcf            = true;
-      $usePostTitleExistsInDataWhenRequired = true;
+      $useNoFieldMissing                      = true;
+      $useFieldValidationWithAcf              = true;
+      $usePostTitleExistsInDataWhenRequired   = true;
+      $usePostContentExistsInDataWhenRequired = true;
 
       //Check if the module is configured to use the WPDB handler
       //This configuration allows us to validate that the fields
@@ -90,11 +91,12 @@ class ValidatorFactory {
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
 
       return array_filter([
-          $useNoFieldMissing                    ? new NoFieldsMissing(...$args) : null,
-          $useFieldsExistsOnPostType            ? new FieldsExistsOnPostType(...$args) : null,
-          $useFieldsExists                      ? new FieldsExists(...$args) : null,
-          $useFieldValidationWithAcf            ? new FieldValidationWithAcf(...$args) : null,
-          $usePostTitleExistsInDataWhenRequired ? new PostTitleExistsInDataWhenRequired(...$args) : null,
+          $useNoFieldMissing                      ? new NoFieldsMissing(...$args) : null,
+          $useFieldsExistsOnPostType              ? new FieldsExistsOnPostType(...$args) : null,
+          $useFieldsExists                        ? new FieldsExists(...$args) : null,
+          $useFieldValidationWithAcf              ? new FieldValidationWithAcf(...$args) : null,
+          $usePostTitleExistsInDataWhenRequired   ? new PostTitleExistsInDataWhenRequired(...$args) : null,
+          $usePostContentExistsInDataWhenRequired ? new PostContentExistsInDataWhenRequired(...$args) : null,
       ]);
   }
 

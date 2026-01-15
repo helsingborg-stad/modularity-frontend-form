@@ -51,26 +51,32 @@ class FilesCountIsWithinLimits implements ValidatorInterface
 
         $fileCount = count($filesArray);
 
-        if($fieldMaxItems !== null && $fileCount > $fieldMaxItems) {
+        if($fieldMaxItems !== null && is_numeric($fieldMaxItems) && $fileCount > $fieldMaxItems) {
+
+          $fieldLabel = $this->acfService->acfGetField($fieldKey)['label'] ?? $fieldKey;
+
           $this->validationResult->setError(
             new WP_Error(
               RestApiResponseStatusEnums::FileError->value,
               sprintf(
                 __('The number of files uploaded for field "%s" exceeds the maximum allowed of %d.', 'modularity-frontend-form'),
-                $fieldKey,
+                $fieldLabel,
                 $fieldMaxItems
               )
             )
           );
         }
 
-        if($fieldMinItems !== null && $fileCount < $fieldMinItems) {
+        if($fieldMinItems !== null && is_numeric($fieldMinItems) && $fileCount < $fieldMinItems) {
+
+          $fieldLabel = $this->acfService->acfGetField($fieldKey)['label'] ?? $fieldKey;
+
           $this->validationResult->setError(
             new WP_Error(
               RestApiResponseStatusEnums::FileError->value,
               sprintf(
                 __('The number of files uploaded for field "%s" is less than the minimum required of %d.', 'modularity-frontend-form'),
-                $fieldKey,
+                $fieldLabel,
                 $fieldMinItems
               )
             )
@@ -84,12 +90,13 @@ class FilesCountIsWithinLimits implements ValidatorInterface
 
 
     /**
-     * Get field constraints from ACF
+     * Get field constraint value from ACF
      *
      * @param string $fieldKey
-     * @return array|null
+     * @param string $key
+     * @return int|null
      */
-    private function getFieldConstraints(string $fieldKey, string $key): ?array
+    private function getFieldConstraints(string $fieldKey, string $key): mixed
     {
       return $this->acfService->acfGetField($fieldKey)[$key] ?? null;
     }

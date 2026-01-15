@@ -72,9 +72,9 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
      * Get field constraints from ACF
      *
      * @param string $fieldKey
-     * @return array|null
+     * @return mixed
      */
-    private function getFieldConstraints(string $fieldKey, string $key): ?array
+    private function getFieldConstraints(string $fieldKey, string $key): mixed
     {
       return $this->acfService->acfGetField($fieldKey)[$key] ?? null;
     }

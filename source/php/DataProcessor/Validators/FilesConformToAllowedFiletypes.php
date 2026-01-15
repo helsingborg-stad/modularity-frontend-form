@@ -48,7 +48,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
           $fileName = $fileProps['name'] ?? '';
           
           $postedFileMimeType = $fileType;
-          $storedFileMimeType = $this->getMimeFromFile($fileProps['tmp_name'], $allowedMimeTypes);
+          $storedFileMimeType = $this->getMimeFromFile($fileName, $allowedMimeTypes);
 
           if($postedFileMimeType !== $storedFileMimeType) {
             $this->validationResult->setError(
@@ -76,16 +76,11 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
      */
     private function getMimeFromFile(string $filePath, ?array $allowedMimes = null): ?string
     {
-      $fileInfo = $this->wpService->wpCheckFiletype(
-        $filePath,
-        $allowedMimes
-      );
-
-      if(array_filter($fileInfo) === []) {
+      $fileMimeType = mime_content_type($filePath);
+      if($allowedMimes && !in_array($fileMimeType, $allowedMimes)) {
         return null;
       }
-
-      return $fileInfo['type'] ?? null;
+      return $fileMimeType;
     }
 
     /**
@@ -117,7 +112,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
      */
     private function getAllowedFileExtensions(string $fieldKey): ?array
     {
-      $allowedTypes = $this->acfService->acfGetField($fieldKey)['allowed_types'] ?? null;
+      $allowedTypes = $this->acfService->acfGetField($fieldKey)['mime_types'] ?? null;
 
       if (is_string($allowedTypes)) {
         $allowedTypes = array_filter(array_map('trim', explode(',', $allowedTypes)));

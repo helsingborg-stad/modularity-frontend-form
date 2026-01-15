@@ -81,7 +81,7 @@ class ValidatorFactory {
       //Feature toggles - file validation
       $useFilesIntegrityCheck            = true;
       $useFilesConformToAllowedFileSize  = true;
-      $useFilesConformToAllowedFileTypes = false;
+      $useFilesConformToAllowedFileTypes = true;
       $useFilesCountIsWithinLimits       = false;
       
       //Check if the module is configured to use the WPDB handler

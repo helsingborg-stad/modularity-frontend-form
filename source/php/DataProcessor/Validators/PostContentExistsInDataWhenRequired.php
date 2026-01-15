@@ -11,6 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 class PostContentExistsInDataWhenRequired implements ValidatorInterface
 {
@@ -28,7 +29,7 @@ class PostContentExistsInDataWhenRequired implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
         // Check if the form has a native post content configured
         if(!$this->moduleHasNativePostContent()) {

@@ -8,9 +8,9 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\Validators\FieldsExistsOnPostType;
 use ModularityFrontendForm\DataProcessor\Validators\FieldValidationWithAcf;
-use ModularityFrontendForm\DataProcessor\Validators\NonceValidator;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\DataProcessor\Validators\NoFieldsMissing;
+use ModularityFrontendForm\DataProcessor\Validators\FilesIntegrityCheck;
 class ValidatorFactory {
 
   use GetModuleConfigInstanceTrait;
@@ -79,10 +79,11 @@ class ValidatorFactory {
       $usePostContentExistsInDataWhenRequired = true;
 
       //Feature toggles - file validation
+      $useFilesIntegrityCheck            = true;
       $useFilesConformToAllowedFileSize  = true;
       $useFilesConformToAllowedFileTypes = false;
       $useFilesCountIsWithinLimits       = false;
-
+      
       //Check if the module is configured to use the WPDB handler
       //This configuration allows us to validate that the fields
       //exist on the post type.
@@ -103,6 +104,7 @@ class ValidatorFactory {
           $usePostTitleExistsInDataWhenRequired   ? new PostTitleExistsInDataWhenRequired(...$args) : null,
           $usePostContentExistsInDataWhenRequired ? new PostContentExistsInDataWhenRequired(...$args) : null,
 
+          $useFilesIntegrityCheck                 ? new FilesIntegrityCheck(...$args) : null,
           $useFilesConformToAllowedFileSize       ? new FilesConformToAllowedFileSize(...$args) : null,
           $useFilesConformToAllowedFileTypes      ? new FilesConformToAllowedFileTypes(...$args) : null,
           $useFilesCountIsWithinLimits            ? new FilesCountIsWithinLimits(...$args) : null,

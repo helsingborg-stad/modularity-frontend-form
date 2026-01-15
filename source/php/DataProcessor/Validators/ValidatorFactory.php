@@ -70,7 +70,7 @@ class ValidatorFactory {
    */
   public function createInsertValidators(int $moduleId): array {
 
-      $config = $this->getModuleConfigInstance($moduleId);
+      $moduleConfig = $this->getModuleConfigInstance($moduleId);
 
       //Feature toggles
       $useNoFieldMissing                      = true;
@@ -79,10 +79,10 @@ class ValidatorFactory {
       $usePostContentExistsInDataWhenRequired = true;
 
       //Feature toggles - file validation
-      $useFilesIntegrityCheck            = true;
+      $useFilesCountIsWithinLimits       = false;
       $useFilesConformToAllowedFileSize  = true;
       $useFilesConformToAllowedFileTypes = true;
-      $useFilesCountIsWithinLimits       = false;
+      $useFilesIntegrityCheck            = true;
       
       //Check if the module is configured to use the WPDB handler
       //This configuration allows us to validate that the fields
@@ -90,7 +90,7 @@ class ValidatorFactory {
       //This will gracefully degrade to a simple field existence check
       //if the WPDB handler is not configured.
       $useFieldsExistsOnPostType = (
-        $config->getWpDbHandlerConfig() !== null
+        $moduleConfig->getWpDbHandlerConfig() !== null
       ) ? true : false;
       $useFieldsExists = !$useFieldsExistsOnPostType;
 
@@ -104,10 +104,10 @@ class ValidatorFactory {
           $usePostTitleExistsInDataWhenRequired   ? new PostTitleExistsInDataWhenRequired(...$args) : null,
           $usePostContentExistsInDataWhenRequired ? new PostContentExistsInDataWhenRequired(...$args) : null,
 
-          $useFilesIntegrityCheck                 ? new FilesIntegrityCheck(...$args) : null,
+          $useFilesCountIsWithinLimits            ? new FilesCountIsWithinLimits(...$args) : null,
           $useFilesConformToAllowedFileSize       ? new FilesConformToAllowedFileSize(...$args) : null,
           $useFilesConformToAllowedFileTypes      ? new FilesConformToAllowedFileTypes(...$args) : null,
-          $useFilesCountIsWithinLimits            ? new FilesCountIsWithinLimits(...$args) : null,
+          $useFilesIntegrityCheck                 ? new FilesIntegrityCheck(...$args) : null,
       ]);
   }
 

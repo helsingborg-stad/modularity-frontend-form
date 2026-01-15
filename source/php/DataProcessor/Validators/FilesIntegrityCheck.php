@@ -50,7 +50,7 @@ class FilesIntegrityCheck implements ValidatorInterface
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,
                 sprintf(
-                  __('The file "%s" could not be uploaded [unable to find the file].', 'modularity-frontend-form'),
+                  $this->wpService->__('The file "%s" could not be uploaded [unable to find the file].', 'modularity-frontend-form'),
                   $fileProps['name'],
                 )
               )
@@ -66,7 +66,7 @@ class FilesIntegrityCheck implements ValidatorInterface
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,
                 sprintf(
-                  __('The file "%s" could not be uploaded [unable to access the file].', 'modularity-frontend-form'),
+                  $this->wpService->__('The file "%s" could not be uploaded [unable to access the file].', 'modularity-frontend-form'),
                   $fileProps['name'],
                 )
               )
@@ -80,7 +80,7 @@ class FilesIntegrityCheck implements ValidatorInterface
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,
                 sprintf(
-                  __('The file "%s" (%d) does not match the expected filesize of %d. The file might be corrupted or incomplete.', 'modularity-frontend-form'),
+                  $this->wpService->__('The file "%s" (%d) does not match the expected filesize of %d. The file might be corrupted or incomplete.', 'modularity-frontend-form'),
                   $fileProps['name'],
                   $fileSizeOnDisk,
                   $fileProps['size']

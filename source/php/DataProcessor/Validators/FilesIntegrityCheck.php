@@ -29,17 +29,14 @@ class FilesIntegrityCheck implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate(array $data, WP_REST_Request $request, ?FilesArrayFormatterInterface $filesArrayFormatter = null): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
-      // Use the provided files array formatter or create a new one
-      if ($filesArrayFormatter === null) {
         $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
-      }
 
-      //No files to validate
-      if (!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
-        return $this->validationResult;
-      }
+        //No files to validate
+        if (!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
+            return $this->validationResult;
+        }
 
       foreach ($formattedFilesArray as $filesArray) {
         foreach ($filesArray as $fileProps) {

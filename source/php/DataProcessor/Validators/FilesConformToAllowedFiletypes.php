@@ -9,7 +9,6 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResult;
 use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
 use WP_Error;
 use WpService\WpService;
-use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_REST_Request;
 use ModularityFrontendForm\Helper\FilesArrayFormatterInterface;

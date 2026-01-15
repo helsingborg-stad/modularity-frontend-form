@@ -78,6 +78,11 @@ class ValidatorFactory {
       $usePostTitleExistsInDataWhenRequired   = true;
       $usePostContentExistsInDataWhenRequired = true;
 
+      //Feature toggles - file validation
+      $useFilesConformToAllowedFileSize  = true;
+      $useFilesConformToAllowedFileTypes = false;
+      $useFilesCountIsWithinLimits       = false;
+
       //Check if the module is configured to use the WPDB handler
       //This configuration allows us to validate that the fields
       //exist on the post type.
@@ -97,6 +102,10 @@ class ValidatorFactory {
           $useFieldValidationWithAcf              ? new FieldValidationWithAcf(...$args) : null,
           $usePostTitleExistsInDataWhenRequired   ? new PostTitleExistsInDataWhenRequired(...$args) : null,
           $usePostContentExistsInDataWhenRequired ? new PostContentExistsInDataWhenRequired(...$args) : null,
+
+          $useFilesConformToAllowedFileSize       ? new FilesConformToAllowedFileSize(...$args) : null,
+          $useFilesConformToAllowedFileTypes      ? new FilesConformToAllowedFileTypes(...$args) : null,
+          $useFilesCountIsWithinLimits            ? new FilesCountIsWithinLimits(...$args) : null,
       ]);
   }
 

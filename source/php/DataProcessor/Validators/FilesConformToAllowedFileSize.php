@@ -29,6 +29,9 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
      */
     public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
+
+      var_dump($request);
+
       return $this->validationResult;
     }
 }

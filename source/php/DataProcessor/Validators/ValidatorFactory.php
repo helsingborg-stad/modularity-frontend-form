@@ -79,7 +79,7 @@ class ValidatorFactory {
       $usePostContentExistsInDataWhenRequired = true;
 
       //Feature toggles - file validation
-      $useFilesCountIsWithinLimits       = false;
+      $useFilesCountIsWithinLimits       = true;
       $useFilesConformToAllowedFileSize  = true;
       $useFilesConformToAllowedFileTypes = true;
       $useFilesIntegrityCheck            = true;

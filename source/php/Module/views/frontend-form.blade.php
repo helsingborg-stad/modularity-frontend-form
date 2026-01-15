@@ -42,19 +42,5 @@
         @include('partials.formStepButtons')
     @endform
     @include('partials.notices')
-    
-    {{--
-        TODO: Move disclaimer to its own partial?
-    --}}
-    @typography([
-        'variant' => 'meta',
-        'classList' => [
-            'mod-frontend-form__disclaimer',
-            'u-margin__x--4',
-            'u-margin__top--4',
-        ]
-    ])
-        {!! $disclaimerText !!}
-    @endtypography
-
+    @include('partials.disclaimer')
 @endpaper

@@ -44,11 +44,12 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
         $allowedMimeTypes = $this->getAllowedMimeTypes($fieldKey);
 
         foreach($filesArray as $fileProps) {
-          $fileType = $fileProps['type'] ?? '';
-          $fileName = $fileProps['name'] ?? '';
+          $fileType   = $fileProps['type'] ?? '';
+          $fileName   = $fileProps['name'] ?? '';
+          $fileTmpPath = $fileProps['tmp_name'] ?? '';
           
           $postedFileMimeType = $fileType;
-          $storedFileMimeType = $this->getMimeFromFile($fileName, $allowedMimeTypes);
+          $storedFileMimeType = $this->getMimeFromFile($fileTmpPath, $allowedMimeTypes);
 
           if($this->wpService->isWpError($storedFileMimeType)) {
             $this->validationResult->setError(
@@ -83,7 +84,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
     }
 
     /**
-     * Get mime type from file
+     * Get mime type from file, only allowed mimes are allowed to be returned
      *
      * @param string $filePath
      * @param array|null $allowedMimes

@@ -52,7 +52,7 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,
                 sprintf(
-                  __('The file "%s" exceeds the maximum allowed file size of %s.', 'modularity-frontend-form'),
+                  $this->wpService->__('The file "%s" exceeds the maximum allowed file size of %s.', 'modularity-frontend-form'),
                   $fileProps['name'],
                   $maxFileSizeReadable
                 )

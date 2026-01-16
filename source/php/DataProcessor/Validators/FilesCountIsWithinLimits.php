@@ -58,7 +58,7 @@ class FilesCountIsWithinLimits implements ValidatorInterface
             new WP_Error(
               RestApiResponseStatusEnums::FileError->value,
               sprintf(
-                __('The number of files uploaded for field "%s" exceeds the maximum allowed of %d.', 'modularity-frontend-form'),
+                $this->wpService->__('The number of files uploaded for field "%s" exceeds the maximum allowed of %d.', 'modularity-frontend-form'),
                 $fieldLabel,
                 $fieldMaxItems
               )
@@ -74,7 +74,7 @@ class FilesCountIsWithinLimits implements ValidatorInterface
             new WP_Error(
               RestApiResponseStatusEnums::FileError->value,
               sprintf(
-                __('The number of files uploaded for field "%s" is less than the minimum required of %d.', 'modularity-frontend-form'),
+                $this->wpService->__('The number of files uploaded for field "%s" is less than the minimum required of %d.', 'modularity-frontend-form'),
                 $fieldLabel,
                 $fieldMinItems
               )

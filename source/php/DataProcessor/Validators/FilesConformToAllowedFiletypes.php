@@ -156,7 +156,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
      * @param string $extension
      * @return string|null
      */
-    private function getMimeTypeFromExtension(string $extension): ?string  
+    private function getMimeTypeFromExtension(string $extension): ?string
     {
       $extension      = strtolower(ltrim($extension, '.'));
       $mimeTypesList  = $this->wpService->wpGetMimeTypes();

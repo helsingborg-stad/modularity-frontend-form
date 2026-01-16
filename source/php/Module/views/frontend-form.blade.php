@@ -1,46 +1,53 @@
-@paper([
+@card([
     'classList' => [
         'mod-frontend-form',
         'o-layout-grid',
         'o-layout-grid--cq',
         'o-layout-grid--gap-12',
         'u-level-3',
-        'u-padding__y--4',
+        'c-card--panel'
     ],
     'attributeList' => [
         'data-js-frontend-form' => 'true'
     ]
 ])
 
-    @includeWhen(empty($hideTitle) && !empty($postTitle), 'partials.module-title')
+    @include('partials.module-title')
     @include('partials.working')
+
     @includeWhen($stepsCount > 1, 'progressbar', ['steps' => $steps])
 
-    @form([
-        'validation' => false,
-        'attributeList' => [
-            'data-js-frontend-form-id' => $moduleId,
-            'data-js-frontend-form-holding-post-id' => $holdingPostId,
-        ],
+    @element([
         'classList' => [
-            'mod-frontend-form__form',
-            'u-padding__x--4',
-        ],
+            'c-card__body',
+            'mod-frontend-form__content',
+        ]
     ])
-        @element([
+        @form([
+            'validation' => false,
+            'attributeList' => [
+                'data-js-frontend-form-id' => $moduleId,
+                'data-js-frontend-form-holding-post-id' => $holdingPostId,
+            ],
             'classList' => [
-                'u-position--relative',
-                'mod-frontend-form__steps',
-            ]
+                'mod-frontend-form__form',
+            ],
         ])
-            @foreach($steps as $index => $step)
-                @include('step', ['step' => $step, 'index' => $index])
-            @endforeach
+            @element([
+                'classList' => [
+                    'u-position--relative',
+                    'mod-frontend-form__steps',
+                ]
+            ])
+                @foreach($steps as $index => $step)
+                    @include('step', ['step' => $step, 'index' => $index])
+                @endforeach
 
-        @endelement
+            @endelement
 
-        @include('partials.formStepButtons')
-    @endform
-    @include('partials.notices')
-    @include('partials.disclaimer')
-@endpaper
+            @include('partials.formStepButtons')
+        @endform
+        @include('partials.notices')
+        @include('partials.disclaimer')
+    @endelement
+@endcard

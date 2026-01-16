@@ -39,7 +39,7 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
       foreach ($formattedFilesArray as $fieldKey => $filesArray) {
         $fieldMaxSize = $this->getFieldConstraints($fieldKey, 'max_size');
 
-        if (! $fieldMaxSize) {
+        if (!$fieldMaxSize) {
           $fieldMaxSize = $this->wpService->wpMaxUploadSize() / 1024;
         }
 
@@ -74,6 +74,10 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
      */
     private function getFieldConstraints(string $fieldKey, string $key): mixed
     {
-      return $this->acfService->acfGetField($fieldKey)[$key] ?? null;
+      $constraint =  $this->acfService->acfGetField($fieldKey)[$key] ?? null;
+      if(in_array($key, ['max_size', 'min_size']) && is_numeric($constraint)) {
+        return (int) absint($constraint) * 1024;
+      }
+      return $constraint;
     }
 }

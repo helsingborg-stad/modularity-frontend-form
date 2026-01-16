@@ -89,13 +89,12 @@ class FilesCountIsWithinLimits implements ValidatorInterface
       return $this->validationResult;
     }
 
-
     /**
      * Get field constraint value from ACF
      *
      * @param string $fieldKey
      * @param string $key
-     * @return int|null
+     * @return mixed
      */
     private function getFieldConstraints(string $fieldKey, string $key): mixed
     {

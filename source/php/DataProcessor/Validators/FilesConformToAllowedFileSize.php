@@ -68,7 +68,8 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
     /**
      * Get field constraints from ACF
      *
-     * @param string $fieldKey
+     * @param string $fieldKey The ACF field key
+     * @param string $key The constraint key to retrieve
      * @return mixed
      */
     private function getFieldConstraints(string $fieldKey, string $key): mixed

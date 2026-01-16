@@ -123,6 +123,10 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
       $allowedMimes          = [];
       $allowedFileExtensions = $this->getAllowedFileExtensions($fieldKey);
 
+      if (!$allowedFileExtensions) {
+        return null;
+      }
+
       foreach ($allowedFileExtensions as $extension) {
         $mimeType = $this->getMimeTypeFromExtension($extension);
         if ($mimeType) {
@@ -130,7 +134,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
         }
       }
 
-      return $allowedMimes ?? null;
+      return !empty($allowedMimes) ? $allowedMimes : null;
     }
 
     /**

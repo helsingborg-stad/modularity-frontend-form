@@ -11,6 +11,9 @@ use ModularityFrontendForm\DataProcessor\Validators\FieldValidationWithAcf;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\DataProcessor\Validators\NoFieldsMissing;
 use ModularityFrontendForm\DataProcessor\Validators\FilesIntegrityCheck;
+use ModularityFrontendForm\DataProcessor\Validators\FilesConformToAllowedFiletypes;
+use ModularityFrontendForm\DataProcessor\Validators\FilesConformToAllowedFileSize;
+use ModularityFrontendForm\DataProcessor\Validators\FilesCountIsWithinLimits;
 class ValidatorFactory {
 
   use GetModuleConfigInstanceTrait;

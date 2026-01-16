@@ -33,7 +33,7 @@ class FilesCountIsWithinLimits implements ValidatorInterface
       
       $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
 
-      if(!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
+      if (!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
         return $this->validationResult;
       }
 
@@ -41,7 +41,7 @@ class FilesCountIsWithinLimits implements ValidatorInterface
 
       foreach($formattedFilesArray as $fieldKey => $filesArray) {
 
-        if(in_array($fieldKey, $checkedFieldKeys)) {
+        if (in_array($fieldKey, $checkedFieldKeys)) {
           continue;
         }
 
@@ -50,7 +50,7 @@ class FilesCountIsWithinLimits implements ValidatorInterface
 
         $fileCount = count($filesArray);
 
-        if($fieldMaxItems !== null && is_numeric($fieldMaxItems) && $fileCount > $fieldMaxItems) {
+        if ($fieldMaxItems !== null && is_numeric($fieldMaxItems) && $fileCount > $fieldMaxItems) {
 
           $fieldLabel = $this->acfService->acfGetField($fieldKey)['label'] ?? $fieldKey;
 
@@ -66,7 +66,7 @@ class FilesCountIsWithinLimits implements ValidatorInterface
           );
         }
 
-        if($fieldMinItems !== null && is_numeric($fieldMinItems) && $fileCount < $fieldMinItems) {
+        if ($fieldMinItems !== null && is_numeric($fieldMinItems) && $fileCount < $fieldMinItems) {
 
           $fieldLabel = $this->acfService->acfGetField($fieldKey)['label'] ?? $fieldKey;
 

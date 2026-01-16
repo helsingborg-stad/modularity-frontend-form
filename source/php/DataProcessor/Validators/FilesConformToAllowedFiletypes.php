@@ -30,11 +30,11 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
      */
     public function validate(array $data, WP_REST_Request $request, ?FilesArrayFormatterInterface $filesArrayFormatter = null): ?ValidationResultInterface
     {
-      if($filesArrayFormatter === null) {
+      if ($filesArrayFormatter === null) {
         $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
       }
 
-      if(!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
+      if (!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
         return $this->validationResult;
       }
 
@@ -50,7 +50,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
           $postedFileMimeType = $fileType;
           $storedFileMimeType = $this->getMimeFromFile($fileTmpPath, $allowedMimeTypes);
 
-          if($this->wpService->isWpError($storedFileMimeType)) {
+          if ($this->wpService->isWpError($storedFileMimeType)) {
             $this->validationResult->setError(
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,
@@ -64,7 +64,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
             continue;
           }
 
-          if($postedFileMimeType !== $storedFileMimeType) {
+          if ($postedFileMimeType !== $storedFileMimeType) {
             $this->validationResult->setError(
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,
@@ -91,14 +91,14 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
      */
     private function getMimeFromFile(string $filePath, ?array $allowedMimes = null): null|string|WP_Error
     {
-      if(!file_exists($filePath)) {
+      if (!file_exists($filePath)) {
         return new WP_Error(
           RestApiResponseStatusEnums::FileError->value,
           $this->wpService->__('File does not exist', 'modularity-frontend-form')
         );
       }
 
-      if(!is_readable($filePath)) {
+      if (!is_readable($filePath)) {
         return new WP_Error(
           RestApiResponseStatusEnums::FileError->value,
           $this->wpService->__('Unable to read file', 'modularity-frontend-form')
@@ -106,7 +106,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
       }
 
       $fileMimeType = mime_content_type($filePath);
-      if($allowedMimes && !in_array($fileMimeType, $allowedMimes)) {
+      if ($allowedMimes && !in_array($fileMimeType, $allowedMimes)) {
         return null;
       }
       return $fileMimeType;
@@ -162,7 +162,7 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
       $mimeTypesList  = $this->wpService->wpGetMimeTypes();
     
       //Direct match
-      if(isset($mimeTypesList[$extension])) {
+      if (isset($mimeTypesList[$extension])) {
         return $mimeTypesList[$extension];
       }
 

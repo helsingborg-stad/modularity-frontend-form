@@ -32,12 +32,12 @@ class PostTitleExistsInDataWhenRequired implements ValidatorInterface
     public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
         // Check if the form has a native post title configured
-        if(!$this->moduleHasNativePostTitle()) {
+        if (!$this->moduleHasNativePostTitle()) {
             return $this->validationResult;
         }
 
         // Check if the submitted data contains a post title
-        if(!$this->dataIncludesPostTitle($data)) {
+        if (!$this->dataIncludesPostTitle($data)) {
             return $this->validationResult;
         }
 
@@ -51,7 +51,7 @@ class PostTitleExistsInDataWhenRequired implements ValidatorInterface
      */
     private function moduleHasNativePostTitle() {
         $dynamicPostFeatures = $this->moduleConfigInstance->getDynamicPostFeatures();
-        if(in_array('title', $dynamicPostFeatures)) {
+        if (in_array('title', $dynamicPostFeatures)) {
             return true;
         }
         return false;
@@ -65,7 +65,7 @@ class PostTitleExistsInDataWhenRequired implements ValidatorInterface
     private function dataIncludesPostTitle(array $data): bool {
         $postDataPrefix = $this->config->getFieldNamespace();
 
-        if(isset($data[$postDataPrefix]['post_title']) && !empty(trim($data[$postDataPrefix]['post_title']))) {
+        if (isset($data[$postDataPrefix]['post_title']) && !empty(trim($data[$postDataPrefix]['post_title']))) {
             return true;
         }
 

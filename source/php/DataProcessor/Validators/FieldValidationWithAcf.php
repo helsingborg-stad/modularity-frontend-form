@@ -89,17 +89,17 @@ class FieldValidationWithAcf implements ValidatorInterface
      */
     private function isSubFieldCollection(mixed $value): bool
     {
-      if(!is_array($value)) {
+      if (!is_array($value)) {
         return false;
       }
 
       foreach($value as $subValue) {
-        if(!is_array($subValue)) {
+        if (!is_array($subValue)) {
           return false;
         }
 
         foreach($subValue as $subKey => $subSubValue) {
-          if(str_starts_with($subKey, 'field_')) {
+          if (str_starts_with($subKey, 'field_')) {
             return true;
           }
         }

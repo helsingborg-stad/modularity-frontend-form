@@ -39,11 +39,11 @@ class FieldsExists implements ValidatorInterface
       foreach ($data as $key => $value) {
 
           // Check if the field key is in the bypass list
-          if(in_array($key, $this->bypassValidationForKeys)) {
+          if (in_array($key, $this->bypassValidationForKeys)) {
             continue;
           }
 
-          if(acf_get_field($key) === false) { //TODO: Add to acf service
+          if (acf_get_field($key) === false) { //TODO: Add to acf service
             $this->validationResult->setError(
               new WP_Error(
                 RestApiResponseStatusEnums::ValidationError->value, 

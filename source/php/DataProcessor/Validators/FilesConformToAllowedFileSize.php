@@ -28,11 +28,9 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate(array $data, WP_REST_Request $request, ?FilesArrayFormatterInterface $filesArrayFormatter = null): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
-      if ($filesArrayFormatter === null) {
-        $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
-      }
+      $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
 
       if (! $formattedFilesArray = $filesArrayFormatter->getFormatted()) {
         return $this->validationResult;

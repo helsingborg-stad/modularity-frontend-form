@@ -43,8 +43,8 @@ class FilesConformToAllowedFiletypes implements ValidatorInterface
         $allowedMimeTypes = $this->getAllowedMimeTypes($fieldKey);
 
         foreach($filesArray as $fileProps) {
-          $fileType   = $fileProps['type'] ?? '';
-          $fileName   = $fileProps['name'] ?? '';
+          $fileType    = $fileProps['type'] ?? '';
+          $fileName    = $fileProps['name'] ?? '';
           $fileTmpPath = $fileProps['tmp_name'] ?? '';
           
           $postedFileMimeType = $fileType;

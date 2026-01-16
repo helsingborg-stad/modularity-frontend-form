@@ -11,6 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 class FieldsExists implements ValidatorInterface
 {
@@ -33,16 +34,16 @@ class FieldsExists implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
       foreach ($data as $key => $value) {
 
           // Check if the field key is in the bypass list
-          if(in_array($key, $this->bypassValidationForKeys)) {
+          if (in_array($key, $this->bypassValidationForKeys)) {
             continue;
           }
 
-          if(acf_get_field($key) === false) { //TODO: Add to acf service
+          if (acf_get_field($key) === false) { //TODO: Add to acf service
             $this->validationResult->setError(
               new WP_Error(
                 RestApiResponseStatusEnums::ValidationError->value, 

@@ -11,6 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 class FieldValidationWithAcf implements ValidatorInterface
 {
@@ -33,7 +34,7 @@ class FieldValidationWithAcf implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
       $this->recursiveValidate($data);
       return $this->validationResult;
@@ -88,17 +89,17 @@ class FieldValidationWithAcf implements ValidatorInterface
      */
     private function isSubFieldCollection(mixed $value): bool
     {
-      if(!is_array($value)) {
+      if (!is_array($value)) {
         return false;
       }
 
       foreach($value as $subValue) {
-        if(!is_array($subValue)) {
+        if (!is_array($subValue)) {
           return false;
         }
 
         foreach($subValue as $subKey => $subSubValue) {
-          if(str_starts_with($subKey, 'field_')) {
+          if (str_starts_with($subKey, 'field_')) {
             return true;
           }
         }

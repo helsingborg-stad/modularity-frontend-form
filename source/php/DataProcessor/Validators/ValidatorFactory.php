@@ -83,7 +83,7 @@ class ValidatorFactory {
       $useFilesConformToAllowedFileSize  = true;
       $useFilesConformToAllowedFileTypes = true;
       $useFilesIntegrityCheck            = true;
-      
+
       //Check if the module is configured to use the WPDB handler
       //This configuration allows us to validate that the fields
       //exist on the post type.

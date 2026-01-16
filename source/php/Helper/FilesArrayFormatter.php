@@ -39,6 +39,7 @@ class FilesArrayFormatter implements FilesArrayFormatterInterface
   public function getFormatted(): ?array
   {
     $files = $this->getFilesFromRequest();
+    
     if (!$files || !isset($files['name']) || !is_array($files['name'])) {
       return null;
     }
@@ -48,25 +49,48 @@ class FilesArrayFormatter implements FilesArrayFormatterInterface
       if (is_array($names)) {
         // Multiple files for this field
         foreach ($names as $i => $name) {
-          $result[$field][$i] = [
+          $file = [
             'name'     => $name,
             'type'     => $files['type'][$field][$i] ?? '',
             'tmp_name' => $files['tmp_name'][$field][$i] ?? '',
             'error'    => $files['error'][$field][$i] ?? 4,
             'size'     => $files['size'][$field][$i] ?? 0,
           ];
+          // Skip empty file uploads
+          if (
+            (empty($file['name']) || $file['error'] === 4) &&
+            empty($file['tmp_name']) &&
+            empty($file['type']) &&
+            empty($file['size'])
+          ) {
+            continue;
+          }
+          $result[$field][$i] = $file;
+        }
+        // Remove field if all files were empty
+        if (empty($result[$field])) {
+          unset($result[$field]);
         }
       } else {
         // Single file upload for this field
-        $result[$field][] = [
+        $file = [
           'name'     => $files['name'][$field] ?? '',
           'type'     => $files['type'][$field] ?? '',
           'tmp_name' => $files['tmp_name'][$field] ?? '',
           'error'    => $files['error'][$field] ?? 4,
           'size'     => $files['size'][$field] ?? 0,
         ];
+        if (
+          (empty($file['name']) || $file['error'] === 4) &&
+          empty($file['tmp_name']) &&
+          empty($file['type']) &&
+          empty($file['size'])
+        ) {
+          continue;
+        }
+        $result[$field][] = $file;
       }
     }
-    return $result;
+    return empty($result) ? null : $result;
   }
 }

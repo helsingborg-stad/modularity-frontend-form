@@ -45,6 +45,8 @@ class FilesCountIsWithinLimits implements ValidatorInterface
           continue;
         }
 
+        $checkedFieldKeys[] = $fieldKey;
+
         $fieldMaxItems = $this->getFieldConstraints($fieldKey, 'max');
         $fieldMinItems = $this->getFieldConstraints($fieldKey, 'min');
 

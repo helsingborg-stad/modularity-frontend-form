@@ -44,7 +44,7 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
         }
 
         $maxFileSizeInBytes  = $fieldMaxSize * 1024;
-        $maxFileSizeReadable = size_format($maxFileSizeInBytes);
+        $maxFileSizeReadable = $this->wpService->sizeFormat($maxFileSizeInBytes);
 
         foreach ($filesArray as $fileProps) {
           if (isset($fileProps['size']) && $fileProps['size'] > $maxFileSizeInBytes) {

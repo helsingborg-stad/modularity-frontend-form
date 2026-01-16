@@ -58,6 +58,9 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
         // Set up options pages
         $this->setUpOptionsPages();
+
+        // Ensure no submissions exist before deletion
+        $this->ensureNoSubmissionsBeforeDeletion();
     }
 
     /**
@@ -141,6 +144,14 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->config,
             $this->wpService,
             $this->acfService
+        ))->addHooks();
+    }
+
+    public function ensureNoSubmissionsBeforeDeletion(): void
+    {
+        (new EnsureNoSubmissionsBeforeDeletion\EnsureNoSubmissionsBeforeDeletion(
+            $this->config,
+            $this->wpService,
         ))->addHooks();
     }
 }

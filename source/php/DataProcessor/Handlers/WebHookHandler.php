@@ -77,10 +77,10 @@ class WebHookHandler implements HandlerInterface {
     $headers = @get_headers($url);
     if ($headers === false) {
       $this->handlerResult->setError(
-      new WP_Error(
-        RestApiResponseStatusEnums::HandlerError->value, 
-        $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
-      )
+        new WP_Error(
+          RestApiResponseStatusEnums::HandlerError->value, 
+          $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
+        )
       );
       return false;
     }

@@ -9,7 +9,6 @@ use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResult;
 use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
 use WP_Error;
 use WpService\WpService;
-use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use WP_REST_Request;
 use ModularityFrontendForm\Helper\FilesArrayFormatterInterface;
@@ -31,26 +30,26 @@ class FilesConformToAllowedFileSize implements ValidatorInterface
      */
     public function validate(array $data, WP_REST_Request $request, ?FilesArrayFormatterInterface $filesArrayFormatter = null): ?ValidationResultInterface
     {
-      if($filesArrayFormatter === null) {
+      if ($filesArrayFormatter === null) {
         $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
       }
 
-      if(!$formattedFilesArray = $filesArrayFormatter->getFormatted()) {
+      if (! $formattedFilesArray = $filesArrayFormatter->getFormatted()) {
         return $this->validationResult;
       }
 
-      foreach($formattedFilesArray as $fieldKey => $filesArray) {
+      foreach ($formattedFilesArray as $fieldKey => $filesArray) {
         $fieldMaxSize = $this->getFieldConstraints($fieldKey, 'max_size');
 
-        if(!$fieldMaxSize) {
+        if (! $fieldMaxSize) {
           $fieldMaxSize = $this->wpService->wpMaxUploadSize() / 1024;
         }
 
         $maxFileSizeInBytes  = $fieldMaxSize * 1024;
         $maxFileSizeReadable = size_format($maxFileSizeInBytes);
 
-        foreach($filesArray as $fileProps) {
-          if(isset($fileProps['size']) && $fileProps['size'] > $maxFileSizeInBytes) {
+        foreach ($filesArray as $fileProps) {
+          if (isset($fileProps['size']) && $fileProps['size'] > $maxFileSizeInBytes) {
             $this->validationResult->setError(
               new WP_Error(
                 RestApiResponseStatusEnums::FileError->value,

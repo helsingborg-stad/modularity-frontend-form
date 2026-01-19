@@ -3,6 +3,20 @@
 .mod-frontend-form__layout {
     display: flex;
 
+    /* Dusable visibility for scroollbars */
+    .mod-frontend-form__progressbar {
+        scrollbar-width: none;
+    }
+    .mod-frontend-form__progressbar:hover {
+        scrollbar-width: thin;
+    }
+    .mod-frontend-form__progressbar::-webkit-scrollbar {
+        height: 0;
+    }
+    .mod-frontend-form__progressbar:hover::-webkit-scrollbar {
+        height: 6px;
+    }
+
     @container (width > 800px) {
         flex-direction: row;
 

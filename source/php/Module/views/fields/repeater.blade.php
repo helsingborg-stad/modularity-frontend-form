@@ -7,9 +7,7 @@
         @include('partials.repeaterHeader')
         @element([
             'classList' => [
-                'mod-frontend-form__repeater-container',
-                'o-layout-grid',
-                'c-paper'
+                'mod-frontend-form__repeater-container'
             ],
             'attributeList' => [
                 'data-js-repeater-row-container' => 'true'

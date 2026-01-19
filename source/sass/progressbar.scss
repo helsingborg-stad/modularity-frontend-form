@@ -15,8 +15,9 @@
             width: 300px;
             border-bottom: none;
             border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
-            height: auto;
+            height: 100%;
             overflow-y: auto;
+
             .mod-frontend-form__progressbar-step {
                 flex-grow: unset;
             }
@@ -32,16 +33,17 @@
         }
     }
 
+    @container (width < 600px) {
+        .mod-frontend-form__progressbar-step-button {
+            display: none !important;
+        }
+    }
+
     @container (width <= 800px) {
         flex-direction: column;
 
-        .mod-frontend-form__progressbar {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+        .mod-frontend-form__progressbar-wrapper {
             position: relative;
-            overflow-x: auto;
 
             &:before,
             &:after {
@@ -62,6 +64,15 @@
                 right: 0;
                 transform: rotate(180deg);
             }
+        }
+
+        .mod-frontend-form__progressbar {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            position: relative;
+            overflow-x: auto;
         }
 
         .mod-frontend-form__progressbar-divider {
@@ -136,9 +147,10 @@
 
     /* Status styles */
     &:is(.is-invalid, .is-valid, .is-active) {
+        pointer-events: auto;
+        cursor: pointer;
+
         .mod-frontend-form__progressbar-step-button {
-            pointer-events: auto;
-            cursor: pointer;
             background-color: var(--step-background-color-icon);
         }
         .mod-frontend-form__progressbar-step-button-icon {
@@ -153,11 +165,22 @@
         }
     }
 
-    &.is-active,
-    &.is-first {
+    &.is-active {
         .mod-frontend-form__progressbar-step-button {
             --step-background-color-icon: var(--color-primary, #3333ff);
             --step-background-color-icon-contrast: var(--color-primary-contrast, #ffffff);
+        }
+
+        @container (width < 600px) {
+            .mod-frontend-form__progressbar-step-title {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &:not(.is-active) {
+        @container (width < 600px) {
+            opacity: 0.6;
         }
     }
 

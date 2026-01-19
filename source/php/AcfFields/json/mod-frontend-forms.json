@@ -48,7 +48,7 @@
             "name": "formSteps",
             "aria-label": "",
             "type": "repeater",
-            "instructions": "Add the steps that should be displayed in this form.",
+            "instructions": "Add the steps that should be displayed in this form. A maximum of 9 steps is allowed.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -56,11 +56,10 @@
                 "class": "",
                 "id": ""
             },
-            "acfe_repeater_stylised_button": 0,
             "layout": "row",
             "pagination": 0,
             "min": 0,
-            "max": 0,
+            "max": 9,
             "collapsed": "field_6627a6b312423",
             "button_label": "Add Step",
             "rows_per_page": 20,

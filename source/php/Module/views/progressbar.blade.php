@@ -2,6 +2,9 @@
     'componentElement' => 'ul',
     'classList' => [
         'mod-frontend-form__progressbar',
+    ],
+    'attributeList' => [
+        'data-js-frontend-form-progressbar' => 'true',
     ]
 ])
     @foreach($steps as $index => $step)

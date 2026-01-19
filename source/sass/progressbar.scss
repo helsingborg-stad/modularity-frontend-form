@@ -27,8 +27,6 @@
             min-width: 0;
         }
 
-        
-
         .mod-frontend-form__progressbar-divider {
             display: none;
         }
@@ -42,6 +40,27 @@
             flex-direction: row;
             width: 100%;
             border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            position: relative;
+
+            &:before,
+            &:after {
+                content: "";
+                position: absolute;
+                top: 0;
+                height: 100%;
+                z-index: 1000;
+                width: calc(var(--base, 8px) * 2);
+                background: linear-gradient(90deg,rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%);
+            }
+
+            &::before {
+                left: 0;
+            }
+
+            &::after {
+                right: 0;
+                transform: rotate(180deg);
+            }
         }
 
         .mod-frontend-form__progressbar-divider {

@@ -24,7 +24,7 @@ class ModuleConfig implements ModuleConfigInterface
     if(!$this->wpService->getPost($this->moduleId)) {
       throw new \Exception('Module not found');
     }
-    if(!$this->wpService->getPostType($this->moduleId) === $this->config->getModuleSlug()) {
+    if($this->wpService->getPostType($this->moduleId) !== $this->config->getModuleSlug()) {
       throw new \Exception('Module is not of type ' . $this->config->getModuleSlug());
     }
   }

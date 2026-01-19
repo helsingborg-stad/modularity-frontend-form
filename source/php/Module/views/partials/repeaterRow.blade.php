@@ -9,14 +9,16 @@
     @element([
         'attributeList' => [
             'data-js-repeater-row-fields' => 'true'
-        ],
-        'classList' => [
-            'u-display--flex',
         ]
     ])
         @element([
             'classList' => [
                 'mod-frontend-form__repeater-row-fields',
+                'o-layout-grid',
+                'o-layout-grid--cq',
+                'o-layout-grid--cols-12',
+                'o-layout-grid--row-gap-8',
+                'o-layout-grid--column-gap-6'
             ]
         ])
             @foreach ($field['fields'] as $index => $subField)

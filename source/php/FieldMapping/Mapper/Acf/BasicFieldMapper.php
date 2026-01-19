@@ -42,7 +42,15 @@ class BasicFieldMapper implements BasicFieldMapperInterface
         $classList[] = 'mod-frontend-form__field';
 
         if (!empty($this->field['wrapper']['width'])) {
-            $classList[] = 'o-layout-grid--col-span-' . $this->calculateColumnSpan((int) $this->field['wrapper']['width']) . '@cq-lg';
+
+            $columnSpan = $this->calculateColumnSpan((int) $this->field['wrapper']['width']);
+
+            if($columnSpan < 6) {
+                $classList[] = 'o-layout-grid--col-span-' . $columnSpan . '@cq-sm';
+            } else {
+                $classList[] = 'o-layout-grid--col-span-' . $columnSpan . '@cq-xs';
+            }
+
         }
 
         $classList[] = 'o-layout-grid--col-span-12';

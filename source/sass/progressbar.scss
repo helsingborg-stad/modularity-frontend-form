@@ -7,6 +7,7 @@
         flex-direction: row;
 
         .mod-frontend-form__progressbar {
+            padding: calc(var(--base, 8px) * 3) calc(var(--base, 8px) * 2);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -14,7 +15,7 @@
             flex: 0 0 300px;
             width: 300px;
             border-bottom: none;
-            border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            border-right: 1px solid $color-border;
             height: 100%;
             overflow-y: auto;
 
@@ -36,6 +37,12 @@
     @container (width < 600px) {
         .mod-frontend-form__progressbar-step-button {
             display: none !important;
+        }
+    }
+
+    @container (width > 500px) and (width <= 800px) {
+        .mod-frontend-form__progressbar {
+            padding: 0 calc(var(--base, 8px) * 3);
         }
     }
 
@@ -70,7 +77,7 @@
             display: flex;
             flex-direction: row;
             width: 100%;
-            border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            border-bottom: 1px solid $color-border;
             position: relative;
             overflow-x: auto;
         }
@@ -98,7 +105,7 @@
 
 .mod-frontend-form__progressbar-step--vertical {
     flex-direction: column;
-    border-right: 1px solid rgba(0, 0, 0, .1);
+    border-right: 1px solid $color-border;
     border-bottom: none;
 }
 

@@ -58,7 +58,7 @@
 }
 
 .mod-frontend-form__disclaimer {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid $color-border;
     padding-top: calc(var(--base, 8px) * 4);
     color: var(--color-text-muted, #777);
 }

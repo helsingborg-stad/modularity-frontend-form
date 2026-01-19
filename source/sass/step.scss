@@ -18,7 +18,7 @@
 
         .mod-frontend-form__step-header {
             margin-bottom: calc(var(--base, 8px) * 1);
-            border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            border-bottom: 1px solid $color-border;
             padding-bottom: calc(var(--base, 8px) * 3);
         }
 

@@ -8,9 +8,12 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\Validators\FieldsExistsOnPostType;
 use ModularityFrontendForm\DataProcessor\Validators\FieldValidationWithAcf;
-use ModularityFrontendForm\DataProcessor\Validators\NonceValidator;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\DataProcessor\Validators\NoFieldsMissing;
+use ModularityFrontendForm\DataProcessor\Validators\FilesIntegrityCheck;
+use ModularityFrontendForm\DataProcessor\Validators\FilesConformToAllowedFiletypes;
+use ModularityFrontendForm\DataProcessor\Validators\FilesConformToAllowedFileSize;
+use ModularityFrontendForm\DataProcessor\Validators\FilesCountIsWithinLimits;
 class ValidatorFactory {
 
   use GetModuleConfigInstanceTrait;
@@ -70,7 +73,7 @@ class ValidatorFactory {
    */
   public function createInsertValidators(int $moduleId): array {
 
-      $config = $this->getModuleConfigInstance($moduleId);
+      $moduleConfig = $this->getModuleConfigInstance($moduleId);
 
       //Feature toggles
       $useNoFieldMissing                      = true;
@@ -78,13 +81,19 @@ class ValidatorFactory {
       $usePostTitleExistsInDataWhenRequired   = true;
       $usePostContentExistsInDataWhenRequired = true;
 
+      //Feature toggles - file validation
+      $useFilesCountIsWithinLimits       = true;
+      $useFilesConformToAllowedFileSize  = true;
+      $useFilesConformToAllowedFileTypes = true;
+      $useFilesIntegrityCheck            = true;
+
       //Check if the module is configured to use the WPDB handler
       //This configuration allows us to validate that the fields
       //exist on the post type.
       //This will gracefully degrade to a simple field existence check
       //if the WPDB handler is not configured.
       $useFieldsExistsOnPostType = (
-        $config->getWpDbHandlerConfig() !== null
+        $moduleConfig->getWpDbHandlerConfig() !== null
       ) ? true : false;
       $useFieldsExists = !$useFieldsExistsOnPostType;
 
@@ -97,6 +106,11 @@ class ValidatorFactory {
           $useFieldValidationWithAcf              ? new FieldValidationWithAcf(...$args) : null,
           $usePostTitleExistsInDataWhenRequired   ? new PostTitleExistsInDataWhenRequired(...$args) : null,
           $usePostContentExistsInDataWhenRequired ? new PostContentExistsInDataWhenRequired(...$args) : null,
+
+          $useFilesCountIsWithinLimits            ? new FilesCountIsWithinLimits(...$args) : null,
+          $useFilesConformToAllowedFileSize       ? new FilesConformToAllowedFileSize(...$args) : null,
+          $useFilesConformToAllowedFileTypes      ? new FilesConformToAllowedFileTypes(...$args) : null,
+          $useFilesIntegrityCheck                 ? new FilesIntegrityCheck(...$args) : null,
       ]);
   }
 

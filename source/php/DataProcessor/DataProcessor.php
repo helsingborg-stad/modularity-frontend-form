@@ -30,7 +30,7 @@ class DataProcessor implements DataProcessorInterface {
 
         //1. Validate the data
         foreach ($this->validators as $validator) {
-            $validationResult = $validator->validate($data);
+            $validationResult = $validator->validate($data, $request);
 
             if($validationResult->getIsValid()) {
                 continue;

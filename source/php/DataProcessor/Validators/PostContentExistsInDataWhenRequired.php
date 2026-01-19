@@ -11,6 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 class PostContentExistsInDataWhenRequired implements ValidatorInterface
 {
@@ -28,15 +29,15 @@ class PostContentExistsInDataWhenRequired implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
         // Check if the form has a native post content configured
-        if(!$this->moduleHasNativePostContent()) {
+        if (!$this->moduleHasNativePostContent()) {
             return $this->validationResult;
         }
 
         // Check if the submitted data contains a post content
-        if(!$this->dataIncludesPostContent($data)) {
+        if (!$this->dataIncludesPostContent($data)) {
             return $this->validationResult;
         }
 
@@ -50,7 +51,7 @@ class PostContentExistsInDataWhenRequired implements ValidatorInterface
      */
     private function moduleHasNativePostContent() {
         $dynamicPostFeatures = $this->moduleConfigInstance->getDynamicPostFeatures();
-        if(in_array('content', $dynamicPostFeatures)) {
+        if (in_array('content', $dynamicPostFeatures)) {
             return true;
         }
         return false;
@@ -64,7 +65,7 @@ class PostContentExistsInDataWhenRequired implements ValidatorInterface
     private function dataIncludesPostContent(array $data): bool {
         $postDataPrefix = $this->config->getFieldNamespace();
 
-        if(isset($data[$postDataPrefix]['post_content']) && !empty(trim($data[$postDataPrefix]['post_content']))) {
+        if (isset($data[$postDataPrefix]['post_content']) && !empty(trim($data[$postDataPrefix]['post_content']))) {
             return true;
         }
 

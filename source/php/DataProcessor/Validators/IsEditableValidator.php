@@ -11,7 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-
+use WP_REST_Request;
 class IsEditableValidator implements ValidatorInterface
 {
     use GetModuleConfigInstanceTrait;
@@ -28,16 +28,16 @@ class IsEditableValidator implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
         // Check if the module is editable
-        if(!$this->moduleHasEditingEnabled()) {
+        if (!$this->moduleHasEditingEnabled()) {
             return $this->validationResult;
         }
 
         // Check if the target post has a registered token
         $postId = $data['postId'] ?? null;
-        if(!$this->postHasARegisteredToken($postId)) {
+        if (!$this->postHasARegisteredToken($postId)) {
             return $this->validationResult;
         }
 
@@ -52,7 +52,7 @@ class IsEditableValidator implements ValidatorInterface
     private function moduleHasEditingEnabled() {
         
         $moduleId = $this->moduleConfigInstance->getModuleId();
-        if($this->acfService->getField('editingEnabled', $moduleId)) {
+        if ($this->acfService->getField('editingEnabled', $moduleId)) {
             return true;
         }
 
@@ -75,7 +75,7 @@ class IsEditableValidator implements ValidatorInterface
      */
     private function postHasARegisteredToken(int $postId): bool {
         
-        if($this->acfService->getField('token', $postId)) {
+        if ($this->acfService->getField('token', $postId)) {
             return true;
         }
 

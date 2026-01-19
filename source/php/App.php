@@ -5,13 +5,6 @@ namespace ModularityFrontendForm;
 use AcfService\AcfService;
 use WpService\WpService;
 
-use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
-use ModularityFrontendForm\Api\Submit\Post;
-use ModularityFrontendForm\Api\Submit\Update;
-use ModularityFrontendForm\Api\Read\Get;
-use ModularityFrontendForm\Config\Config;
-
-use Municipio\HooksRegistrar\Hookable;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 
@@ -58,6 +51,9 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
         // Set up options pages
         $this->setUpOptionsPages();
+
+        // Ensure no submissions exist before deletion
+        $this->ensureNoSubmissionsBeforeDeletion();
     }
 
     /**
@@ -142,5 +138,33 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->wpService,
             $this->acfService
         ))->addHooks();
+    }
+
+    public function ensureNoSubmissionsBeforeDeletion(): void
+    {
+        /**
+         * Ensure no submissions exist before deletion
+         */
+        (new EnsureNoSubmissionsBeforeDeletion\EnsureNoSubmissionsBeforeDeletion(
+            $this->config,
+            $this->wpService,
+        ))->addHooks();
+
+        /**
+         * Alter wp_redirect to add notice when deletion is prevented
+         */
+        (new EnsureNoSubmissionsBeforeDeletion\AlterTrashedRedirectToAllowCustomNotice(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+
+        /**
+         * Add notice when deletion is prevented
+         */
+        (new EnsureNoSubmissionsBeforeDeletion\AdminNotices(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+
     }
 }

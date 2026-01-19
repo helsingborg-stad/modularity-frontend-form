@@ -60,23 +60,7 @@ export class FormProgressBar {
       ? layoutComputedStyle.flexDirection === 'row'
       : false;
 
-
-    if (isVertical) {
-      // Scroll so the active step is centered vertically
-      const containerRect = this.root.getBoundingClientRect();
-      const stepRect      = activeStep.getBoundingClientRect();
-      const offset =
-        stepRect.top -
-        containerRect.top -
-        containerRect.height / 2 +
-        stepRect.height / 2;
-
-      this.root.scrollTop += offset;
-
-      activeStep.setAttribute('tabindex', '-1');
-      activeStep.focus();
-    } else {
-      // Horizontal (default) behavior
+    if (!isVertical) {
       const containerRect = this.root.getBoundingClientRect();
       const stepRect      = activeStep.getBoundingClientRect();
       const offset =

@@ -97,6 +97,7 @@
     z-index: 4000;
     display: flex;
     justify-content: flex-end;
+    margin-top: calc(var(--base, 8px) * 2);
 }
 
 /* Loading */

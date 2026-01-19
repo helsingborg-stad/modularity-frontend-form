@@ -60,7 +60,6 @@ export class FormProgressBar {
       ? layoutComputedStyle.flexDirection === 'row'
       : false;
 
-      console.log('Centering active step in', isVertical ? 'vertical' : 'horizontal', 'mode.');
 
     if (isVertical) {
       // Scroll so the active step is centered vertically

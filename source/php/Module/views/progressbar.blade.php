@@ -36,7 +36,7 @@
                     ],
                     'attributeList' => [
                         'type' => 'button',
-                        'aria-label' => 'Go to step ' . ($index + 1) . ': ' . $step['title'],
+                        'aria-label' => $lang->goToStep . ' ' . ($index + 1) . ': ' . $step['title'],
                     ]
                 ])
                     @icon([
@@ -75,7 +75,7 @@
                             'mod-frontend-form__progressbar-step-number',
                         ]
                     ])
-                        Step {{ $index + 1 }}/{{ count($steps) }}
+                        {{ $lang->step }} {{ $index + 1 }}/{{ count($steps) }}
                     @endtypography
                 @endelement
 
@@ -88,7 +88,6 @@
                     'icon' => 'check',
                     'size' => 'md',
                     'attributeList' => [
-                        'aria-label' => 'Completed',
                         'aria-hidden' => 'true'
                     ]
                 ])

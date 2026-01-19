@@ -12,11 +12,13 @@
             'data-js-frontend-form-previous-step' => 'true'
         ],
         'classList' => [
-            'u-visibility--hidden'
+            'u-visibility--hidden',
+            'u-margin__right--auto'
         ],
         'text' => $lang->previous,
     ])
     @endbutton
+
     @button([
         'style' => 'filled',
         'color' => 'primary',

@@ -31,6 +31,7 @@ class FormatSteps {
     {
         $formattedSteps = [];
         foreach ($steps as $key => $step) {
+            $formattedSteps[$key]['icon'] = $step['formStepIcon'] ?? null;
             $formattedSteps[$key]['title'] = $step['formStepTitle'] ?? null;
             $formattedSteps[$key]['description'] = $step['formStepContent'] ?? null;
             $formattedSteps[$key]['fields'] = $this->formatStep($step);

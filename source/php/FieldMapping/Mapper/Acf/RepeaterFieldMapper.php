@@ -34,7 +34,9 @@ class RepeaterFieldMapper implements FieldMapperInterface
             $mappedSubfield = (new Mapper($this->wpService, $this->lang, $this->config))->map($subfield);
 
             if(!is_null($mappedSubfield)) {
-                $subfields[] = $mappedSubfield;
+                $subfields[] = array_merge($mappedSubfield, [
+                    'size' => 'sm',
+                ]);
             }
         }
 

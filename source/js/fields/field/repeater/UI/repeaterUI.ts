@@ -8,6 +8,7 @@ class RepeaterUI implements RepeaterUIInterface {
 	private rowFieldsObject: RowFieldsObject = {};
 	private rowChangeListeners: RowCountChangeListener[] = [];
 	private rowCountElement: HTMLElement | null = null;
+	private placeholderElement: HTMLElement | null = null;
 
 	constructor(
 		private fieldBuilder: FieldBuilderInterface,
@@ -22,6 +23,12 @@ class RepeaterUI implements RepeaterUIInterface {
 		this.repeaterField = repeaterField;
 		this.conditionBuilder = conditionBuilder;
 		this.rowCountElement = this.repeaterField.getFieldContainer().querySelector('[data-js-repeater-row-counter]');
+
+		// Setup placeholder
+		this.placeholderElement = this.repeaterContainer.querySelector('[data-js-repeater-placeholder]');
+
+		// Initial placeholder state
+		this.togglePlaceholder(this.rowCount);
 
 		if (!this.repeaterField || !this.conditionBuilder) {
 			console.error('Repeater field or condition builder is not set');
@@ -70,6 +77,20 @@ class RepeaterUI implements RepeaterUIInterface {
 		this.addRowChangeListener((count) => {
 			this.addRowButton.disabled = count >= this.repeaterField.getMaxRows();
 		});
+
+		// Observer for placeholder
+		this.addRowChangeListener((count) => {
+			this.togglePlaceholder(count);
+		});
+	}
+
+	private togglePlaceholder(count: number) {
+		if (!this.placeholderElement) return;
+		if (count === 0) {
+			this.placeholderElement.style.display = '';
+		} else {
+			this.placeholderElement.style.display = 'none';
+		}
 	}
 
 	private removeRow(rowId: string): void {

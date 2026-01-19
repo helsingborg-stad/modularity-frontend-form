@@ -7,13 +7,33 @@
         @include('partials.repeaterHeader')
         @element([
             'classList' => [
-                'mod-frontend-form__repeater-container',
-                'o-layout-grid'
+                'mod-frontend-form__repeater-container'
             ],
             'attributeList' => [
                 'data-js-repeater-row-container' => 'true'
             ]
         ])
+            @if($lang->repeaterNoRows ?? false)
+                @element([
+                    'classList' => [
+                        'mod-frontend-form__repeater-placeholder',
+                    ],
+                    'attributeList' => [
+                        'data-js-repeater-placeholder' => 'true',
+                    ]
+                ])
+                    @typography([
+                        'element' => 'div',
+                        'variant' => 'meta',
+                        'classList' => [
+                            'mod-frontend-form__repeater-no-rows'
+                        ]
+                    ])
+                        {{ $lang->repeaterNoRows }}
+                    @endtypography
+                @endelement
+            @endif
+
             @element([
                 'componentElement' => 'template',
                 'attributeList' => [
@@ -28,6 +48,7 @@
             'icon' => 'playlist_add',
             'color' => 'secondary',
             'style' => 'filled',
+            'size' => 'sm',
             'attributeList' => [
                 'data-js-repeater-add-row' => 'true'
             ],

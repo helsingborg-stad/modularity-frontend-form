@@ -52,16 +52,13 @@
 }
 
 .mod-frontend-form__disclaimer mark {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(0, 0, 0, 0.05);
-    padding: 4px 8px;
-    border-radius: 2px;
-    white-space: nowrap;
+    font-style: italic;
+    background: unset;
+    color: inherit;
 }
 
 .mod-frontend-form__disclaimer {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: rgba(0, 0, 0, 0.03);
-    padding: calc(var(--base, 8px) * 2);
-    margin-left: auto;
+    border-top: 1px solid $color-border;
+    padding-top: calc(var(--base, 8px) * 4);
+    color: var(--color-text-muted, #777);
 }

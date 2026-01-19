@@ -77,7 +77,6 @@ class StepUIManager implements StepUIManagerInterface {
 		valid &&
 			allowEdit &&
 			step.getEditItem()?.classList.add(this.hasPassedClass);
-		this.updateEditItemIcon(step, valid);
 	}
 
 	/**
@@ -165,14 +164,6 @@ class StepUIManager implements StepUIManagerInterface {
 	public hideStep(step: StepInterface): void {
 		step.getStepContainer().classList.remove(this.isActiveClass);
 		step.getEditItem()?.classList.remove(this.isActiveClass);
-	}
-
-	private updateEditItemIcon(step: StepInterface, valid: boolean): void {
-		if (!step.getEditItemIcon()) return;
-
-		step
-			.getEditItemIcon()!
-			.setAttribute("data-material-symbol", valid ? "check" : "close");
 	}
 }
 

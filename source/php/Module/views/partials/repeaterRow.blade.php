@@ -11,18 +11,19 @@
             'data-js-repeater-row-fields' => 'true'
         ],
         'classList' => [
-            'mod-frontend-form__repeater-row-fields',
-            'o-layout-grid',
-            'o-layout-grid--cq',
-            'o-layout-grid--cols-12',
-            'o-layout-grid--row-gap-8',
-            'o-layout-grid--column-gap-6'
+            'u-display--flex',
         ]
     ])
-        @foreach ($field['fields'] as $index => $subField)
-            @includeIf('fields.' . $subField['view'], ['field' => $subField])
-        @endforeach
-    @endelement
+        @element([
+            'classList' => [
+                'mod-frontend-form__repeater-row-fields',
+            ]
+        ])
+            @foreach ($field['fields'] as $index => $subField)
+                @includeIf('fields.' . $subField['view'], ['field' => $subField])
+            @endforeach
+        @endelement
+
         @button([
             'style' => 'basic',
             'icon' => 'delete',
@@ -36,4 +37,6 @@
             ]
         ])
         @endbutton
+    @endelement
+        
 @endelement

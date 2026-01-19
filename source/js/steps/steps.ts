@@ -63,12 +63,12 @@ class Steps implements StepsInterface {
 			e.preventDefault();
 
 			const currentStep = this.stepNavigator.getActiveStep();
-			const nextStep = this.stepNavigator.goPrevious();
+			const previousStep = this.stepNavigator.goPrevious();
 			const stepIsValid = currentStep.validate();
 			this.stepUIManager.handleValidity(currentStep, stepIsValid);
 
-			if (nextStep) {
-				this.handleMove(currentStep, nextStep);
+			if (previousStep) {
+				this.handleMove(currentStep, previousStep);
 			}
 		});
 	}

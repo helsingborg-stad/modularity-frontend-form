@@ -1,10 +1,7 @@
 @use "./variables.scss" as *;
 
 .mod-frontend-form__repeater-container {
-    gap: 1px;
     border-radius: $border-radius;
-    background-color: #eee;
-
     position: relative;
     display: flex;
     flex-direction: column;
@@ -24,14 +21,11 @@
 }
 
 .mod-frontend-form__repeater-placeholder {
-
     display: flex;
     justify-content: center;
     align-items: center;
     padding: calc(var(--base, 8px) * 3);
 
-    
-    
     .mod-frontend-form__repeater-no-rows {
         display: inline-block;
         padding: calc(var(--base, 8px) * 2) calc(var(--base, 8px) * 3); 
@@ -80,13 +74,9 @@
 
     .mod-frontend-form__repeater-row-remove.c-button {
         background-color: #f0f0f0;
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
-        right: -1rem;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+        height: inherit;
+        border-left: 1px solid $color-border;
+        border-radius: 0;
     }
 
     &.animate-show {
@@ -101,5 +91,9 @@
 }
 
 .mod-frontend-form__repeater-row-fields {
-    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1; 
+    gap: calc(var(--base, 8px) * 3);
+    padding: calc(var(--base, 8px) * 4) calc(var(--base, 8px) * 3);
 }

@@ -177,7 +177,7 @@ class FrontendForm extends \Modularity\Module
             'newRow'                        => $this->wpService->__('New row', 'modularity-frontend-form'),
             'followingFieldIsNotSupported'  => $this->wpService->__('The following field is not supported', 'modularity-frontend-form'),
             'loadingSuccessful'             => $this->wpService->__('Loading successful', 'modularity-frontend-form'),
-            'repeaterNoRows'                => $this->wpService->__('No rows added', 'modularity-frontend-form'),
+            'repeaterNoRows'                => $this->wpService->__('No rows', 'modularity-frontend-form'),
 
             // Error Messages for fields
             'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),

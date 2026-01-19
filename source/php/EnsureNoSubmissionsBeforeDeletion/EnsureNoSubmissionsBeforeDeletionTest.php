@@ -8,6 +8,21 @@ use WpService\Contracts\DoAction;
 use WpService\Contracts\GetPosts;
 
 class EnsureNoSubmissionsBeforeDeletionTest extends TestCase {
+
+    /**
+     * @testdox addHooks can be invoked without errors
+     */
+    public function testAddHooks_CanBeInvokedWithoutErrors(): void {
+        $modulePostType = 'mod-frontend-form';
+        $config = $this->createMock(\ModularityFrontendForm\Config\ConfigInterface::class);
+        $config->method('getModuleSlug')->willReturn($modulePostType);
+
+        $ensureNoSubmissionsBeforeDeletion = new EnsureNoSubmissionsBeforeDeletion($config, $this->createWpService());
+        $ensureNoSubmissionsBeforeDeletion->addHooks();
+
+        static::assertTrue(true);
+    }
+
     /**
      * @testdox preventDeletionIfSubmissionsExist() returns provided $delete value for non-form module post types
      */

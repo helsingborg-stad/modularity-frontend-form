@@ -25,80 +25,101 @@ class AdminNoticesTest extends TestCase {
     }
 
     /**
-     * @testdox modifyRedirectForTrashedPost adds custom param and removes trashed
+     * @testdox Adds hooks for query_vars and admin_notices
      */
-    public function test_modifyRedirectForTrashedPost_addsCustomParamAndRemovesTrashed() {
-        $config = self::createConfig();
-        $wpService = new class extends FakeWpService {
-            public function removeQueryArg($key, $query = false): string {
-                if ($key === 'trashed' && $query === 'http://example.com/?trashed=1') {
-                    return 'http://example.com/';
-                }
-                return parent::removeQueryArg($key, $query);
-            }
-            public function addQueryArg(...$args): string {
-                if ($args === ['test-module-trash-prevented', 123, 'http://example.com/']) {
-                    return 'http://example.com/?test-module-trash-prevented=123';
-                }
-                return parent::addQueryArg(...$args);
-            }
-        };
-        $sut = new AlterTrashedRedirectToAllowCustomNotice($config, $wpService);
-        $post = new \WP_Post([]);
-        $post->ID = 123;
-        $result = $sut->modifyRedirectForTrashedPost('http://example.com/?trashed=1', $post);
-        static::assertEquals('http://example.com/?test-module-trash-prevented=123', $result);
+    public function testAddHooksAddsFilterAndAction(): void
+    {
+        $wpService = new FakeWpService([
+            'addFilter' => true,
+            'addAction' => true
+        ]);
+        $sut = new AdminNotices(self::createConfig(), $wpService);
+        $sut->addHooks();
+
+        $this->assertArrayHasKey('addFilter', $wpService->methodCalls);
+        $this->assertArrayHasKey('addAction', $wpService->methodCalls);
     }
 
     /**
-     * @testdox modifyRedirectForTrashedPost returns unchanged if no trashed
+     * @testdox registerQueryVar adds both trashed and deleted query vars
      */
-    public function test_modifyRedirectForTrashedPost_returnsUnchangedIfNoTrashed() {
-        $config = self::createConfig();
-        $wpService = static::createWpService();
-        $sut = new AlterTrashedRedirectToAllowCustomNotice($config, $wpService);
-        $post = new \WP_Post([]);
-        $post->ID = 123;
-        $result = $sut->modifyRedirectForTrashedPost('http://example.com/', $post);
-        static::assertEquals('http://example.com/', $result);
+    public function testRegisterQueryVarAddsVars(): void
+    {
+        $sut = new AdminNotices(self::createConfig(), new FakeWpService());
+        $vars = ['foo'];
+        $result = $sut->registerQueryVar($vars);
+
+        $this->assertContains('test-module-trash-prevented', $result);
+        $this->assertContains('test-module-deletion-prevented', $result);
     }
 
     /**
-     * @testdox modifyRedirectForDeletedPost adds custom param and removes deleted
+     * @testdox adminNotices adds trash prevented notice if trashed query var is present
      */
-    public function test_modifyRedirectForDeletedPost_addsCustomParamAndRemovesDeleted() {
-        $config = self::createConfig();
-        $wpService = new class extends FakeWpService {
-            public function removeQueryArg($key, $query = false): string {
-                if ($key === 'deleted' && $query === 'http://example.com/?deleted=1') {
-                    return 'http://example.com/';
-                }
-                return parent::removeQueryArg($key, $query);
-            }
-            public function addQueryArg(...$args): string {
-                if ($args === ['test-module-deletion-prevented', 456, 'http://example.com/']) {
-                    return 'http://example.com/?test-module-deletion-prevented=456';
-                }
-                return parent::addQueryArg(...$args);
-            }
-        };
-        $sut = new AlterTrashedRedirectToAllowCustomNotice($config, $wpService);
-        $post = new \WP_Post([]);
-        $post->ID = 456;
-        $result = $sut->modifyRedirectForDeletedPost('http://example.com/?deleted=1', $post);
-        static::assertEquals('http://example.com/?test-module-deletion-prevented=456', $result);
+    public function testAdminNoticesAddsTrashPreventedNotice(): void
+    {
+        $wpService = new FakeWpService([
+            'getQueryVar' => function($key) { return $key === 'test-module-trash-prevented' ? 123 : null; },
+            '__' => function($msg, $domain = null) { return $msg; },
+            'wpAdminNotice' => function($msg, $opts = []) { return null; }
+        ]);
+        $sut = new AdminNotices(self::createConfig(), $wpService);
+        $sut->adminNotices();
+
+        $calls = $wpService->methodCalls['wpAdminNotice'] ?? [];
+        $this->assertNotEmpty($calls);
+        $this->assertStringContainsString('Cannot move form module to trash', $calls[0][0]);
     }
 
     /**
-     * @testdox modifyRedirectForDeletedPost returns unchanged if no deleted
+     * @testdox adminNotices adds deletion prevented notice if deleted query var is present
      */
-    public function test_modifyRedirectForDeletedPost_returnsUnchangedIfNoDeleted() {
-        $config = self::createConfig();
-        $wpService = static::createWpService();
-        $sut = new AlterTrashedRedirectToAllowCustomNotice($config, $wpService);
-        $post = new \WP_Post([]);
-        $post->ID = 456;
-        $result = $sut->modifyRedirectForDeletedPost('http://example.com/', $post);
-        static::assertEquals('http://example.com/', $result);
+    public function testAdminNoticesAddsDeletionPreventedNotice(): void
+    {
+        $wpService = new FakeWpService([
+            'getQueryVar' => function($key) { return $key === 'test-module-deletion-prevented' ? 1 : null; },
+            '__' => function($msg, $domain = null) { return $msg; },
+            'wpAdminNotice' => function($msg, $opts = []) { return null; }
+        ]);
+        $sut = new AdminNotices(self::createConfig(), $wpService);
+        $sut->adminNotices();
+
+        $calls = $wpService->methodCalls['wpAdminNotice'] ?? [];
+        $this->assertNotEmpty($calls);
+        $this->assertStringContainsString('Cannot delete form module', $calls[0][0]);
+    }
+
+    /**
+     * @testdox addDeletionsPreventedNotice prints correct notice
+     */
+    public function testAddDeletionsPreventedNotice(): void
+    {
+        $wpService = new FakeWpService([
+            '__' => function($msg, $domain = null) { return $msg; },
+            'wpAdminNotice' => function($msg, $opts = []) { return null; }
+        ]);
+        $sut = new AdminNotices(self::createConfig(), $wpService);
+        $sut->addDeletionsPreventedNotice();
+
+        $calls = $wpService->methodCalls['wpAdminNotice'] ?? [];
+        $this->assertNotEmpty($calls);
+        $this->assertStringContainsString('Cannot delete form module', $calls[0][0]);
+    }
+
+    /**
+     * @testdox addTrashPreventedNotice prints correct notice
+     */
+    public function testAddTrashPreventedNotice(): void
+    {
+        $wpService = new FakeWpService([
+            '__' => function($msg, $domain = null) { return $msg; },
+            'wpAdminNotice' => function($msg, $opts = []) { return null; }
+        ]);
+        $sut = new AdminNotices(self::createConfig(), $wpService);
+        $sut->addTrashPreventedNotice();
+
+        $calls = $wpService->methodCalls['wpAdminNotice'] ?? [];
+        $this->assertNotEmpty($calls);
+        $this->assertStringContainsString('Cannot move form module to trash', $calls[0][0]);
     }
 }

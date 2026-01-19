@@ -28,10 +28,4 @@ jobs:
         run: |
           composer test:coverage
 
-      - name: Check coverage percentage
-        uses: php-actions/phpunit-coverage-check@v2
-        with:
-          clover-file: ./.coverage-phpunit/coverage.xml
-          min-coverage: 0
-          fail-on-low-coverage: true
 

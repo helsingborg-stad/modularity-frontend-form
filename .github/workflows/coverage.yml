@@ -28,4 +28,10 @@ jobs:
         run: |
           composer test:coverage
 
+      - name: Coverage Check
+        uses: docker://ghcr.io/ericsizemore/phpunit-coverage-check-action
+        with:
+          clover_file: './.coverage-phpunit/clover.xml'
+          threshold: 0
+
 

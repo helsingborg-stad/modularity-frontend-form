@@ -28,7 +28,7 @@ class EnsureNoSubmissionsBeforeDeletion implements Hookable {
         $allowDeletion = $this->allowDeletion($post);
 
         if($allowDeletion === false) {
-            $this->wpService->doAction('\ModularityFrontendForm\EnsureNoSubmissionsBeforeDeletion\trash_prevented', $post);
+            $this->wpService->doAction(self::createHookName('trash_prevented'), $post);
         }
 
         return $allowDeletion ? $trash : true;
@@ -47,7 +47,7 @@ class EnsureNoSubmissionsBeforeDeletion implements Hookable {
         $allowDeletion = $this->allowDeletion($post);
 
         if($allowDeletion === false) {
-            $this->wpService->doAction('\ModularityFrontendForm\EnsureNoSubmissionsBeforeDeletion\deletion_prevented', $post);
+            $this->wpService->doAction(self::createHookName('deletion_prevented'), $post);
         }
 
         return $allowDeletion ? $delete : true;
@@ -88,5 +88,10 @@ class EnsureNoSubmissionsBeforeDeletion implements Hookable {
         ]);
 
         return count($submissions) > 0;
+    }
+
+    public static function createHookName(string $hookName): string
+    {
+        return self::class . "\\" . $hookName;
     }
 }

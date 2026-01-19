@@ -64,7 +64,7 @@ class EnsureNoSubmissionsBeforeDeletionTest extends TestCase {
         $ensureNoSubmissionsBeforeDeletion->preventDeletionIfSubmissionsExist($delete, $post, $forceDelete);
 
         static::assertArrayHasKey('doAction', $wpService->calls);
-        static::assertSame('\ModularityFrontendForm\EnsureNoSubmissionsBeforeDeletion\deletion_prevented', $wpService->calls['doAction'][0]);
+        static::assertSame('ModularityFrontendForm\EnsureNoSubmissionsBeforeDeletion\EnsureNoSubmissionsBeforeDeletion\deletion_prevented', $wpService->calls['doAction'][0]);
         static::assertSame($post, $wpService->calls['doAction'][1]);
     }
 
@@ -85,7 +85,7 @@ class EnsureNoSubmissionsBeforeDeletionTest extends TestCase {
         $ensureNoSubmissionsBeforeDeletion->preventTrashIfSubmissionsExist($trash, $post);
 
         static::assertArrayHasKey('doAction', $wpService->calls);
-        static::assertSame('\ModularityFrontendForm\EnsureNoSubmissionsBeforeDeletion\trash_prevented', $wpService->calls['doAction'][0]);
+        static::assertSame('ModularityFrontendForm\EnsureNoSubmissionsBeforeDeletion\EnsureNoSubmissionsBeforeDeletion\trash_prevented', $wpService->calls['doAction'][0]);
         static::assertSame($post, $wpService->calls['doAction'][1]);
     }
 

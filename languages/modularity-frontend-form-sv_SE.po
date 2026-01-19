@@ -538,152 +538,152 @@ msgstr "Underrubrik"
 
 #: AcfFields/php/mod-frontend-forms.php:34
 msgid "The post type from which the fields should be retrieved; this setting also determines which post type the submission will be saved to."
-msgstr ""
+msgstr "Den posttyp från vilken fälten ska hämtas; denna inställning avgör också vilken posttyp inskickningen kommer att sparas till."
 
 #: AcfFields/php/mod-frontend-forms.php:548
 msgid "Legal"
-msgstr ""
+msgstr "Juridisk"
 
 #: AcfFields/php/mod-frontend-forms.php:566
 msgid "Why are we collecting this data?"
-msgstr ""
+msgstr "Varför samlar vi in dessa uppgifter?"
 
 #: AcfFields/php/mod-frontend-forms.php:570
 msgid "Describe why we need to collect this data."
-msgstr ""
+msgstr "Beskriv varför vi behöver samla in dessa uppgifter."
 
 #: AcfFields/php/mod-frontend-forms.php:592
 msgid "Who will process or have access to the data?"
-msgstr ""
+msgstr "Vem kommer att behandla eller ha åtkomst till uppgifterna?"
 
 #: AcfFields/php/mod-frontend-forms.php:596
 msgid "List all entities that will access or process the data, including internal departments as well as any external system providers."
-msgstr ""
+msgstr "Lista alla enheter som kommer att få åtkomst till eller behandla uppgifterna, inklusive interna avdelningar samt externa systemleverantörer."
 
 #: AcfFields/php/mod-frontend-forms.php:618
 msgid "For how long should we keep the data submitted in this form?"
-msgstr ""
+msgstr "Hur länge ska vi behålla de uppgifter som skickats in i detta formulär?"
 
 #: AcfFields/php/mod-frontend-forms.php:622
 msgid "What is the maximum retention period for the data before it is deleted? This function will delete the information completly."
-msgstr ""
+msgstr "Vilket är den maximala lagringstiden för uppgifterna innan de raderas? Denna funktion kommer att radera informationen helt."
 
 #: AcfFields/php/mod-frontend-forms.php:635
 msgid "days"
-msgstr ""
+msgstr "dagar"
 
 #: Admin/DisplayEditLinkInterfaceNotice.php:121
 msgid "Frontend Submission"
-msgstr ""
+msgstr "Frontend-inskick"
 
 #: Admin/DisplayEditLinkInterfaceNotice.php:122
 msgid "This content was created by a end user, you may edit as a end user by clicking the button."
-msgstr ""
+msgstr "Detta innehåll skapades av en slutanvändare, du kan redigera som en slutanvändare genom att klicka på knappen."
 
 #: Admin/DisplayEditLinkInterfaceNotice.php:124
 msgid "View on frontend"
-msgstr ""
+msgstr "Visa på frontend"
 
 #: Admin/LegalFormDataTaxonomiesRegistrar.php:38
 msgid "Data Categories"
-msgstr ""
+msgstr "Datakategorier"
 
 #: Admin/LegalFormDataTaxonomiesRegistrar.php:43
 msgid "Data Processors"
-msgstr ""
+msgstr "Databehandlare"
 
 #: Admin/PluginOptionsPageRegistrar.php:39
 msgid "Frontend Form Options"
-msgstr ""
+msgstr "Frontendformulärsalternativ"
 
 #: Admin/SubmissionsPostTypeRegistrar.php:39
 msgid "Frontend Form Submissions"
-msgstr ""
+msgstr "Formulärssvar"
 
 #: Api/RestApiParams.php:77
 msgid "The post id that shows the form (holding post)."
-msgstr ""
+msgstr "Post-ID:t som visar formuläret (hållande post)."
 
 #: Api/RestApiParams.php:89
 msgid "The page was not submitted from a valid source post id."
-msgstr ""
+msgstr "Sidan skickades inte in från ett giltigt källpost-ID."
 
 #: DataProcessor/FileHandlers/NullFileHandler.php:23
 msgid "No file handler available."
-msgstr ""
+msgstr "Ingen filhanterare tillgänglig."
 
 #: DataProcessor/FileHandlers/WpDbFileHandler.php:52
 msgid "File upload error."
-msgstr ""
+msgstr "Filuppladdningsfel."
 
 #: DataProcessor/FileHandlers/WpDbFileHandler.php:82
 msgid "One or more files failed to upload."
-msgstr ""
+msgstr "En eller flera filer kunde inte laddas upp."
 
 #: DataProcessor/Validators/FilesConformToAllowedFileSize.php:55
 #, php-format
 msgid "The file \"%s\" exceeds the maximum allowed file size of %s."
-msgstr ""
+msgstr "Filen \"%s\" överskrider den högsta tillåtna filstorleken på %s."
 
 #: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:58
 #, php-format
 msgid "Unable to check type of file \"%s\". %s."
-msgstr ""
+msgstr "Kunde inte kontrollera typen av filen \"%s\". %s."
 
 #: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:72
 #, php-format
 msgid "The file type is not allowed or communicated mime type (%s) does not match the actual file type (%s)."
-msgstr ""
+msgstr "Filtypen är inte tillåten eller den angivna mimetypen (%s) matchar inte den faktiska filtypen (%s)."
 
 #: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:73
 #: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:74
 msgid "unknown"
-msgstr ""
+msgstr "okänd"
 
 #: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:97
 msgid "File does not exist"
-msgstr ""
+msgstr "Filen finns inte"
 
 #: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:104
 msgid "Unable to read file"
-msgstr ""
+msgstr "Kunde inte läsa fil"
 
 #: DataProcessor/Validators/FilesCountIsWithinLimits.php:63
 #, php-format
 msgid "The number of files uploaded for field \"%s\" exceeds the maximum allowed of %d."
-msgstr ""
+msgstr "Antalet uppladdade filer för fältet \"%s\" överstiger det högsta tillåtna på %d."
 
 #: DataProcessor/Validators/FilesCountIsWithinLimits.php:79
 #, php-format
 msgid "The number of files uploaded for field \"%s\" is less than the minimum required of %d."
-msgstr ""
+msgstr "Antalet uppladdade filer för fältet \"%s\" är mindre än det minsta kravet på %d."
 
 #: DataProcessor/Validators/FilesIntegrityCheck.php:50
 #, php-format
 msgid "The file \"%s\" could not be uploaded [unable to find the file]."
-msgstr ""
+msgstr "Filen \"%s\" kunde inte laddas upp [kunde inte hitta filen]."
 
 #: DataProcessor/Validators/FilesIntegrityCheck.php:66
 #, php-format
 msgid "The file \"%s\" could not be uploaded [unable to access the file]."
-msgstr ""
+msgstr "Filen \"%s\" kunde inte laddas upp [kunde inte komma åt filen]."
 
 #: DataProcessor/Validators/FilesIntegrityCheck.php:80
 #, php-format
 msgid "The file \"%s\" (%d) does not match the expected filesize of %d. The file might be corrupted or incomplete."
-msgstr ""
+msgstr "Filen \"%s\" (%d) matchar inte den förväntade filstorleken på %d. Filen kan vara skadad eller ofullständig."
 
 #: DataProcessor/Validators/NoFieldsMissing.php:53
 msgid "Form is missing required fields"
-msgstr ""
+msgstr "Formuläret saknar obligatoriska fält"
 
 #: DataProcessor/Validators/PostContentExistsInDataWhenRequired.php:75
 msgid "Content is required in this form. The field cannot be empty."
-msgstr ""
+msgstr "Innehåll krävs i detta formulär. Fältet kan inte vara tomt."
 
 #: DataProcessor/Validators/PostTitleExistsInDataWhenRequired.php:75
 msgid "A title is required in this form. The field cannot be empty."
-msgstr ""
+msgstr "En rubrik krävs i detta formulär. Fältet kan inte vara tomt."
 
 #: EnsureNoSubmissionsBeforeDeletion/AdminNotices.php:41
 msgid "Cannot delete form module: existing submissions found."
@@ -695,44 +695,44 @@ msgstr "Kan inte flytta formulärmodul till papperskorgen: befintliga inskick hi
 
 #: FieldMapping/Mapper/Wordpress/PostContent.php:18
 msgid "Post Content"
-msgstr ""
+msgstr "Innehåll för inlägg"
 
 #: FieldMapping/Mapper/Wordpress/PostTitle.php:19
 msgid "Post Title"
-msgstr ""
+msgstr "Rubrik för inlägg"
 
 #: Module/FrontendForm.php:179
 msgid "Loading successful"
-msgstr ""
+msgstr "Inläsning lyckades"
 
 #: Module/FrontendForm.php:212
 msgid "An unknown error occurred while submitting the form."
-msgstr ""
+msgstr "Ett okänt fel uppstod vid inskick av formuläret."
 
 #: Module/FrontendForm.php:243
 msgid "By submitting this form, you agree to our terms and conditions. You also consent to your personal data being processed by <mark>{{data_processors}}</mark> in accordance with GDPR. Additionally, you confirm that you have the full rights to all content you provide. We need to process this data with the following reason(s): <mark>{{data_categories}}</mark>. Your data will be permanently deleted after <mark>{{data_retention_period}}</mark> days, calculated from the date of the last modification or expiration."
-msgstr ""
+msgstr "Genom att skicka in detta formulär godkänner du våra villkor. Du samtycker också till att dina personuppgifter behandlas av <mark>{{data_processors}}</mark> i enlighet med GDPR. Dessutom bekräftar du att du har fulla rättigheter till allt innehåll du tillhandahåller. Vi behöver behandla dessa uppgifter med följande anledning(ar): <mark>{{data_categories}}</mark>. Dina uppgifter kommer att raderas permanent efter <mark>{{data_retention_period}}</mark> dagar, räknat från datumet för den senaste ändringen eller utgången."
 
 #: Module/FrontendForm.php:252
 msgid "us"
-msgstr ""
+msgstr "oss"
 
 #: Module/FrontendForm.php:258
 msgid "relevant processing requirements"
-msgstr ""
+msgstr "relevanta behandlingskrav"
 
 #: Module/FrontendForm.php:264
 msgid "30"
-msgstr ""
+msgstr "30"
 
 #: Module/FrontendForm.php:305
 msgid "and"
-msgstr ""
+msgstr "och"
 
 #: Module/GroupHelper.php:69
 msgid "Post title"
-msgstr ""
+msgstr "Rubrik"
 
 #: Module/GroupHelper.php:70
 msgid "Post content"
-msgstr ""
+msgstr "Innehåll"

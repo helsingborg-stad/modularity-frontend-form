@@ -8,13 +8,19 @@
         opacity: 0;
         width: 100%;
         position: absolute;
-        transform: scale(.7);
         transition: opacity .4s ease-in-out, transform .2s ease-in-out;
         max-height: 0;
         top: 2rem;
         pointer-events: none;
         z-index: -1;
         overflow: hidden;
+        transform: translateY(calc(var(--base, 8px) * 2));
+
+        .mod-frontend-form__step-header {
+            margin-bottom: calc(var(--base, 8px) * 1);
+            border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            padding-bottom: calc(var(--base, 8px) * 3);
+        }
 
         .mod-frontend-form__step-header-title {
             display: flex;
@@ -33,10 +39,10 @@
             position: relative;
             max-height: unset;
             top: 0;
-            transform: scale(1);
             pointer-events: auto;
             z-index: 2;
             overflow: visible;
+            transform: translateY(0);
         }
 
         &.is-invalid {

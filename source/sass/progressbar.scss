@@ -1,122 +1,153 @@
 @use "./variables.scss" as *;
 
-$default-step-background-color: color-mix(in srgb, var(--color-dark, #707070), white 70%);
-$step-background-color: var(--step-background-color, $default-step-background-color) !default;
-$step-color: var(--step-color, #ffffff) !default;
-
-.mod-frontend-form__progressbar {
+.mod-frontend-form__layout {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    background-color: rgba(0, 0, 0, .05);
-}
 
-.mod-frontend-form__progressbar-step {
-    --step-color: var(--color-white, #ffffff);
-    --step-background-color: color-mix(in srgb, var(--color-dark, #707070), white 70%);
-}
+    @container (width > 800px) {
+        flex-direction: row;
 
-.mod-frontend-form__progressbar-step.is-invalid {
-    --step-background-color: var(--color-danger, #d73740);
-    --step-color: #ffffff;
-}
+        .mod-frontend-form__progressbar {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            flex: 0 0 300px;
+            width: 300px;
+            border-bottom: none;
+            border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
+            height: auto;
 
-.mod-frontend-form__progressbar-step.is-valid {
-    --step-background-color: var(--color-success, #91d736);
-    --step-color: #ffffff;
-}
-
-.mod-frontend-form__progressbar-step {
-    flex: 1;
-    position: relative;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-
-    .mod-frontend-form__progressbar-step-button {
-        z-index: 1000;
-        transform: translateY(50%);
-        width: 1.5rem;
-        height: 1.5rem;
-        border-radius: 50%;
-        background-color: $step-background-color;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: $step-color;
-        border: 2px solid;
-        border-color: $step-background-color;
-        transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    .mod-frontend-form__progressbar-step-title {
-        opacity: 1;
-        transition: opacity 0.3s ease;
-    }
-
-    .mod-frontend-form__progressbar-step-indicator {
-        width: 100%;
-        &::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            height: .25rem;
-            width: 100%;
-            left: 50%;
-            transform: translateY(-50%);
-            background-color: $default-step-background-color;
-            z-index: 0;
+            .mod-frontend-form__progressbar-step {
+                flex-grow: unset;
+            }
         }
 
-        &::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            height: .25rem;
-            width: 0;
-            z-index: 1;
-            transform: translateY(-50%);
-            background-color: $step-background-color;
-            transition: width 0.3s ease-in-out;
+        .mod-frontend-form__content {
+            flex: 1 1 auto;
+            min-width: 0;
         }
-    }
 
-    &:is(.is-invalid, .is-valid, .is-active) {
-        .mod-frontend-form__progressbar-step-button {
-            pointer-events: auto;
-            cursor: pointer;
-        }
-    }
+        
 
-    &.has-passed {
-        .mod-frontend-form__progressbar-step-indicator::before {
-            width: 100%;
-        }
-    }
-
-    &.is-last {
-        .mod-frontend-form__progressbar-step-indicator::after,
-        .mod-frontend-form__progressbar-step-indicator::before {
+        .mod-frontend-form__progressbar-divider {
             display: none;
         }
     }
 
-    &.is-active {
-        .mod-frontend-form__progressbar-step-button {
-            color: $step-background-color;
-            background-color: $step-color;
-            border-color: $step-background-color;
+    @container (width <= 800px) {
+        flex-direction: column;
+
+        .mod-frontend-form__progressbar {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
         }
 
-        .mod-frontend-form__progressbar-step-title {
-            opacity: 0;
+        .mod-frontend-form__progressbar-divider {
+            align-self: center;
+            margin: 0;
+            padding: 0;
+            height: calc(var(--base, 8px) * 3);
+            width: calc(var(--base, 8px) * 3);
         }
+    }
+}
+
+.mod-frontend-form__progressbar {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    flex: 1;
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+
+.mod-frontend-form__progressbar-step--vertical {
+    flex-direction: column;
+    border-right: 1px solid rgba(0, 0, 0, .1);
+    border-bottom: none;
+}
+
+.mod-frontend-form__progressbar-step {
+    position: relative;
+    display: flex;
+    pointer-events: none;
+    padding: calc(var(--base, 8px) * 2);
+    gap: calc(var(--base, 8px) * 1);
+    background-color: #fff;
+    flex-grow: 1;
+    align-items: center;
+
+    --c-icon-size-lg: calc(var(--base, 8px) * 5);
+
+    .mod-frontend-form__progressbar-step-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .mod-frontend-form__progressbar-step-button {
+        background-color: var(--step-background-color-icon);
+        color: var(--step-background-color-icon-contrast);
+    }
+
+    .mod-frontend-form__progressbar-step-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: var(--c-icon-size-lg);
+        height: var(--c-icon-size-lg);
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        border: none;
+
+        --step-background-color-icon: #eee;
+        --step-background-color-icon-contrast: #000;
+    }
+
+    .mod-frontend-form__progressbar-step-status-icon {
+        display: none;
+        margin-left: auto;
+        justify-self: top;
+    }
+
+    /* Status styles */
+    &:is(.is-invalid, .is-valid, .is-active) {
+        .mod-frontend-form__progressbar-step-button {
+            pointer-events: auto;
+            cursor: pointer;
+            background-color: var(--step-background-color-icon);
+        }
+        .mod-frontend-form__progressbar-step-button-icon {
+            color: var(--step-background-color-icon-contrast);
+        }
+    }
+   
+    &.has-passed {
+        .mod-frontend-form__progressbar-step-button {
+            --step-background-color-icon: var(--color-dark, #707070);
+            --step-background-color-icon-contrast: var(--color-dark-contrast, #ffffff);
+        }
+    }
+
+    &.is-active,
+    &.is-first {
+        .mod-frontend-form__progressbar-step-button {
+            --step-background-color-icon: var(--color-primary, #3333ff);
+            --step-background-color-icon-contrast: var(--color-primary-contrast, #ffffff);
+        }
+    }
+
+    &.is-valid .mod-frontend-form__progressbar-step-status-icon-ok {
+        display: block;
+        color: var(--color-success, #91d736);
+    }
+
+    &.is-invalid .mod-frontend-form__progressbar-step-status-icon-error {
+        display: block;
+        color: var(--color-danger, #d73740);
     }
 }

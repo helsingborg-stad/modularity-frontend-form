@@ -3,7 +3,7 @@
 if (function_exists('acf_add_local_field_group')) {
     acf_add_local_field_group(array(
     'key' => 'group_6627a5e16d74c',
-    'title' => __('Configure Multistep Form', 'modularity-frontend-form'),
+    'title' => 'Configure Multistep Form',
     'fields' => array(
         0 => array(
             'key' => 'field_662a51f8a599e',
@@ -69,6 +69,24 @@
             'rows_per_page' => 20,
             'sub_fields' => array(
                 0 => array(
+                    'key' => 'field_696ddb068d230',
+                    'label' => __('Form Step Icon', 'modularity-frontend-form'),
+                    'name' => 'formStepIcon',
+                    'aria-label' => '',
+                    'type' => 'icon',
+                    'instructions' => '',
+                    'required' => 0,
+                    'conditional_logic' => 0,
+                    'wrapper' => array(
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ),
+                    'default_value' => '',
+                    'placeholder' => '',
+                    'parent_repeater' => 'field_6627a5e312422',
+                ),
+                1 => array(
                     'key' => 'field_6627a6b312423',
                     'label' => __('Form Step Title', 'modularity-frontend-form'),
                     'name' => 'formStepTitle',
@@ -89,7 +107,7 @@
                     'append' => '',
                     'parent_repeater' => 'field_6627a5e312422',
                 ),
-                1 => array(
+                2 => array(
                     'key' => 'field_6627a6e112424',
                     'label' => __('From Step Content', 'modularity-frontend-form'),
                     'name' => 'formStepContent',
@@ -110,7 +128,7 @@
                     'delay' => 0,
                     'parent_repeater' => 'field_6627a5e312422',
                 ),
-                2 => array(
+                3 => array(
                     'key' => 'field_6627a6f212425',
                     'label' => __('Form Step Group', 'modularity-frontend-form'),
                     'name' => 'formStepGroup',
@@ -125,6 +143,10 @@
                         'id' => '',
                     ),
                     'choices' => array(
+                        'group_6627a5e16d74c' => __('Configure Multistep Form', 'modularity-frontend-form'),
+                        'group_69281214800e9' => __('Testgroup', 'modularity-frontend-form'),
+                        'post_title' => __('Post title', 'modularity-frontend-form'),
+                        'post_content' => __('Post content', 'modularity-frontend-form'),
                     ),
                     'default_value' => array(
                     ),

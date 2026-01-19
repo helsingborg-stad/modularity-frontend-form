@@ -66,6 +66,24 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
+                    "key": "field_696ddb068d230",
+                    "label": "Form Step Icon",
+                    "name": "formStepIcon",
+                    "aria-label": "",
+                    "type": "icon",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "parent_repeater": "field_6627a5e312422"
+                },
+                {
                     "key": "field_6627a6b312423",
                     "label": "Form Step Title",
                     "name": "formStepTitle",
@@ -121,7 +139,12 @@
                         "class": "",
                         "id": ""
                     },
-                    "choices": [],
+                    "choices": {
+                        "group_6627a5e16d74c": "Configure Multistep Form",
+                        "group_69281214800e9": "Testgroup",
+                        "post_title": "Post title",
+                        "post_content": "Post content"
+                    },
                     "default_value": [],
                     "return_format": "value",
                     "multiple": 1,

@@ -1,7 +1,0 @@
-@use "./variables.scss" as *;
-
-.mod-frontend-form__openstreetmap {
-    &.is-invalid .mod-frontend-form__openstreetmap {
-        border: 1px solid $color-danger;
-    }
-}

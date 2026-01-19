@@ -18,6 +18,7 @@ import StatusRendererInterface from './formStatus/renderInterface';
 import FormParamExtractor from './formPopulator/formParamExtractor';
 import FormDataFetcher from './formPopulator/formDataFetcher';
 import FieldsPopulator from './formPopulator/fieldsPopulator';
+import FormProgressBar from './progressbar';
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
@@ -59,6 +60,9 @@ class FormHandler {
 		fieldsInitiatorInstance.initializeConditionals(builder.getFieldsObject());
 		this.removeLoader(stepsObject);
 		this.setupFormPopulator(statusRenderer, builder.getFieldsObject());
+
+		//Add progressbar support
+		FormProgressBar.initAll();
 	}
 
 	private setupFormPopulator(statusRenderer: StatusRendererInterface, fieldsObject: FieldsObject): void {

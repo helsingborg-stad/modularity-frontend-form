@@ -28,6 +28,21 @@ export class FormProgressBar {
   /**
    * Find and center/focus the active step
    */
+  /**
+   * Centers the currently active step within the progress bar container,
+   * either vertically or horizontally depending on the layout direction.
+   *
+   * - In vertical mode (when the closest `.mod-frontend-form__layout` has `flex-direction: row`),
+   *   it scrolls the container vertically so the active step is centered.
+   * - In horizontal mode (default), it scrolls the container horizontally to center the active step.
+   *
+   * The method also sets focus to the active step for accessibility.
+   *
+   * @remarks
+   * For this method to have a visible effect, the progress bar container (`this.root`)
+   * must have scrolling enabled in the relevant direction (i.e., `overflow-y: auto` for vertical,
+   * `overflow-x: auto` for horizontal) and its content must overflow the container's bounds.
+   */
   private centerActiveStep(): void {
     const activeStep = this.root.querySelector<HTMLElement>(
       '.mod-frontend-form__progressbar-step.is-active'

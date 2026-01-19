@@ -16,7 +16,7 @@
             border-bottom: none;
             border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
             height: auto;
-
+            overflow-y: auto;
             .mod-frontend-form__progressbar-step {
                 flex-grow: unset;
             }
@@ -41,6 +41,7 @@
             width: 100%;
             border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.0588235294));
             position: relative;
+            overflow-x: auto;
 
             &:before,
             &:after {

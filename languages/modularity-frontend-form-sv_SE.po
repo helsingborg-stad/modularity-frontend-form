@@ -1,594 +1,738 @@
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Modularity Frontend Form\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-21 12:21+0100\n"
-"PO-Revision-Date: 2025-11-21 12:22+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-21 12:21+0100\n"
+"PO-Revision-Date: 2025-11-21 12:22+0100\n"
+"Language: sv_SE\n"
 "X-Generator: Poedit 3.4.2\n"
 "X-Poedit-Basepath: ../source\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: php/AcfFields/php/mod-frontend-forms.php:8
+#: AcfFields/php/mod-frontend-forms.php:8
 msgid "Configure Multistep Form"
 msgstr "Konfigurera flerstegsformulär"
 
-#: php/AcfFields/php/mod-frontend-forms.php:12
+#: AcfFields/php/mod-frontend-forms.php:12
 msgid "Form Steps"
 msgstr "Formulärsteg"
 
-#: php/AcfFields/php/mod-frontend-forms.php:29
+#: AcfFields/php/mod-frontend-forms.php:52
 msgid "Add Form Step"
 msgstr "Lägg till formulärsteg"
 
-#: php/AcfFields/php/mod-frontend-forms.php:33
+#: AcfFields/php/mod-frontend-forms.php:56
 msgid "Add the steps that should be displayed in this form."
 msgstr "Lägg till de steg som ska visas i detta formulär."
 
-#: php/AcfFields/php/mod-frontend-forms.php:47
+#: AcfFields/php/mod-frontend-forms.php:70
 msgid "Add Step"
 msgstr "Lägg till steg"
 
-#: php/AcfFields/php/mod-frontend-forms.php:52
+#: AcfFields/php/mod-frontend-forms.php:75
 msgid "Form Step Title"
 msgstr "Formulärstegstitel"
 
-#: php/AcfFields/php/mod-frontend-forms.php:56
-#: php/AcfFields/php/mod-frontend-forms.php:77
-msgid ""
-"By leaving this blank, the configuration of the fieldgroup will be used."
+#: AcfFields/php/mod-frontend-forms.php:79
+#: AcfFields/php/mod-frontend-forms.php:100
+msgid "By leaving this blank, the configuration of the fieldgroup will be used."
 msgstr "Om detta lämnas tomt används konfigurationen för fältgruppen."
 
-#: php/AcfFields/php/mod-frontend-forms.php:73
+#: AcfFields/php/mod-frontend-forms.php:96
 msgid "From Step Content"
 msgstr "Från steg-innehåll"
 
-#: php/AcfFields/php/mod-frontend-forms.php:94
+#: AcfFields/php/mod-frontend-forms.php:117
 msgid "Form Step Group"
 msgstr "Formulärstegsgrupp"
 
-#: php/AcfFields/php/mod-frontend-forms.php:121
-msgid "Display Post title"
-msgstr "Visa inläggstitel"
-
-#: php/AcfFields/php/mod-frontend-forms.php:133
-msgid "If this step should include a field for the posts title"
-msgstr "Om detta steg ska inkludera ett fält för inläggstiteln"
-
-#: php/AcfFields/php/mod-frontend-forms.php:144
+#: AcfFields/php/mod-frontend-forms.php:149
 msgid "Submission Configuration"
 msgstr "Konfiguration av inskick"
 
-#: php/AcfFields/php/mod-frontend-forms.php:161
+#: AcfFields/php/mod-frontend-forms.php:167
 msgid "Submit to"
 msgstr "Skicka till"
 
-#: php/AcfFields/php/mod-frontend-forms.php:165
+#: AcfFields/php/mod-frontend-forms.php:171
 msgid "Select where you want the submissions to be stored or sent to."
 msgstr "Välj var du vill att inskick ska lagras eller skickas."
 
-#: php/AcfFields/php/mod-frontend-forms.php:174
-#: php/AcfFields/php/mod-frontend-forms.php:222
+#: AcfFields/php/mod-frontend-forms.php:180
+#: AcfFields/php/mod-frontend-forms.php:228
 msgid "Database"
 msgstr "Databas"
 
-#: php/AcfFields/php/mod-frontend-forms.php:175
+#: AcfFields/php/mod-frontend-forms.php:181
 msgid "E-Mail"
 msgstr "E-post"
 
-#: php/AcfFields/php/mod-frontend-forms.php:176
-#: php/AcfFields/php/mod-frontend-forms.php:380
+#: AcfFields/php/mod-frontend-forms.php:182
+#: AcfFields/php/mod-frontend-forms.php:368
 msgid "Webhook"
 msgstr "Webhook"
 
-#: php/AcfFields/php/mod-frontend-forms.php:189
+#: AcfFields/php/mod-frontend-forms.php:195
 msgid "Data Protection Information"
 msgstr "Information om dataskydd"
 
-#: php/AcfFields/php/mod-frontend-forms.php:216
-msgid ""
-"<mark>Some of the selected options to send to will receive all data "
-"submitted through the form, including any sensitive information that you may "
-"collection. Please ensure that the connected services complies with all "
-"relevant data protection regulations, such as GDPR and Schrems II.</mark>"
-msgstr ""
-"<mark>Vissa av de valda alternativen för mottagning kommer att ta emot all "
-"data som skickas via formuläret, inklusive eventuell känslig information som "
-"du kan ha samlat in. Säkerställ att de anslutna tjänsterna följer alla "
-"gällande dataskyddsregler, såsom GDPR och Schrems II.</mark>"
+#: AcfFields/php/mod-frontend-forms.php:222
+msgid "<mark>Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.</mark>"
+msgstr "<mark>Vissa av de valda alternativen för mottagning kommer att ta emot all data som skickas via formuläret, inklusive eventuell känslig information som du kan ha samlat in. Säkerställ att de anslutna tjänsterna följer alla gällande dataskyddsregler, såsom GDPR och Schrems II.</mark>"
 
-#: php/AcfFields/php/mod-frontend-forms.php:226
-msgid ""
-"Select where we should store the answers on this form, and with what default "
-"status."
-msgstr ""
-"Välj var vi ska lagra svaren för detta formulär och med vilken "
-"standardstatus."
+#: AcfFields/php/mod-frontend-forms.php:232
+msgid "Select where we should store the answers on this form, and with what default status."
+msgstr "Välj var vi ska lagra svaren för detta formulär och med vilken standardstatus."
 
-#: php/AcfFields/php/mod-frontend-forms.php:248
+#: AcfFields/php/mod-frontend-forms.php:30
 msgid "Select Post Type"
 msgstr "Välj posttyp"
 
-#: php/AcfFields/php/mod-frontend-forms.php:252
-msgid "The post type that the user should be able to add to or modify."
-msgstr "Den posttyp som användaren ska kunna lägga till eller ändra."
-
-#: php/AcfFields/php/mod-frontend-forms.php:269
+#: AcfFields/php/mod-frontend-forms.php:257
 msgid "Save as Post Status"
 msgstr "Spara som poststatus"
 
-#: php/AcfFields/php/mod-frontend-forms.php:273
+#: AcfFields/php/mod-frontend-forms.php:261
 msgid "The post status to use when a form hasen't been reviewed by the user."
-msgstr ""
-"Poststatus som används när ett formulär inte har granskats av användaren."
+msgstr "Poststatus som används när ett formulär inte har granskats av användaren."
 
-#: php/AcfFields/php/mod-frontend-forms.php:282
+#: AcfFields/php/mod-frontend-forms.php:270
 msgid "Draft"
 msgstr "Utkast"
 
-#: php/AcfFields/php/mod-frontend-forms.php:283
+#: AcfFields/php/mod-frontend-forms.php:271
 msgid "Pending Review"
 msgstr "Väntar på granskning"
 
-#: php/AcfFields/php/mod-frontend-forms.php:284
+#: AcfFields/php/mod-frontend-forms.php:272
 msgid "Private"
 msgstr "Privat"
 
-#: php/AcfFields/php/mod-frontend-forms.php:285
+#: AcfFields/php/mod-frontend-forms.php:273
 msgid "Published"
 msgstr "Publicerad"
 
-#: php/AcfFields/php/mod-frontend-forms.php:287
+#: AcfFields/php/mod-frontend-forms.php:275
 msgid "draft"
 msgstr "utkast"
 
-#: php/AcfFields/php/mod-frontend-forms.php:304
-#: php/AcfFields/php/mod-frontend-forms.php:353
+#: AcfFields/php/mod-frontend-forms.php:292
+#: AcfFields/php/mod-frontend-forms.php:344
 msgid "Email"
 msgstr "E-post"
 
-#: php/AcfFields/php/mod-frontend-forms.php:308
-msgid ""
-"Configure the email adresses that should recive the form submission "
-"automatically."
-msgstr ""
-"Konfigurera e-postadresser som ska ta emot formulärinskick automatiskt."
+#: AcfFields/php/mod-frontend-forms.php:296
+msgid "Configure the email adresses that should recive the form submission automatically."
+msgstr "Konfigurera e-postadresser som ska ta emot formulärinskick automatiskt."
 
-#: php/AcfFields/php/mod-frontend-forms.php:330
-#: php/AcfFields/php/mod-frontend-forms.php:348
+#: AcfFields/php/mod-frontend-forms.php:321
+#: AcfFields/php/mod-frontend-forms.php:339
 msgid "Add Reciver"
 msgstr "Lägg till mottagare"
 
-#: php/AcfFields/php/mod-frontend-forms.php:384
+#: AcfFields/php/mod-frontend-forms.php:372
 msgid "Configure a web adress that can recive post data."
 msgstr "Konfigurera en webbadress som kan ta emot postdata."
 
-#: php/AcfFields/php/mod-frontend-forms.php:406
+#: AcfFields/php/mod-frontend-forms.php:397
 msgid "Callback URL"
 msgstr "Callback-URL"
 
-#: php/AcfFields/php/mod-frontend-forms.php:428
+#: AcfFields/php/mod-frontend-forms.php:416
 msgid "Form Completion"
 msgstr "Formulärslutförande"
 
-#: php/AcfFields/php/mod-frontend-forms.php:445
+#: AcfFields/php/mod-frontend-forms.php:434
 msgid "Enable summary"
 msgstr "Aktivera sammanfattning"
 
-#: php/AcfFields/php/mod-frontend-forms.php:457
-msgid ""
-"Wheter this form should include a summary step before acquiring the final "
-"post status."
-msgstr ""
-"Om detta formulär ska inkludera ett sammanfattningssteg innan slutlig "
-"poststatus."
+#: AcfFields/php/mod-frontend-forms.php:446
+msgid "Wheter this form should include a summary step before acquiring the final post status."
+msgstr "Om detta formulär ska inkludera ett sammanfattningssteg innan slutlig poststatus."
 
-#: php/AcfFields/php/mod-frontend-forms.php:465
+#: AcfFields/php/mod-frontend-forms.php:454
 msgid "Summary Title"
 msgstr "Sammanfattningstitel"
 
-#: php/AcfFields/php/mod-frontend-forms.php:493
+#: AcfFields/php/mod-frontend-forms.php:482
 msgid "Summary Lead"
 msgstr "Sammanfattningsinledning"
 
-#: php/AcfFields/php/mod-frontend-forms.php:521
+#: AcfFields/php/mod-frontend-forms.php:510
 msgid "Security"
 msgstr "Säkerhet"
 
-#: php/AcfFields/php/mod-frontend-forms.php:538
+#: AcfFields/php/mod-frontend-forms.php:528
 msgid "Public Access"
 msgstr "Publik åtkomst"
 
-#: php/AcfFields/php/mod-frontend-forms.php:550
+#: AcfFields/php/mod-frontend-forms.php:540
 msgid "This form may be used by unauthenticated visitors"
 msgstr "Detta formulär kan användas av icke autentiserade besökare"
 
-#: php/Api/RestApiParams.php:76
+#: Api/RestApiParams.php:106
 msgid "The post id that stores the form data."
 msgstr "ID för inlägget som lagrar formulärdata."
 
-#: php/Api/RestApiParams.php:88 php/Api/RestApiParams.php:156
+#: Api/RestApiParams.php:118
+#: Api/RestApiParams.php:186
 msgid "The resource you are trying to find, does not exist."
 msgstr "Resursen du försöker hitta finns inte."
 
-#: php/Api/RestApiParams.php:106
+#: Api/RestApiParams.php:136
 msgid "The module id that the request originates from"
 msgstr "Modul-ID som begäran kommer från"
 
-#: php/Api/RestApiParams.php:121
+#: Api/RestApiParams.php:151
 msgid "The forms created by this module cannot be edited at this moment."
 msgstr "Formulären som skapats av denna modul kan inte redigeras just nu."
 
-#: php/Api/RestApiParams.php:138
+#: Api/RestApiParams.php:168
 msgid "The token that is used to authenticate the request."
 msgstr "Token som används för att autentisera begäran."
 
-#: php/Api/RestApiParams.php:165
+#: Api/RestApiParams.php:195
 msgid "The resource you are trying to access is not editable."
 msgstr "Resursen du försöker komma åt är inte redigerbar."
 
-#: php/Api/RestApiParams.php:174
+#: Api/RestApiParams.php:204
 msgid "The token provided, does not match the asset."
 msgstr "Den angivna token matchar inte resursen."
 
-#: php/Api/RestApiParams.php:192
+#: Api/RestApiParams.php:222
 msgid "The nonce that is used to authenticate the request."
 msgstr "Nonce som används för att autentisera begäran."
 
-#: php/Api/RestApiParams.php:211
+#: Api/RestApiParams.php:241
 msgid "The nonce provided, does not match the asset."
 msgstr "Den angivna nonce matchar inte resursen."
 
-#: php/Api/Submit/Post.php:96 php/Api/Submit/Update.php:98
+#: Api/Submit/Post.php:96
+#: Api/Submit/Update.php:99
 msgid "An error occurred while processing the form"
 msgstr "Ett fel uppstod vid bearbetning av formuläret"
 
-#: php/Api/Submit/Post.php:106
+#: Api/Submit/Post.php:106
 msgid "Form submitted successfully"
 msgstr "Formuläret skickades framgångsrikt"
 
-#: php/Api/Submit/Update.php:108
+#: Api/Submit/Update.php:109
 msgid "Form updated successfully"
 msgstr "Formuläret uppdaterades framgångsrikt"
 
-#: php/DataProcessor/Handlers/MailHandler.php:67
+#: DataProcessor/Handlers/MailHandler.php:75
 msgid "Failed to send email."
 msgstr "Misslyckades med att skicka e-post."
 
-#: php/DataProcessor/Handlers/MailHandler.php:94
+#: DataProcessor/Handlers/MailHandler.php:102
 msgid "Invalid email address in recivers list."
 msgstr "Ogiltig e-postadress i mottagarlistan."
 
-#: php/DataProcessor/Handlers/MailHandler.php:116
+#: DataProcessor/Handlers/MailHandler.php:124
 msgid "No email address set in recivers list."
 msgstr "Ingen e-postadress angiven i mottagarlistan."
 
-#: php/DataProcessor/Handlers/MailHandler.php:176
+#: DataProcessor/Handlers/MailHandler.php:183
 #, php-format
 msgid "New submission: %s"
 msgstr "Nytt inskick: %s"
 
-#: php/DataProcessor/Handlers/NullHandler.php:37
+#: DataProcessor/Handlers/NullHandler.php:45
 msgid "No handler found."
 msgstr "Ingen hanterare hittades."
 
-#: php/DataProcessor/Handlers/WebHookHandler.php:62
+#: DataProcessor/Handlers/WebHookHandler.php:70
 msgid "Invalid callback url format."
 msgstr "Ogiltigt format på callback-URL."
 
-#: php/DataProcessor/Handlers/WebHookHandler.php:74
+#: DataProcessor/Handlers/WebHookHandler.php:82
 msgid "Callback url is not reachable."
 msgstr "Callback-URL är inte nåbar."
 
-#: php/DataProcessor/Handlers/WebHookHandler.php:104
+#: DataProcessor/Handlers/WebHookHandler.php:112
 msgid "Failed to send data to webhook."
 msgstr "Misslyckades med att skicka data till webhook."
 
-#: php/DataProcessor/Handlers/WpDbHandler.php:80
+#: DataProcessor/Handlers/WpDbHandler.php:128
 msgid "Could not insert post."
 msgstr "Kunde inte infoga inlägg."
 
-#: php/DataProcessor/Handlers/WpDbHandler.php:113
+#: DataProcessor/Handlers/WpDbHandler.php:197
 msgid "Could not update post."
 msgstr "Kunde inte uppdatera inlägg."
 
-#: php/DataProcessor/Handlers/WpDbHandler.php:146
+#: DataProcessor/Handlers/WpDbHandler.php:275
 msgid "Could not update field with metadata."
 msgstr "Kunde inte uppdatera fält med metadata."
 
-#: php/DataProcessor/Validators/FieldValidationWithAcf.php:52
-msgid "Field validation failed"
-msgstr "Fältvalidering misslyckades"
-
-#: php/DataProcessor/Validators/FieldsExists.php:50
-msgid "Form contains fields that do not exist"
-msgstr "Formuläret innehåller fält som inte finns"
-
-#: php/DataProcessor/Validators/FieldsExistsOnPostType.php:47
-msgid "Some fields are not registered in the taget store location"
-msgstr "Vissa fält är inte registrerade på målplatsen"
-
-#: php/DataProcessor/Validators/IsEditableValidator.php:63
+#: DataProcessor/Validators/IsEditableValidator.php:62
 msgid "This form has the editing feature disabled."
 msgstr "Detta formulär har redigeringsfunktionen inaktiverad."
 
-#: php/DataProcessor/Validators/IsEditableValidator.php:86
+#: DataProcessor/Validators/IsEditableValidator.php:85
 msgid "The post does not have a registered security token."
 msgstr "Inlägget har ingen registrerad säkerhetstoken."
 
-#: php/DataProcessor/Validators/NonceValidator.php:56
+#: DataProcessor/Validators/NonceValidator.php:57
 msgid "Nonce missing."
 msgstr "Nonce saknas."
 
-#: php/DataProcessor/Validators/NonceValidator.php:79
+#: DataProcessor/Validators/NonceValidator.php:80
 msgid "Nonce is invalid."
 msgstr "Nonce är ogiltig."
 
-#: php/FieldMapping/Mapper/TrueFalseFieldMapper.php:17
+#: FieldMapping/Mapper/Acf/TrueFalseFieldMapper.php:17
 msgid "No"
 msgstr "Nej"
 
-#: php/FieldMapping/Mapper/TrueFalseFieldMapper.php:18
+#: FieldMapping/Mapper/Acf/TrueFalseFieldMapper.php:18
 msgid "Yes"
 msgstr "Ja"
 
-#: php/Module/FrontendForm.php:78
+#: Admin/PluginOptionsPageRegistrar.php:40
+#: Module/FrontendForm.php:90
 msgid "Frontend Form"
 msgstr "Frontendformulär"
 
-#: php/Module/FrontendForm.php:79
+#: Module/FrontendForm.php:91
 msgid "Frontend Forms"
 msgstr "Frontendformulär"
 
-#: php/Module/FrontendForm.php:80
+#: Module/FrontendForm.php:92
 msgid "Module for creating forms."
 msgstr "Modul för att skapa formulär."
 
-#: php/Module/FrontendForm.php:134
-msgid ""
-"By submitting this form, you're agreeing to our terms and conditions.\n"
-"You're also consenting to us processing your personal data in line with GDPR "
-"regulations,\n"
-"and confirming that you have full rights to use all provided content."
-msgstr ""
-"Genom att skicka in detta formulär godkänner du våra villkor.\n"
-"Du samtycker också till att vi behandlar dina personuppgifter i enlighet med "
-"GDPR-bestämmelserna,\n"
-"och bekräftar att du har fulla rättigheter att använda allt material du "
-"tillhandahåller."
-
-#: php/Module/FrontendForm.php:142
+#: Module/FrontendForm.php:164
 msgid "Edit"
 msgstr "Redigera"
 
-#: php/Module/FrontendForm.php:143
+#: Module/FrontendForm.php:165
 msgid "Submit"
 msgstr "Skicka"
 
-#: php/Module/FrontendForm.php:144
+#: Module/FrontendForm.php:166
 msgid "Previous"
 msgstr "Föregående"
 
-#: php/Module/FrontendForm.php:145
+#: Module/FrontendForm.php:167
 msgid "Next"
 msgstr "Nästa"
 
-#: php/Module/FrontendForm.php:146
+#: Module/FrontendForm.php:168
 msgid "of"
 msgstr "av"
 
-#: php/Module/FrontendForm.php:147
+#: Module/FrontendForm.php:169
 msgid "Step"
 msgstr "Steg"
 
-#: php/Module/FrontendForm.php:148
+#: Module/FrontendForm.php:170
 msgid "Completed"
 msgstr "Slutförd"
 
-#: php/Module/FrontendForm.php:149
+#: Module/FrontendForm.php:171
 msgid "No results found"
 msgstr "Inga resultat hittades"
 
-#: php/Module/FrontendForm.php:150
+#: Module/FrontendForm.php:172
 msgid "Search location..."
 msgstr "Sök plats..."
 
-#: php/Module/FrontendForm.php:151
+#: Module/FrontendForm.php:173
 msgid "Name of the location"
 msgstr "Platsens namn"
 
-#: php/Module/FrontendForm.php:152
+#: Module/FrontendForm.php:174
 msgid "Remove row"
 msgstr "Ta bort rad"
 
-#: php/Module/FrontendForm.php:153
+#: Module/FrontendForm.php:175
 msgid "At least one value is required"
 msgstr "Minst ett värde krävs"
 
-#: php/Module/FrontendForm.php:154 php/Module/FrontendForm.php:180
+#: Module/FrontendForm.php:176
+#: Module/FrontendForm.php:203
 msgid "Loading"
 msgstr "Laddar"
 
-#: php/Module/FrontendForm.php:155
+#: Module/FrontendForm.php:177
 msgid "New row"
 msgstr "Ny rad"
 
-#: php/Module/FrontendForm.php:156
+#: Module/FrontendForm.php:178
 msgid "The following field is not supported"
 msgstr "Följande fält stöds inte"
 
-#: php/Module/FrontendForm.php:159
+#: Module/FrontendForm.php:182
 msgid "This field is required"
 msgstr "Detta fält är obligatoriskt"
 
-#: php/Module/FrontendForm.php:160
+#: Module/FrontendForm.php:183
 msgid "Please choose a place on the map"
 msgstr "Vänligen välj en plats på kartan"
 
-#: php/Module/FrontendForm.php:161
+#: Module/FrontendForm.php:184
 msgid "Please add some content"
 msgstr "Vänligen lägg till innehåll"
 
-#: php/Module/FrontendForm.php:162
+#: Module/FrontendForm.php:185
 msgid "Please select an option"
 msgstr "Vänligen välj ett alternativ"
 
-#: php/Module/FrontendForm.php:163
+#: Module/FrontendForm.php:186
 #, php-format
 msgid "Please enter a valid email address (ex. %s)"
 msgstr "Vänligen ange en giltig e-postadress (t.ex. %s)"
 
-#: php/Module/FrontendForm.php:164
+#: Module/FrontendForm.php:187
 #, php-format
 msgid "Please enter a valid URL (ex. %s)"
 msgstr "Vänligen ange en giltig URL (t.ex. %s)"
 
-#: php/Module/FrontendForm.php:165
+#: Module/FrontendForm.php:188
 msgid "Please enter a valid phone number"
 msgstr "Vänligen ange ett giltigt telefonnummer"
 
-#: php/Module/FrontendForm.php:166
+#: Module/FrontendForm.php:189
 msgid "Please enter a valid date (ex. yyyy-mm-dd)"
 msgstr "Vänligen ange ett giltigt datum (t.ex. åååå-mm-dd)"
 
-#: php/Module/FrontendForm.php:167
+#: Module/FrontendForm.php:190
 #, php-format
 msgid "Please enter a date after %s"
 msgstr "Vänligen ange ett datum efter %s"
 
-#: php/Module/FrontendForm.php:168
+#: Module/FrontendForm.php:191
 #, php-format
 msgid "Please enter a date before %s"
 msgstr "Vänligen ange ett datum före %s"
 
-#: php/Module/FrontendForm.php:169
+#: Module/FrontendForm.php:192
 msgid "Please enter a valid date and time"
 msgstr "Vänligen ange ett giltigt datum och tid"
 
-#: php/Module/FrontendForm.php:170
+#: Module/FrontendForm.php:193
 msgid "Please enter a valid time (ex. hh:mm)"
 msgstr "Vänligen ange en giltig tid (t.ex. tt:mm)"
 
-#: php/Module/FrontendForm.php:171
+#: Module/FrontendForm.php:194
 #, php-format
 msgid "Please enter a time after %s"
 msgstr "Vänligen ange en tid efter %s"
 
-#: php/Module/FrontendForm.php:172
+#: Module/FrontendForm.php:195
 #, php-format
 msgid "Please enter a time before %s"
 msgstr "Vänligen ange en tid före %s"
 
-#: php/Module/FrontendForm.php:173
+#: Module/FrontendForm.php:196
 msgid "Please enter a valid number"
 msgstr "Vänligen ange ett giltigt nummer"
 
-#: php/Module/FrontendForm.php:174
+#: Module/FrontendForm.php:197
 #, php-format
 msgid "Please enter a number greater than or equal to %s"
 msgstr "Vänligen ange ett nummer större än eller lika med %s"
 
-#: php/Module/FrontendForm.php:175
+#: Module/FrontendForm.php:198
 #, php-format
 msgid "Please enter a number smaller than or equal to %s"
 msgstr "Vänligen ange ett nummer mindre än eller lika med %s"
 
-#: php/Module/FrontendForm.php:176
+#: Module/FrontendForm.php:199
 #, php-format
 msgid "Please enter a number in increments of %s"
 msgstr "Vänligen ange ett nummer i steg om %s"
 
-#: php/Module/FrontendForm.php:178
+#: Module/FrontendForm.php:201
 msgid "The following files could not be uploaded"
 msgstr "Följande filer kunde inte laddas upp"
 
-#: php/Module/FrontendForm.php:181
+#: Module/FrontendForm.php:204
 msgid "Error"
 msgstr "Fel"
 
-#: php/Module/FrontendForm.php:182
+#: Module/FrontendForm.php:205
 msgid "Success"
 msgstr "Framgång"
 
-#: php/Module/FrontendForm.php:183 php/Module/FrontendForm.php:185
+#: Module/FrontendForm.php:206
+#: Module/FrontendForm.php:208
 msgid "Submitting"
 msgstr "Skickar"
 
-#: php/Module/FrontendForm.php:186
+#: Module/FrontendForm.php:209
 msgid "Preparing"
 msgstr "Förbereder"
 
-#: php/Module/FrontendForm.php:187
+#: Module/FrontendForm.php:210
 msgid "Form submitted successfully."
 msgstr "Formuläret skickades framgångsrikt."
 
-#: php/Module/FrontendForm.php:188
+#: Module/FrontendForm.php:211
 msgid "Form submission failed: Cound not find path."
 msgstr "Formulärinskick misslyckades: kunde inte hitta sökväg."
 
-#: php/Module/FrontendForm.php:189
-msgid "An error occurred while submitting the form."
-msgstr "Ett fel uppstod vid inskick av formuläret."
-
-#: php/Module/FrontendForm.php:191
+#: Module/FrontendForm.php:214
 msgid "Communication error"
 msgstr "Kommunikationsfel"
 
-#: php/Module/FrontendForm.php:193 php/Module/FrontendForm.php:195
+#: Module/FrontendForm.php:216
+#: Module/FrontendForm.php:218
 msgid "Securing"
 msgstr "Säkrar"
 
-#: php/Module/FrontendForm.php:194
+#: Module/FrontendForm.php:217
 msgid "Could not secure connection – link missing."
 msgstr "Kunde inte säkra anslutning – länk saknas."
 
-#: php/Module/FrontendForm.php:196
+#: Module/FrontendForm.php:219
 msgid "Could not secure connection – please try again."
 msgstr "Kunde inte säkra anslutning – vänligen försök igen."
 
-#: php/Module/FrontendForm.php:199
+#: Module/FrontendForm.php:222
 msgid "Bold"
 msgstr "Fet"
 
-#: php/Module/FrontendForm.php:200
+#: Module/FrontendForm.php:223
 msgid "Italic"
 msgstr "Kursiv"
 
-#: php/Module/FrontendForm.php:201
+#: Module/FrontendForm.php:224
 msgid "Underline"
 msgstr "Understruken"
 
-#: php/Module/FrontendForm.php:202
+#: Module/FrontendForm.php:225
 msgid "Strikethrough"
 msgstr "Genomstruken"
 
-#: php/Module/FrontendForm.php:203
+#: Module/FrontendForm.php:226
 msgid "Bullet list"
 msgstr "Punktlista"
 
-#: php/Module/FrontendForm.php:204
+#: Module/FrontendForm.php:227
 msgid "Numbered list"
 msgstr "Numrerad lista"
 
-#: php/Module/FrontendForm.php:205
+#: Module/FrontendForm.php:228
 msgid "Link"
 msgstr "Länk"
 
-#: php/Module/FrontendForm.php:206
+#: Module/FrontendForm.php:229
 msgid "Blockquote"
 msgstr "Citatblock"
 
-#: php/Module/FrontendForm.php:207
+#: Module/FrontendForm.php:230
 msgid "Heading"
 msgstr "Rubrik"
 
-#: php/Module/FrontendForm.php:208
+#: Module/FrontendForm.php:231
 msgid "Subheading"
 msgstr "Underrubrik"
+
+#: AcfFields/php/mod-frontend-forms.php:34
+msgid "The post type from which the fields should be retrieved; this setting also determines which post type the submission will be saved to."
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:548
+msgid "Legal"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:566
+msgid "Why are we collecting this data?"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:570
+msgid "Describe why we need to collect this data."
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:592
+msgid "Who will process or have access to the data?"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:596
+msgid "List all entities that will access or process the data, including internal departments as well as any external system providers."
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:618
+msgid "For how long should we keep the data submitted in this form?"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:622
+msgid "What is the maximum retention period for the data before it is deleted? This function will delete the information completly."
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:635
+msgid "days"
+msgstr ""
+
+#: Admin/DisplayEditLinkInterfaceNotice.php:121
+msgid "Frontend Submission"
+msgstr ""
+
+#: Admin/DisplayEditLinkInterfaceNotice.php:122
+msgid "This content was created by a end user, you may edit as a end user by clicking the button."
+msgstr ""
+
+#: Admin/DisplayEditLinkInterfaceNotice.php:124
+msgid "View on frontend"
+msgstr ""
+
+#: Admin/LegalFormDataTaxonomiesRegistrar.php:38
+msgid "Data Categories"
+msgstr ""
+
+#: Admin/LegalFormDataTaxonomiesRegistrar.php:43
+msgid "Data Processors"
+msgstr ""
+
+#: Admin/PluginOptionsPageRegistrar.php:39
+msgid "Frontend Form Options"
+msgstr ""
+
+#: Admin/SubmissionsPostTypeRegistrar.php:39
+msgid "Frontend Form Submissions"
+msgstr ""
+
+#: Api/RestApiParams.php:77
+msgid "The post id that shows the form (holding post)."
+msgstr ""
+
+#: Api/RestApiParams.php:89
+msgid "The page was not submitted from a valid source post id."
+msgstr ""
+
+#: DataProcessor/FileHandlers/NullFileHandler.php:23
+msgid "No file handler available."
+msgstr ""
+
+#: DataProcessor/FileHandlers/WpDbFileHandler.php:52
+msgid "File upload error."
+msgstr ""
+
+#: DataProcessor/FileHandlers/WpDbFileHandler.php:82
+msgid "One or more files failed to upload."
+msgstr ""
+
+#: DataProcessor/Validators/FilesConformToAllowedFileSize.php:55
+#, php-format
+msgid "The file \"%s\" exceeds the maximum allowed file size of %s."
+msgstr ""
+
+#: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:58
+#, php-format
+msgid "Unable to check type of file \"%s\". %s."
+msgstr ""
+
+#: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:72
+#, php-format
+msgid "The file type is not allowed or communicated mime type (%s) does not match the actual file type (%s)."
+msgstr ""
+
+#: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:73
+#: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:74
+msgid "unknown"
+msgstr ""
+
+#: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:97
+msgid "File does not exist"
+msgstr ""
+
+#: DataProcessor/Validators/FilesConformToAllowedFiletypes.php:104
+msgid "Unable to read file"
+msgstr ""
+
+#: DataProcessor/Validators/FilesCountIsWithinLimits.php:63
+#, php-format
+msgid "The number of files uploaded for field \"%s\" exceeds the maximum allowed of %d."
+msgstr ""
+
+#: DataProcessor/Validators/FilesCountIsWithinLimits.php:79
+#, php-format
+msgid "The number of files uploaded for field \"%s\" is less than the minimum required of %d."
+msgstr ""
+
+#: DataProcessor/Validators/FilesIntegrityCheck.php:50
+#, php-format
+msgid "The file \"%s\" could not be uploaded [unable to find the file]."
+msgstr ""
+
+#: DataProcessor/Validators/FilesIntegrityCheck.php:66
+#, php-format
+msgid "The file \"%s\" could not be uploaded [unable to access the file]."
+msgstr ""
+
+#: DataProcessor/Validators/FilesIntegrityCheck.php:80
+#, php-format
+msgid "The file \"%s\" (%d) does not match the expected filesize of %d. The file might be corrupted or incomplete."
+msgstr ""
+
+#: DataProcessor/Validators/NoFieldsMissing.php:53
+msgid "Form is missing required fields"
+msgstr ""
+
+#: DataProcessor/Validators/PostContentExistsInDataWhenRequired.php:75
+msgid "Content is required in this form. The field cannot be empty."
+msgstr ""
+
+#: DataProcessor/Validators/PostTitleExistsInDataWhenRequired.php:75
+msgid "A title is required in this form. The field cannot be empty."
+msgstr ""
+
+#: EnsureNoSubmissionsBeforeDeletion/AdminNotices.php:41
+msgid "Cannot delete form module: existing submissions found."
+msgstr "Kan inte ta bort formulärmodul: befintliga inskick hittades."
+
+#: EnsureNoSubmissionsBeforeDeletion/AdminNotices.php:45
+msgid "Cannot move form module to trash: existing submissions found."
+msgstr "Kan inte flytta formulärmodul till papperskorgen: befintliga inskick hittades."
+
+#: FieldMapping/Mapper/Wordpress/PostContent.php:18
+msgid "Post Content"
+msgstr ""
+
+#: FieldMapping/Mapper/Wordpress/PostTitle.php:19
+msgid "Post Title"
+msgstr ""
+
+#: Module/FrontendForm.php:179
+msgid "Loading successful"
+msgstr ""
+
+#: Module/FrontendForm.php:212
+msgid "An unknown error occurred while submitting the form."
+msgstr ""
+
+#: Module/FrontendForm.php:243
+msgid "By submitting this form, you agree to our terms and conditions. You also consent to your personal data being processed by <mark>{{data_processors}}</mark> in accordance with GDPR. Additionally, you confirm that you have the full rights to all content you provide. We need to process this data with the following reason(s): <mark>{{data_categories}}</mark>. Your data will be permanently deleted after <mark>{{data_retention_period}}</mark> days, calculated from the date of the last modification or expiration."
+msgstr ""
+
+#: Module/FrontendForm.php:252
+msgid "us"
+msgstr ""
+
+#: Module/FrontendForm.php:258
+msgid "relevant processing requirements"
+msgstr ""
+
+#: Module/FrontendForm.php:264
+msgid "30"
+msgstr ""
+
+#: Module/FrontendForm.php:305
+msgid "and"
+msgstr ""
+
+#: Module/GroupHelper.php:69
+msgid "Post title"
+msgstr ""
+
+#: Module/GroupHelper.php:70
+msgid "Post content"
+msgstr ""

@@ -6,7 +6,10 @@
 	"scripts": {
 		"test": "./vendor/bin/phpunit --testdox",
 		"test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testdox",
-		"minimal": "./vendor/bin/phpunit"
+		"minimal": "./vendor/bin/phpunit",
+		"make-pot": "wp i18n make-pot --allow-root ./source/php ./languages/modularity-frontend-form.pot --slug=modularity-frontend-form",
+		"update-po": "wp i18n update-po --allow-root ./languages/modularity-frontend-form.pot ./languages/modularity-frontend-form-sv_SE.po",
+		"make-mo": "wp i18n make-mo --allow-root ./languages/modularity-frontend-form-sv_SE.po"
 	},
 	"authors": [
 		{

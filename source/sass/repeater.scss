@@ -43,7 +43,7 @@
 .mod-frontend-form__repeater-header {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1rem;
     margin-bottom: .5rem;
 }

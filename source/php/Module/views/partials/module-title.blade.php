@@ -5,7 +5,7 @@
             'variant' => $variant ?? 'h2',
             'classList' => $classList ?? ['module-title', 'u-margin--0']
         ])
-            {!! $postTitle !!}
+            {!! wp_kses_post($postTitle) !!}
         @endtypography
     </div>
 @endif

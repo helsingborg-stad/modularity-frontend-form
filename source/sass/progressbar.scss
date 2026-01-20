@@ -16,6 +16,13 @@
     .mod-frontend-form__progressbar:hover::-webkit-scrollbar {
         height: 6px;
     }
+    .mod-frontend-form__progressbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .mod-frontend-form__progressbar .mod-frontend-form__progressbar-step {
+        min-width: max(calc(var(--base, 8px) * 24), 33.333%);
+    }
 
     @container (width > 800px) {
         flex-direction: row;
@@ -139,6 +146,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        max-width: calc(100% - var(--base, 8px) * 4);
     }
 
     .mod-frontend-form__progressbar-step-button {
@@ -164,6 +172,11 @@
         display: none;
         margin-left: auto;
         justify-self: top;
+    }
+
+    .mod-frontend-form__progressbar-step-content {
+        max-width: 100%;
+        width: 100%;
     }
 
     /* Status styles */

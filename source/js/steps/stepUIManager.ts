@@ -23,7 +23,9 @@ class StepUIManager implements StepUIManagerInterface {
 		);
 		this.iconElement = this.nextButton.querySelector(".c-icon");
 		this.maxSteps = Object.keys(this.steps).length - 1;
-		this.contentElement = this.nextButton.closest('.mod-frontend-form__content');
+		// Find content element by traversing up from the next button or falling back to document query
+		this.contentElement = this.nextButton.closest('.mod-frontend-form__content') || 
+			document.querySelector('.mod-frontend-form__content');
 	}
 
 	/**
@@ -93,6 +95,47 @@ class StepUIManager implements StepUIManagerInterface {
 	}
 
 	/**
+	 * Animate the height of the content element
+	 * 
+	 * @private
+	 */
+	private animateContentHeight(): void {
+		if (!this.contentElement) return;
+
+		const currentHeight = this.contentElement.offsetHeight;
+		this.contentElement.style.height = `${currentHeight}px`;
+		
+		// Use requestAnimationFrame to allow browser to apply current height
+		requestAnimationFrame(() => {
+			if (!this.contentElement) return;
+
+			const newHeight = this.contentElement.scrollHeight;
+			this.contentElement.style.height = `${newHeight}px`;
+			
+			// Remove fixed height after transition with timeout fallback
+			let cleanupHandled = false;
+			
+			const cleanup = () => {
+				if (cleanupHandled || !this.contentElement) return;
+				cleanupHandled = true;
+				this.contentElement.style.height = '';
+				this.contentElement.removeEventListener('transitionend', onHeightTransitionEnd);
+			};
+
+			const onHeightTransitionEnd = (e: TransitionEvent) => {
+				if (e.propertyName === 'height') {
+					cleanup();
+				}
+			};
+
+			this.contentElement.addEventListener('transitionend', onHeightTransitionEnd);
+			
+			// Fallback cleanup after 400ms (transition duration + buffer)
+			setTimeout(cleanup, 400);
+		});
+	}
+
+	/**
 	 * Show and hide steps with animation
 	 *
 	 * @param stepToShow The step to show
@@ -113,7 +156,7 @@ class StepUIManager implements StepUIManagerInterface {
 		];
 
 		// Animate height change using View Transitions API if available
-		const animateHeight = () => {
+		const performTransition = () => {
 			this.hideStep(stepToHide);
 
 			// Clean old classes
@@ -126,28 +169,8 @@ class StepUIManager implements StepUIManagerInterface {
 			stepToShow.getStepContainer().classList.add(this.isActiveClass);
 			this.showStep(stepToShow);
 
-			// Update content height
-			if (this.contentElement) {
-				const currentHeight = this.contentElement.offsetHeight;
-				this.contentElement.style.height = `${currentHeight}px`;
-				
-				// Use requestAnimationFrame to allow browser to apply current height
-				requestAnimationFrame(() => {
-					if (this.contentElement) {
-						const newHeight = this.contentElement.scrollHeight;
-						this.contentElement.style.height = `${newHeight}px`;
-						
-						// Remove fixed height after transition
-						const onHeightTransitionEnd = () => {
-							if (this.contentElement) {
-								this.contentElement.style.height = '';
-								this.contentElement.removeEventListener('transitionend', onHeightTransitionEnd);
-							}
-						};
-						this.contentElement.addEventListener('transitionend', onHeightTransitionEnd);
-					}
-				});
-			}
+			// Animate content height
+			this.animateContentHeight();
 
 			// Cleanup
 			const onTransitionEnd = (e: TransitionEvent) => {
@@ -174,12 +197,15 @@ class StepUIManager implements StepUIManagerInterface {
 		};
 
 		// Use View Transitions API if available
-		if ('startViewTransition' in document) {
-			(document as any).startViewTransition(() => {
-				animateHeight();
+		if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+			const doc = document as Document & {
+				startViewTransition: (callback: () => void) => void;
+			};
+			doc.startViewTransition(() => {
+				performTransition();
 			});
 		} else {
-			animateHeight();
+			performTransition();
 		}
 	}
 

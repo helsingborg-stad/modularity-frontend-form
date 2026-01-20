@@ -83,9 +83,6 @@ export class FormProgressBar {
           mutation.attributeName === 'class'
         ) {
           const target = mutation.target as HTMLElement;
-
-          console.log('Mutation observed on progressbar step:', target);
-
           if (
             target.classList.contains('mod-frontend-form__progressbar-step') &&
             target.classList.contains('is-active')

@@ -85,17 +85,9 @@ class WebHookHandler implements HandlerInterface {
       return false;
     }
 
-    // Resolve hostname to IP address
-    $ip = gethostbyname($parsed['host']);
-    
-    // Block private IP ranges, localhost, and reserved IPs (SSRF protection)
-    if ($this->isPrivateOrReservedIp($ip)) {
-      $this->handlerResult->setError(
-        new WP_Error(
-          RestApiResponseStatusEnums::HandlerError->value, 
-          $this->wpService->__('Callback URL cannot point to private or reserved IP addresses.', 'modularity-frontend-form')
-        )
-      );
+    // Resolve hostname to IP addresses (both IPv4 and IPv6)
+    // This prevents bypass via IPv6 addresses pointing to private ranges
+    if (!$this->validateHostIsNotPrivate($parsed['host'])) {
       return false;
     }
 
@@ -115,7 +107,54 @@ class WebHookHandler implements HandlerInterface {
   }
 
   /**
+   * Validate that the hostname does not resolve to private or reserved IP addresses
+   * Handles both IPv4 and IPv6 to prevent SSRF bypass
+   *
+   * @param string $host The hostname to validate
+   * @return bool True if valid (not private), false if private/reserved
+   */
+  private function validateHostIsNotPrivate(string $host): bool
+  {
+    // Get all DNS records for the host (A for IPv4, AAAA for IPv6)
+    $records = @dns_get_record($host, DNS_A + DNS_AAAA);
+    
+    if ($records === false || empty($records)) {
+      // If DNS lookup fails, try gethostbyname as fallback for IPv4
+      $ip = gethostbyname($host);
+      if ($ip === $host) {
+        // DNS resolution failed
+        $this->handlerResult->setError(
+          new WP_Error(
+            RestApiResponseStatusEnums::HandlerError->value, 
+            $this->wpService->__('Unable to resolve callback URL hostname.', 'modularity-frontend-form')
+          )
+        );
+        return false;
+      }
+      $records = [['ip' => $ip]];
+    }
+
+    // Check each resolved IP address
+    foreach ($records as $record) {
+      $ip = $record['ip'] ?? $record['ipv6'] ?? null;
+      
+      if ($ip && $this->isPrivateOrReservedIp($ip)) {
+        $this->handlerResult->setError(
+          new WP_Error(
+            RestApiResponseStatusEnums::HandlerError->value, 
+            $this->wpService->__('Callback URL cannot point to private or reserved IP addresses.', 'modularity-frontend-form')
+          )
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Check if an IP address is private or reserved (SSRF protection)
+   * Supports both IPv4 and IPv6
    *
    * @param string $ip The IP address to check
    * @return bool True if the IP is private or reserved, false otherwise
@@ -123,8 +162,8 @@ class WebHookHandler implements HandlerInterface {
   private function isPrivateOrReservedIp(string $ip): bool
   {
     // Use PHP's built-in filter to check for private and reserved IP ranges
-    // FILTER_FLAG_NO_PRIV_RANGE: Blocks private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
-    // FILTER_FLAG_NO_RES_RANGE: Blocks reserved IP ranges (including 127.0.0.0/8, 169.254.0.0/16, etc.)
+    // FILTER_FLAG_NO_PRIV_RANGE: Blocks private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, fc00::/7)
+    // FILTER_FLAG_NO_RES_RANGE: Blocks reserved IP ranges (including 127.0.0.0/8, 169.254.0.0/16, ::1, fe80::/10, etc.)
     return !filter_var(
       $ip,
       FILTER_VALIDATE_IP,

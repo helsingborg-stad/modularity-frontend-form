@@ -104,8 +104,8 @@ class RateLimiter
         // Get IP address - use WordPress helper to respect proxy headers
         $ipAddress = $this->getClientIp();
         
-        // Get user agent
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+        // Get user agent and sanitize to prevent header injection
+        $userAgent = $this->wpService->sanitizeTextField($_SERVER['HTTP_USER_AGENT'] ?? 'unknown');
         
         // Combine and hash for privacy
         return md5($ipAddress . $userAgent);
@@ -113,12 +113,22 @@ class RateLimiter
     
     /**
      * Get the client IP address, respecting proxy headers
+     * 
+     * WARNING: X-Forwarded-For and X-Real-IP headers can be spoofed.
+     * In production, ensure your web server/load balancer strips these headers
+     * from untrusted sources and only sets them from trusted proxies.
      *
      * @return string IP address
      */
     private function getClientIp(): string
     {
-        // Try to get real IP if behind proxy
+        // In a hardened environment, you might want to check:
+        // - If the server is behind a known proxy (e.g., Cloudflare, AWS LB)
+        // - Validate the proxy IP is in a trusted list
+        // - Only then trust X-Forwarded-For
+        
+        // For now, trust proxy headers but validate the IP format
+        // TODO: Implement trusted proxy validation for production use
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             // X-Forwarded-For can contain multiple IPs, get the first one
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -129,12 +139,13 @@ class RateLimiter
             $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         }
         
-        // Validate IP address
+        // Validate IP address format before returning
         if (filter_var($ip, FILTER_VALIDATE_IP)) {
             return $ip;
         }
         
-        return '0.0.0.0';
+        // If validation fails, fall back to REMOTE_ADDR which is trustworthy
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
     
     /**

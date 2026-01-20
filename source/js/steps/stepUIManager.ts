@@ -23,7 +23,7 @@ class StepUIManager implements StepUIManagerInterface {
 		);
 		this.iconElement = this.nextButton.querySelector(".c-icon");
 		this.maxSteps = Object.keys(this.steps).length - 1;
-		// Find content element by traversing up from the next button or falling back to document query
+		// Find content element by traversing up the DOM tree from the next button or falling back to document query
 		this.contentElement = this.nextButton.closest('.mod-frontend-form__content') || 
 			document.querySelector('.mod-frontend-form__content');
 	}
@@ -96,6 +96,10 @@ class StepUIManager implements StepUIManagerInterface {
 
 	/**
 	 * Animate the height of the content element
+	 * 
+	 * Captures the current height, sets it as a fixed height, then transitions to the new height
+	 * based on the content's scrollHeight. After the transition completes, removes the fixed height
+	 * to allow natural content flow. Includes a timeout fallback to prevent memory leaks.
 	 * 
 	 * @private
 	 */
@@ -199,7 +203,7 @@ class StepUIManager implements StepUIManagerInterface {
 		// Use View Transitions API if available
 		if (typeof document !== 'undefined' && 'startViewTransition' in document) {
 			const doc = document as Document & {
-				startViewTransition: (callback: () => void) => void;
+				startViewTransition: (callback: () => void) => { finished: Promise<void> };
 			};
 			doc.startViewTransition(() => {
 				performTransition();

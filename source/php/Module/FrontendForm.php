@@ -192,6 +192,7 @@ class FrontendForm extends \Modularity\Module
             'errorDateRangeUnderflow'  => $this->wpService->__('Please enter a date after %s', 'modularity-frontend-form'),
             'errorDateRangeOverflow'   => $this->wpService->__('Please enter a date before %s', 'modularity-frontend-form'),
             'errorDateTime'            => $this->wpService->__('Please enter a valid date and time', 'modularity-frontend-form'),
+            'errorGalleryMinFiles'      => $this->wpService->__('A minimum of %s files is required', 'modularity-frontend-form'),
             'errorTime'                => $this->wpService->__('Please enter a valid time (ex. hh:mm)', 'modularity-frontend-form'),
             'errorTimeRangeUnderflow'  => $this->wpService->__('Please enter a time after %s', 'modularity-frontend-form'),
             'errorTimeRangeOverflow'   => $this->wpService->__('Please enter a time before %s', 'modularity-frontend-form'),

@@ -7,8 +7,10 @@
     'attributeList' => $field['attributeList'],
     'description' => $field['description'],
     'filesMax' => $field['filesMax'],
+    'filesMin' => $field['filesMin'],
     'maxSize' => $field['maxSize'],
     'classList' => $field['classList'],
-    'uploadErrorMessage' => $lang->followingFilesCouldNotBeUploaded . ': '
+    'uploadErrorMessage' => $lang->followingFilesCouldNotBeUploaded . ': ',
+    'uploadErrorMessageMinFiles' => $field['errorGalleryMinFiles']
 ])
 @endimageinput

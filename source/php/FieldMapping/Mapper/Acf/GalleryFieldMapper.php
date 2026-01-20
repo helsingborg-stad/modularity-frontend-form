@@ -19,9 +19,10 @@ class GalleryFieldMapper implements FieldMapperInterface
             ? str_replace(' ', ',', $this->field['mime_types'])
             : 'image/*';
 
-
         $mapped['filesMax'] = !empty($this->field['max']) ? $this->field['max'] : 50;
+        $mapped['filesMin'] = !empty($this->field['min']) ? $this->field['min'] : null;
         $mapped['maxSize'] = !empty($this->field['max_size']) ? $this->field['max_size'] : 10;
+        $mapped['errorGalleryMinFiles'] = sprintf( $this->lang->errorGalleryMinFiles, $mapped['filesMin'] );
 
         return $mapped ?? null;
     }

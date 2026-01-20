@@ -45,7 +45,7 @@
                         'mod-frontend-form__step-header-description'
                     ]
                 ])
-                    {!! wp_kses_post($step['description']) !!}
+                    {!! $step['description'] !!}
                 @endtypography
             @endif
         @endelement

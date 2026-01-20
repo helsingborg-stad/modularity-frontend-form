@@ -8,5 +8,5 @@
         'style' => 'max-width: unset;'
     ]
 ])
-  {!! wp_kses_post($disclaimerText) !!}
+  {!! $disclaimerText !!}
 @endtypography

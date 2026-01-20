@@ -15,12 +15,15 @@ use WP_REST_Request;
 /**
  * Rate limit validator to prevent abuse and DoS attacks
  * 
- * This validator implements rate limiting using WordPress transients
+ * This validator implements rate limiting using WordPress object cache
  * to track and limit the number of form submissions per identifier
  * (typically IP address + user agent) within a time window.
  * 
  * This should be applied as the last validator to ensure rate limiting
  * only occurs after all other validations have passed.
+ * 
+ * Note: Requires a persistent object cache (e.g., Redis, Memcached) to be 
+ * configured in WordPress for proper rate limiting across requests.
  */
 class RateLimitValidator implements ValidatorInterface
 {
@@ -29,6 +32,9 @@ class RateLimitValidator implements ValidatorInterface
     
     // Time window in seconds (1 hour)
     private const TIME_WINDOW = 3600;
+    
+    // Cache group for rate limiting
+    private const CACHE_GROUP = 'modularity_frontend_form_rate_limit';
     
     public function __construct(
         private WpService $wpService,
@@ -69,25 +75,44 @@ class RateLimitValidator implements ValidatorInterface
      */
     private function isRateLimited(string $identifier, string $action): bool
     {
-        $transientKey = $this->getTransientKey($identifier, $action);
-        $count = $this->wpService->getTransient($transientKey) ?: 0;
+        $cacheKey = $this->getCacheKey($identifier, $action);
+        $cacheData = $this->wpService->wpCacheGet($cacheKey, self::CACHE_GROUP);
         
-        if ($count >= self::SUBMISSION_LIMIT) {
+        // Initialize cache data if not present
+        if ($cacheData === false) {
+            $cacheData = [
+                'count' => 0,
+                'expires' => time() + self::TIME_WINDOW
+            ];
+        }
+        
+        // Check if the time window has expired, reset if so
+        if ($cacheData['expires'] <= time()) {
+            $cacheData = [
+                'count' => 0,
+                'expires' => time() + self::TIME_WINDOW
+            ];
+        }
+        
+        // Check if limit exceeded
+        if ($cacheData['count'] >= self::SUBMISSION_LIMIT) {
             // Log rate limit event for monitoring
             $this->wpService->doAction('modularity_frontend_form_rate_limit_exceeded', [
                 'identifier' => $identifier,
                 'action' => $action,
-                'count' => $count,
+                'count' => $cacheData['count'],
                 'limit' => self::SUBMISSION_LIMIT
             ]);
             
             return true;
         }
         
-        // Increment counter and set expiration
-        $this->wpService->setTransient(
-            $transientKey,
-            $count + 1,
+        // Increment counter and store in cache
+        $cacheData['count']++;
+        $this->wpService->wpCacheSet(
+            $cacheKey,
+            $cacheData,
+            self::CACHE_GROUP,
             self::TIME_WINDOW
         );
         
@@ -95,17 +120,16 @@ class RateLimitValidator implements ValidatorInterface
     }
 
     /**
-     * Generate a transient key for rate limiting
+     * Generate a cache key for rate limiting
      *
      * @param string $identifier Unique identifier
      * @param string $action Action being rate limited
-     * @return string Transient key
+     * @return string Cache key
      */
-    private function getTransientKey(string $identifier, string $action): string
+    private function getCacheKey(string $identifier, string $action): string
     {
-        // Use WordPress transient naming conventions
-        // Max 172 characters for transient keys
-        return 'mff_rl_' . substr(md5($identifier . $action), 0, 32);
+        // Create a unique cache key from identifier and action
+        return md5($identifier . $action);
     }
 
     /**

@@ -70,20 +70,6 @@ class Update extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
-        // Rate limiting check to prevent abuse and DoS attacks
-        $rateLimiter = new \ModularityFrontendForm\RateLimiter\RateLimiter($this->wpService);
-        $identifier = $rateLimiter->getRateLimitIdentifier();
-        
-        if ($rateLimiter->isRateLimited($identifier, 'submit_form')) {
-            return $this->wpService->restEnsureResponse(
-                new WP_Error(
-                    'rate_limit_exceeded',
-                    __('Too many submissions. Please try again later.', 'modularity-frontend-form'),
-                    ['status' => 429]
-                )
-            );
-        }
-
         $params = (new RestApiParams(
             $this->wpService, 
             $this->config, 

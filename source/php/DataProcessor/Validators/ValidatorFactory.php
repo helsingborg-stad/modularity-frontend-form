@@ -99,6 +99,9 @@ class ValidatorFactory {
 
       $args = $this->createValidatorInterfaceRequiredArguments($moduleId);
 
+      //Feature toggle - rate limiting (applied last)
+      $useRateLimitValidator = true;
+
       return array_filter([
           $useNoFieldMissing                      ? new NoFieldsMissing(...$args) : null,
           $useFieldsExistsOnPostType              ? new FieldsExistsOnPostType(...$args) : null,
@@ -111,6 +114,9 @@ class ValidatorFactory {
           $useFilesConformToAllowedFileSize       ? new FilesConformToAllowedFileSize(...$args) : null,
           $useFilesConformToAllowedFileTypes      ? new FilesConformToAllowedFileTypes(...$args) : null,
           $useFilesIntegrityCheck                 ? new FilesIntegrityCheck(...$args) : null,
+
+          // Rate limiting validator - applied last to prevent abuse
+          $useRateLimitValidator                  ? new RateLimitValidator(...$args) : null,
       ]);
   }
 

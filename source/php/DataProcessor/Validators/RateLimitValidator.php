@@ -1,17 +1,28 @@
 <?php
 
-namespace ModularityFrontendForm\RateLimiter;
+namespace ModularityFrontendForm\DataProcessor\Validators;
 
+use AcfService\AcfService;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResult;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
+use WP_Error;
 use WpService\WpService;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 /**
- * Rate limiter to prevent abuse and DoS attacks
+ * Rate limit validator to prevent abuse and DoS attacks
  * 
- * This class implements a simple rate limiting mechanism using WordPress transients
- * to track and limit the number of actions (e.g., form submissions) per identifier
+ * This validator implements rate limiting using WordPress transients
+ * to track and limit the number of form submissions per identifier
  * (typically IP address + user agent) within a time window.
+ * 
+ * This should be applied as the last validator to ensure rate limiting
+ * only occurs after all other validations have passed.
  */
-class RateLimiter
+class RateLimitValidator implements ValidatorInterface
 {
     // Maximum number of submissions allowed per time window
     private const SUBMISSION_LIMIT = 10;
@@ -19,33 +30,55 @@ class RateLimiter
     // Time window in seconds (1 hour)
     private const TIME_WINDOW = 3600;
     
-    // Maximum file uploads allowed per time window
-    private const FILE_UPLOAD_LIMIT = 20;
-    
-    public function __construct(private WpService $wpService) {}
-    
+    public function __construct(
+        private WpService $wpService,
+        private AcfService $acfService,
+        private ConfigInterface $config,
+        private ModuleConfigInterface $moduleConfigInstance,
+        private ValidationResultInterface $validationResult = new ValidationResult()
+    ) {
+    }
+
     /**
-     * Check if the identifier has exceeded the rate limit for the given action
+     * @inheritDoc
+     */
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
+    {
+        $identifier = $this->getRateLimitIdentifier();
+        $action = 'submit_form';
+        
+        if ($this->isRateLimited($identifier, $action)) {
+            $this->validationResult->setError(
+                new WP_Error(
+                    'rate_limit_exceeded',
+                    $this->wpService->__('Too many submissions. Please try again later.', 'modularity-frontend-form'),
+                    ['status' => 429]
+                )
+            );
+        }
+        
+        return $this->validationResult;
+    }
+
+    /**
+     * Check if the identifier has exceeded the rate limit
      *
      * @param string $identifier Unique identifier (typically IP + user agent hash)
-     * @param string $action Action being rate limited (e.g., 'submit_form', 'upload_file')
-     * @param int|null $customLimit Optional custom limit for this specific check
+     * @param string $action Action being rate limited
      * @return bool True if rate limited (exceeded), false if within limits
      */
-    public function isRateLimited(string $identifier, string $action, ?int $customLimit = null): bool
+    private function isRateLimited(string $identifier, string $action): bool
     {
         $transientKey = $this->getTransientKey($identifier, $action);
         $count = $this->wpService->getTransient($transientKey) ?: 0;
         
-        $limit = $customLimit ?? $this->getDefaultLimit($action);
-        
-        if ($count >= $limit) {
+        if ($count >= self::SUBMISSION_LIMIT) {
             // Log rate limit event for monitoring
             $this->wpService->doAction('modularity_frontend_form_rate_limit_exceeded', [
                 'identifier' => $identifier,
                 'action' => $action,
                 'count' => $count,
-                'limit' => $limit
+                'limit' => self::SUBMISSION_LIMIT
             ]);
             
             return true;
@@ -60,22 +93,7 @@ class RateLimiter
         
         return false;
     }
-    
-    /**
-     * Get the default limit for a given action
-     *
-     * @param string $action The action to get the limit for
-     * @return int The rate limit
-     */
-    private function getDefaultLimit(string $action): int
-    {
-        return match($action) {
-            'submit_form' => self::SUBMISSION_LIMIT,
-            'upload_file' => self::FILE_UPLOAD_LIMIT,
-            default => self::SUBMISSION_LIMIT
-        };
-    }
-    
+
     /**
      * Generate a transient key for rate limiting
      *
@@ -89,7 +107,7 @@ class RateLimiter
         // Max 172 characters for transient keys
         return 'mff_rl_' . substr(md5($identifier . $action), 0, 32);
     }
-    
+
     /**
      * Get a unique identifier for rate limiting based on IP and user agent
      * 
@@ -99,9 +117,9 @@ class RateLimiter
      *
      * @return string Hashed identifier
      */
-    public function getRateLimitIdentifier(): string
+    private function getRateLimitIdentifier(): string
     {
-        // Get IP address - use WordPress helper to respect proxy headers
+        // Get IP address
         $ipAddress = $this->getClientIp();
         
         // Get user agent and sanitize to prevent header injection
@@ -110,7 +128,7 @@ class RateLimiter
         // Combine and hash for privacy
         return md5($ipAddress . $userAgent);
     }
-    
+
     /**
      * Get the client IP address, respecting proxy headers
      * 
@@ -146,31 +164,5 @@ class RateLimiter
         
         // If validation fails, fall back to REMOTE_ADDR which is trustworthy
         return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    }
-    
-    /**
-     * Reset rate limit for an identifier and action (admin use only)
-     *
-     * @param string $identifier Unique identifier
-     * @param string $action Action to reset
-     * @return bool True if successfully reset
-     */
-    public function resetRateLimit(string $identifier, string $action): bool
-    {
-        $transientKey = $this->getTransientKey($identifier, $action);
-        return $this->wpService->deleteTransient($transientKey);
-    }
-    
-    /**
-     * Get current count for an identifier and action (admin/monitoring use)
-     *
-     * @param string $identifier Unique identifier
-     * @param string $action Action to check
-     * @return int Current count
-     */
-    public function getCurrentCount(string $identifier, string $action): int
-    {
-        $transientKey = $this->getTransientKey($identifier, $action);
-        return $this->wpService->getTransient($transientKey) ?: 0;
     }
 }

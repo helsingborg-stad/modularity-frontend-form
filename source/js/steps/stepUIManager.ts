@@ -10,6 +10,7 @@ class StepUIManager implements StepUIManagerInterface {
 	private nextButtonLabelElement: HTMLElement | null;
 	private maxSteps: number;
 	private iconElement: HTMLElement | null;
+	private contentElement: HTMLElement | null;
 
 	constructor(
 		private steps: StepsObject,
@@ -22,6 +23,7 @@ class StepUIManager implements StepUIManagerInterface {
 		);
 		this.iconElement = this.nextButton.querySelector(".c-icon");
 		this.maxSteps = Object.keys(this.steps).length - 1;
+		this.contentElement = this.nextButton.closest('.mod-frontend-form__content');
 	}
 
 	/**
@@ -110,40 +112,75 @@ class StepUIManager implements StepUIManagerInterface {
 			this.shakeAnimationClass,
 		];
 
-		this.hideStep(stepToHide);
+		// Animate height change using View Transitions API if available
+		const animateHeight = () => {
+			this.hideStep(stepToHide);
 
-		// Clean old classes
-		stepToHide.getStepContainer().classList.remove(...allAnim);
-		stepToShow.getStepContainer().classList.remove(...allAnim);
-		// Trigger reflow to restart animation
-		void stepToShow.getStepContainer().offsetWidth;
-		// Add new classes
-		stepToHide.getStepContainer().classList.add(exitClass);
-		stepToShow.getStepContainer().classList.add(this.isActiveClass);
-		this.showStep(stepToShow);
+			// Clean old classes
+			stepToHide.getStepContainer().classList.remove(...allAnim);
+			stepToShow.getStepContainer().classList.remove(...allAnim);
+			// Trigger reflow to restart animation
+			void stepToShow.getStepContainer().offsetWidth;
+			// Add new classes
+			stepToHide.getStepContainer().classList.add(exitClass);
+			stepToShow.getStepContainer().classList.add(this.isActiveClass);
+			this.showStep(stepToShow);
 
-		// Cleanup
-		const onTransitionEnd = (e: TransitionEvent) => {
-			if (e.propertyName !== "transform" && e.propertyName !== "opacity")
-				return;
+			// Update content height
+			if (this.contentElement) {
+				const currentHeight = this.contentElement.offsetHeight;
+				this.contentElement.style.height = `${currentHeight}px`;
+				
+				// Use requestAnimationFrame to allow browser to apply current height
+				requestAnimationFrame(() => {
+					if (this.contentElement) {
+						const newHeight = this.contentElement.scrollHeight;
+						this.contentElement.style.height = `${newHeight}px`;
+						
+						// Remove fixed height after transition
+						const onHeightTransitionEnd = () => {
+							if (this.contentElement) {
+								this.contentElement.style.height = '';
+								this.contentElement.removeEventListener('transitionend', onHeightTransitionEnd);
+							}
+						};
+						this.contentElement.addEventListener('transitionend', onHeightTransitionEnd);
+					}
+				});
+			}
+
+			// Cleanup
+			const onTransitionEnd = (e: TransitionEvent) => {
+				if (e.propertyName !== "transform" && e.propertyName !== "opacity")
+					return;
+				stepToHide
+					.getStepContainer()
+					.classList.remove(this.isActiveClass, exitClass);
+				stepToHide
+					.getStepContainer()
+					.removeEventListener("transitionend", onTransitionEnd);
+			};
+
 			stepToHide
 				.getStepContainer()
-				.classList.remove(this.isActiveClass, exitClass);
-			stepToHide
-				.getStepContainer()
-				.removeEventListener("transitionend", onTransitionEnd);
+				.addEventListener("transitionend", onTransitionEnd);
+
+			// Fallback cleanup
+			setTimeout(() => {
+				stepToHide
+					.getStepContainer()
+					.classList.remove(this.isActiveClass, exitClass);
+			}, 400);
 		};
 
-		stepToHide
-			.getStepContainer()
-			.addEventListener("transitionend", onTransitionEnd);
-
-		// Fallback cleanup
-		setTimeout(() => {
-			stepToHide
-				.getStepContainer()
-				.classList.remove(this.isActiveClass, exitClass);
-		}, 400);
+		// Use View Transitions API if available
+		if ('startViewTransition' in document) {
+			(document as any).startViewTransition(() => {
+				animateHeight();
+			});
+		} else {
+			animateHeight();
+		}
 	}
 
 	/**

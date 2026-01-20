@@ -147,15 +147,11 @@
                     "default_value": [],
                     "return_format": "value",
                     "multiple": 1,
-                    "allow_custom": 0,
-                    "placeholder": "",
                     "allow_null": 0,
                     "ui": 1,
                     "ajax": 0,
-                    "search_placeholder": "",
-                    "parent_repeater": "field_6627a5e312422",
-                    "create_options": 0,
-                    "save_options": 0
+                    "placeholder": "",
+                    "parent_repeater": "field_6627a5e312422"
                 }
             ]
         },
@@ -424,100 +420,6 @@
                     "placeholder": ""
                 }
             ]
-        },
-        {
-            "key": "field_662a5230a59a0",
-            "label": "Form Completion",
-            "name": "",
-            "aria-label": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 0,
-            "selected": 0
-        },
-        {
-            "key": "field_664de6eb4fffd",
-            "label": "Enable summary",
-            "name": "hasSummaryStep",
-            "aria-label": "",
-            "type": "true_false",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "message": "Wheter this form should include a summary step before acquiring the final post status.",
-            "default_value": 1,
-            "ui": 0,
-            "ui_on_text": "",
-            "ui_off_text": ""
-        },
-        {
-            "key": "field_664de74a4fffe",
-            "label": "Summary Title",
-            "name": "summaryTitle",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_664de6eb4fffd",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_664de76b4ffff",
-            "label": "Summary Lead",
-            "name": "summaryLead",
-            "aria-label": "",
-            "type": "wysiwyg",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_664de6eb4fffd",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "tabs": "all",
-            "toolbar": "full",
-            "media_upload": 1,
-            "delay": 0
         },
         {
             "key": "field_662a6546a687a",

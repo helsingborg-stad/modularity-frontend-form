@@ -151,15 +151,11 @@
                     ),
                     'return_format' => 'value',
                     'multiple' => 1,
-                    'allow_custom' => 0,
-                    'placeholder' => '',
                     'allow_null' => 0,
                     'ui' => 1,
                     'ajax' => 0,
-                    'search_placeholder' => '',
+                    'placeholder' => '',
                     'parent_repeater' => 'field_6627a5e312422',
-                    'create_options' => 0,
-                    'save_options' => 0,
                 ),
             ),
         ),
@@ -431,100 +427,6 @@
             ),
         ),
         9 => array(
-            'key' => 'field_662a5230a59a0',
-            'label' => __('Form Completion', 'modularity-frontend-form'),
-            'name' => '',
-            'aria-label' => '',
-            'type' => 'tab',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'placement' => 'top',
-            'endpoint' => 0,
-            'selected' => 0,
-        ),
-        10 => array(
-            'key' => 'field_664de6eb4fffd',
-            'label' => __('Enable summary', 'modularity-frontend-form'),
-            'name' => 'hasSummaryStep',
-            'aria-label' => '',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'message' => __('Wheter this form should include a summary step before acquiring the final post status.', 'modularity-frontend-form'),
-            'default_value' => 1,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ),
-        11 => array(
-            'key' => 'field_664de74a4fffe',
-            'label' => __('Summary Title', 'modularity-frontend-form'),
-            'name' => 'summaryTitle',
-            'aria-label' => '',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => array(
-                0 => array(
-                    0 => array(
-                        'field' => 'field_664de6eb4fffd',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'default_value' => '',
-            'maxlength' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-        ),
-        12 => array(
-            'key' => 'field_664de76b4ffff',
-            'label' => __('Summary Lead', 'modularity-frontend-form'),
-            'name' => 'summaryLead',
-            'aria-label' => '',
-            'type' => 'wysiwyg',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => array(
-                0 => array(
-                    0 => array(
-                        'field' => 'field_664de6eb4fffd',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
-            'wrapper' => array(
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ),
-            'default_value' => '',
-            'tabs' => 'all',
-            'toolbar' => 'full',
-            'media_upload' => 1,
-            'delay' => 0,
-        ),
-        13 => array(
             'key' => 'field_662a6546a687a',
             'label' => __('Security', 'modularity-frontend-form'),
             'name' => '',
@@ -542,7 +444,7 @@
             'endpoint' => 0,
             'selected' => 0,
         ),
-        14 => array(
+        10 => array(
             'key' => 'field_662a6557a687b',
             'label' => __('Public Access', 'modularity-frontend-form'),
             'name' => 'isPublicForm',
@@ -562,7 +464,7 @@
             'ui_on_text' => '',
             'ui_off_text' => '',
         ),
-        15 => array(
+        11 => array(
             'key' => 'field_69286e466e006',
             'label' => __('Legal', 'modularity-frontend-form'),
             'name' => '',
@@ -580,7 +482,7 @@
             'endpoint' => 0,
             'selected' => 0,
         ),
-        16 => array(
+        12 => array(
             'key' => 'field_69287218405e9',
             'label' => __('Why are we collecting this data?', 'modularity-frontend-form'),
             'name' => 'dataProcessingCategories',
@@ -606,7 +508,7 @@
             'bidirectional_target' => array(
             ),
         ),
-        17 => array(
+        13 => array(
             'key' => 'field_69287054405e8',
             'label' => __('Who will process or have access to the data?', 'modularity-frontend-form'),
             'name' => 'dataProcessingProcessors',
@@ -632,7 +534,7 @@
             'bidirectional_target' => array(
             ),
         ),
-        18 => array(
+        14 => array(
             'key' => 'field_69286e646e007',
             'label' => __('For how long should we keep the data submitted in this form?', 'modularity-frontend-form'),
             'name' => 'dataProcessingRetentionTime',

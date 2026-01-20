@@ -63,7 +63,8 @@
     background-color: var(--c-field-background-color);
     width: 100%;
 
-    .c-field {
+    .c-field,
+    .mod-frontend-form__wysiwyg-content {
         --c-field-background-color: #fff;
     }
 

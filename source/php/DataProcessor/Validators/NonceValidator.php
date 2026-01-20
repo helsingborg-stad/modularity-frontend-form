@@ -70,14 +70,18 @@ class NonceValidator implements ValidatorInterface
      */
     private function checkNonceValidity($data): bool
     {
-        $nonceKey = $this->wpService->wpCreateNonce(
+        $verified = $this->wpService->wpVerifyNonce(
+            $data['nonce'],
             $this->moduleConfigInstance->getNonceKey()
         );
-        if ($nonceKey !== $data['nonce']) {
+        
+        // wp_verify_nonce returns false for invalid nonce, 1 or 2 for valid
+        // false (0) = invalid/expired, 1 = valid within last 12 hours, 2 = valid 12-24 hours ago
+        if ($verified === false || $verified === 0) {
             $this->validationResult->setError(
                 new WP_Error(
                     RestApiResponseStatusEnums::ValidationError->value, 
-                    $this->wpService->__('Nonce is invalid.', 'modularity-frontend-form')
+                    $this->wpService->__('Nonce is invalid or expired.', 'modularity-frontend-form')
                 )
             );
             return false;

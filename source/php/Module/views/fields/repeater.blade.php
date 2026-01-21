@@ -22,15 +22,18 @@
                         'data-js-repeater-placeholder' => 'true',
                     ]
                 ])
-                    @typography([
-                        'element' => 'div',
-                        'variant' => 'meta',
+
+                    @icon([
+                        'icon' => 'format_list_bulleted',
+                        'size' => 'lg',
                         'classList' => [
                             'mod-frontend-form__repeater-no-rows'
+                        ],
+                        'attributeList' => [
+                            'aria-label' => $lang->repeaterNoRowsIconLabel
                         ]
                     ])
-                        {{ $lang->repeaterNoRows }}
-                    @endtypography
+                    @endicon
                 @endelement
             @endif
 

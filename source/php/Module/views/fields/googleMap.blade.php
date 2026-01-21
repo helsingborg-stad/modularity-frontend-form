@@ -24,7 +24,7 @@
     @endfield
     @element([
         'id' => $field['name'] . '_map',
-        'classList' => ['mod-frontend-form__openstreetmap'],
+        'classList' => ['mod-frontend-form__openstreetmap','mod-frontend-form__openstreetmap_container'],
         'attributeList' => [
             'data-js-openstreetmap' => 'true',
             'data-js-zoom' => $field['zoom'],

@@ -111,6 +111,11 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->wpService,
             $this->moduleConfigFactory
         ))->addHooks();
+
+        (new Admin\DisableGutenbergOnSubmissions(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
     }
 
     public function setUpTaxonomies(): void

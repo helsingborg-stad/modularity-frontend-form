@@ -7,6 +7,8 @@ use ModularityFrontendForm\Config\Config;
 
 class DisableGutenbergOnSubmissions {
 
+  private bool $isEnabled = true;
+
   public function __construct(private Config $config, private WpService $wpService){}
 
   /**
@@ -14,7 +16,10 @@ class DisableGutenbergOnSubmissions {
    */
   public function addHooks(): void
   {
-    $this->wpService->addFilter('use_block_editor_for_post_type', [$this, 'disableGutenberg'], 10, 2);
+    $this->wpService->addFilter(
+      'use_block_editor_for_post_type', 
+      [$this, 'disableGutenberg']
+    , 150, 2);
   }
 
   /**
@@ -26,6 +31,10 @@ class DisableGutenbergOnSubmissions {
    */
   public function disableGutenberg($useBlockEditor, $postType): bool
   {
+    if(!$this->isEnabled) {
+      return $useBlockEditor;
+    }
+
     // Check if we are on a single admin page
     $isSingleAdminPage = $this->isSingleAdminPage();
     if(!$isSingleAdminPage) {
@@ -33,8 +42,8 @@ class DisableGutenbergOnSubmissions {
     }
 
     // Check if the post type manages submissions,
-    $currentPostId = $this->wpService->getCurrentPostId();
-    if ($this->currentPostIsPostSubmission($currentPostId)) {
+    $currentPostId = $this->wpService->getTheID();
+    if ($this->isSubmittedByForm($currentPostId)) {
       return false;
     }
 
@@ -47,15 +56,16 @@ class DisableGutenbergOnSubmissions {
    * @param int $postId The ID of the post to check.
    * @return bool
    */
-  public function currentPostIsPostSubmission($postId): bool
-  {
-    $metaValue = $this->wpService->getPostMeta(
-      $postId, 
-      $this->config->getMetaDataNamespace('submission'), 
-      true
-    );
-    return !empty($metaValue);
-  }
+  public function isSubmittedByForm(int $postId): bool
+    {
+        return filter_var(
+            $this->wpService->getPostMeta(
+                $postId, 
+                $this->config->getMetaDataNamespace('submission'), 
+                true
+            )
+        , FILTER_VALIDATE_BOOLEAN);
+    }
 
   /**
    * Checks if the current page is a single admin page using WordPress functions.

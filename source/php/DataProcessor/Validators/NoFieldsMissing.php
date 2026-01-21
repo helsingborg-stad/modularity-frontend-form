@@ -42,17 +42,23 @@ class NoFieldsMissing implements ValidatorInterface
     {
       $requiredFieldsInRequest = $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields(
         'key', 
-        false
+        false,
+        true
       );
 
       foreach($requiredFieldsInRequest as $fieldKey ) {
         if (!$this->array_key_exists_recursive($fieldKey, $data)) {
+          $text = $this->wpService->__(
+            'Form is missing required field: %s',
+            'modularity-frontend-form'
+          );
+
           $this->validationResult->setError(
             new WP_Error(
               RestApiResponseStatusEnums::ValidationError->value, 
-              $this->wpService->__(
-                'Form is missing required fields',
-                'modularity-frontend-form'
+              sprintf(
+                $text,
+                $this->getFieldLabel($fieldKey)
               ), 
               [
                 'fields' => [
@@ -87,5 +93,20 @@ class NoFieldsMissing implements ValidatorInterface
         }
       }
       return false;
+    }
+
+    /**
+     * Get the field label for a given field key
+     *
+     * @param string $fieldKey The field key to get the label for
+     * @return string The field label
+     */
+    private function getFieldLabel(string $fieldKey): string
+    {
+      $field = acf_get_field($fieldKey); //TODO: Implement in acf service
+      if($field) {
+        return $field['label'];
+      }
+      return $fieldKey;
     }
 }

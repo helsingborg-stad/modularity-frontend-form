@@ -61,10 +61,11 @@ interface ModuleConfigInterface
      *
      * @param string $property The property to return (key or name)
      * @param bool $includeConditionalFields Whether to include conditional fields
+     * @param bool $onlyIncludeRequiredFields Whether to only include required fields
      *
      * @return array|null The field keys or null if none are found
      */
-    public function getFieldKeysRegisteredAsFormFields(string $property = 'key', bool $includeConditionalFields = true): ?array;
+    public function getFieldKeysRegisteredAsFormFields(string $property = 'key', bool $includeConditionalFields = true, bool $onlyIncludeRequiredFields = false): ?array;
 
     /**
      * Gets the activated handlers for the module

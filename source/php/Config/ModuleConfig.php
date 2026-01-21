@@ -160,7 +160,11 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getFieldKeysRegisteredAsFormFields(string $property = 'key', bool $includeConditionalFields = true): ?array
+  public function getFieldKeysRegisteredAsFormFields(
+    string $property = 'key', 
+    bool $includeConditionalFields = true,
+    bool $onlyIncludeRequiredFields = false
+  ): ?array
   {
     $steps = $this->acfService->getField('formSteps', $this->getModuleId());
     if ($steps === null) {
@@ -193,6 +197,12 @@ class ModuleConfig implements ModuleConfigInterface
                 }
 
                 return true;
+            });
+        }
+
+        if($onlyIncludeRequiredFields) {
+            $fields = array_filter($fields, function ($field) {
+                return isset($field['required']) && ($field['required'] === 1 || $field['required'] === 'true');
             });
         }
 

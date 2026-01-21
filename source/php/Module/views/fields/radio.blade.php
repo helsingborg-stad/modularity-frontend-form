@@ -13,8 +13,13 @@
             {{ $field['label'] }} {!! !empty($field['attributeList']['data-js-required']) ? '<span class="u-color__text--danger">*</span>' : '' !!}
         @endtypography
     @endif
-    @foreach ($field['choices'] as $choice)
-        @option($choice)
-        @endoption
-    @endforeach
+    @element([
+        'componentElement' => 'div',
+        'classList' => ['mod-frontend-form__field--radio__options'],
+    ])
+        @foreach ($field['choices'] as $choice)
+            @option($choice)
+            @endoption
+        @endforeach
+    @endelement
 @endelement

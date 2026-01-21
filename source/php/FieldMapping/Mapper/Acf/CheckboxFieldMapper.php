@@ -20,6 +20,12 @@ class CheckboxFieldMapper implements FieldMapperInterface
             $mapped['attributeList']['data-js-required'] = 'true';
         }
 
+        if($this->field['layout'] === 'horizontal') {
+            $mapped['classList'][] = 'mod-frontend-form__field--checkbox--horizontal';
+        } else {
+            $mapped['classList'][] = 'mod-frontend-form__field--checkbox--vertical';
+        }
+
         foreach ($this->field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type'     => $mapped['type'],

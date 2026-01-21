@@ -22,7 +22,6 @@
                         'data-js-repeater-placeholder' => 'true',
                     ]
                 ])
-
                     @icon([
                         'icon' => 'format_list_bulleted',
                         'size' => 'lg',

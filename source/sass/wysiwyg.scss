@@ -36,6 +36,7 @@
         margin-top: calc(var(--base, 8px) * 2);
         padding: calc(var(--base, 8px) * 2);
         overflow: auto;
+        resize: vertical;
 
         p {
             margin-top: unset;

@@ -7,14 +7,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-01-19T10:59:56+00:00\n"
+"POT-Creation-Date: 2026-01-21T14:07:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: modularity-frontend-form\n"
-
-#: AcfFields/php/mod-frontend-forms.php:8
-msgid "Configure Multistep Form"
-msgstr ""
 
 #: AcfFields/php/mod-frontend-forms.php:12
 msgid "Form Steps"
@@ -33,179 +29,181 @@ msgid "Add Form Step"
 msgstr ""
 
 #: AcfFields/php/mod-frontend-forms.php:56
-msgid "Add the steps that should be displayed in this form."
+msgid "Add the steps that should be displayed in this form. A maximum of 9 steps is allowed."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:70
+#: AcfFields/php/mod-frontend-forms.php:69
 msgid "Add Step"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:75
+#: AcfFields/php/mod-frontend-forms.php:74
+msgid "Form Step Icon"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:92
 msgid "Form Step Title"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:79
-#: AcfFields/php/mod-frontend-forms.php:100
+#: AcfFields/php/mod-frontend-forms.php:96
+#: AcfFields/php/mod-frontend-forms.php:117
 msgid "By leaving this blank, the configuration of the fieldgroup will be used."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:96
+#: AcfFields/php/mod-frontend-forms.php:113
 msgid "From Step Content"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:117
+#: AcfFields/php/mod-frontend-forms.php:134
 msgid "Form Step Group"
 msgstr ""
 
+#: AcfFields/php/mod-frontend-forms.php:147
+msgid "Configure Multistep Form"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:148
+msgid "Testgroup"
+msgstr ""
+
 #: AcfFields/php/mod-frontend-forms.php:149
+#: Module/GroupHelper.php:69
+msgid "Post title"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:150
+#: Module/GroupHelper.php:70
+msgid "Post content"
+msgstr ""
+
+#: AcfFields/php/mod-frontend-forms.php:166
 msgid "Submission Configuration"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:167
+#: AcfFields/php/mod-frontend-forms.php:184
 msgid "Submit to"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:171
+#: AcfFields/php/mod-frontend-forms.php:188
 msgid "Select where you want the submissions to be stored or sent to."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:180
-#: AcfFields/php/mod-frontend-forms.php:228
+#: AcfFields/php/mod-frontend-forms.php:197
+#: AcfFields/php/mod-frontend-forms.php:245
 msgid "Database"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:181
+#: AcfFields/php/mod-frontend-forms.php:198
 msgid "E-Mail"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:182
-#: AcfFields/php/mod-frontend-forms.php:368
+#: AcfFields/php/mod-frontend-forms.php:199
+#: AcfFields/php/mod-frontend-forms.php:385
 msgid "Webhook"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:195
+#: AcfFields/php/mod-frontend-forms.php:212
 msgid "Data Protection Information"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:222
+#: AcfFields/php/mod-frontend-forms.php:239
 msgid "<mark>Some of the selected options to send to will receive all data submitted through the form, including any sensitive information that you may collection. Please ensure that the connected services complies with all relevant data protection regulations, such as GDPR and Schrems II.</mark>"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:232
+#: AcfFields/php/mod-frontend-forms.php:249
 msgid "Select where we should store the answers on this form, and with what default status."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:257
+#: AcfFields/php/mod-frontend-forms.php:274
 msgid "Save as Post Status"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:261
+#: AcfFields/php/mod-frontend-forms.php:278
 msgid "The post status to use when a form hasen't been reviewed by the user."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:270
+#: AcfFields/php/mod-frontend-forms.php:287
 msgid "Draft"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:271
+#: AcfFields/php/mod-frontend-forms.php:288
 msgid "Pending Review"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:272
+#: AcfFields/php/mod-frontend-forms.php:289
 msgid "Private"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:273
+#: AcfFields/php/mod-frontend-forms.php:290
 msgid "Published"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:275
+#: AcfFields/php/mod-frontend-forms.php:292
 msgid "draft"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:292
-#: AcfFields/php/mod-frontend-forms.php:344
+#: AcfFields/php/mod-frontend-forms.php:309
+#: AcfFields/php/mod-frontend-forms.php:361
 msgid "Email"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:296
+#: AcfFields/php/mod-frontend-forms.php:313
 msgid "Configure the email adresses that should recive the form submission automatically."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:321
-#: AcfFields/php/mod-frontend-forms.php:339
+#: AcfFields/php/mod-frontend-forms.php:338
+#: AcfFields/php/mod-frontend-forms.php:356
 msgid "Add Reciver"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:372
+#: AcfFields/php/mod-frontend-forms.php:389
 msgid "Configure a web adress that can recive post data."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:397
+#: AcfFields/php/mod-frontend-forms.php:414
 msgid "Callback URL"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:416
-msgid "Form Completion"
-msgstr ""
-
-#: AcfFields/php/mod-frontend-forms.php:434
-msgid "Enable summary"
-msgstr ""
-
-#: AcfFields/php/mod-frontend-forms.php:446
-msgid "Wheter this form should include a summary step before acquiring the final post status."
-msgstr ""
-
-#: AcfFields/php/mod-frontend-forms.php:454
-msgid "Summary Title"
-msgstr ""
-
-#: AcfFields/php/mod-frontend-forms.php:482
-msgid "Summary Lead"
-msgstr ""
-
-#: AcfFields/php/mod-frontend-forms.php:510
+#: AcfFields/php/mod-frontend-forms.php:433
 msgid "Security"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:528
+#: AcfFields/php/mod-frontend-forms.php:451
 msgid "Public Access"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:540
+#: AcfFields/php/mod-frontend-forms.php:463
 msgid "This form may be used by unauthenticated visitors"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:548
+#: AcfFields/php/mod-frontend-forms.php:471
 msgid "Legal"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:566
+#: AcfFields/php/mod-frontend-forms.php:489
 msgid "Why are we collecting this data?"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:570
+#: AcfFields/php/mod-frontend-forms.php:493
 msgid "Describe why we need to collect this data."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:592
+#: AcfFields/php/mod-frontend-forms.php:515
 msgid "Who will process or have access to the data?"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:596
+#: AcfFields/php/mod-frontend-forms.php:519
 msgid "List all entities that will access or process the data, including internal departments as well as any external system providers."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:618
+#: AcfFields/php/mod-frontend-forms.php:541
 msgid "For how long should we keep the data submitted in this form?"
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:622
+#: AcfFields/php/mod-frontend-forms.php:545
 msgid "What is the maximum retention period for the data before it is deleted? This function will delete the information completly."
 msgstr ""
 
-#: AcfFields/php/mod-frontend-forms.php:635
+#: AcfFields/php/mod-frontend-forms.php:558
 msgid "days"
 msgstr ""
 
@@ -519,7 +517,7 @@ msgid "At least one value is required"
 msgstr ""
 
 #: Module/FrontendForm.php:176
-#: Module/FrontendForm.php:203
+#: Module/FrontendForm.php:206
 msgid "Loading"
 msgstr ""
 
@@ -535,201 +533,206 @@ msgstr ""
 msgid "Loading successful"
 msgstr ""
 
-#: Module/FrontendForm.php:182
-msgid "This field is required"
+#: Module/FrontendForm.php:180
+msgid "No rows"
 msgstr ""
 
-#: Module/FrontendForm.php:183
-msgid "Please choose a place on the map"
+#: Module/FrontendForm.php:181
+msgid "Go to step "
 msgstr ""
 
 #: Module/FrontendForm.php:184
-msgid "Please add some content"
+msgid "This field is required"
 msgstr ""
 
 #: Module/FrontendForm.php:185
-msgid "Please select an option"
+msgid "Please choose a place on the map"
 msgstr ""
 
 #: Module/FrontendForm.php:186
+msgid "Please add some content"
+msgstr ""
+
+#: Module/FrontendForm.php:187
+msgid "Please select an option"
+msgstr ""
+
+#: Module/FrontendForm.php:188
 #, php-format
 msgid "Please enter a valid email address (ex. %s)"
 msgstr ""
 
-#: Module/FrontendForm.php:187
+#: Module/FrontendForm.php:189
 #, php-format
 msgid "Please enter a valid URL (ex. %s)"
 msgstr ""
 
-#: Module/FrontendForm.php:188
+#: Module/FrontendForm.php:190
 msgid "Please enter a valid phone number"
 msgstr ""
 
-#: Module/FrontendForm.php:189
+#: Module/FrontendForm.php:191
 msgid "Please enter a valid date (ex. yyyy-mm-dd)"
 msgstr ""
 
-#: Module/FrontendForm.php:190
+#: Module/FrontendForm.php:192
 #, php-format
 msgid "Please enter a date after %s"
 msgstr ""
 
-#: Module/FrontendForm.php:191
+#: Module/FrontendForm.php:193
 #, php-format
 msgid "Please enter a date before %s"
 msgstr ""
 
-#: Module/FrontendForm.php:192
-msgid "Please enter a valid date and time"
-msgstr ""
-
-#: Module/FrontendForm.php:193
-msgid "Please enter a valid time (ex. hh:mm)"
-msgstr ""
-
 #: Module/FrontendForm.php:194
-#, php-format
-msgid "Please enter a time after %s"
+msgid "Please enter a valid date and time"
 msgstr ""
 
 #: Module/FrontendForm.php:195
 #, php-format
-msgid "Please enter a time before %s"
+msgid "A minimum of %s files is required"
 msgstr ""
 
 #: Module/FrontendForm.php:196
-msgid "Please enter a valid number"
+msgid "Please enter a valid time (ex. hh:mm)"
 msgstr ""
 
 #: Module/FrontendForm.php:197
 #, php-format
-msgid "Please enter a number greater than or equal to %s"
+msgid "Please enter a time after %s"
 msgstr ""
 
 #: Module/FrontendForm.php:198
 #, php-format
-msgid "Please enter a number smaller than or equal to %s"
+msgid "Please enter a time before %s"
 msgstr ""
 
 #: Module/FrontendForm.php:199
+msgid "Please enter a valid number"
+msgstr ""
+
+#: Module/FrontendForm.php:200
+#, php-format
+msgid "Please enter a number greater than or equal to %s"
+msgstr ""
+
+#: Module/FrontendForm.php:201
+#, php-format
+msgid "Please enter a number smaller than or equal to %s"
+msgstr ""
+
+#: Module/FrontendForm.php:202
 #, php-format
 msgid "Please enter a number in increments of %s"
 msgstr ""
 
-#: Module/FrontendForm.php:201
+#: Module/FrontendForm.php:204
 msgid "The following files could not be uploaded"
 msgstr ""
 
-#: Module/FrontendForm.php:204
+#: Module/FrontendForm.php:207
 msgid "Error"
 msgstr ""
 
-#: Module/FrontendForm.php:205
+#: Module/FrontendForm.php:208
 msgid "Success"
 msgstr ""
 
-#: Module/FrontendForm.php:206
-#: Module/FrontendForm.php:208
+#: Module/FrontendForm.php:209
+#: Module/FrontendForm.php:211
 msgid "Submitting"
 msgstr ""
 
-#: Module/FrontendForm.php:209
+#: Module/FrontendForm.php:212
 msgid "Preparing"
 msgstr ""
 
-#: Module/FrontendForm.php:210
+#: Module/FrontendForm.php:213
 msgid "Form submitted successfully."
 msgstr ""
 
-#: Module/FrontendForm.php:211
+#: Module/FrontendForm.php:214
 msgid "Form submission failed: Cound not find path."
 msgstr ""
 
-#: Module/FrontendForm.php:212
+#: Module/FrontendForm.php:215
 msgid "An unknown error occurred while submitting the form."
 msgstr ""
 
-#: Module/FrontendForm.php:214
+#: Module/FrontendForm.php:217
 msgid "Communication error"
 msgstr ""
 
-#: Module/FrontendForm.php:216
-#: Module/FrontendForm.php:218
+#: Module/FrontendForm.php:219
+#: Module/FrontendForm.php:221
 msgid "Securing"
 msgstr ""
 
-#: Module/FrontendForm.php:217
+#: Module/FrontendForm.php:220
 msgid "Could not secure connection – link missing."
 msgstr ""
 
-#: Module/FrontendForm.php:219
+#: Module/FrontendForm.php:222
 msgid "Could not secure connection – please try again."
 msgstr ""
 
-#: Module/FrontendForm.php:222
+#: Module/FrontendForm.php:225
 msgid "Bold"
 msgstr ""
 
-#: Module/FrontendForm.php:223
+#: Module/FrontendForm.php:226
 msgid "Italic"
 msgstr ""
 
-#: Module/FrontendForm.php:224
+#: Module/FrontendForm.php:227
 msgid "Underline"
 msgstr ""
 
-#: Module/FrontendForm.php:225
+#: Module/FrontendForm.php:228
 msgid "Strikethrough"
 msgstr ""
 
-#: Module/FrontendForm.php:226
+#: Module/FrontendForm.php:229
 msgid "Bullet list"
 msgstr ""
 
-#: Module/FrontendForm.php:227
+#: Module/FrontendForm.php:230
 msgid "Numbered list"
 msgstr ""
 
-#: Module/FrontendForm.php:228
+#: Module/FrontendForm.php:231
 msgid "Link"
 msgstr ""
 
-#: Module/FrontendForm.php:229
+#: Module/FrontendForm.php:232
 msgid "Blockquote"
 msgstr ""
 
-#: Module/FrontendForm.php:230
+#: Module/FrontendForm.php:233
 msgid "Heading"
 msgstr ""
 
-#: Module/FrontendForm.php:231
+#: Module/FrontendForm.php:234
 msgid "Subheading"
 msgstr ""
 
-#: Module/FrontendForm.php:243
+#: Module/FrontendForm.php:246
 msgid "By submitting this form, you agree to our terms and conditions. You also consent to your personal data being processed by <mark>{{data_processors}}</mark> in accordance with GDPR. Additionally, you confirm that you have the full rights to all content you provide. We need to process this data with the following reason(s): <mark>{{data_categories}}</mark>. Your data will be permanently deleted after <mark>{{data_retention_period}}</mark> days, calculated from the date of the last modification or expiration."
 msgstr ""
 
-#: Module/FrontendForm.php:252
+#: Module/FrontendForm.php:255
 msgid "us"
 msgstr ""
 
-#: Module/FrontendForm.php:258
+#: Module/FrontendForm.php:261
 msgid "relevant processing requirements"
 msgstr ""
 
-#: Module/FrontendForm.php:264
+#: Module/FrontendForm.php:267
 msgid "30"
 msgstr ""
 
-#: Module/FrontendForm.php:305
+#: Module/FrontendForm.php:308
 msgid "and"
-msgstr ""
-
-#: Module/GroupHelper.php:69
-msgid "Post title"
-msgstr ""
-
-#: Module/GroupHelper.php:70
-msgid "Post content"
 msgstr ""

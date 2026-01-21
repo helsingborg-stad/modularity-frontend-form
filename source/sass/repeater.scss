@@ -30,6 +30,7 @@
         display: inline-block;
         padding: calc(var(--base, 8px) * 2) calc(var(--base, 8px) * 3); 
         color: var(--color-darker, #565656);
+        opacity: .4;
     }
 }
 

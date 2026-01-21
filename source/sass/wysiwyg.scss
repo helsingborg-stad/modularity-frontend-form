@@ -35,6 +35,7 @@
         height: 20rem;
         margin-top: calc(var(--base, 8px) * 2);
         padding: calc(var(--base, 8px) * 2);
+        overflow: auto;
 
         p {
             margin-top: unset;

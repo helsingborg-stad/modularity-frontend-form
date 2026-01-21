@@ -11,7 +11,7 @@
   .mod-frontend-form__field--radio__options {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: calc(var(--base, 8px) * 2);
+    gap: calc(var(--base, 8px) * 1);
 
     .c-option__checkbox {
       width: auto;

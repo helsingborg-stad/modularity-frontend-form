@@ -32,7 +32,7 @@ type ModularityFrontendFormLang = {
 	nonceRequestSuccess?: string;
 
 	statusTitleLoading?: string;
-	statusTitleSucess?: string;
+	statusTitleSuccess?: string;
 	statusTitleError?: string;
 	statusTitleSubmitting?: string;
 

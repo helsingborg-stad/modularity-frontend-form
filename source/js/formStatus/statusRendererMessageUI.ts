@@ -36,7 +36,7 @@ class StatusRendererMessageUI {
 			[SubmitStatus.Loading]:
 				this.modularityFrontendFormLang?.statusTitleLoading ?? "Loading",
 			[SubmitStatus.Success]:
-				this.modularityFrontendFormLang?.statusTitleSucess ?? "Success",
+				this.modularityFrontendFormLang?.statusTitleSuccess ?? "Success",
 			[SubmitStatus.Error]:
 				this.modularityFrontendFormLang?.statusTitleError ?? "Error",
 			[SubmitStatus.Working]:

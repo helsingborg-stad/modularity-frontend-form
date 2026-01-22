@@ -54,6 +54,9 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
         // Ensure no submissions exist before deletion
         $this->ensureNoSubmissionsBeforeDeletion();
+
+        // Set up field formatting
+        $this->setUpFieldFormatting();
     }
 
     /**
@@ -171,5 +174,12 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->wpService
         ))->addHooks();
 
+    }
+
+    public function setUpFieldFormatting(): void
+    {
+        (new FieldFormatting\FormatMapFieldOnSubmit(
+            $this->wpService
+        ))->addHooks();
     }
 }

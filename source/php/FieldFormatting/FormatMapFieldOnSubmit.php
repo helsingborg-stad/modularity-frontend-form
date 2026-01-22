@@ -112,6 +112,36 @@ class FormatMapFieldOnSubmit implements Hookable
      */
     private function isSchemaFormat(string $string) : bool
     {
-      return str_contains($string, 'https://schema.org') && json_decode($string) !== null;
+        $data = json_decode($string, true);
+        if (!is_array($data)) {
+          return false;
+        }
+
+        $hasContext = false;
+        if (isset($data['@context'])) {
+          if (is_array($data['@context'])) {
+            foreach ($data['@context'] as $ctx) {
+              if (is_string($ctx) && str_contains($ctx, 'schema.org')) {
+                $hasContext = true;
+                break;
+              }
+            }
+            foreach ($data['@context'] as $key => $ctx) {
+              if (is_string($ctx) && str_contains($ctx, 'schema.org')) {
+                $hasContext = true;
+                break;
+              }
+            }
+          } elseif (is_string($data['@context']) && str_contains($data['@context'], 'schema.org')) {
+            $hasContext = true;
+          }
+        }
+
+        $hasType    = isset($data['@type']) && $data['@type'] === 'Place';
+        $hasLat     = isset($data['latitude']);
+        $hasLng     = isset($data['longitude']);
+        $hasAddress = isset($data['address']) && is_array($data['address']);
+
+        return $hasContext && $hasType && $hasLat && $hasLng && $hasAddress;
     }
 }

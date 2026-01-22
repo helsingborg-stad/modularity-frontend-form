@@ -25,18 +25,17 @@ class FormatMapFieldOnSubmit implements Hookable
      */
     public function addHooks(): void
     {
-        $this->wpService->addFilter('acf/update_value/type=google_map', [$this, 'formatMapFieldValue'], 10, 3);
+        $this->wpService->addFilter('acf/update_value/type=google_map', [$this, 'formatMapFieldValue'], 10, 1);
     }
 
     /**
      * Format map field value on submit
      *
      * @param string $value
-     * @param int $post_id
-     * @param array $field
+     * 
      * @return string
      */
-    public function formatMapFieldValue($value, $post_id, $field) : string|array
+    public function formatMapFieldValue($value) : string|array
     {
       $isFrontendRequest  = $this->isFrontendApi();
       $isSchemaFormat     = $this->isSchemaFormat($value);
@@ -81,6 +80,13 @@ class FormatMapFieldOnSubmit implements Hookable
           'country'       => $schemaObject['address']['addressCountry'] ?? null,
           'country_short' => 'SE',
       ];
+
+      //Convert all items to utf8
+      array_walk_recursive($formattedValueFromSchema, function (&$item) {
+          if (is_string($item)) {
+              $item = mb_convert_encoding($item, 'UTF-8', 'UTF-8');
+          }
+      });
 
       return $formattedValueFromSchema;
     }

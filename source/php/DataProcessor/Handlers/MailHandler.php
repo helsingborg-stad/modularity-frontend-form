@@ -179,12 +179,19 @@ class MailHandler implements HandlerInterface {
    */
   private function createEmailSubject(array $data): string
   {
+    $title = $this->moduleConfigInstance->getModuleTitle();
+    
+    // Sanitize for email headers - remove newlines, carriage returns, and control characters
+    // This prevents email header injection attacks
+    $title = preg_replace('/[\r\n\t\x00-\x1F\x7F]/', '', $title);
+    $title = $this->wpService->sanitizeTextField($title);
+    
     return sprintf(
       $this->wpService->__(
         'New submission: %s', 
         'modularity-frontend-form'
       ), 
-      $this->moduleConfigInstance->getModuleTitle()
+      $title
     ); 
   }
 

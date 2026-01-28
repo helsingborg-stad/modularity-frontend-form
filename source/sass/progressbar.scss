@@ -1,5 +1,10 @@
 @use "./variables.scss" as *;
 
+.mod-frontend-form__content {
+    transition: height 0.3s ease-in-out;
+    overflow: hidden;
+}
+
 .mod-frontend-form__layout {
     display: flex;
 

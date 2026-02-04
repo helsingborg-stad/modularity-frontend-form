@@ -22,7 +22,7 @@ class RadioFieldMapper implements FieldMapperInterface
             $mapped['attributeList']['data-js-required'] = 'true';
         }
 
-        if($this->field['layout'] === 'horizontal') {
+        if (($this->field['layout'] ?? null) === 'horizontal') {
             $mapped['classList'][] = 'mod-frontend-form__field--radio--horizontal';
         } else {
             $mapped['classList'][] = 'mod-frontend-form__field--radio--vertical';

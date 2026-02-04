@@ -180,6 +180,7 @@ class FrontendForm extends \Modularity\Module
             'loadingSuccessful'             => $this->wpService->__('Loading successful', 'modularity-frontend-form'),
             'repeaterNoRows'                => $this->wpService->__('No rows', 'modularity-frontend-form'),
             'goToStep'                      => $this->wpService->__('Go to step ', 'modularity-frontend-form'),
+            'repeaterNoRowsIconLabel'       => $this->wpService->__('No rows added', 'modularity-frontend-form'),
 
             // Error Messages for fields
             'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),

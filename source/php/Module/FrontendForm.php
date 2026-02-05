@@ -15,6 +15,7 @@ use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use ModularityFrontendForm\Module\FormatSteps;
 use ModularityFrontendForm\Config\Config;
+use ModularityFrontendForm\Config\ConfigFactory;
 use ModularityFrontendForm\FieldMapping\Director\WordpressMappingDirector;
 use ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\Helper\CacheBust;
@@ -48,13 +49,16 @@ class FrontendForm extends \Modularity\Module
     private FormatSteps $formatSteps;
 
     private Config $config;
+    private object $fields;
 
     public function init(): void
     {
         $this->wpService   = new WpServiceWithTypecastedReturns(new NativeWpService());
         $this->acfService  = new NativeAcfService();
         $this->groupHelper = new GroupHelper($this->acfService, $this->wpService);
-        $this->config      = new Config($this->wpService,'modularity-frontend-form');
+        $this->fields      = (object) $this->getFields();
+        $this->config      = ConfigFactory::create($this->wpService, 'modularity-frontend-form', $this->fields->saveToPostType ?? null);
+
 
         $this->formatSteps  = new FormatSteps(
             [
@@ -73,7 +77,7 @@ class FrontendForm extends \Modularity\Module
                 ),
                 new AcfGroupFields(
                     $this->acfService,
-                    new Config($this->wpService,'modularity-frontend-form'),
+                    $this->config,
                     new Mapper(
                         $this->wpService,
                         $this->getLang(),
@@ -116,7 +120,6 @@ class FrontendForm extends \Modularity\Module
     {
         //Needs to be called, otherwise a notice will be thrown.
         $data   = [];
-        $fields = (object) $this->getFields();
 
         //The module id
         $data['moduleId'] = $this->ID;
@@ -124,7 +127,7 @@ class FrontendForm extends \Modularity\Module
         //Current post id (the page where the form is displayed)
         $data['holdingPostId'] = $this->wpService->getQueriedObjectId();
 
-        $data['steps'] = $this->formatSteps->formatSteps(($fields->formSteps ?? []) ?: []);
+        $data['steps'] = $this->formatSteps->formatSteps(($this->fields->formSteps ?? []) ?: []);
 
         $data['stepsCount'] = count($data['steps']);
 
@@ -133,7 +136,7 @@ class FrontendForm extends \Modularity\Module
 
         //Disclaimer text
         $data['disclaimerText'] = $this->createDisclaimerText(
-            $fields
+            $this->fields
         );
 
         return $data;

@@ -117,4 +117,13 @@
     calc(var(--base, 8px) * 3.5)
     calc(var(--base, 8px) * 2.5)
     ;
+
+     @container(max-width: 500px) {
+            padding: 
+                calc(var(--base, 8px) * 5) 
+                calc(var(--base, 8px) * 2.5)
+                calc(var(--base, 8px) * 3.5)
+                calc(var(--base, 8px) * 2.5)
+            ;
+    }
 }

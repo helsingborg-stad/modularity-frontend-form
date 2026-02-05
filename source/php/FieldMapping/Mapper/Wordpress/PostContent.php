@@ -15,7 +15,7 @@ class PostContent implements FieldMapperInterface
     {
         $mapped = (new BasicFieldMapper($this->field, $this->lang, 'wysiwyg'))->map();
         $mapped['name'] = $this->config->getFieldNamespace($this->field);
-        $mapped['label'] = $this->wpService->__('Post Content', 'modularity-frontend-form');
+        $mapped['label'] = $this->wpService->__('Content for ', 'modularity-frontend-form') . ($this->config->getSaveToPostType() ?? $this->wpService->__('post', 'modularity-frontend-form'));
         $mapped['attributeList']['data-js-required'] = 'required';
         $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
 

@@ -16,7 +16,7 @@ class PostTitle implements FieldMapperInterface
         $mapped = (new BasicFieldMapper($this->field, $this->lang, 'text'))->map();
 
         $mapped['name'] = $this->config->getFieldNamespace($this->field);
-        $mapped['label'] = $this->wpService->__('Post Title', 'modularity-frontend-form');
+        $mapped['label'] = $this->wpService->__('Title for ', 'modularity-frontend-form') . ($this->config->getSaveToPostType() ?? $this->wpService->__('post', 'modularity-frontend-form'));
         $mapped['required'] = true;
         $mapped['moveAttributesListToFieldAttributes'] = false;
         $mapped['fieldAttributeList'] = [

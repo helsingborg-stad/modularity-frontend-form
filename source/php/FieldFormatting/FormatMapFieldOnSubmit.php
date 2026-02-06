@@ -79,6 +79,7 @@ class FormatMapFieldOnSubmit implements Hookable
           'post_code'     => $schemaObject['address']['postalCode'] ?? null,
           'country'       => $schemaObject['address']['addressCountry'] ?? null,
           'country_short' => 'SE',
+          'address_locality' => $schemaObject['address']['addressLocality'] ?? null,
       ];
 
       //Convert all items to utf8

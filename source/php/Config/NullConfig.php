@@ -51,4 +51,9 @@ class NullConfig implements ConfigInterface
   {
     return '';
   }
+
+  public function getSaveToPostType(): ?string
+  {
+    return null;
+  }
 }

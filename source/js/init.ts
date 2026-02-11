@@ -157,6 +157,7 @@ class FormHandler {
 			stepUIManager,
 			nextButton as HTMLButtonElement,
 			previousButton as HTMLButtonElement,
+			this.form.formId,
 		).init();
 
 		return steps;

@@ -10,6 +10,7 @@ class Steps implements StepsInterface {
 		private stepUIManager: StepUIManager,
 		private nextButton: HTMLButtonElement,
 		private previousButton: HTMLButtonElement,
+		private formId: number,
 	) {}
 
 	public init() {
@@ -17,6 +18,7 @@ class Steps implements StepsInterface {
 		this.setupPrevious();
 		this.setupNext();
 		this.setupEdit();
+		this.updateUrlWithStep(this.stepNavigator.getActiveStepIndex());
 	}
 
 	private setupEdit() {
@@ -83,6 +85,14 @@ class Steps implements StepsInterface {
 		);
 
 		this.stepUIManager.showAndHideSteps(nextStep, currentStep);
+		this.updateUrlWithStep(nextStep.getId());
+	}
+
+	private updateUrlWithStep(stepIndex: number): void {
+		const url = new URL(window.location.href);
+		const paramName = `${this.formId}-step`;
+		url.searchParams.set(paramName, String(stepIndex + 1));
+		window.history.replaceState({}, '', url.toString());
 	}
 }
 

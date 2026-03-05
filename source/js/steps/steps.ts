@@ -11,14 +11,15 @@ class Steps implements StepsInterface {
 		private nextButton: HTMLButtonElement,
 		private previousButton: HTMLButtonElement,
 		private formId: number,
-	) {}
+	) { }
 
 	public init() {
 		this.editableSteps[this.stepNavigator.getActiveStepIndex()] = true;
 		this.setupPrevious();
 		this.setupNext();
 		this.setupEdit();
-		this.updateUrlWithStep(this.stepNavigator.getActiveStepIndex());
+		this.setupPopstate();
+		this.updateUrlWithStep(this.stepNavigator.getActiveStepIndex(), true);
 	}
 
 	private setupEdit() {
@@ -88,11 +89,35 @@ class Steps implements StepsInterface {
 		this.updateUrlWithStep(nextStep.getId());
 	}
 
-	private updateUrlWithStep(stepIndex: number): void {
+	private setupPopstate(): void {
+		window.addEventListener('popstate', () => {
+			const url = new URL(window.location.href);
+			const paramName = `${this.formId}-step`;
+			const stepParam = url.searchParams.get(paramName);
+			if (stepParam === null) return;
+
+			const targetStepIndex = parseInt(stepParam, 10) - 1;
+			if (Number.isNaN(targetStepIndex)) return;
+
+			const currentStep = this.stepNavigator.getActiveStep();
+			const targetStep = this.stepNavigator.goTo(targetStepIndex);
+
+			if (targetStep) {
+				this.stepUIManager.updateButtonStates(targetStep.getId(), currentStep.getId());
+				this.stepUIManager.showAndHideSteps(targetStep, currentStep);
+			}
+		});
+	}
+
+	private updateUrlWithStep(stepIndex: number, replace: boolean = false): void {
 		const url = new URL(window.location.href);
 		const paramName = `${this.formId}-step`;
 		url.searchParams.set(paramName, String(stepIndex + 1));
-		window.history.replaceState({}, '', url.toString());
+		if (replace) {
+			window.history.replaceState({}, '', url.toString());
+		} else {
+			window.history.pushState({}, '', url.toString());
+		}
 	}
 }
 

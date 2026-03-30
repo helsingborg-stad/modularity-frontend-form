@@ -152,6 +152,8 @@ class WpDbHandler implements HandlerInterface {
     //Store fields
     $this->storeFields($fieldMeta, $result);
 
+    $this->wpService->doAction('ModularityFrontendForm/afterInsertPost', $result);
+
     return true;
   }
 

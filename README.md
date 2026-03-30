@@ -101,6 +101,13 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 - **Add a handler**: Implement a PHP handler in `/source/php/DataProcessor/Handlers/`.
 - **Add a REST endpoint**: Extend `/source/php/Api/`.
 
+## Actions
+### ModularityFrontendForm/afterInsertPost
+* ```@param int|WP_Error $result``` 
+```php
+do_action('ModularityFrontendForm/afterInsertPost', $result);
+```
+
 ---
 
 ## Contribution Guidelines

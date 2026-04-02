@@ -1,6 +1,26 @@
 import StepNavigator from "./stepNavigator";
 import StepUIManager from "./stepUIManager";
 
+function matomoUrlTracker(): void {
+	const track = (url: string) => {
+		console.log('[matomoUrlTracker] URL changed:', url);
+	};
+
+	const wrapHistoryMethod = (method: 'pushState' | 'replaceState') => {
+		const original = history[method].bind(history);
+		history[method] = (...args: Parameters<typeof history.pushState>) => {
+			original(...args);
+			track(window.location.href);
+		};
+	};
+
+	wrapHistoryMethod('pushState');
+
+	window.addEventListener('popstate', () => track(window.location.href));
+}
+
+matomoUrlTracker();
+
 class Steps implements StepsInterface {
 	private editableSteps: { [key: number]: boolean } = {};
 

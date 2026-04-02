@@ -105,6 +105,18 @@ class FrontendForm extends \Modularity\Module
             return $field;
         });
 
+        $this->wpService->addFilter('acf/load_field/name=saveToPostType', function ($field) {
+            if ($this->wpService->getPostType() !== ('mod-') . $this->slug) {
+                return $field;
+            }
+
+            $field['choices']['default'] = $this->wpService->__('Default', 'modularity-frontend-form');
+
+            $field['default_value'] = 'default';
+
+            return $field;
+        });
+
         //Add query vars that should be allowed in context.
         $this->wpService->addFilter('query_vars', [$this, 'registerFormQueryVars']);
     }
@@ -395,6 +407,7 @@ class FrontendForm extends \Modularity\Module
 
     public function adminEnqueue(): void
     {
+        // echo '<pre>' . print_r( $this->getField(), true ) . '</pre>';
         // Register admin script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle('admin'),

@@ -1,9 +1,9 @@
-import BasicLayoutUi from "./basicUi";
+import BasicLayoutUi from "./basicUI";
 
 class BasicLayout implements BasicLayoutInterface {
     constructor(
-        private layoutData: LayoutData,
-        private layoutUI: BasicLayoutUi
+        protected layoutData: LayoutData,
+        protected layoutUI: BasicLayoutUi
     ) {
         this.setConditionalSelectListener();
     }
@@ -29,7 +29,7 @@ class BasicLayout implements BasicLayoutInterface {
         const isSelectableLayout = conditionalValueLayout?.getType() === 'radio';
 
         if (isSelectableLayout && this.isSelectableValuesLayout(conditionalValueLayout)) {
-            const options = conditionalValueLayout.getValue();
+            const options = conditionalValueLayout.getValues();
 
         }
 

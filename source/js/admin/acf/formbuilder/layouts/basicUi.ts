@@ -1,4 +1,4 @@
-class BasicLayoutUI implements BasicLayoutUiInterface {
+class BasicLayoutUI implements BasicLayoutUIInterface {
     private nameFieldInputTimeout: number | undefined;
 
     constructor(private layoutData: LayoutData) {

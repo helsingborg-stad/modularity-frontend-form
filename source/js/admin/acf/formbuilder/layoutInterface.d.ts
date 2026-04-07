@@ -6,11 +6,18 @@ interface BasicLayoutInterface {
     getType(): string;
 }
 
-interface SelectableValuesLayoutInterface extends BasicLayoutInterface {
-    getValue(): Array<{ value: string; label: string }>;
+type OptionValues = {
+    key: string;
+    previousKey: string;
+    label: string;
 }
 
-interface BasicLayoutUiInterface {
+interface SelectableValuesLayoutInterface extends BasicLayoutInterface {
+    getValues(): Array<OptionValues>;
+    initOptions(): void;
+}
+
+interface BasicLayoutUIInterface {
     onConditionalSelectChange(callback: () => void): void;
     onNameInput(callback: () => void): void;
     bindNameInputToLayoutUpdate(debounceMs: number): void;
@@ -34,4 +41,8 @@ type LayoutData = {
     conditionalOperatorSelect: HTMLSelectElement;
     conditionalLogicValueSelect: HTMLSelectElement;
     store: FormBuilderStoreInterface;
+}
+
+type options = {
+    [key: string]: HTMLInputElement;
 }

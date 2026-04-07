@@ -25,10 +25,12 @@ class Layouts {
                 return;
             }
 
+            // Checking if the added element is a layout, if not, we don't want to call init on it
             const layout = this.addLayout($el[0]);
 
             if (layout) {
                 layout.init();
+                return;
             }
         });
 
@@ -43,7 +45,7 @@ class Layouts {
         this.updateAllConditionalSelects();
     }
 
-    private addLayout(layoutElement: HTMLElement): BasicLayoutInterface | null {
+    private addLayout(layoutElement: HTMLElement): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
         const layout = this.layoutFactory.createLayout(layoutElement);
 
         if (!layout) {
@@ -68,6 +70,10 @@ class Layouts {
     private setLayoutUpdateListener(layoutElement: HTMLElement): void {
         layoutElement.addEventListener('layout:update', () => {
             this.updateAllConditionalSelects();
+        });
+
+        layoutElement.addEventListener('layout:selectable', () => {
+
         });
     }
 
@@ -108,4 +114,4 @@ class Layouts {
     }
 }
 
-export default Layouts
+export default Layouts;

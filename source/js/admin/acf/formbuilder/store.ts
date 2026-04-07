@@ -1,7 +1,7 @@
 class Store implements FormBuilderStoreInterface {
-    private layouts: Record<string, BasicLayoutInterface> = {};
+    private layouts: Record<string, BasicLayoutInterface | SelectableValuesLayoutInterface> = {};
 
-    public add(id: string, layout: BasicLayoutInterface): void {
+    public add(id: string, layout: BasicLayoutInterface | SelectableValuesLayoutInterface): void {
         this.layouts[id] = layout;
     }
 
@@ -9,11 +9,11 @@ class Store implements FormBuilderStoreInterface {
         delete this.layouts[id];
     }
 
-    public get(id: string): BasicLayoutInterface | null {
+    public get(id: string): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
         return this.layouts[id] ?? null;
     }
 
-    public getAll(): BasicLayoutInterface[] {
+    public getAll(): (BasicLayoutInterface | SelectableValuesLayoutInterface)[] {
         return Object.values(this.layouts);
     }
 }

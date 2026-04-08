@@ -74,6 +74,16 @@ class Layouts {
             this.updateAllConditionalSelects();
         });
 
+        layoutElement.addEventListener('layout:conditional-changed', (event: Event) => {
+            const customEvent = event as CustomEvent<{ layoutId: string }>;
+
+            if (!customEvent.detail?.layoutId) {
+                return;
+            }
+
+            this.maybeUpdateConditionalValueSelectForLayout(customEvent.detail.layoutId);
+        });
+
         layoutElement.addEventListener('layout:selectable', (event: Event) => {
             const customEvent = event as CustomEvent<{ layoutId: string }>;
 
@@ -101,8 +111,18 @@ class Layouts {
         const values = layout.getValues();
         const fragment = LayoutOptionFragments.createConditionalValueOptionsFragment(values);
         affectedLayouts.forEach(currentLayout => {
-            currentLayout.updateConditionalSelectValuesOptions(fragment.cloneNode(true));
+            currentLayout.updateConditionalSelectValuesOptions(fragment.cloneNode(true), values);
         });
+    }
+
+    private maybeUpdateConditionalValueSelectForLayout(changedLayoutId: string): void {
+        const targetId = this.store.get(changedLayoutId)?.getSavedConditionalLogicValue();
+
+        if (!targetId) {
+            return;
+        }
+
+        this.maybeUpdateConditionalValueSelect(targetId);
     }
 
     private updateAllConditionalSelects(): void {

@@ -9,6 +9,14 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         this.layoutData.conditionalSelect.addEventListener('change', callback);
     }
 
+    public onConditionalOperatorSelectChange(callback: () => void): void {
+        this.layoutData.conditionalOperatorSelect.addEventListener('change', callback);
+    }
+
+    public onConditionalLogicValueSelectChange(callback: () => void): void {
+        this.layoutData.conditionalLogicValueSelect.addEventListener('change', callback);
+    }
+
     public onNameInput(callback: () => void): void {
         this.layoutData.name.addEventListener('input', callback);
     }
@@ -41,8 +49,24 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         return this.layoutData.conditionalSelect.value;
     }
 
+    public setConditionalSelectValue(value: string): void {
+        this.layoutData.conditionalSelect.value = value;
+    }
+
     public getConditionalOperatorValue(): string {
         return this.layoutData.conditionalOperatorSelect.value;
+    }
+
+    public setConditionalOperatorValue(value: string): void {
+        this.layoutData.conditionalOperatorSelect.value = value;
+    }
+
+    public getConditionalLogicValueSelectValue(): string {
+        return this.layoutData.conditionalLogicValueSelect.value;
+    }
+
+    public setConditionalLogicValueSelectValue(value: string): void {
+        this.layoutData.conditionalLogicValueSelect.value = value;
     }
 
     public setSavedConditionalLogicValue(value: string): void {
@@ -57,13 +81,18 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         return this.layoutData.name;
     }
 
-    public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValue: string): void {
+    public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValue: string, values: OptionValues[]): void {
+        const remappedSelectedValue = values.find(value => value.previousKey === selectedValue)?.key;
+        const finalSelectedValue = values.some(value => value.key === selectedValue)
+            ? selectedValue
+            : remappedSelectedValue;
+
         this.layoutData.conditionalLogicValueSelect.innerHTML = '';
 
         while (optionsNodes.firstChild) {
             const option = optionsNodes.firstChild as HTMLOptionElement;
 
-            if (option.value === selectedValue) {
+            if (option.value === finalSelectedValue) {
                 option.selected = true;
             }
 

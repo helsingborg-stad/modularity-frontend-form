@@ -64,6 +64,18 @@ class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValues
         return option.getAttribute(this.OPTION_ID_ATTRIBUTE) ?? '';
     }
 
+    public getOptionIdCounter(option: HTMLInputElement): string | null {
+        return option.getAttribute(this.OPTION_ID_COUNTER_ATTRIBUTE);
+    }
+
+    public dispatchSelectableUpdate(): void {
+        this.layoutData.layout.dispatchEvent(new CustomEvent('layout:selectable', {
+            detail: {
+                layoutId: this.layoutData.layoutId
+            }
+        }));
+    }
+
     public getOptionAttributes(option: HTMLInputElement): OptionValues {
         return {
             key: option.getAttribute(this.OPTION_ID_ATTRIBUTE) ?? '',

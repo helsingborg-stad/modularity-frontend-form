@@ -28,6 +28,21 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
             }
 
             this.initAddedOption(option);
+            this.layoutUI.dispatchSelectableUpdate();
+        });
+
+        acf.addAction('remove', ($el: JQuery<HTMLElement>) => {
+            if (!this.layoutUI.isElementWithinLayout($el[0])) {
+                return;
+            }
+
+            const option = this.layoutUI.getOptionInputFromElement($el[0]);
+
+            if (!option) {
+                return;
+            }
+
+            this.removeOption(option);
         });
     }
 
@@ -47,6 +62,17 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
 
     private getOptionKey(option: HTMLInputElement): string {
         return option.value || `option-${this.i++}`;
+    }
+
+    private removeOption(option: HTMLInputElement): void {
+        const idCounter = this.layoutUI.getOptionIdCounter(option);
+
+        if (idCounter === null) {
+            return;
+        }
+
+        delete this.options[idCounter];
+        this.layoutUI.dispatchSelectableUpdate();
     }
 
     public getValues(): Array<OptionValues> {

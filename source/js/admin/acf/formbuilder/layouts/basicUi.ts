@@ -2,6 +2,7 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
     private nameFieldInputTimeout: number | undefined;
 
     constructor(protected layoutData: LayoutData) {
+        this.layoutData.conditionalLogicValueSelect.multiple = true;
         this.bindNameInputToLayoutUpdate(500);
     }
 
@@ -61,12 +62,16 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         this.layoutData.conditionalOperatorSelect.value = value;
     }
 
-    public getConditionalLogicValueSelectValue(): string {
-        return this.layoutData.conditionalLogicValueSelect.value;
+    public getConditionalLogicValueSelectValues(): ConditionalLogicValue {
+        return Array.from(this.layoutData.conditionalLogicValueSelect.selectedOptions).map(option => option.value);
     }
 
-    public setConditionalLogicValueSelectValue(value: string): void {
-        this.layoutData.conditionalLogicValueSelect.value = value;
+    public setConditionalLogicValueSelectValues(values: ConditionalLogicValue): void {
+        const selectedValues = new Set(values);
+
+        Array.from(this.layoutData.conditionalLogicValueSelect.options).forEach(option => {
+            option.selected = selectedValues.has(option.value);
+        });
     }
 
     public setSavedConditionalLogicValue(value: string): void {
@@ -81,18 +86,25 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         return this.layoutData.name;
     }
 
-    public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValue: string, values: OptionValues[]): void {
-        const remappedSelectedValue = values.find(value => value.previousKey === selectedValue)?.key;
-        const finalSelectedValue = values.some(value => value.key === selectedValue)
-            ? selectedValue
-            : remappedSelectedValue;
+    public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValues: ConditionalLogicValue, values: OptionValues[]): void {
+        const finalSelectedValues = new Set(
+            selectedValues
+                .map(selectedValue => {
+                    if (values.some(value => value.key === selectedValue)) {
+                        return selectedValue;
+                    }
+
+                    return values.find(value => value.previousKey === selectedValue)?.key;
+                })
+                .filter((value): value is string => !!value)
+        );
 
         this.layoutData.conditionalLogicValueSelect.innerHTML = '';
 
         while (optionsNodes.firstChild) {
             const option = optionsNodes.firstChild as HTMLOptionElement;
 
-            if (option.value === finalSelectedValue) {
+            if (finalSelectedValues.has(option.value)) {
                 option.selected = true;
             }
 

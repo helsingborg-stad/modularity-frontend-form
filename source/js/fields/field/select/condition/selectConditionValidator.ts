@@ -1,6 +1,10 @@
 class SelectConditionValidator implements ConditionValidatorInterface {
 	private parent: SelectInterface | null = null;
 
+	private getConditionValues(condition: any): string[] {
+		return Array.isArray(condition.value) ? condition.value : [condition.value];
+	}
+
 	public init(parent: SelectInterface): void {
 		this.parent = parent;
 	}
@@ -13,11 +17,15 @@ class SelectConditionValidator implements ConditionValidatorInterface {
 			case "=":
 			case "===":
 			case "==contains":
-				return selected.includes(condition.value);
+				return this.getConditionValues(condition).some((conditionValue) =>
+					selected.includes(conditionValue),
+				);
 			case "!=":
 			case "!==":
 			case "!=contains":
-				return !selected.includes(condition.value);
+				return this.getConditionValues(condition).every(
+					(conditionValue) => !selected.includes(conditionValue),
+				);
 			case "==empty":
 				return selected.length === 0;
 			case "!=empty":

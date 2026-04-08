@@ -1,6 +1,10 @@
 class RadioConditionValidator implements ConditionValidatorInterface {
 	private parent: RadioInterface | null = null;
 
+	private getConditionValues(condition: Condition): string[] {
+		return Array.isArray(condition.value) ? condition.value : [condition.value];
+	}
+
 	public init(parent: RadioInterface): void {
 		this.parent = parent;
 	}
@@ -13,11 +17,11 @@ class RadioConditionValidator implements ConditionValidatorInterface {
 			case "=":
 			case "===":
 			case "==contains":
-				return selected === condition.value;
+				return this.getConditionValues(condition).includes(selected);
 			case "!=":
 			case "!==":
 			case "!=contains":
-				return selected !== condition.value;
+				return !this.getConditionValues(condition).includes(selected);
 			case "==empty":
 				return Number(selected) === 0;
 			case "!=empty":

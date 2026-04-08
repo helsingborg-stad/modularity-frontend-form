@@ -1,6 +1,10 @@
 class BasicConditionValidator implements ConditionValidatorInterface {
 	private parent: BasicInterface | null = null;
 
+	private getConditionValues(condition: any): string[] {
+		return Array.isArray(condition.value) ? condition.value : [condition.value];
+	}
+
 	public init(parent: BasicInterface): void {
 		this.parent = parent;
 	}
@@ -21,9 +25,13 @@ class BasicConditionValidator implements ConditionValidatorInterface {
 			case "!=empty":
 				return value.length > 0;
 			case "==contains":
-				return value.includes(condition.value);
+				return this.getConditionValues(condition).some((conditionValue) =>
+					value.includes(conditionValue),
+				);
 			case "!=contains":
-				return !value.includes(condition.value);
+				return this.getConditionValues(condition).every(
+					(conditionValue) => !value.includes(conditionValue),
+				);
 			case ">":
 				return Number(value) > Number(condition.value);
 			case "<":

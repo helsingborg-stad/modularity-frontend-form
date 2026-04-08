@@ -14,6 +14,8 @@ type OptionValues = {
     label: string;
 }
 
+type ConditionalLogicValue = string[];
+
 interface SelectableValuesLayoutInterface extends BasicLayoutInterface {
     getValues(): Array<OptionValues>;
     initOptions(): void;
@@ -46,13 +48,13 @@ interface BasicLayoutUIInterface {
     setConditionalSelectValue(value: string): void;
     getConditionalOperatorValue(): string;
     setConditionalOperatorValue(value: string): void;
-    getConditionalLogicValueSelectValue(): string;
-    setConditionalLogicValueSelectValue(value: string): void;
+    getConditionalLogicValueSelectValues(): ConditionalLogicValue;
+    setConditionalLogicValueSelectValues(values: ConditionalLogicValue): void;
     setSavedConditionalLogicValue(value: string): void;
     getSavedConditionalLogicValue(): string;
     getNameField(): HTMLInputElement;
     renderConditionalSelectOptions(optionsNodes: Node, layoutId: string, selectedValue: string): void;
-    renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValue: string, values: OptionValues[]): void;
+    renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValues: ConditionalLogicValue, values: OptionValues[]): void;
     renderConditionalOperatorSelectOptions(optionsNodes: Node, selectedValue: string): void;
 }
 

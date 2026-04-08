@@ -4,7 +4,7 @@ import BasicLayoutUi from "./basicUI";
 type ConditionalLogicState = {
     targetId: string;
     operator: string;
-    value: string;
+    value: ConditionalLogicValue;
 };
 
 class BasicLayout implements BasicLayoutInterface {
@@ -77,7 +77,7 @@ class BasicLayout implements BasicLayoutInterface {
         const state: ConditionalLogicState = {
             targetId: this.layoutUI.getConditionalSelectValue(),
             operator: this.layoutUI.getConditionalOperatorValue(),
-            value: this.layoutUI.getConditionalLogicValueSelectValue()
+            value: this.layoutUI.getConditionalLogicValueSelectValues()
         };
 
         this.layoutUI.setSavedConditionalLogicValue(JSON.stringify(state));
@@ -98,8 +98,8 @@ class BasicLayout implements BasicLayoutInterface {
             this.layoutUI.setConditionalOperatorValue(state.operator);
         }
 
-        if (state.value) {
-            this.layoutUI.setConditionalLogicValueSelectValue(state.value);
+        if (state.value.length > 0) {
+            this.layoutUI.setConditionalLogicValueSelectValues(state.value);
         }
     }
 
@@ -117,10 +117,16 @@ class BasicLayout implements BasicLayoutInterface {
                 return null;
             }
 
+            const value = Array.isArray(parsedValue.value)
+                ? parsedValue.value
+                : typeof parsedValue.value === 'string'
+                    ? [parsedValue.value]
+                    : [];
+
             return {
                 targetId: parsedValue.targetId ?? '',
                 operator: parsedValue.operator ?? '',
-                value: parsedValue.value ?? ''
+                value
             };
         } catch {
             return null;
@@ -148,19 +154,30 @@ class BasicLayout implements BasicLayoutInterface {
     }
 
     public updateConditionalSelectValuesOptions(optionsNodes: Node, values: OptionValues[]): void {
-        const selectedValue = this.getSavedConditionalLogicState()?.value ?? this.layoutUI.getConditionalLogicValueSelectValue();
+        const selectedValues = this.getSavedConditionalLogicState()?.value ?? this.layoutUI.getConditionalLogicValueSelectValues();
 
         this.layoutUI.renderConditionalSelectValuesOptions(
             optionsNodes,
-            selectedValue,
+            selectedValues,
             values
         );
 
-        const selectedValueAfterRender = this.layoutUI.getConditionalLogicValueSelectValue();
+        const selectedValuesAfterRender = this.layoutUI.getConditionalLogicValueSelectValues();
 
-        if (selectedValueAfterRender !== selectedValue) {
+        if (!this.isSameConditionalLogicValues(selectedValuesAfterRender, selectedValues)) {
             this.saveConditionalLogicState();
         }
+    }
+
+    private isSameConditionalLogicValues(a: ConditionalLogicValue, b: ConditionalLogicValue): boolean {
+        if (a.length !== b.length) {
+            return false;
+        }
+
+        const sortedA = [...a].sort();
+        const sortedB = [...b].sort();
+
+        return sortedA.every((value, index) => value === sortedB[index]);
     }
 }
 

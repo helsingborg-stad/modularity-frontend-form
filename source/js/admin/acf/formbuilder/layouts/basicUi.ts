@@ -1,7 +1,7 @@
 class BasicLayoutUI implements BasicLayoutUIInterface {
     private nameFieldInputTimeout: number | undefined;
 
-    constructor(private layoutData: LayoutData) {
+    constructor(protected layoutData: LayoutData) {
         this.bindNameInputToLayoutUpdate(500);
     }
 
@@ -41,6 +41,10 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         return this.layoutData.conditionalSelect.value;
     }
 
+    public getConditionalOperatorValue(): string {
+        return this.layoutData.conditionalOperatorSelect.value;
+    }
+
     public setSavedConditionalLogicValue(value: string): void {
         this.layoutData.conditionalLogicSaveField.value = value;
     }
@@ -53,8 +57,32 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         return this.layoutData.name;
     }
 
-    public renderConditionalSelectValueOptions(optionsNodes: Node, selectedValue: string): void {
+    public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValue: string): void {
         this.layoutData.conditionalLogicValueSelect.innerHTML = '';
+
+        while (optionsNodes.firstChild) {
+            const option = optionsNodes.firstChild as HTMLOptionElement;
+
+            if (option.value === selectedValue) {
+                option.selected = true;
+            }
+
+            this.layoutData.conditionalLogicValueSelect.appendChild(option);
+        }
+    }
+
+    public renderConditionalOperatorSelectOptions(optionsNodes: Node, selectedValue: string): void {
+        this.layoutData.conditionalOperatorSelect.innerHTML = '';
+
+        while (optionsNodes.firstChild) {
+            const option = optionsNodes.firstChild as HTMLOptionElement;
+
+            if (option.value === selectedValue) {
+                option.selected = true;
+            }
+
+            this.layoutData.conditionalOperatorSelect.appendChild(option);
+        }
     }
 
     public renderConditionalSelectOptions(optionsNodes: Node, layoutId: string, selectedValue: string): void {

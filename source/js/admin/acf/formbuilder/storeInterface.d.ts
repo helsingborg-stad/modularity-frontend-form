@@ -1,6 +1,6 @@
 interface FormBuilderStoreInterface {
-    add(id: string, layout: BasicLayoutInterface | RadioLayoutInterface): void;
+    add(id: string, layout: BasicLayoutInterface | SelectableValuesLayoutInterface): void;
     remove(id: string): void;
-    get(id: string): BasicLayoutInterface | RadioLayoutInterface | null;
-    getAll(): (BasicLayoutInterface | RadioLayoutInterface)[];
+    get(id: string): BasicLayoutInterface | SelectableValuesLayoutInterface | null;
+    getAll(): (BasicLayoutInterface | SelectableValuesLayoutInterface)[];
 }

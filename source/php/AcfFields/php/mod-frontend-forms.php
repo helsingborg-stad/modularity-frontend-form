@@ -427,8 +427,6 @@
                                         'id' => '',
                                     ),
                                     'choices' => array(
-                                        'hasValue' => 'Has value',
-                                        'hasNoValue' => 'Has no value',
                                     ),
                                     'default_value' => false,
                                     'return_format' => 'value',
@@ -703,8 +701,6 @@
                                         'id' => '',
                                     ),
                                     'choices' => array(
-                                        'hasValue' => 'Has value',
-                                        'hasNoValue' => 'Has no value',
                                     ),
                                     'default_value' => false,
                                     'return_format' => 'value',

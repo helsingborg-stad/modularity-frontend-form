@@ -1,3 +1,4 @@
+import LayoutOptionFragments from "../layoutOptionFragments";
 import BasicLayoutUi from "./basicUI";
 
 class BasicLayout implements BasicLayoutInterface {
@@ -21,34 +22,38 @@ class BasicLayout implements BasicLayoutInterface {
 
     private updateConditionalState(): void {
         this.maybeDisableConditionalLogicValueSelect();
+        this.updateConditionalOperatorSelectOptions();
         this.maybeDisableConditionalOperatorSelect();
     }
 
     private maybeDisableConditionalLogicValueSelect(): void {
         const conditionalValueLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
-        const isSelectableLayout = conditionalValueLayout?.getType() === 'radio';
-
-        if (isSelectableLayout && this.isSelectableValuesLayout(conditionalValueLayout)) {
-            const options = conditionalValueLayout.getValues();
-
-        }
+        const isSelectableLayout = this.isSelectableValuesLayout(conditionalValueLayout);
 
         this.layoutUI.setConditionalLogicValueSelectDisabled(!isSelectableLayout);
     }
 
     private isSelectableValuesLayout(layout: BasicLayoutInterface | null): layout is SelectableValuesLayoutInterface {
-        return !!layout && layout.getType() === 'radio' && 'getValue' in layout;
+        return !!layout && layout.getType() === 'radio' && 'getValues' in layout;
     }
 
     private maybeDisableConditionalOperatorSelect(): void {
         this.layoutUI.setConditionalOperatorSelectDisabled(!this.getSavedConditionalLogicValue());
     }
 
+    private updateConditionalOperatorSelectOptions(): void {
+        const conditionalValueLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
+        const includeContains = this.isSelectableValuesLayout(conditionalValueLayout);
+        const operatorOptions = LayoutOptionFragments.createConditionalOperatorOptionsFragment(includeContains);
+
+        this.layoutUI.renderConditionalOperatorSelectOptions(operatorOptions, this.layoutUI.getConditionalOperatorValue());
+    }
+
     private saveConditionalLogicValue(): void {
         this.layoutUI.setSavedConditionalLogicValue(this.layoutUI.getConditionalSelectValue());
     }
 
-    private getSavedConditionalLogicValue(): string {
+    public getSavedConditionalLogicValue(): string {
         return this.layoutUI.getSavedConditionalLogicValue();
     }
 
@@ -66,6 +71,10 @@ class BasicLayout implements BasicLayoutInterface {
 
     public updateConditionalSelectOptions(optionsNodes: Node): void {
         this.layoutUI.renderConditionalSelectOptions(optionsNodes, this.layoutData.layoutId, this.getSavedConditionalLogicValue());
+    }
+
+    public updateConditionalSelectValuesOptions(optionsNodes: Node): void {
+        this.layoutUI.renderConditionalSelectValuesOptions(optionsNodes, this.getSavedConditionalLogicValue());
     }
 }
 

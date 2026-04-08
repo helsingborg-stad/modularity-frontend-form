@@ -1,4 +1,5 @@
 import LayoutFactory from "./layoutFactory";
+import LayoutOptionFragments from "./layoutOptionFragments";
 import Store from "./store";
 
 declare const acf: any;
@@ -25,7 +26,6 @@ class Layouts {
                 return;
             }
 
-            // Checking if the added element is a layout, if not, we don't want to call init on it
             const layout = this.addLayout($el[0]);
 
             if (layout) {
@@ -43,6 +43,7 @@ class Layouts {
         });
 
         this.updateAllConditionalSelects();
+        this.updateAllConditionalSelectValuesOptions();
     }
 
     private addLayout(layoutElement: HTMLElement): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
@@ -55,6 +56,7 @@ class Layouts {
         this.store.add(layout.getId(), layout);
         this.setLayoutUpdateListener(layoutElement);
         this.updateAllConditionalSelects();
+
         return layout;
     }
 
@@ -72,16 +74,49 @@ class Layouts {
             this.updateAllConditionalSelects();
         });
 
-        layoutElement.addEventListener('layout:selectable', () => {
+        layoutElement.addEventListener('layout:selectable', (event: Event) => {
+            const customEvent = event as CustomEvent<{ layoutId: string }>;
 
+            if (!customEvent.detail?.layoutId) {
+                return;
+            }
+
+            this.maybeUpdateConditionalValueSelect(customEvent.detail.layoutId);
+        });
+    }
+
+    private maybeUpdateConditionalValueSelect(layoutId: string): void {
+        const layout = this.store.get(layoutId);
+
+        if (!this.isSelectableValuesLayout(layout)) {
+            return;
+        }
+
+        const affectedLayouts = this.store.getAll().filter(currentLayout => currentLayout.getSavedConditionalLogicValue() === layoutId);
+
+        if (affectedLayouts.length === 0) {
+            return;
+        }
+
+        const values = layout.getValues();
+        const fragment = LayoutOptionFragments.createConditionalValueOptionsFragment(values);
+        affectedLayouts.forEach(currentLayout => {
+            currentLayout.updateConditionalSelectValuesOptions(fragment.cloneNode(true));
         });
     }
 
     private updateAllConditionalSelects(): void {
-        const optionsFragment = this.createOptionsFragment();
+        const layouts = this.store.getAll();
+        const optionsFragment = LayoutOptionFragments.createLayoutOptionsFragment(layouts);
 
-        this.store.getAll().forEach(layout => {
+        layouts.forEach(layout => {
             layout.updateConditionalSelectOptions(optionsFragment.cloneNode(true));
+        });
+    }
+
+    private updateAllConditionalSelectValuesOptions(): void {
+        this.store.getAll().forEach(layout => {
+            this.maybeUpdateConditionalValueSelect(layout.getId());
         });
     }
 
@@ -91,26 +126,12 @@ class Layouts {
         });
     }
 
-    private createOptionsFragment(): DocumentFragment {
-        const fragment = document.createDocumentFragment();
-
-        const none = document.createElement('option');
-        none.value = '';
-        none.textContent = 'None';
-        fragment.appendChild(none);
-
-        this.store.getAll().forEach(layout => {
-            const option = document.createElement('option');
-            option.value = layout.getId();
-            option.textContent = layout.getNameField().value || 'Unnamed Layout';
-            fragment.appendChild(option);
-        });
-
-        return fragment;
-    }
-
     private checkIfElementIsWithinTheFormbuilderField($el: JQuery<HTMLElement>): boolean {
         return this.field.$el[0].contains($el[0]);
+    }
+
+    private isSelectableValuesLayout(layout: BasicLayoutInterface | SelectableValuesLayoutInterface | null): layout is SelectableValuesLayoutInterface {
+        return !!layout && layout.getType() === 'radio' && 'getValues' in layout;
     }
 }
 

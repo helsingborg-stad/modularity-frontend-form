@@ -421,10 +421,7 @@
                                         "class": "",
                                         "id": ""
                                     },
-                                    "choices": {
-                                        "hasValue": "Has value",
-                                        "hasNoValue": "Has no value"
-                                    },
+                                    "choices": [],
                                     "default_value": false,
                                     "return_format": "value",
                                     "multiple": 0,
@@ -695,10 +692,7 @@
                                         "class": "",
                                         "id": ""
                                     },
-                                    "choices": {
-                                        "hasValue": "Has value",
-                                        "hasNoValue": "Has no value"
-                                    },
+                                    "choices": [],
                                     "default_value": false,
                                     "return_format": "value",
                                     "multiple": 0,

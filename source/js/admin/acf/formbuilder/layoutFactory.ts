@@ -1,6 +1,7 @@
 import BasicLayout from "./layouts/basic";
 import BasicLayoutUI from "./layouts/basicUI";
 import RadioLayout from "./layouts/selectableValuesLayout";
+import SelectableValuesLayoutUI from "./layouts/selectableValuesLayoutUI";
 
 class LayoutFactory {
     constructor(private store: FormBuilderStoreInterface) { }
@@ -13,8 +14,7 @@ class LayoutFactory {
         }
 
         if (layoutData.layoutType === 'radio') {
-            const options = this.getSelectableOptions(layout);
-            const selectableValuesLayout = new RadioLayout(layoutData, new BasicLayoutUI(layoutData));
+            const selectableValuesLayout = new RadioLayout(layoutData, new SelectableValuesLayoutUI(layoutData));
             selectableValuesLayout.initOptions();
             return selectableValuesLayout;
         }
@@ -46,18 +46,6 @@ class LayoutFactory {
             conditionalLogicValueSelect,
             store: this.store
         };
-    }
-
-    private getSelectableOptions(layout: HTMLElement): string[] {
-        const options = layout.querySelectorAll('[data-name="options"] [data-name="name"] input');
-        const optionsArray: string[] = [];
-        options.forEach(option => {
-            if (option instanceof HTMLInputElement) {
-                optionsArray.push(option.value);
-            }
-        });
-
-        return optionsArray;
     }
 
     private getConditionalValueSelect(layout: HTMLElement): HTMLSelectElement | null {

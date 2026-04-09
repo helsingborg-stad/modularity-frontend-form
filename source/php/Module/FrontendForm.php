@@ -407,7 +407,6 @@ class FrontendForm extends \Modularity\Module
 
     public function adminEnqueue(): void
     {
-        // echo '<pre>' . print_r( $this->getField(), true ) . '</pre>';
         // Register admin script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle('admin'),

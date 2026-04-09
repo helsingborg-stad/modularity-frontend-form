@@ -6,32 +6,33 @@ class BasicConditionValidator implements ConditionValidatorInterface {
 	}
 
 	public validate(condition: any): boolean {
-		const value = this.parent?.getField().value ?? "";
+		const value = this.parent?.getField().value ?? '';
 
 		switch (condition.operator) {
-			case "==":
-			case "=":
-			case "===":
+			case '==':
+			case '=':
+			case '===':
 				return value === condition.value;
-			case "!=":
-			case "!==":
+			case '!=':
+			case '!==':
 				return value !== condition.value;
-			case "==empty":
+			case '==empty':
 				return value.length === 0;
-			case "!=empty":
+			case '!=empty':
 				return value.length > 0;
-			case "==contains":
+			case '==contains':
 				return value.includes(condition.value);
-			case "!=contains":
+			case '!=contains':
 				return !value.includes(condition.value);
-			case ">":
+			case '>':
 				return Number(value) > Number(condition.value);
-			case "<":
+			case '<':
 				return Number(value) < Number(condition.value);
 			default:
-				console.error("Invalid operator:", condition.operator);
+				console.error('Invalid operator:', condition.operator);
 				return false;
 		}
+
 	}
 }
 

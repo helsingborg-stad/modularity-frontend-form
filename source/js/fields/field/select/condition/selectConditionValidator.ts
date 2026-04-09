@@ -1,10 +1,6 @@
 class SelectConditionValidator implements ConditionValidatorInterface {
 	private parent: SelectInterface | null = null;
 
-	private getConditionValues(condition: any): string[] {
-		return Array.isArray(condition.value) ? condition.value : [condition.value];
-	}
-
 	public init(parent: SelectInterface): void {
 		this.parent = parent;
 	}
@@ -13,25 +9,21 @@ class SelectConditionValidator implements ConditionValidatorInterface {
 		const selected: string[] = this.parent?.getSelectedOptions() || [];
 
 		switch (condition.operator) {
-			case "==":
-			case "=":
-			case "===":
-			case "==contains":
-				return this.getConditionValues(condition).some((conditionValue) =>
-					selected.includes(conditionValue),
-				);
-			case "!=":
-			case "!==":
-			case "!=contains":
-				return this.getConditionValues(condition).every(
-					(conditionValue) => !selected.includes(conditionValue),
-				);
-			case "==empty":
+			case '==':
+			case '=':
+			case '===':
+			case '==contains':
+				return selected.includes(condition.value);
+			case '!=':
+			case '!==':
+			case '!=contains':
+				return !selected.includes(condition.value);
+			case '==empty':
 				return selected.length === 0;
-			case "!=empty":
+			case '!=empty':
 				return selected.length > 0;
 			default:
-				console.error("Invalid operator:", condition.operator);
+				console.error('Invalid operator:', condition.operator);
 				return false;
 		}
 	}

@@ -2,8 +2,6 @@ import LayoutFactory from "./formbuilder/layoutFactory";
 import Layouts from "./formbuilder/layouts";
 import Store from "./formbuilder/store";
 
-declare const acf: any;
-
 export function initializeFormBuilder(): void {
     const formBuilderFieldName = 'formbuilder';
 

@@ -23,13 +23,8 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
 
     public bindNameInputToLayoutUpdate(debounceMs: number): void {
         this.onNameInput(() => {
-            if (this.nameFieldInputTimeout) {
-                clearTimeout(this.nameFieldInputTimeout);
-            }
-
-            this.nameFieldInputTimeout = window.setTimeout(() => {
-                this.dispatchLayoutUpdate();
-            }, debounceMs);
+            clearTimeout(this.nameFieldInputTimeout);
+            this.nameFieldInputTimeout = window.setTimeout(() => this.dispatchLayoutUpdate(), debounceMs);
         });
     }
 
@@ -67,7 +62,6 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
 
     public setConditionalLogicValueSelectValues(values: ConditionalLogicValue): void {
         const selectedValues = new Set(values);
-
         Array.from(this.layoutData.conditionalLogicValueSelect.options).forEach(option => {
             option.selected = selectedValues.has(option.value);
         });
@@ -90,61 +84,57 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
     }
 
     public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValues: ConditionalLogicValue, values: OptionValues[]): void {
-        const finalSelectedValues = new Set(
+        const resolvedKeys = new Set(
             selectedValues
-                .map(selectedValue => {
-                    if (values.some(value => value.key === selectedValue)) {
-                        return selectedValue;
-                    }
-
-                    return values.find(value => value.previousKey === selectedValue)?.key;
-                })
-                .filter((value): value is string => !!value)
+                .map(selected => values.find(v => v.key === selected)?.key ?? values.find(v => v.previousKey === selected)?.key)
+                .filter((v): v is string => v !== undefined)
         );
 
-        this.layoutData.conditionalLogicValueSelect.innerHTML = '';
-
-        while (optionsNodes.firstChild) {
-            const option = optionsNodes.firstChild as HTMLOptionElement;
-
-            if (finalSelectedValues.has(option.value)) {
-                option.selected = true;
-            }
-
-            this.layoutData.conditionalLogicValueSelect.appendChild(option);
-        }
+        this.renderToSelect(
+            this.layoutData.conditionalLogicValueSelect,
+            optionsNodes,
+            option => resolvedKeys.has(option.value)
+        );
     }
 
     public renderConditionalOperatorSelectOptions(optionsNodes: Node, selectedValue: string): void {
-        this.layoutData.conditionalOperatorSelect.innerHTML = '';
-
-        while (optionsNodes.firstChild) {
-            const option = optionsNodes.firstChild as HTMLOptionElement;
-
-            if (option.value === selectedValue) {
-                option.selected = true;
-            }
-
-            this.layoutData.conditionalOperatorSelect.appendChild(option);
-        }
+        this.renderToSelect(
+            this.layoutData.conditionalOperatorSelect,
+            optionsNodes,
+            option => option.value === selectedValue
+        );
     }
 
     public renderConditionalSelectOptions(optionsNodes: Node, layoutId: string, selectedValue: string): void {
-        this.layoutData.conditionalSelect.innerHTML = '';
+        this.renderToSelect(
+            this.layoutData.conditionalSelect,
+            optionsNodes,
+            option => option.value === selectedValue,
+            option => option.value === layoutId
+        );
+    }
+
+    private renderToSelect(
+        select: HTMLSelectElement,
+        optionsNodes: Node,
+        isSelected?: (option: HTMLOptionElement) => boolean,
+        shouldSkip?: (option: HTMLOptionElement) => boolean
+    ): void {
+        select.innerHTML = '';
 
         while (optionsNodes.firstChild) {
             const option = optionsNodes.firstChild as HTMLOptionElement;
 
-            if (option.value === layoutId) {
-                optionsNodes.removeChild(optionsNodes.firstChild);
+            if (shouldSkip?.(option)) {
+                optionsNodes.removeChild(option);
                 continue;
             }
 
-            if (option.value === selectedValue) {
+            if (isSelected?.(option)) {
                 option.selected = true;
             }
 
-            this.layoutData.conditionalSelect.appendChild(option);
+            select.appendChild(option);
         }
     }
 }

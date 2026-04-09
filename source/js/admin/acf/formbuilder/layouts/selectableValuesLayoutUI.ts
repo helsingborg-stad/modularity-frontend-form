@@ -2,7 +2,7 @@ import BasicLayoutUI from "./basicUi";
 
 class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValuesLayoutUIInterface {
     private readonly OPTIONS_TARGET = '[data-name="options"] .acf-row:not(.acf-clone) input';
-    private readonly OPTION_TARGET = '[data-name="name"] input';
+    private readonly OPTION_TARGET = '[data-name="option"] input';
     private readonly OPTION_KEY_ATTRIBUTE = 'data-option-key';
     private readonly OPTION_PREVIOUS_KEY_ATTRIBUTE = 'data-previous-option-key';
     private readonly OPTION_ID_COUNTER_ATTRIBUTE = 'data-option-id';
@@ -19,7 +19,7 @@ class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValues
     }
 
     public getOptionInputFromElement(element: HTMLElement): HTMLInputElement | null {
-        return element.querySelector<HTMLInputElement>(this.OPTION_TARGET);
+        return element.classList.contains('acf-row') ? element.querySelector<HTMLInputElement>(this.OPTION_TARGET) : null;
     }
 
     public bindOptionInputToKeyUpdate(option: HTMLInputElement, debounceMs: number, getNewKey: (option: HTMLInputElement) => string): void {

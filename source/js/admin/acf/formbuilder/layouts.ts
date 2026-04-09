@@ -9,11 +9,13 @@ class Layouts {
         const addedLayouts: BasicLayoutInterface[] = [];
 
         this.field.$el.find('[data-layout]:not(.acf-clone)').each((_index: number, element: HTMLElement) => {
-            const layout = this.addLayout(element);
+            const layout = this.addLayout(element, false);
             if (layout) {
                 addedLayouts.push(layout);
             }
         });
+
+        this.updateAllConditionalSelects();
 
         addedLayouts.forEach(layout => layout.init());
 
@@ -34,11 +36,10 @@ class Layouts {
             this.removeLayout($el[0]);
         });
 
-        this.updateAllConditionalSelects();
         this.updateAllConditionalSelectValuesOptions();
     }
 
-    private addLayout(layoutElement: HTMLElement): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
+    private addLayout(layoutElement: HTMLElement, shouldUpdateConditionalSelects: boolean = true): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
         const layout = this.layoutFactory.createLayout(layoutElement);
 
         if (!layout) {
@@ -47,7 +48,10 @@ class Layouts {
 
         this.store.add(layout.getId(), layout);
         this.setLayoutEventListeners(layoutElement);
-        this.updateAllConditionalSelects();
+
+        if (shouldUpdateConditionalSelects) {
+            this.updateAllConditionalSelects();
+        }
 
         return layout;
     }

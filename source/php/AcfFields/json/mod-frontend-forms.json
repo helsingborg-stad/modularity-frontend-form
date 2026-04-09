@@ -573,8 +573,8 @@
                                     "sub_fields": [
                                         {
                                             "key": "field_69ccb015837d9",
-                                            "label": "Name",
-                                            "name": "name",
+                                            "label": "Option",
+                                            "name": "option",
                                             "aria-label": "",
                                             "type": "text",
                                             "instructions": "",

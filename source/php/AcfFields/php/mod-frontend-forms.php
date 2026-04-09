@@ -581,8 +581,8 @@
                                     'sub_fields' => array(
                                         0 => array(
                                             'key' => 'field_69ccb015837d9',
-                                            'label' => 'Name',
-                                            'name' => 'name',
+                                            'label' => 'Option',
+                                            'name' => 'option',
                                             'aria-label' => '',
                                             'type' => 'text',
                                             'instructions' => '',

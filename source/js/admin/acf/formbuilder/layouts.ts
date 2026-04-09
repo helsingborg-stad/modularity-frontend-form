@@ -10,12 +10,16 @@ class Layouts {
     public init(): void {
         const layouts = this.field.$el.find('[data-layout]:not(.acf-clone)');
         const addedLayouts: BasicLayoutInterface[] = [];
+
         layouts.each((index: number, element: HTMLElement) => {
-            const layout = this.addLayout(element);
+            const layout = this.addLayout(element, false);
+
             if (layout) {
                 addedLayouts.push(layout);
             }
         });
+
+        this.updateAllConditionalSelects();
 
         addedLayouts.forEach(layout => {
             layout.init();
@@ -42,11 +46,10 @@ class Layouts {
             this.removeLayout($el[0]);
         });
 
-        this.updateAllConditionalSelects();
         this.updateAllConditionalSelectValuesOptions();
     }
 
-    private addLayout(layoutElement: HTMLElement): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
+    private addLayout(layoutElement: HTMLElement, shouldUpdateConditionalSelects: boolean = true): BasicLayoutInterface | SelectableValuesLayoutInterface | null {
         const layout = this.layoutFactory.createLayout(layoutElement);
 
         if (!layout) {
@@ -55,7 +58,10 @@ class Layouts {
 
         this.store.add(layout.getId(), layout);
         this.setLayoutUpdateListener(layoutElement);
-        this.updateAllConditionalSelects();
+
+        if (shouldUpdateConditionalSelects) {
+            this.updateAllConditionalSelects();
+        }
 
         return layout;
     }
@@ -75,23 +81,23 @@ class Layouts {
         });
 
         layoutElement.addEventListener('layout:conditional-changed', (event: Event) => {
-            const customEvent = event as CustomEvent<{ layoutId: string }>;
+            const layoutId = this.getLayoutIdFromEvent(event);
 
-            if (!customEvent.detail?.layoutId) {
+            if (!layoutId) {
                 return;
             }
 
-            this.maybeUpdateConditionalValueSelectForLayout(customEvent.detail.layoutId);
+            this.maybeUpdateConditionalValueSelectForLayout(layoutId);
         });
 
         layoutElement.addEventListener('layout:selectable', (event: Event) => {
-            const customEvent = event as CustomEvent<{ layoutId: string }>;
+            const layoutId = this.getLayoutIdFromEvent(event);
 
-            if (!customEvent.detail?.layoutId) {
+            if (!layoutId) {
                 return;
             }
 
-            this.maybeUpdateConditionalValueSelect(customEvent.detail.layoutId);
+            this.maybeUpdateConditionalValueSelect(layoutId);
         });
     }
 
@@ -152,6 +158,12 @@ class Layouts {
 
     private isSelectableValuesLayout(layout: BasicLayoutInterface | SelectableValuesLayoutInterface | null): layout is SelectableValuesLayoutInterface {
         return !!layout && layout.getType() === 'radio' && 'getValues' in layout;
+    }
+
+    private getLayoutIdFromEvent(event: Event): string | null {
+        const customEvent = event as CustomEvent<{ layoutId?: string }>;
+
+        return customEvent.detail?.layoutId ?? null;
     }
 }
 

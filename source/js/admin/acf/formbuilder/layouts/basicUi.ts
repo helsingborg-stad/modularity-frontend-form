@@ -90,61 +90,56 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
     }
 
     public renderConditionalSelectValuesOptions(optionsNodes: Node, selectedValues: ConditionalLogicValue, values: OptionValues[]): void {
+        const valuesByKey = new Set(values.map(value => value.key));
+        const remappedValuesByPreviousKey = new Map(values.map(value => [value.previousKey, value.key]));
         const finalSelectedValues = new Set(
             selectedValues
-                .map(selectedValue => {
-                    if (values.some(value => value.key === selectedValue)) {
-                        return selectedValue;
-                    }
-
-                    return values.find(value => value.previousKey === selectedValue)?.key;
-                })
+                .map(selectedValue => valuesByKey.has(selectedValue)
+                    ? selectedValue
+                    : remappedValuesByPreviousKey.get(selectedValue))
                 .filter((value): value is string => !!value)
         );
 
-        this.layoutData.conditionalLogicValueSelect.innerHTML = '';
-
-        while (optionsNodes.firstChild) {
-            const option = optionsNodes.firstChild as HTMLOptionElement;
-
-            if (finalSelectedValues.has(option.value)) {
-                option.selected = true;
-            }
-
-            this.layoutData.conditionalLogicValueSelect.appendChild(option);
-        }
+        this.replaceSelectOptions(this.layoutData.conditionalLogicValueSelect, optionsNodes, option => {
+            option.selected = finalSelectedValues.has(option.value);
+        });
     }
 
     public renderConditionalOperatorSelectOptions(optionsNodes: Node, selectedValue: string): void {
-        this.layoutData.conditionalOperatorSelect.innerHTML = '';
-
-        while (optionsNodes.firstChild) {
-            const option = optionsNodes.firstChild as HTMLOptionElement;
-
-            if (option.value === selectedValue) {
-                option.selected = true;
-            }
-
-            this.layoutData.conditionalOperatorSelect.appendChild(option);
-        }
+        this.replaceSelectOptions(this.layoutData.conditionalOperatorSelect, optionsNodes, option => {
+            option.selected = option.value === selectedValue;
+        });
     }
 
     public renderConditionalSelectOptions(optionsNodes: Node, layoutId: string, selectedValue: string): void {
-        this.layoutData.conditionalSelect.innerHTML = '';
+        this.replaceSelectOptions(this.layoutData.conditionalSelect, optionsNodes, option => {
+            if (option.value === layoutId) {
+                return false;
+            }
+
+            option.selected = option.value === selectedValue;
+
+            return true;
+        });
+    }
+
+    private replaceSelectOptions(
+        selectElement: HTMLSelectElement,
+        optionsNodes: Node,
+        mutateOption: (option: HTMLOptionElement) => void | boolean
+    ): void {
+        selectElement.innerHTML = '';
 
         while (optionsNodes.firstChild) {
             const option = optionsNodes.firstChild as HTMLOptionElement;
+            const shouldAppend = mutateOption(option);
 
-            if (option.value === layoutId) {
+            if (shouldAppend === false) {
                 optionsNodes.removeChild(optionsNodes.firstChild);
                 continue;
             }
 
-            if (option.value === selectedValue) {
-                option.selected = true;
-            }
-
-            this.layoutData.conditionalSelect.appendChild(option);
+            selectElement.appendChild(option);
         }
     }
 }

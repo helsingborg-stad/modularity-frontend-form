@@ -28,28 +28,21 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
             }
 
             this.initAddedOption(option);
+            this.layoutUI.dispatchSelectableUpdate();
         });
-    }
 
-    /**
-     * Sets up a debounced input listener on the option input element.
-     * Updates option key attributes only after the user has stopped typing for 1 second.
-     *
-     * @param option The input element to attach the listener to.
-     */
-    private setListenersOnOptionInput(option: HTMLInputElement): void {
-        let debounceTimeout: number | undefined;
-
-        this.layoutUI.onOptionInput(option, () => {
-            if (debounceTimeout) {
-                clearTimeout(debounceTimeout);
+        acf.addAction('remove', ($el: JQuery<HTMLElement>) => {
+            if (!this.layoutUI.isElementWithinLayout($el[0])) {
+                return;
             }
 
-            debounceTimeout = window.setTimeout(() => {
-                const previousKey = this.layoutUI.getCurrentOptionKey(option);
-                const newKey = this.getOptionKey(option);
-                this.layoutUI.updateOptionKey(option, newKey, previousKey);
-            }, 1000);
+            const option = this.layoutUI.getOptionInputFromElement($el[0]);
+
+            if (!option) {
+                return;
+            }
+
+            this.removeOption(option);
         });
     }
 
@@ -62,13 +55,25 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
     private initAddedOption(option: HTMLInputElement): void {
         const key = this.getOptionKey(option);
         const idCounter = (this.i++).toString();
+
         this.layoutUI.setOptionAttributes(option, key, key, idCounter);
         this.options[idCounter] = option;
-        this.setListenersOnOptionInput(option);
+        this.layoutUI.bindOptionInputToKeyUpdate(option, 1000, optionInput => this.getOptionKey(optionInput));
     }
 
     private getOptionKey(option: HTMLInputElement): string {
         return option.value || `option-${this.i++}`;
+    }
+
+    private removeOption(option: HTMLInputElement): void {
+        const idCounter = this.layoutUI.getOptionIdCounter(option);
+
+        if (!idCounter) {
+            return;
+        }
+
+        delete this.options[idCounter];
+        this.layoutUI.dispatchSelectableUpdate();
     }
 
     public getValues(): Array<OptionValues> {

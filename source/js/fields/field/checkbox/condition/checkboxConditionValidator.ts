@@ -1,10 +1,6 @@
 class CheckboxConditionValidator implements ConditionValidatorInterface {
 	private parent: CheckboxInterface | null = null;
 
-	private getConditionValues(condition: Condition): string[] {
-		return Array.isArray(condition.value) ? condition.value : [condition.value];
-	}
-
 	public init(parent: CheckboxInterface): void {
 		this.parent = parent;
 	}
@@ -17,15 +13,11 @@ class CheckboxConditionValidator implements ConditionValidatorInterface {
 			case "=":
 			case "===":
 			case "==contains":
-				return this.getConditionValues(condition).some((conditionValue) =>
-					selected.includes(conditionValue),
-				);
+				return selected.includes(condition.value);
 			case "!=":
 			case "!==":
 			case "!=contains":
-				return this.getConditionValues(condition).every(
-					(conditionValue) => !selected.includes(conditionValue),
-				);
+				return !selected.includes(condition.value);
 			case "==empty":
 				return selected.length === 0;
 			case "!=empty":

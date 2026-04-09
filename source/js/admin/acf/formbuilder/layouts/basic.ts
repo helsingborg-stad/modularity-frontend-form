@@ -1,5 +1,4 @@
 import LayoutOptionFragments from "../layoutOptionFragments";
-import BasicLayoutUi from "./basicUI";
 
 type ConditionalLogicState = {
     targetId: string;
@@ -10,7 +9,7 @@ type ConditionalLogicState = {
 class BasicLayout implements BasicLayoutInterface {
     constructor(
         protected layoutData: LayoutData,
-        protected layoutUI: BasicLayoutUi
+        protected layoutUI: BasicLayoutUIInterface
     ) {
         this.setConditionalSelectListener();
         this.setConditionalOperatorSelectListener();
@@ -49,6 +48,18 @@ class BasicLayout implements BasicLayoutInterface {
         this.maybeDisableConditionalOperatorSelect();
         this.updateConditionalOperatorSelectOptions();
         this.updateConditionalValueSelectDisabledState();
+        this.clearConditionalValueSelectIfTargetIsNotSelectable();
+    }
+
+    private clearConditionalValueSelectIfTargetIsNotSelectable(): void {
+        const conditionalTargetLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
+
+        if (this.isSelectableValuesLayout(conditionalTargetLayout)) {
+            return;
+        }
+
+        this.layoutUI.clearConditionalLogicValueSelect();
+        this.saveConditionalLogicState();
     }
 
     private updateConditionalValueSelectDisabledState(): void {

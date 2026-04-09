@@ -2,7 +2,6 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
     private nameFieldInputTimeout: number | undefined;
 
     constructor(protected layoutData: LayoutData) {
-        this.layoutData.conditionalLogicValueSelect.multiple = true;
         this.bindNameInputToLayoutUpdate(500);
     }
 
@@ -72,6 +71,10 @@ class BasicLayoutUI implements BasicLayoutUIInterface {
         Array.from(this.layoutData.conditionalLogicValueSelect.options).forEach(option => {
             option.selected = selectedValues.has(option.value);
         });
+    }
+
+    public clearConditionalLogicValueSelect(): void {
+        this.layoutData.conditionalLogicValueSelect.innerHTML = '';
     }
 
     public setSavedConditionalLogicValue(value: string): void {

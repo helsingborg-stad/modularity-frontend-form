@@ -50,6 +50,7 @@ interface BasicLayoutUIInterface {
     setConditionalOperatorValue(value: string): void;
     getConditionalLogicValueSelectValues(): ConditionalLogicValue;
     setConditionalLogicValueSelectValues(values: ConditionalLogicValue): void;
+    clearConditionalLogicValueSelect(): void;
     setSavedConditionalLogicValue(value: string): void;
     getSavedConditionalLogicValue(): string;
     getNameField(): HTMLInputElement;

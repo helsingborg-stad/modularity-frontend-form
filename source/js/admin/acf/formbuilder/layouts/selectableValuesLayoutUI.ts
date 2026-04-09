@@ -1,11 +1,11 @@
-import BasicLayoutUI from "./basicUI";
+import BasicLayoutUI from "./basicUi";
 
 class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValuesLayoutUIInterface {
-    private OPTIONS_TARGET = '[data-name="options"] .acf-row:not(.acf-clone) input';
-    private OPTION_TARGET = '[data-name="name"] input';
-    private OPTION_ID_ATTRIBUTE = 'data-option-key';
-    private OPTION_PREVIOUS_ID_ATTRIBUTE = 'data-previous-option-key';
-    private OPTION_ID_COUNTER_ATTRIBUTE = 'data-option-id';
+    private readonly OPTIONS_TARGET = '[data-name="options"] .acf-row:not(.acf-clone) input';
+    private readonly OPTION_TARGET = '[data-name="name"] input';
+    private readonly OPTION_KEY_ATTRIBUTE = 'data-option-key';
+    private readonly OPTION_PREVIOUS_KEY_ATTRIBUTE = 'data-previous-option-key';
+    private readonly OPTION_ID_COUNTER_ATTRIBUTE = 'data-option-id';
     private optionInputTimeouts = new WeakMap<HTMLInputElement, number>();
 
     constructor(layoutData: LayoutData) {
@@ -13,36 +13,24 @@ class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValues
     }
 
     public getOptionsFromDOM(): HTMLInputElement[] {
-        const result: HTMLInputElement[] = [];
-        this.layoutData.layout.querySelectorAll(this.OPTIONS_TARGET).forEach((option: Element) => {
-            if (option instanceof HTMLInputElement) {
-                result.push(option);
-            }
-        });
-        return result;
+        return Array.from(
+            this.layoutData.layout.querySelectorAll<HTMLInputElement>(this.OPTIONS_TARGET)
+        );
     }
 
     public getOptionInputFromElement(element: HTMLElement): HTMLInputElement | null {
-        return element.querySelector(this.OPTION_TARGET) as HTMLInputElement | null;
+        return element.querySelector<HTMLInputElement>(this.OPTION_TARGET);
     }
 
     public bindOptionInputToKeyUpdate(option: HTMLInputElement, debounceMs: number, getNewKey: (option: HTMLInputElement) => string): void {
         this.onOptionInput(option, () => {
-            const existingTimeout = this.optionInputTimeouts.get(option);
-
-            if (existingTimeout) {
-                clearTimeout(existingTimeout);
-            }
+            clearTimeout(this.optionInputTimeouts.get(option));
 
             const timeoutId = window.setTimeout(() => {
                 const previousKey = this.getCurrentOptionKey(option);
                 const newKey = getNewKey(option);
                 this.updateOptionKey(option, newKey, previousKey);
-                this.layoutData.layout.dispatchEvent(new CustomEvent('layout:selectable', {
-                    detail: {
-                        layoutId: this.layoutData.layoutId
-                    }
-                }));
+                this.dispatchSelectableUpdate();
             }, debounceMs);
 
             this.optionInputTimeouts.set(option, timeoutId);
@@ -50,18 +38,18 @@ class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValues
     }
 
     public setOptionAttributes(option: HTMLInputElement, key: string, previousKey: string, idCounter: string): void {
-        option.setAttribute(this.OPTION_ID_ATTRIBUTE, key);
-        option.setAttribute(this.OPTION_PREVIOUS_ID_ATTRIBUTE, previousKey);
+        option.setAttribute(this.OPTION_KEY_ATTRIBUTE, key);
+        option.setAttribute(this.OPTION_PREVIOUS_KEY_ATTRIBUTE, previousKey);
         option.setAttribute(this.OPTION_ID_COUNTER_ATTRIBUTE, idCounter);
     }
 
     public updateOptionKey(option: HTMLInputElement, newKey: string, previousKey: string): void {
-        option.setAttribute(this.OPTION_ID_ATTRIBUTE, newKey);
-        option.setAttribute(this.OPTION_PREVIOUS_ID_ATTRIBUTE, previousKey);
+        option.setAttribute(this.OPTION_KEY_ATTRIBUTE, newKey);
+        option.setAttribute(this.OPTION_PREVIOUS_KEY_ATTRIBUTE, previousKey);
     }
 
     public getCurrentOptionKey(option: HTMLInputElement): string {
-        return option.getAttribute(this.OPTION_ID_ATTRIBUTE) ?? '';
+        return option.getAttribute(this.OPTION_KEY_ATTRIBUTE) ?? '';
     }
 
     public getOptionIdCounter(option: HTMLInputElement): string | null {
@@ -70,17 +58,15 @@ class SelectableValuesLayoutUI extends BasicLayoutUI implements SelectableValues
 
     public dispatchSelectableUpdate(): void {
         this.layoutData.layout.dispatchEvent(new CustomEvent('layout:selectable', {
-            detail: {
-                layoutId: this.layoutData.layoutId
-            }
+            detail: { layoutId: this.layoutData.layoutId }
         }));
     }
 
     public getOptionAttributes(option: HTMLInputElement): OptionValues {
         return {
-            key: option.getAttribute(this.OPTION_ID_ATTRIBUTE) ?? '',
-            previousKey: option.getAttribute(this.OPTION_PREVIOUS_ID_ATTRIBUTE) ?? '',
-            label: option.value ?? ''
+            key: option.getAttribute(this.OPTION_KEY_ATTRIBUTE) ?? '',
+            previousKey: option.getAttribute(this.OPTION_PREVIOUS_KEY_ATTRIBUTE) ?? '',
+            label: option.value
         };
     }
 

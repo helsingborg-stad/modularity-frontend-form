@@ -1,5 +1,5 @@
 import BasicLayout from "./layouts/basic";
-import BasicLayoutUI from "./layouts/basicUI";
+import BasicLayoutUI from "./layouts/basicUi";
 import RadioLayout from "./layouts/selectableValuesLayout";
 import SelectableValuesLayoutUI from "./layouts/selectableValuesLayoutUI";
 
@@ -69,30 +69,21 @@ class LayoutFactory {
     }
 
     private getLayoutType(layout: HTMLElement): string | undefined {
-        const type = layout.getAttribute('data-layout');
-
-        if (!type) {
-            return;
-        }
-
-        return type.replace('formbuilder-', '');
+        return layout.getAttribute('data-layout')?.replace('formbuilder-', '') ?? undefined;
     }
 
     private findAndMaybeSetLayoutId(layout: HTMLElement): string | undefined {
-        const conditionalLogicFields = layout.querySelector('[data-name="hidden_id"] input') as HTMLInputElement | null;
+        const idField = layout.querySelector('[data-name="hidden_id"] input') as HTMLInputElement | null;
 
-        if (!conditionalLogicFields) {
+        if (!idField) {
             return;
         }
 
-        let id = conditionalLogicFields.value;
-
-        if (!id) {
-            id = 'hidden-id-' + Math.random().toString(36).substr(2, 9);
-            conditionalLogicFields.value = id;
+        if (!idField.value) {
+            idField.value = crypto.randomUUID();
         }
 
-        return id;
+        return idField.value;
     }
 }
 

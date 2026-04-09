@@ -16,6 +16,12 @@ type OptionValues = {
 
 type ConditionalLogicValue = string[];
 
+type ConditionalLogicState = {
+    targetId: string;
+    operator: string;
+    value: ConditionalLogicValue;
+};
+
 interface SelectableValuesLayoutInterface extends BasicLayoutInterface {
     getValues(): Array<OptionValues>;
     initOptions(): void;
@@ -71,6 +77,4 @@ type LayoutData = {
     store: FormBuilderStoreInterface;
 }
 
-type options = {
-    [key: string]: HTMLInputElement;
-}
+type LayoutOptions = Record<string, HTMLInputElement>;

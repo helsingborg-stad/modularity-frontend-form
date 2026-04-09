@@ -1,10 +1,4 @@
-import LayoutOptionFragments from "../layoutOptionFragments";
-
-type ConditionalLogicState = {
-    targetId: string;
-    operator: string;
-    value: ConditionalLogicValue;
-};
+import { createConditionalOperatorOptionsFragment } from "../layoutOptionFragments";
 
 class BasicLayout implements BasicLayoutInterface {
     constructor(
@@ -52,9 +46,9 @@ class BasicLayout implements BasicLayoutInterface {
     }
 
     private clearConditionalValueSelectIfTargetIsNotSelectable(): void {
-        const conditionalTargetLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
+        const targetLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
 
-        if (this.isSelectableValuesLayout(conditionalTargetLayout)) {
+        if (this.isSelectableValuesLayout(targetLayout)) {
             return;
         }
 
@@ -76,12 +70,12 @@ class BasicLayout implements BasicLayoutInterface {
     }
 
     private updateConditionalOperatorSelectOptions(): void {
-        const conditionalValueLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
-        const includeContains = this.isSelectableValuesLayout(conditionalValueLayout);
-        const operatorOptions = LayoutOptionFragments.createConditionalOperatorOptionsFragment(includeContains);
+        const targetLayout = this.layoutData.store.get(this.layoutUI.getConditionalSelectValue());
+        const includeContains = this.isSelectableValuesLayout(targetLayout);
+        const fragment = createConditionalOperatorOptionsFragment(includeContains);
         const selectedOperator = this.getSavedConditionalLogicState()?.operator ?? this.layoutUI.getConditionalOperatorValue();
 
-        this.layoutUI.renderConditionalOperatorSelectOptions(operatorOptions, selectedOperator);
+        this.layoutUI.renderConditionalOperatorSelectOptions(fragment, selectedOperator);
     }
 
     private saveConditionalLogicState(): void {
@@ -122,21 +116,21 @@ class BasicLayout implements BasicLayoutInterface {
         }
 
         try {
-            const parsedValue = JSON.parse(rawValue) as Partial<ConditionalLogicState>;
+            const parsed = JSON.parse(rawValue) as Partial<ConditionalLogicState>;
 
-            if (typeof parsedValue !== 'object' || parsedValue === null) {
+            if (typeof parsed !== 'object' || parsed === null) {
                 return null;
             }
 
-            const value = Array.isArray(parsedValue.value)
-                ? parsedValue.value
-                : typeof parsedValue.value === 'string'
-                    ? [parsedValue.value]
+            const value = Array.isArray(parsed.value)
+                ? parsed.value
+                : typeof parsed.value === 'string'
+                    ? [parsed.value]
                     : [];
 
             return {
-                targetId: parsedValue.targetId ?? '',
-                operator: parsedValue.operator ?? '',
+                targetId: parsed.targetId ?? '',
+                operator: parsed.operator ?? '',
                 value
             };
         } catch {
@@ -167,11 +161,7 @@ class BasicLayout implements BasicLayoutInterface {
     public updateConditionalSelectValuesOptions(optionsNodes: Node, values: OptionValues[]): void {
         const selectedValues = this.getSavedConditionalLogicState()?.value ?? this.layoutUI.getConditionalLogicValueSelectValues();
 
-        this.layoutUI.renderConditionalSelectValuesOptions(
-            optionsNodes,
-            selectedValues,
-            values
-        );
+        this.layoutUI.renderConditionalSelectValuesOptions(optionsNodes, selectedValues, values);
 
         const selectedValuesAfterRender = this.layoutUI.getConditionalLogicValueSelectValues();
 

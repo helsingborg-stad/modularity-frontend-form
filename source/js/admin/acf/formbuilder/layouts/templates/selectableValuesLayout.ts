@@ -1,5 +1,5 @@
 import BasicLayout from "./basic";
-import SelectableValuesLayoutUI from "./selectableValuesLayoutUI";
+import SelectableValuesLayoutUI from "./selectableValuesLayoutUi";
 
 class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayoutInterface {
     private options: LayoutOptions = {};
@@ -14,7 +14,7 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
     }
 
     public initOptions(): void {
-        this.layoutUI.getOptionsFromDOM().forEach(option => this.initAddedOption(option));
+        this.layoutUI.getOptionsFromDOM().forEach((option: HTMLInputElement) => this.initAddedOption(option));
 
         acf.addAction('append', ($el: JQuery<HTMLElement>) => {
             if (!this.layoutUI.isElementWithinLayout($el[0])) {
@@ -51,7 +51,7 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
         const idCounter = (this.optionCounter++).toString();
         this.layoutUI.setOptionAttributes(option, key, key, idCounter);
         this.options[idCounter] = option;
-        this.layoutUI.bindOptionInputToKeyUpdate(option, 1000, opt => this.getOptionKey(opt));
+        this.layoutUI.bindOptionInputToKeyUpdate(option, 1000, (opt: HTMLInputElement) => this.getOptionKey(opt));
     }
 
     private getOptionKey(option: HTMLInputElement): string {
@@ -69,7 +69,7 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
         this.layoutUI.dispatchSelectableUpdate();
     }
 
-    public getValues(): OptionValues[] {
+    public getValue(): OptionValues[] {
         return Object.values(this.options).map(element => this.layoutUI.getOptionAttributes(element));
     }
 }

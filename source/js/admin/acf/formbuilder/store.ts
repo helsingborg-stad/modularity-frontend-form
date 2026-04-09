@@ -1,5 +1,5 @@
 class Store implements FormBuilderStoreInterface {
-    private layouts: Record<string, BasicLayoutInterface | SelectableValuesLayoutInterface> = {};
+    private readonly layouts: Record<string, BasicLayoutInterface | SelectableValuesLayoutInterface> = {};
 
     public add(id: string, layout: BasicLayoutInterface | SelectableValuesLayoutInterface): void {
         this.layouts[id] = layout;

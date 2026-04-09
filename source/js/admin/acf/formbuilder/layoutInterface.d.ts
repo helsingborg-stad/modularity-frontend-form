@@ -23,7 +23,7 @@ type ConditionalLogicState = {
 };
 
 interface SelectableValuesLayoutInterface extends BasicLayoutInterface {
-    getValues(): Array<OptionValues>;
+    getValue(): Array<OptionValues>;
     initOptions(): void;
 }
 

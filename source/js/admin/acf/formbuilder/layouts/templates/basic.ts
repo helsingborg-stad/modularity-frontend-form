@@ -1,4 +1,4 @@
-import { createConditionalOperatorOptionsFragment } from "../layoutOptionFragments";
+import { createConditionalOperatorOptionsFragment } from "../../layoutOptionFragments";
 
 class BasicLayout implements BasicLayoutInterface {
     constructor(
@@ -62,7 +62,7 @@ class BasicLayout implements BasicLayoutInterface {
     }
 
     private isSelectableValuesLayout(layout: BasicLayoutInterface | null): layout is SelectableValuesLayoutInterface {
-        return !!layout && layout.getType() === 'radio' && 'getValues' in layout;
+        return !!layout && 'getValue' in layout;
     }
 
     private maybeDisableConditionalOperatorSelect(): void {

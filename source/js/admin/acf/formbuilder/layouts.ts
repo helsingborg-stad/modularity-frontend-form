@@ -1,9 +1,8 @@
 import LayoutFactory from "./layoutFactory";
 import { createConditionalValueOptionsFragment, createLayoutOptionsFragment } from "./layoutOptionFragments";
-import Store from "./store";
 
 class Layouts {
-    constructor(private field: AcfField, private layoutFactory: LayoutFactory, private store: Store) { }
+    constructor(private field: AcfField, private layoutFactory: LayoutFactory, private store: FormBuilderStoreInterface) { }
 
     public init(): void {
         const addedLayouts: BasicLayoutInterface[] = [];
@@ -98,7 +97,7 @@ class Layouts {
             return;
         }
 
-        const values = layout.getValues();
+        const values = layout.getValue();
         const fragment = createConditionalValueOptionsFragment(values);
 
         affectedLayouts.forEach(l => {
@@ -128,7 +127,7 @@ class Layouts {
     }
 
     private isSelectableValuesLayout(layout: BasicLayoutInterface | SelectableValuesLayoutInterface | null): layout is SelectableValuesLayoutInterface {
-        return !!layout && layout.getType() === 'radio' && 'getValues' in layout;
+        return !!layout && 'getValue' in layout;
     }
 }
 

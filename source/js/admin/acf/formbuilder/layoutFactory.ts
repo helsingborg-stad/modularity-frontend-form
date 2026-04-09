@@ -1,10 +1,18 @@
-import BasicLayout from "./layouts/basic";
-import BasicLayoutUI from "./layouts/basicUi";
-import RadioLayout from "./layouts/selectableValuesLayout";
-import SelectableValuesLayoutUI from "./layouts/selectableValuesLayoutUI";
+import BasicLayout from "./layouts/templates/basic";
+import BasicLayoutUI from "./layouts/templates/basicUi";
+import SelectableValuesLayoutUI from "./layouts/templates/selectableValuesLayoutUi";
+import { type LayoutDefinition, layoutDefinitions } from "./layoutConfig";
+
+type LayoutCreator = (layoutData: LayoutData) => BasicLayoutInterface;
 
 class LayoutFactory {
-    constructor(private store: FormBuilderStoreInterface) { }
+    private readonly layoutRegistry: Record<string, LayoutCreator>;
+    private readonly defaultLayoutCreator: LayoutCreator;
+
+    constructor(private store: FormBuilderStoreInterface) {
+        this.layoutRegistry = this.createLayoutRegistry(layoutDefinitions);
+        this.defaultLayoutCreator = this.createBasicLayoutCreator(BasicLayout);
+    }
 
     public createLayout(layout: HTMLElement): BasicLayoutInterface | null {
         const layoutData = this.getLayoutData(layout);
@@ -13,13 +21,31 @@ class LayoutFactory {
             return null;
         }
 
-        if (layoutData.layoutType === 'radio') {
-            const selectableValuesLayout = new RadioLayout(layoutData, new SelectableValuesLayoutUI(layoutData));
-            selectableValuesLayout.initOptions();
-            return selectableValuesLayout;
-        }
+        return (this.layoutRegistry[layoutData.layoutType] ?? this.defaultLayoutCreator)(layoutData);
+    }
 
-        return new BasicLayout(layoutData, new BasicLayoutUI(layoutData));
+    private createLayoutRegistry(definitions: LayoutDefinition[]): Record<string, LayoutCreator> {
+        return Object.fromEntries(
+            definitions.map(definition => [
+                definition.type,
+                definition.kind === 'selectable'
+                    ? this.createSelectableLayoutCreator(definition.LayoutClass)
+                    : this.createBasicLayoutCreator(definition.LayoutClass)
+            ])
+        );
+    }
+
+    private createBasicLayoutCreator(LayoutClass: new (layoutData: LayoutData, layoutUI: BasicLayoutUI) => BasicLayoutInterface): LayoutCreator {
+        return (layoutData: LayoutData) => new LayoutClass(layoutData, new BasicLayoutUI(layoutData));
+    }
+
+    private createSelectableLayoutCreator(LayoutClass: new (layoutData: LayoutData, layoutUI: SelectableValuesLayoutUI) => SelectableValuesLayoutInterface): LayoutCreator {
+        return (layoutData: LayoutData) => {
+            const layout = new LayoutClass(layoutData, new SelectableValuesLayoutUI(layoutData));
+            layout.initOptions();
+
+            return layout;
+        };
     }
 
     private getLayoutData(layout: HTMLElement): LayoutData | null {

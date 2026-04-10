@@ -5,7 +5,7 @@ interface BasicLayoutInterface {
     getId(): string;
     getNameField(): HTMLInputElement;
     getType(): string;
-    getSavedConditionalLogicValue(): string;
+    getSavedConditionalTargetId(): string;
 }
 
 type OptionValues = {

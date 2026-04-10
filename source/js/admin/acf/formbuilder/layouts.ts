@@ -91,7 +91,7 @@ class Layouts {
             return;
         }
 
-        const affectedLayouts = this.store.getAll().filter(l => l.getSavedConditionalLogicValue() === layoutId);
+        const affectedLayouts = this.store.getAll().filter(l => l.getSavedConditionalTargetId() === layoutId);
 
         if (affectedLayouts.length === 0) {
             return;
@@ -106,7 +106,7 @@ class Layouts {
     }
 
     private maybeUpdateConditionalValueSelectForLayout(changedLayoutId: string): void {
-        const targetId = this.store.get(changedLayoutId)?.getSavedConditionalLogicValue();
+        const targetId = this.store.get(changedLayoutId)?.getSavedConditionalTargetId();
         if (targetId) {
             this.maybeUpdateConditionalValueSelect(targetId);
         }

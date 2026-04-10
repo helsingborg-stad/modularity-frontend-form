@@ -1,4 +1,5 @@
 import BasicLayout from "./basic";
+import ConditionalLogicController from "./conditionalLogicController";
 import SelectableValuesLayoutUI from "./selectableValuesLayoutUi";
 
 class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayoutInterface {
@@ -8,9 +9,10 @@ class SelectableValuesLayout extends BasicLayout implements SelectableValuesLayo
 
     constructor(
         protected layoutData: LayoutData,
-        protected layoutUI: SelectableValuesLayoutUI
+        protected layoutUI: SelectableValuesLayoutUI,
+        conditionalLogicController: ConditionalLogicController
     ) {
-        super(layoutData, layoutUI);
+        super(layoutData, layoutUI, conditionalLogicController);
     }
 
     public initOptions(): void {

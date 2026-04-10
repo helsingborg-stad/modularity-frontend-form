@@ -1,5 +1,6 @@
 import BasicLayout from "./layouts/templates/basic";
 import BasicLayoutUI from "./layouts/templates/basicUi";
+import ConditionalLogicController from "./layouts/templates/conditionalLogicController";
 import SelectableValuesLayoutUI from "./layouts/templates/selectableValuesLayoutUi";
 import { type LayoutDefinition, layoutDefinitions } from "./layoutConfig";
 
@@ -35,13 +36,20 @@ class LayoutFactory {
         );
     }
 
-    private createBasicLayoutCreator(LayoutClass: new (layoutData: LayoutData, layoutUI: BasicLayoutUI) => BasicLayoutInterface): LayoutCreator {
-        return (layoutData: LayoutData) => new LayoutClass(layoutData, new BasicLayoutUI(layoutData));
+    private createBasicLayoutCreator(LayoutClass: new (layoutData: LayoutData, layoutUI: BasicLayoutUI, conditionalLogicController: ConditionalLogicController) => BasicLayoutInterface): LayoutCreator {
+        return (layoutData: LayoutData) => {
+            const layoutUI = new BasicLayoutUI(layoutData);
+            const conditionalLogicController = new ConditionalLogicController(layoutData, layoutUI);
+
+            return new LayoutClass(layoutData, layoutUI, conditionalLogicController);
+        };
     }
 
-    private createSelectableLayoutCreator(LayoutClass: new (layoutData: LayoutData, layoutUI: SelectableValuesLayoutUI) => SelectableValuesLayoutInterface): LayoutCreator {
+    private createSelectableLayoutCreator(LayoutClass: new (layoutData: LayoutData, layoutUI: SelectableValuesLayoutUI, conditionalLogicController: ConditionalLogicController) => SelectableValuesLayoutInterface): LayoutCreator {
         return (layoutData: LayoutData) => {
-            const layout = new LayoutClass(layoutData, new SelectableValuesLayoutUI(layoutData));
+            const layoutUI = new SelectableValuesLayoutUI(layoutData);
+            const conditionalLogicController = new ConditionalLogicController(layoutData, layoutUI);
+            const layout = new LayoutClass(layoutData, layoutUI, conditionalLogicController);
             layout.initOptions();
 
             return layout;

@@ -1,0 +1,4060 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "flexite REST API",
+    "version": "9.13.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://domain.tld/flexite/api",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Search instances",
+      "description": "Search instances by available attributes"
+    },
+    {
+      "name": "List view of instances",
+      "description": "List view of instances with details"
+    },
+    {
+      "name": "Identity operations",
+      "description": "Handle actions and operations based on an identity."
+    },
+    {
+      "name": "Instance operations",
+      "description": "Create instance, sign instance, view instance, add/reply message"
+    },
+    {
+      "name": "Responsibility",
+      "description": "Instance responsibility"
+    }
+  ],
+  "paths": {
+    "/process/{process_id}/search": {
+      "get": {
+        "tags": [
+          "Search instances"
+        ],
+        "summary": "List of available search attributes",
+        "description": "Returns list of available search attributes for authenticated user",
+        "operationId": "getAvailableAttributes",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 906
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchAttributesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Search instances"
+        ],
+        "summary": "Instance search",
+        "description": "Searches for instances and returns list of instance ID",
+        "operationId": "search",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 906
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/process/{process_id}/listview": {
+      "get": {
+        "tags": [
+          "List view of instances"
+        ],
+        "summary": "List of available instance attributes",
+        "description": "Returns list of available instance attributes for authenticated user",
+        "operationId": "getAvailableAttributes_1",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 906
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListViewAttributesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "List view of instances"
+        ],
+        "summary": "List of instances with details",
+        "description": "Produces list of instances with details",
+        "operationId": "search_1",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 906
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListViewResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/process/{process_id}/instance": {
+      "post": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "Create instance",
+        "description": "Creates instance and returns instance ID",
+        "operationId": "createInstance",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Instance cannot be created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/process/{process_id}/instance/{instance_id}": {
+      "get": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "View instance",
+        "description": "View instance details",
+        "operationId": "getInstanceData",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 284
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "Sign instance",
+        "description": "Signs instance",
+        "operationId": "signInstance",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 284
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully signed"
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Instance cannot be signed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "Update instance values",
+        "description": "Updates instance values in components",
+        "operationId": "updateInstance",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 284
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated"
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Instance cannot be updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/process/{process_id}/instance/{instance_id}/message": {
+      "get": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "List of available message receivers",
+        "description": "Returns list of available message receivers for authenticated user",
+        "operationId": "getMessageReceivers",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 906
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10590506
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageReceiversResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "Add new message",
+        "description": "Adds new message to instance",
+        "operationId": "addMessage",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 284
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request cannot be processed due to incorrect data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/process/{process_id}/instance/{instance_id}/message/{message_id}": {
+      "post": {
+        "tags": [
+          "Instance operations"
+        ],
+        "summary": "Add reply message",
+        "description": "Adds reply message to instance",
+        "operationId": "replyMessage",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Instance ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 284
+          },
+          {
+            "name": "message_id",
+            "in": "path",
+            "description": "Message ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 4528
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyMessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request cannot be processed due to incorrect data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity": {
+      "get": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "View attributes of an identity.",
+        "description": "View the attributes of a specific identity, including not filled in ones.",
+        "operationId": "getIdentityAttributes",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityAttributesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Save attributes to a identity",
+        "description": "Validate and save attributes to a specific identity, all required attributes must be provided and valid for saving to be done.",
+        "operationId": "saveIdentityAttributes",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentitySaveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentitySaveResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/instances": {
+      "post": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Get list of available instances for the identity.",
+        "description": "Get instances and partial information available for the provided identity.",
+        "operationId": "getIdentityInstanceList",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityListRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/instances/{instanceId}/message/{messageId}": {
+      "post": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Add reply message",
+        "description": "Adds reply message to instance by the provided identity.",
+        "operationId": "replyIdentityMessage",
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyMessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request cannot be processed due to incorrect data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/process/{process_id}/instances": {
+      "get": {
+        "tags": [
+          "Responsibility"
+        ],
+        "summary": "Instance responsibility",
+        "description": "Returns list of instances where user is current responsible",
+        "operationId": "getInstances",
+        "parameters": [
+          {
+            "name": "process_id",
+            "in": "path",
+            "description": "Process ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 14
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/processes": {
+      "get": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Get identity processes and e-services.",
+        "description": "Get information about processes and e-services available for the identity user.",
+        "operationId": "getIdentityProcesses",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityProcessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/instances/{instanceId}": {
+      "get": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Get detailed instance information for an identity.",
+        "description": "Get available detailed instance information for the provided identity.",
+        "operationId": "getIdentityInstanceDetails",
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/instances/{instanceId}/message/{messageId}/file/{fileId}": {
+      "get": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Get file data from a message attachment for an identity.",
+        "description": "Get available file data from a specific message attachment in an instance for the provided identity.",
+        "operationId": "getIdentityMessageFile",
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonValue"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identity/instances/{instanceId}/file/{componentId}": {
+      "get": {
+        "tags": [
+          "Identity operations"
+        ],
+        "summary": "Get file data from an instance for an identity.",
+        "description": "Get available file data from a specific component in an instance for the provided identity.",
+        "operationId": "getIdentityInstanceFile",
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "Accept-Language header",
+            "required": true,
+            "example": "en-US, en;q=0.9"
+          },
+          {
+            "name": "SECRET_KEY",
+            "in": "header",
+            "description": "Flexite Project ID",
+            "required": true,
+            "example": "FLEXITE"
+          },
+          {
+            "name": "LOGIN_TYPE",
+            "in": "header",
+            "description": "Login type",
+            "required": true,
+            "example": "standard"
+          },
+          {
+            "name": "USERNAME",
+            "in": "header",
+            "description": "Flexite user name",
+            "required": true,
+            "example": "username"
+          },
+          {
+            "name": "PASSWORD",
+            "in": "header",
+            "description": "Base64 encoded SHA1 hash of flexite user password. Original password in example is 'password'",
+            "required": true,
+            "example": "NWJhYTYxZTRjOWI5M2YzZjA2ODIyNTBiNmNmODMzMWI3ZWU2OGZkOA=="
+          },
+          {
+            "name": "UNIQUE_STRING",
+            "in": "header",
+            "description": "Flexite visitor unique string. Used to identify an identity.",
+            "required": true,
+            "example": "100001011234"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully finished",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonValue"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication cannot be performed due to incorrect or missing header(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed - Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Process or instance could not be found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429 ": {
+            "description": "Account/IP is blocked due to too many unsuccessful login attempts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Error",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Error code",
+            "example": 5
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Authentication failed: User name missing"
+          },
+          "exception": {
+            "type": "string",
+            "description": "Exception stack trace",
+            "example": "java.lang.NullPointerException\nat com.company.project.Book.getTitle(Book.java:16)\nat com.company.project.Author.getBookTitles(Author.java:25)"
+          }
+        }
+      },
+      "MessageError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "The file is bigger than allowed"
+          }
+        }
+      },
+      "SearchAttribute": {
+        "type": "object",
+        "description": "Search attribute",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute ID",
+            "example": 5
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchValue"
+            }
+          }
+        }
+      },
+      "SearchRequest": {
+        "type": "object",
+        "description": "List of search attributes",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchAttribute"
+            }
+          }
+        }
+      },
+      "SearchValue": {
+        "type": "object",
+        "description": "Search value",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Value ID",
+            "example": 214
+          },
+          "value": {
+            "type": "string",
+            "description": "Value",
+            "example": "FX202400385"
+          }
+        }
+      },
+      "Instance": {
+        "type": "object",
+        "description": "Instance",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Instance ID",
+            "example": 104
+          }
+        }
+      },
+      "InstanceList": {
+        "type": "object",
+        "description": "List of instances",
+        "properties": {
+          "instances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            }
+          }
+        }
+      },
+      "ListViewRequest": {
+        "type": "object",
+        "description": "List view request",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "description": "List of requested attributes",
+            "items": {
+              "$ref": "#/components/schemas/ListViewRequestAttribute"
+            }
+          },
+          "instances": {
+            "type": "array",
+            "description": "List of instances",
+            "items": {
+              "$ref": "#/components/schemas/Instance"
+            }
+          }
+        }
+      },
+      "ListViewRequestAttribute": {
+        "type": "object",
+        "description": "Attribute",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute ID",
+            "example": 5
+          }
+        }
+      },
+      "ListViewInstance": {
+        "type": "object",
+        "description": "Instance",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Instance ID",
+            "example": 104
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListViewInstanceAttribute"
+            }
+          }
+        }
+      },
+      "ListViewInstanceAttribute": {
+        "type": "object",
+        "description": "Attribute",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute ID",
+            "example": 5
+          },
+          "value": {
+            "type": "string",
+            "description": "Attribute value",
+            "example": "FX202400385"
+          },
+          "filename": {
+            "type": "string",
+            "description": "File name for file component",
+            "example": "attachment.txt"
+          }
+        }
+      },
+      "ListViewResponse": {
+        "type": "object",
+        "description": "List of instances",
+        "properties": {
+          "instances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListViewInstance"
+            }
+          }
+        }
+      },
+      "Component": {
+        "type": "object",
+        "description": "Component with list of values",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Component ID",
+            "example": 101
+          },
+          "caption": {
+            "type": "string",
+            "description": "Component caption",
+            "example": "User name"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Value"
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18",
+              "19",
+              "20",
+              "21",
+              "22",
+              "23",
+              "24",
+              "25",
+              "26",
+              "27",
+              "28",
+              "30",
+              "31",
+              "35",
+              "36",
+              "37",
+              "38",
+              "39",
+              "-1"
+            ],
+            "writeOnly": true
+          }
+        }
+      },
+      "InstanceRequest": {
+        "type": "object",
+        "description": "List of components",
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Component"
+            }
+          }
+        }
+      },
+      "Value": {
+        "type": "object",
+        "description": "Component value",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Value ID",
+            "example": 214
+          },
+          "type": {
+            "type": "string",
+            "description": "Value type",
+            "enum": [
+              "STRING",
+              "NUMBER",
+              "DATE",
+              "TIME",
+              "FILE",
+              "URL"
+            ],
+            "example": "STRING"
+          },
+          "name": {
+            "type": "string",
+            "description": "Value name",
+            "example": "User"
+          },
+          "value": {
+            "type": "string",
+            "description": "Value content",
+            "example": "John Doe"
+          },
+          "filename": {
+            "type": "string",
+            "description": "File name",
+            "example": "attachment.txt"
+          }
+        }
+      },
+      "ComponentError": {
+        "type": "object",
+        "description": "Component error",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Component ID",
+            "example": 215
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Error code",
+            "example": 2
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Incorrect value or value can't be selected"
+          }
+        }
+      },
+      "SignError": {
+        "type": "object",
+        "description": "Create/sign instance error",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Instance can't be signed due to component errors"
+          },
+          "componentErrors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentError"
+            }
+          }
+        }
+      },
+      "InstanceResponse": {
+        "type": "object",
+        "description": "Created instance",
+        "properties": {
+          "instanceId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Created instance ID",
+            "example": 42
+          }
+        }
+      },
+      "File": {
+        "type": "object",
+        "description": "Attached file",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "File ID",
+            "example": 342
+          },
+          "filename": {
+            "type": "string",
+            "description": "File name",
+            "example": "attachment.txt"
+          },
+          "content": {
+            "type": "string",
+            "description": "Base64 encoded file content",
+            "example": "Q29udGVudCBmb3IgdGhlIGZpbGU="
+          }
+        }
+      },
+      "MessageUser": {
+        "type": "object",
+        "description": "Message user",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Message user type",
+            "enum": [
+              "ORIGINAL_INITITATOR",
+              "CONNECTED_IDENTITY",
+              "RESPONSIBLE",
+              "INTERNAL",
+              "EXTERNAL"
+            ],
+            "example": "INTERNAL"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Message user ID",
+            "example": 394
+          },
+          "name": {
+            "type": "string",
+            "description": "Message user name",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Message user email",
+            "example": "john.doe@company.com"
+          }
+        }
+      },
+      "NewMessageRequest": {
+        "type": "object",
+        "description": "Create message request",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "Message subject",
+            "example": "Water leakage"
+          },
+          "text": {
+            "type": "string",
+            "description": "Message text",
+            "example": "I have water leakage in my appartments.\nPlease, fix it"
+          },
+          "importance": {
+            "type": "string",
+            "description": "Message importance",
+            "enum": [
+              "STANDARD",
+              "HIGH",
+              "LOW"
+            ],
+            "example": "STANDARD"
+          },
+          "confidential": {
+            "type": "boolean",
+            "description": "Message is confidential",
+            "example": true
+          },
+          "files": {
+            "type": "array",
+            "description": "List of attached files",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "receivers": {
+            "type": "array",
+            "description": "List of message receivers",
+            "items": {
+              "$ref": "#/components/schemas/MessageUser"
+            }
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "description": "Created message",
+        "properties": {
+          "messageId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Created message ID",
+            "example": 42
+          }
+        }
+      },
+      "ReplyMessageRequest": {
+        "type": "object",
+        "description": "Reply message request",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "Message subject",
+            "example": "Water leakage"
+          },
+          "text": {
+            "type": "string",
+            "description": "Message text",
+            "example": "I have water leakage in my appartments.\nPlease, fix it"
+          },
+          "importance": {
+            "type": "string",
+            "description": "Message importance",
+            "enum": [
+              "STANDARD",
+              "HIGH",
+              "LOW"
+            ],
+            "example": "STANDARD"
+          },
+          "confidential": {
+            "type": "boolean",
+            "description": "Message is confidential",
+            "example": true
+          },
+          "files": {
+            "type": "array",
+            "description": "List of attached files",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "receivers": {
+            "type": "array",
+            "description": "List of message receivers",
+            "items": {
+              "$ref": "#/components/schemas/MessageUser"
+            }
+          },
+          "replyAll": {
+            "type": "boolean",
+            "description": "Reply to the sender and all other receivers",
+            "example": true
+          },
+          "identity": {
+            "type": "string",
+            "description": "Base64 encoded SHA1 hash of identity unique string in case of identity sender. Original identity in example is '210414-2381'",
+            "example": "NmViMjAzN2YxZGFkYmUzMDYzYmI2N2I0MGIwODAxZGJlZDVmYjk4Yw=="
+          }
+        }
+      },
+      "CommonValue": {
+        "type": "object",
+        "description": "A value held by an attribute.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Id of value, or number value",
+            "example": 12
+          },
+          "value": {
+            "type": "string",
+            "description": "Held value string.",
+            "example": "test@company.com"
+          },
+          "filename": {
+            "type": "string",
+            "description": "File name, in the case value is of a file type.",
+            "example": "image.png"
+          },
+          "decimal": {
+            "type": "number",
+            "format": "double",
+            "description": "Held value decimal.",
+            "example": 123.45
+          },
+          "type": {
+            "type": "string",
+            "description": "Value type",
+            "example": "STRING"
+          }
+        }
+      },
+      "IdentityAttributeChange": {
+        "type": "object",
+        "description": "Holds information about a value change for an attribute.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute id",
+            "example": 51
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommonValue"
+            }
+          }
+        }
+      },
+      "IdentitySaveRequest": {
+        "type": "object",
+        "description": "Holds edited information attributes to be saved to the provided identity after being validated.",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityAttributeChange"
+            },
+            "writeOnly": true
+          }
+        }
+      },
+      "IdentitySaveResponse": {
+        "type": "object",
+        "description": "Produced after saving attributes for the provided identity. Will hold any validation error messages in its result if problems occured.",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "description": "Holds any errors that occurred during validation. Empty or OK results indicates a successful save attempt.",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "Contains information about an attribute which did not validate correctly.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute ID",
+            "example": 123
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Error code",
+            "example": 4
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Value is less than the allowed number 4."
+          }
+        }
+      },
+      "IdentityListRequest": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32",
+            "writeOnly": true
+          },
+          "descending": {
+            "type": "boolean",
+            "writeOnly": true
+          }
+        }
+      },
+      "IdentityInstance": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "processId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityInstanceAttribute"
+            }
+          }
+        }
+      },
+      "IdentityInstanceAttribute": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "String",
+              "Text",
+              "Number",
+              "Date",
+              "Email",
+              "Firstname",
+              "Lastname",
+              "File",
+              "Decimal",
+              "Object",
+              "Objects",
+              "Toggle"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommonValue"
+            }
+          }
+        }
+      },
+      "IdentityListResponse": {
+        "type": "object",
+        "properties": {
+          "instances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityInstance"
+            }
+          },
+          "totalLength": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SearchAttributesResponse": {
+        "type": "object",
+        "description": "List of available search attributes",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchAvailableAttribute"
+            }
+          }
+        }
+      },
+      "SearchAvailableAttribute": {
+        "type": "object",
+        "description": "Available search attribute",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute ID",
+            "example": 5
+          },
+          "description": {
+            "type": "string",
+            "description": "Attribute description",
+            "example": "Sequence number"
+          }
+        }
+      },
+      "ListViewAttributesResponse": {
+        "type": "object",
+        "description": "List of available instance attributes",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListViewAvailableAttribute"
+            }
+          }
+        }
+      },
+      "ListViewAvailableAttribute": {
+        "type": "object",
+        "description": "Available instance attribute",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute ID",
+            "example": 5
+          },
+          "description": {
+            "type": "string",
+            "description": "Attribute description",
+            "example": "Sequence number"
+          }
+        }
+      },
+      "InstanceDetailsResponse": {
+        "type": "object",
+        "description": "Instance details",
+        "properties": {
+          "sequenceNumber": {
+            "type": "string",
+            "description": "Sequence number",
+            "example": "FX202400032"
+          },
+          "initiatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Initiated date",
+            "example": "2024-02-03T17:34:12.357Z"
+          },
+          "originalInitiator": {
+            "type": "string",
+            "description": "Original initiator",
+            "example": "John Doe"
+          },
+          "departmentOriginalInitiator": {
+            "type": "string",
+            "description": "Department of original initiator",
+            "example": "Sales"
+          },
+          "initiator": {
+            "type": "string",
+            "description": "Initiator",
+            "example": "John Doe"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status",
+            "example": "Decision"
+          },
+          "innerStatus": {
+            "type": "string",
+            "description": "Inner status",
+            "example": "Arrived"
+          },
+          "atRiskDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "At risk date",
+            "example": "2024-02-05T17:34:12.357Z"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date",
+            "example": "2024-02-06T17:34:12.357Z"
+          },
+          "expiredNowOrWhenSigned": {
+            "type": "boolean",
+            "description": "Instance is expired now or when signed",
+            "example": true
+          },
+          "daysSinceInitiated": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Nunber of days since instance was initiated",
+            "example": 17
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Component"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "description": "List of messages",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "description": "Instance message",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Message ID",
+            "example": 526
+          },
+          "originalId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Original message ID (in case of reply)",
+            "example": 394
+          },
+          "datetime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Message date/time",
+            "example": "2024-02-03T17:34:12.357Z"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Message subject",
+            "example": "Water leakage"
+          },
+          "text": {
+            "type": "string",
+            "description": "Message text",
+            "example": "I have water leakage in my appartments.\nPlease, fix it"
+          },
+          "importance": {
+            "type": "string",
+            "description": "Message importance",
+            "enum": [
+              "STANDARD",
+              "HIGH",
+              "LOW"
+            ],
+            "example": "STANDARD"
+          },
+          "confidential": {
+            "type": "boolean",
+            "description": "Message is confidential",
+            "example": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Message status",
+            "enum": [
+              "UNREAD",
+              "READ",
+              "ANSWERED"
+            ],
+            "example": "UNREAD"
+          },
+          "files": {
+            "type": "array",
+            "description": "List of attached files",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "sender": {
+            "$ref": "#/components/schemas/MessageUser",
+            "description": "Message sender"
+          },
+          "receivers": {
+            "type": "array",
+            "description": "List of message receivers",
+            "items": {
+              "$ref": "#/components/schemas/MessageUser"
+            }
+          }
+        }
+      },
+      "MessageReceiversResponse": {
+        "type": "object",
+        "description": "List of available message receivers",
+        "properties": {
+          "receivers": {
+            "type": "array",
+            "description": "List of message receivers",
+            "items": {
+              "$ref": "#/components/schemas/MessageUser"
+            }
+          }
+        }
+      },
+      "IdentityAttribute": {
+        "type": "object",
+        "description": "A value held by an identity attribute and its parameters.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Attribute id",
+            "example": 123
+          },
+          "caption": {
+            "type": "string",
+            "description": "Attribute caption or display name",
+            "example": "E-mail adress"
+          },
+          "description": {
+            "type": "string",
+            "description": "Attribute description",
+            "example": "This is the e-mail adress that will receive information and notifications."
+          },
+          "type": {
+            "type": "string",
+            "description": "Attribute value type",
+            "enum": [
+              "String",
+              "Text",
+              "Number",
+              "Date",
+              "Email",
+              "Firstname",
+              "Lastname",
+              "File",
+              "Decimal",
+              "Object",
+              "Objects",
+              "Toggle"
+            ],
+            "example": "email"
+          },
+          "values": {
+            "type": "array",
+            "description": "Attribute stored values",
+            "items": {
+              "$ref": "#/components/schemas/CommonValue"
+            }
+          },
+          "rules": {
+            "type": "array",
+            "description": "Attribute validation rules and configurations",
+            "items": {
+              "$ref": "#/components/schemas/ValidationRule"
+            }
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this attribute must have a value.",
+            "example": true
+          },
+          "value": {},
+          "numberValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stringValue": {
+            "type": "string"
+          }
+        }
+      },
+      "IdentityAttributesResponse": {
+        "type": "object",
+        "description": "Holds information attributes about the provided identity.",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "description": "List of available attributes, with configurations and values from the provided identity.",
+            "items": {
+              "$ref": "#/components/schemas/IdentityAttribute"
+            }
+          },
+          "valid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ValidationRule": {
+        "type": "object",
+        "description": "Describes a requirement or rule that must be fulfilled for the attribute to be validated successfully.",
+        "example": {
+          "type": "MIN",
+          "min": 5
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of validation rule.",
+            "enum": [
+              "MANDATORY",
+              "MIN",
+              "MAX"
+            ]
+          }
+        }
+      },
+      "IdentityProcess": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "NEW_INSTANCE",
+                "LIST_INSTANCES",
+                "MESSAGES",
+                "MESSAGE_REPLY"
+              ]
+            }
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityService"
+            }
+          },
+          "fileLimits": {
+            "$ref": "#/components/schemas/IdentityProcessFileLimit"
+          }
+        }
+      },
+      "IdentityProcessFileLimit": {
+        "type": "object",
+        "description": "Holds file size limits for a process.",
+        "properties": {
+          "messageFileLimit": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Maximum size of attachments in kilobytes, -1 = attachments disabled, 0 = unlimited.",
+            "example": 1000
+          }
+        }
+      },
+      "IdentityProcessResponse": {
+        "type": "object",
+        "properties": {
+          "processes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityProcess"
+            }
+          }
+        }
+      },
+      "IdentityService": {
+        "type": "object",
+        "description": "Holds information about an E-service belonging to a process.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Service id",
+            "example": 5
+          },
+          "name": {
+            "type": "string",
+            "description": "Service name/caption",
+            "example": "Registration E-service"
+          },
+          "description": {
+            "type": "string",
+            "description": "Service description",
+            "example": "This is a registration E-service"
+          },
+          "url": {
+            "type": "string",
+            "description": "Full service url",
+            "example": "https://.../"
+          }
+        }
+      },
+      "IdentityDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentityInstanceAttribute"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c882bf962e689714ebaf0b33f4efaec4",
+    "content-hash": "8f27229ee4e338768eeb862252806f43",
     "packages": [
         {
             "name": "helsingborg-stad/acfservice",
-            "version": "1.0.1",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/helsingborg-stad/acfservice.git",
-                "reference": "c1750a9e4f0d54161e49e7cab9f9cec12d9f4dce"
+                "reference": "8d8629c6f087c8a1ce2aba5b9c40bf03b84d0abc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/helsingborg-stad/acfservice/zipball/c1750a9e4f0d54161e49e7cab9f9cec12d9f4dce",
-                "reference": "c1750a9e4f0d54161e49e7cab9f9cec12d9f4dce",
+                "url": "https://api.github.com/repos/helsingborg-stad/acfservice/zipball/8d8629c6f087c8a1ce2aba5b9c40bf03b84d0abc",
+                "reference": "8d8629c6f087c8a1ce2aba5b9c40bf03b84d0abc",
                 "shasum": ""
             },
             "require": {
@@ -46,9 +46,9 @@
             "description": "Simplifies ACF integration by providing a centralized AcfService that exposes global ACF functions in a streamlined manner. Simplify your development workflow and enhance ACF integration with ease.",
             "support": {
                 "issues": "https://github.com/helsingborg-stad/acfservice/issues",
-                "source": "https://github.com/helsingborg-stad/acfservice/tree/1.0.1"
+                "source": "https://github.com/helsingborg-stad/acfservice/tree/1.3.0"
             },
-            "time": "2025-04-23T10:51:02+00:00"
+            "time": "2025-06-30T13:59:30+00:00"
         },
         {
             "name": "helsingborg-stad/wpservice",
@@ -2597,5 +2597,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

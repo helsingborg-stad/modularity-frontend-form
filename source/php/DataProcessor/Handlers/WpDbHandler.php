@@ -249,7 +249,9 @@ class WpDbHandler implements HandlerInterface {
     }
 
     foreach ($reducedSideloadedAttachments as $fieldKey => $attachmentIds) {
-      $fields[$fieldKey] = $attachmentIds;
+      $fieldObject = $this->acfService->getFieldObject($fieldKey);
+      $isImageField = $fieldObject && $fieldObject['type'] === 'image';
+      $fields[$fieldKey] = $isImageField ? $attachmentIds[0] ?? null : $attachmentIds;
     }
 
     return $fields;

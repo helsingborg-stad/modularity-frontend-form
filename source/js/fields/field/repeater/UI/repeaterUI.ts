@@ -1,132 +1,156 @@
-import RowBuilder from "./rowBuilder";
+import RowBuilder from './rowBuilder';
 
 class RepeaterUI implements RepeaterUIInterface {
-    private rowIndex: number = 0;
-    private rowCount: number = 0;
-    private repeaterField!: RepeaterInterface;
-    private conditionBuilder!: ConditionBuilderInterface;
-    private rowFieldsObject: RowFieldsObject = {};
-    private rowChangeListeners: RowCountChangeListener[] = []; 
-    private rowCountElement: HTMLElement|null = null;
+	private rowIndex: number = 0;
+	private rowCount: number = 0;
+	private repeaterField!: RepeaterInterface;
+	private conditionBuilder!: ConditionBuilderInterface;
+	private rowFieldsObject: RowFieldsObject = {};
+	private rowChangeListeners: RowCountChangeListener[] = [];
+	private rowCountElement: HTMLElement | null = null;
+	private placeholderElement: HTMLElement | null = null;
 
-    constructor(
-        private fieldBuilder: FieldBuilderInterface,
-        private fieldsInitiator: FieldsInitiatorInterface,
-        private repeaterContainer: HTMLElement,
-        private addRowButton: HTMLButtonElement,
-        private rowBuilder: RowBuilder,
-        private stepId: string
-    ) {}
+	constructor(
+		private fieldBuilder: FieldBuilderInterface,
+		private fieldsInitiator: FieldsInitiatorInterface,
+		private repeaterContainer: HTMLElement,
+		private addRowButton: HTMLButtonElement,
+		private rowBuilder: RowBuilder,
+		private stepId: string,
+	) {}
 
-    public init(
-        repeaterField: RepeaterInterface,
-        conditionBuilder: ConditionBuilderInterface,
-    ): void {
-        this.repeaterField = repeaterField;
-        this.conditionBuilder = conditionBuilder;
-        this.rowCountElement = this.repeaterField.getFieldContainer().querySelector('[data-js-repeater-row-counter]');
+	public init(repeaterField: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void {
+		this.repeaterField = repeaterField;
+		this.conditionBuilder = conditionBuilder;
+		this.rowCountElement = this.repeaterField.getFieldContainer().querySelector('[data-js-repeater-row-counter]');
 
-        if (!this.repeaterField || !this.conditionBuilder) {
-            console.error("Repeater field or condition builder is not set");
-            return;
-        }
+		// Setup placeholder
+		this.placeholderElement = this.repeaterContainer.querySelector('[data-js-repeater-placeholder]');
 
-        this.setupListeners();
+		// Initial placeholder state
+		this.togglePlaceholder(this.rowCount);
 
-        for(let i = 0; i < this.repeaterField.getMinRows(); i++) {
-            this.buildRow(false);
-        }
-    }
+		if (!this.repeaterField || !this.conditionBuilder) {
+			console.error('Repeater field or condition builder is not set');
+			return;
+		}
 
-    public getRowIndex(): number {
-        return this.rowIndex;
-    }
+		this.setupListeners();
 
-    public getRowCount(): number {
-        return this.rowCount;
-    }
+		for (let i = 0; i < this.repeaterField.getMinRows(); i++) {
+			this.buildRow(false);
+		}
+	}
 
-    public addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void {
-        this.rowChangeListeners.push(rowCountChangeListener);
-    }
+	public getRowIndex(): number {
+		return this.rowIndex;
+	}
 
-    private rowCountChanged(count: number): void {
-        this.rowChangeListeners.forEach(listener => listener(count));
-    }
+	public getRowCount(): number {
+		return this.rowCount;
+	}
 
-    private setupListeners() {
-        this.addRowButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.buildRow();
-        });
+	public getRows(): RowFieldsObject {
+		return this.rowFieldsObject;
+	}
 
-        if (this.rowCountElement) {
-            this.addRowChangeListener(count => {
-                this.rowCountElement!.innerHTML = count.toString();
-            });
-        }
+	public addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void {
+		this.rowChangeListeners.push(rowCountChangeListener);
+	}
 
-        this.addRowChangeListener(count => {
-            this.addRowButton.disabled = count >= this.repeaterField.getMaxRows()
-        });
-    }
+	private rowCountChanged(count: number): void {
+		this.rowChangeListeners.forEach((listener) => listener(count));
+	}
 
-    private removeRow(rowId: string): void {
-        for (const fieldName in this.rowFieldsObject[rowId]) {
-            this.fieldBuilder.removeField(fieldName, this.stepId);
-        }
-    }
+	private setupListeners() {
+		this.addRowButton.addEventListener('click', (e) => {
+			e.preventDefault();
+			this.buildRow();
+		});
 
-    private buildRow(includeRemoveRowButton: boolean = true): void {
-        const rowId = this.rowIndex.toString();
-        const row = this.rowBuilder.createRow(rowId, includeRemoveRowButton);
-        const builtRow = this.buildAddedFields(row);
-        this.rowFieldsObject[rowId] = builtRow;
+		if (this.rowCountElement) {
+			this.addRowChangeListener((count) => {
+				this.rowCountElement!.innerHTML = count.toString();
+			});
+		}
 
-        row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.rowBuilder.deleteRow(row);
-            this.removeRow(rowId);
-            this.rowCountChanged(--this.rowCount);
-        });
+		this.addRowChangeListener((count) => {
+			this.addRowButton.disabled = count >= this.repeaterField.getMaxRows();
+		});
 
-        // Only focus if the row is not auto generated
-        if (includeRemoveRowButton) {
-            this.focusOnNewRow(row);
-        }
+		// Observer for placeholder
+		this.addRowChangeListener((count) => {
+			this.togglePlaceholder(count);
+		});
+	}
 
-        this.rowCountChanged(++this.rowCount);
-        this.rowIndex++;
-    }
+	private togglePlaceholder(count: number) {
+		if (!this.placeholderElement) return;
+		if (count === 0) {
+			this.placeholderElement.style.display = '';
+		} else {
+			this.placeholderElement.style.display = 'none';
+		}
+	}
 
-    // Focus on the first focusable element in the new row
-    private focusOnNewRow(row: HTMLElement): void {
-        const firstFocusable = row.querySelector<HTMLElement>(':not(.u-display--none) input, :not(.u-display--none) select, :not(.u-display--none) textarea, :not(.u-display--none) fieldset');
+	private removeRow(rowId: string): void {
+		for (const fieldName in this.rowFieldsObject[rowId]) {
+			this.fieldBuilder.removeField(fieldName, this.stepId);
+		}
+	}
 
-        if (!firstFocusable) {
-            return;
-        }
+	public buildRow(includeRemoveRowButton: boolean = true, focusNewRow = true): void {
+		const rowId = this.rowIndex.toString();
+		const row = this.rowBuilder.createRow(rowId, includeRemoveRowButton);
+		const builtRow = this.buildAddedFields(row);
+		this.rowFieldsObject[rowId] = builtRow;
 
-        firstFocusable.focus();
-    }
+		row.querySelector('[data-js-repeater-remove-row]')?.addEventListener('click', (e) => {
+			e.preventDefault();
+			this.rowBuilder.deleteRow(row);
+			this.removeRow(rowId);
+			this.rowCountChanged(--this.rowCount);
+		});
 
-    private buildAddedFields(row: HTMLElement): FieldsObject {
-        const newFieldsObject: FieldsObject = {};
+		// Only focus if the row is not auto generated
+		if (includeRemoveRowButton && focusNewRow) {
+			this.focusOnNewRow(row);
+		}
 
-        [...row.querySelectorAll<HTMLElement>('[data-js-field]')].forEach(field => {
-            const builtField = this.fieldBuilder.build(field, field.dataset.jsField!, this.stepId);
-            newFieldsObject[builtField.getName()] = builtField;
-        });
+		this.rowCountChanged(++this.rowCount);
+		this.rowIndex++;
+	}
 
-        for (const fieldName in newFieldsObject) {
-            newFieldsObject[fieldName].init(this.conditionBuilder);
-            newFieldsObject[fieldName].getConditionsHandler().validate();
-        }
+	// Focus on the first focusable element in the new row
+	private focusOnNewRow(row: HTMLElement): void {
+		const firstFocusable = row.querySelector<HTMLElement>(
+			':not(.u-display--none) input, :not(.u-display--none) select, :not(.u-display--none) textarea, :not(.u-display--none) fieldset',
+		);
 
-        this.fieldsInitiator.initializeConditionals(newFieldsObject);
-        
-        return newFieldsObject;
-    }
+		if (!firstFocusable) {
+			return;
+		}
+
+		firstFocusable.focus();
+	}
+
+	private buildAddedFields(row: HTMLElement): FieldsObject {
+		const newFieldsObject: FieldsObject = {};
+
+		[...row.querySelectorAll<HTMLElement>('[data-js-field]')].forEach((field) => {
+			const builtField = this.fieldBuilder.build(field, field.dataset.jsField!, this.stepId);
+			newFieldsObject[builtField.getName()] = builtField;
+		});
+
+		for (const fieldName in newFieldsObject) {
+			newFieldsObject[fieldName].init(this.conditionBuilder);
+			newFieldsObject[fieldName].getConditionsHandler().validate();
+		}
+
+		this.fieldsInitiator.initializeConditionals(newFieldsObject);
+
+		return newFieldsObject;
+	}
 }
 
 export default RepeaterUI;

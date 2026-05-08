@@ -1,20 +1,30 @@
 @element([
-    'classList' => [
-        'openstreetmap'
-    ],
-    'attributeList' => $field['attributeList'] ?? [],
+    'classList' => $field['classList'],
+    'attributeList' => $field['attributeList'],
+    'id' => $field['id']
 ])
+   @if (!empty($field['label']))
+        @typography([
+            'element' => 'span',
+            'classList' => [
+                'mod-frontend-form__custom-label'
+            ],
+        ])
+            {{ $field['label'] }} {!! !empty($field['attributeList']['data-js-required']) ? '<span class="u-color__text--danger">*</span>' : '' !!}
+        @endtypography
+    @endif
     @field([
         'type' => 'hidden',
         'attributeList' => [
             'data-js-google-map-hidden-field' => true
         ],
-        'required' => $field['required'] ?? false,
+        'disabled' => true,
+        'name' => $field['name']
     ])
     @endfield
     @element([
         'id' => $field['name'] . '_map',
-        'classList' => ['mod-frontend-form__openstreetmap'],
+        'classList' => ['mod-frontend-form__openstreetmap','mod-frontend-form__openstreetmap_container'],
         'attributeList' => [
             'data-js-openstreetmap' => 'true',
             'data-js-zoom' => $field['zoom'],

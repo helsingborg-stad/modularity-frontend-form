@@ -1,0 +1,83 @@
+<?php
+
+namespace ModularityFrontendForm\DataProcessor\Validators;
+
+use AcfService\AcfService;
+use ModularityFrontendForm\Config\ConfigInterface;
+use ModularityFrontendForm\Config\ModuleConfigInterface;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResult;
+use ModularityFrontendForm\DataProcessor\Validators\Result\ValidationResultInterface;
+use WP_Error;
+use WpService\WpService;
+use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
+use ModularityFrontendForm\Helper\FilesArrayFormatterInterface;
+use ModularityFrontendForm\Helper\FilesArrayFormatter;
+
+class FilesConformToAllowedFileSize implements ValidatorInterface
+{
+    public function __construct(
+        private WpService $wpService,
+        private AcfService $acfService,
+        private ConfigInterface $config,
+        private ModuleConfigInterface $moduleConfigInstance,
+        private ValidationResultInterface $validationResult = new ValidationResult()
+    ) {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
+    {
+      $filesArrayFormatter = new FilesArrayFormatter($request, $this->config);
+
+      if (! $formattedFilesArray = $filesArrayFormatter->getFormatted()) {
+        return $this->validationResult;
+      }
+
+      foreach ($formattedFilesArray as $fieldKey => $filesArray) {
+        $fieldMaxSize = $this->getFieldConstraints($fieldKey, 'max_size');
+
+        if (!$fieldMaxSize) {
+          $fieldMaxSize = $this->wpService->wpMaxUploadSize() / 1024;
+        }
+
+        $maxFileSizeInBytes  = $fieldMaxSize * 1024;
+        $maxFileSizeReadable = $this->wpService->sizeFormat($maxFileSizeInBytes);
+
+        foreach ($filesArray as $fileProps) {
+          if (isset($fileProps['size']) && $fileProps['size'] > $maxFileSizeInBytes) {
+            $this->validationResult->setError(
+              new WP_Error(
+                RestApiResponseStatusEnums::FileError->value,
+                sprintf(
+                  $this->wpService->__('The file "%s" exceeds the maximum allowed file size of %s.', 'modularity-frontend-form'),
+                  $fileProps['name'],
+                  $maxFileSizeReadable
+                )
+              )
+            );
+          }
+        }
+      }
+
+      return $this->validationResult;
+    }
+
+    /**
+     * Get field constraints from ACF
+     *
+     * @param string $fieldKey The ACF field key
+     * @param string $key The constraint key to retrieve
+     * @return mixed
+     */
+    private function getFieldConstraints(string $fieldKey, string $key): mixed
+    {
+      $constraint =  $this->acfService->acfGetField($fieldKey)[$key] ?? null;
+      if(in_array($key, ['max_size', 'min_size']) && is_numeric($constraint)) {
+        return (int) absint($constraint) * 1024;
+      }
+      return $constraint;
+    }
+}

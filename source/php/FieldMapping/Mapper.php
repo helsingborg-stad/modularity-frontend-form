@@ -5,6 +5,7 @@ namespace ModularityFrontendForm\FieldMapping;
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirector;
 use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
 use WpService\WpService;
+use ModularityFrontendForm\Config\Config;
 
 class Mapper
 {
@@ -12,17 +13,16 @@ class Mapper
     protected FieldMappingDirectorInterface $director;
 
     public function __construct(
-        array $field,
         WpService $wpService,
         object $lang,
-        ?FieldMappingDirectorInterface $director = null,
+        protected Config $config,
+        ?FieldMappingDirectorInterface $director = null
     ) {
-        $this->field = $field;
-        $this->director = $director ?? new FieldMappingDirector($wpService, $lang);
+        $this->director = $director ?? new FieldMappingDirector($wpService, $lang, $config);
     }
 
-    public function map(): mixed
+    public function map(string|array $field): mixed
     {
-        return ($this->director->resolveMapper($this->field))->map();
+        return ($this->director->resolveMapper($field))->map();
     }
 }

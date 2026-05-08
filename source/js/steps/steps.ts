@@ -2,87 +2,123 @@ import StepNavigator from "./stepNavigator";
 import StepUIManager from "./stepUIManager";
 
 class Steps implements StepsInterface {
-    constructor(
-        private steps: StepsObject,
-        private validate: StepValidatorInterface,
-        private stepNavigator: StepNavigator,
-        private stepUIManager: StepUIManager,
-        private nextButton: HTMLButtonElement,
-        private previousButton: HTMLButtonElement
-    ) {
-    }
+	private editableSteps: { [key: number]: boolean } = {};
 
-    public init() {
-        this.setupPrevious();
-        this.setupNext();
-        this.setupEdit();
-    }
+	constructor(
+		private steps: StepsObject,
+		private stepNavigator: StepNavigator,
+		private stepUIManager: StepUIManager,
+		private nextButton: HTMLButtonElement,
+		private previousButton: HTMLButtonElement,
+		private formId: number,
+	) { }
 
-    private setupEdit() {
-        for (const step of Object.values(this.steps)) {
-            step.onEdit(() => {
-                this.handleInvalidStep(this.stepIsInvalid());
- 
-                const prevStep = this.stepNavigator.getActiveStep();
-                const nextStep = this.stepNavigator.goTo(step.getId());
+	public init() {
+		this.editableSteps[this.stepNavigator.getActiveStepIndex()] = true;
+		this.setupPrevious();
+		this.setupNext();
+		this.setupEdit();
+		this.setupPopstate();
+		this.updateUrlWithStep(this.stepNavigator.getActiveStepIndex(), true);
+	}
 
-                if (nextStep) {
-                    nextStep.showStepAndHidePrevious(prevStep);
-                    this.stepUIManager.addActiveClass(nextStep);
-                    this.stepUIManager.removeActiveClass(prevStep);
-                    this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
-                }
-            })
-        }
-    }
+	private setupEdit() {
+		for (const step of Object.values(this.steps)) {
+			if (!step.getEditItem()) continue;
+			step.getEditItem()!.addEventListener("click", (e) => {
+				e.preventDefault();
+				if (step.getId() === this.stepNavigator.getActiveStepIndex()) return;
+				if (!this.editableSteps[step.getId()]) return;
+				const currentStep = this.stepNavigator.getActiveStep();
+				const nextStep = this.stepNavigator.goTo(step.getId());
+				this.stepUIManager.handleValidity(currentStep, currentStep.validate());
 
-    private setupNext() {
-        this.nextButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const isInvalid = this.stepIsInvalid();
-            this.handleInvalidStep(isInvalid);
+				if (nextStep) {
+					this.handleMove(currentStep, nextStep);
+				}
+			});
+		}
+	}
 
-            if (isInvalid) {
-                this.stepUIManager.addErrorIndicator(this.stepNavigator.getActiveStep());
-                return;
-            }
+	private setupNext() {
+		this.nextButton.addEventListener("click", (e) => {
+			e.preventDefault();
+			const currentStep = this.stepNavigator.getActiveStep();
+			const stepIsValid = currentStep.validate();
 
-            const prevStep = this.stepNavigator.getActiveStep();
-            const nextStep = this.stepNavigator.goNext();
+			this.stepUIManager.handleValidity(currentStep, stepIsValid, true);
 
-            if (nextStep) {
-                nextStep.showStepAndHidePrevious(prevStep);
-                this.stepUIManager.addActiveClass(nextStep);
-                this.stepUIManager.removeActiveClass(prevStep);
-                this.stepUIManager.canEditStep(nextStep);
-                this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
-            }
-        });
-    }
+			if (!stepIsValid) {
+				this.stepUIManager.triggerErrorAnimation(currentStep);
+				return;
+			}
 
-    private setupPrevious() {
-        this.previousButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            this.handleInvalidStep(this.stepIsInvalid());
-            const prevStep = this.stepNavigator.getActiveStep();
-            const nextStep = this.stepNavigator.goPrevious();
+			const nextStep = this.stepNavigator.goNext();
+			if (nextStep) {
+				this.editableSteps[nextStep.getId()] = true;
+				this.handleMove(currentStep, nextStep);
+			}
+		});
+	}
 
-            if (nextStep) {
-                this.stepUIManager.removeActiveClass(prevStep);
-                this.stepUIManager.addActiveClass(nextStep);
-                nextStep.showStepAndHidePrevious(prevStep);
-                this.stepUIManager.updateButtonStates(this.stepNavigator.getActiveStepIndex(), prevStep.getId());
-            }
-        });
-    }
+	private setupPrevious() {
+		this.previousButton.addEventListener("click", (e) => {
+			e.preventDefault();
 
-    private handleInvalidStep(isInvalid: boolean): void {
-        this.stepUIManager.handleInvalidStep(this.stepNavigator.getActiveStep(), isInvalid);
-    }
+			const currentStep = this.stepNavigator.getActiveStep();
+			const previousStep = this.stepNavigator.goPrevious();
+			const stepIsValid = currentStep.validate();
+			this.stepUIManager.handleValidity(currentStep, stepIsValid);
 
-    private stepIsInvalid(): boolean {
-        return !this.validate.validateStep(this.stepNavigator.getActiveStepIndex().toString());
-    }
+			if (previousStep) {
+				this.handleMove(currentStep, previousStep);
+			}
+		});
+	}
+
+	private handleMove(
+		currentStep: StepInterface,
+		nextStep: StepInterface,
+	): void {
+		this.stepUIManager.updateButtonStates(
+			nextStep.getId(),
+			currentStep.getId(),
+		);
+
+		this.stepUIManager.showAndHideSteps(nextStep, currentStep);
+		this.updateUrlWithStep(nextStep.getId());
+	}
+
+	private setupPopstate(): void {
+		window.addEventListener('popstate', () => {
+			const url = new URL(window.location.href);
+			const paramName = `${this.formId}-step`;
+			const stepParam = url.searchParams.get(paramName);
+			if (stepParam === null) return;
+
+			const targetStepIndex = parseInt(stepParam, 10) - 1;
+			if (Number.isNaN(targetStepIndex)) return;
+
+			const currentStep = this.stepNavigator.getActiveStep();
+			const targetStep = this.stepNavigator.goTo(targetStepIndex);
+
+			if (targetStep) {
+				this.stepUIManager.updateButtonStates(targetStep.getId(), currentStep.getId());
+				this.stepUIManager.showAndHideSteps(targetStep, currentStep);
+			}
+		});
+	}
+
+	private updateUrlWithStep(stepIndex: number, replace: boolean = false): void {
+		const url = new URL(window.location.href);
+		const paramName = `${this.formId}-step`;
+		url.searchParams.set(paramName, String(stepIndex + 1));
+		if (replace) {
+			window.history.replaceState({}, '', url.toString());
+		} else {
+			window.history.pushState({}, '', url.toString());
+		}
+	}
 }
 
 export default Steps;

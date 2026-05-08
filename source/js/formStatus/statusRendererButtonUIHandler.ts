@@ -1,38 +1,51 @@
+import StatusRendererOverlayUI from './statusRendererOverlayUI';
+
 class StatusRendererButtonUIHandler implements StatusRendererButtonUIHandlerInterface {
-    private tryAgainOnclick: FormActionInterface|false = false;
-    constructor(
-        private returnButton: HTMLElement,
-        private tryAgainButton: HTMLElement
-    ) {
-        this.tryAgainListener();
-        this.returnToFormListener();
-    }
+	private tryAgainOnclick: FormActionInterface | false = false;
+	private returnOnclick: FormActionInterface | false = false;
+	constructor(
+		private formContainer: HTMLElement,
+		private returnButton: HTMLElement,
+		private tryAgainButton: HTMLElement,
+		private statusRendererOverlayUI: StatusRendererOverlayUI,
+	) {
+		this.tryAgainListener();
+		this.returnToFormListener();
+	}
 
-    public toggleReturnButton(shouldShow: boolean = false): void {
-        this.returnButton.classList.toggle('u-display--none', !shouldShow);
-    }
+	public toggleReturnButton(shouldShow: FormActionInterface | false = false): void {
+		this.returnOnclick = shouldShow;
 
-    public toggleTryAgainButton(shouldShow: FormActionInterface|false = false): void {
-        this.tryAgainOnclick = shouldShow;
+		this.returnButton.classList.toggle('u-display--none', !shouldShow);
+	}
 
-        this.tryAgainButton.classList.toggle('u-display--none', !shouldShow);
-    }
+	public toggleTryAgainButton(shouldShow: FormActionInterface | false = false): void {
+		this.tryAgainOnclick = shouldShow;
 
-    private tryAgainListener(): void {
-        this.tryAgainButton.addEventListener('click', (e) => {
-            e.preventDefault();
+		this.tryAgainButton.classList.toggle('u-display--none', !shouldShow);
+	}
 
-            if (this.tryAgainOnclick) {
-                this.tryAgainOnclick.retry();
-            }
-        });
-    }
+	private tryAgainListener(): void {
+		this.tryAgainButton.addEventListener('click', (e) => {
+			e.preventDefault();
 
-    private returnToFormListener(): void {
-        this.returnButton.addEventListener('click', () => {
-            window.location.reload();
-        })
-    }
+			if (this.tryAgainOnclick) {
+				this.tryAgainOnclick.retry();
+			}
+		});
+	}
+
+	private returnToFormListener(): void {
+		this.returnButton.addEventListener('click', () => {
+			if (this.formContainer.dataset.jsFormStatus === 'success') {
+				window.location.reload();
+			} else if (this.returnOnclick) {
+				this.returnOnclick.return();
+				this.statusRendererOverlayUI.removeOverlay();
+				this.statusRendererOverlayUI.removeStatusClasses();
+			}
+		});
+	}
 }
 
 export default StatusRendererButtonUIHandler;

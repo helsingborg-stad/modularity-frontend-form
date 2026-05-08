@@ -9,30 +9,19 @@
 namespace ModularityFrontendForm\Module;
 
 use AcfService\Implementations\NativeAcfService;
-
-use WpService\Contracts\WpEnqueueStyle;
+use ModularityFrontendForm\Module\GroupHelper;
 use WpService\Implementations\NativeWpService;
-use WpService\Contracts\__;
-use WpService\Contracts\AddFilter;
-use WpService\Contracts\AddAction;
-use WpService\Contracts\IsUserLoggedIn;
-use WpService\Contracts\GetQueryVar;
-use WpService\Contracts\GetPostType;
-use WpService\Contracts\GetPostTypeObject;
-use WpService\Contracts\WpRegisterScript;
-use WpService\Contracts\WpEnqueueScript;
-use WpService\Contracts\WpRegisterStyle;
-use WpService\Contracts\GetPermalink;
-use WpService\Contracts\GetPostMeta;
-use WpService\Contracts\UpdatePostMeta;
 use WpService\Implementations\WpServiceWithTypecastedReturns;
 use AcfService\AcfService;
 use ModularityFrontendForm\Module\FormatSteps;
 use ModularityFrontendForm\Config\Config;
-
+use ModularityFrontendForm\Config\ConfigFactory;
+use ModularityFrontendForm\FieldMapping\Director\WordpressMappingDirector;
+use ModularityFrontendForm\FieldMapping\Mapper;
 use ModularityFrontendForm\Helper\CacheBust;
-use WpService\Contracts\GetRestUrl;
-use WpService\Contracts\WpLocalizeScript;
+use ModularityFrontendForm\Module\FieldFormatterResolvers\AcfGroupFields;
+use ModularityFrontendForm\Module\FieldFormatterResolvers\WordpressFields;
+use WpService\WpService;
 
 /**
  * @property string $description
@@ -48,36 +37,73 @@ class FrontendForm extends \Modularity\Module
     public $cacheTtl = 0;
     public CacheBust $cacheBust;
 
-    private $formStepQueryParam  = 'step'; // The query parameter for the form steps.
-    private $formIdQueryParam    = 'formid'; // The query parameter for the form id.
-    private $formTokenQueryParam = 'token';  // The query parameter for the form token.
+    private $formStepQueryParam         = 'step'; // The query parameter for the form steps.
+    private $formIdQueryParam           = 'formid'; // The query parameter for the form id.
+    private $formTokenQueryParam        = 'token';  // The query parameter for the form token.
+    private $wordpressStandardFieldsKey = 'wp-standard-fields';
+    private GroupHelper $groupHelper;
 
-    private WpEnqueueStyle&__&IsUserLoggedIn&AddFilter&AddAction&GetQueryVar&GetPostType&GetPostTypeObject&GetPermalink&GetPostMeta&UpdatePostMeta&WpLocalizeScript&GetRestUrl&WpRegisterScript&WpRegisterStyle&WpEnqueueScript $wpService;
+    private WpService $wpService;
     private AcfService $acfService;
 
     private FormatSteps $formatSteps;
 
+    private Config $config;
+    private object $fields;
+
     public function init(): void
     {
-        $this->wpService    = new WpServiceWithTypecastedReturns(new NativeWpService());
-        $this->acfService   = new NativeAcfService();
+        $this->wpService   = new WpServiceWithTypecastedReturns(new NativeWpService());
+        $this->acfService  = new NativeAcfService();
+        $this->groupHelper = new GroupHelper($this->acfService, $this->wpService);
+        $this->fields      = (object) $this->getFields();
+        $this->config      = ConfigFactory::create($this->wpService, 'modularity-frontend-form', $this->fields->saveToPostType ?? null);
+
+
         $this->formatSteps  = new FormatSteps(
-            $this->wpService, 
-            $this->acfService,
-            new Config($this->wpService, 'modularity-frontend-form'), //TODO: Use a config factory,
-            $this->getLang()
+            [
+                new WordpressFields(
+                    $this->groupHelper, 
+                    new Mapper(
+                        $this->wpService,
+                        $this->getLang(),
+                        $this->config,
+                        new WordpressMappingDirector(
+                            $this->wpService,
+                            $this->getLang(),
+                            $this->config
+                        )
+                    )
+                ),
+                new AcfGroupFields(
+                    $this->acfService,
+                    $this->config,
+                    new Mapper(
+                        $this->wpService,
+                        $this->getLang(),
+                        $this->config
+                    ),
+                    $this->getLang()
+                )
+            ]
         );
 
         $this->cacheBust    = new CacheBust();
-
-        //Form admin service
-        $formAdmin = new FormAdmin($this->wpService, $this->acfService, 'formStepGroup');
-        $formAdmin->addHooks();
 
         //Set module properties
         $this->nameSingular = $this->wpService->__('Frontend Form', 'modularity-frontend-form');
         $this->namePlural   = $this->wpService->__('Frontend Forms', 'modularity-frontend-form');
         $this->description  = $this->wpService->__('Module for creating forms.', 'modularity-frontend-form');
+
+        $this->wpService->addFilter('acf/load_field/name=formStepGroup', function ($field) {
+            if(method_exists($this->wpService, 'getCurrentScreen') === false) {
+                if ($this->wpService->getCurrentScreen()?->id === 'acf-field-group') {
+                    return $field;
+                }
+            }
+            $field['choices'] = $this->groupHelper->getFlatGroups();
+            return $field;
+        });
 
         //Add query vars that should be allowed in context.
         $this->wpService->addFilter('query_vars', [$this, 'registerFormQueryVars']);
@@ -94,17 +120,24 @@ class FrontendForm extends \Modularity\Module
     {
         //Needs to be called, otherwise a notice will be thrown.
         $data   = [];
-        $fields = (object) $this->getFields();
 
         //The module id
         $data['moduleId'] = $this->ID;
 
-        //Steps
-        $data['steps'] = $this->formatSteps->formatSteps($fields->formSteps ?? []);
+        //Current post id (the page where the form is displayed)
+        $data['holdingPostId'] = $this->wpService->getQueriedObjectId();
+
+        $data['steps'] = $this->formatSteps->formatSteps(($this->fields->formSteps ?? []) ?: []);
+
         $data['stepsCount'] = count($data['steps']);
 
         //Language
         $data['lang'] = $this->getLang();
+
+        //Disclaimer text
+        $data['disclaimerText'] = $this->createDisclaimerText(
+            $this->fields
+        );
 
         return $data;
     }
@@ -130,40 +163,50 @@ class FrontendForm extends \Modularity\Module
      */
     private function getLang(): object
     {
-        $disclaimer = $this->wpService->__(
-            <<<EOD
-            By submitting this form, you're agreeing to our terms and conditions. 
-            You're also consenting to us processing your personal data in line with GDPR regulations, 
-            and confirming that you have full rights to use all provided content.
-            EOD, 'modularity-frontend-form'
-        );
-
         return (object) [
-            'disclaimer'                => $disclaimer,
-            'edit'                      => $this->wpService->__('Edit', 'modularity-frontend-form'),
-            'submit'                    => $this->wpService->__('Submit', 'modularity-frontend-form'),
-            'previous'                  => $this->wpService->__('Previous', 'modularity-frontend-form'),
-            'next'                      => $this->wpService->__('Next', 'modularity-frontend-form'),
-            'of'                        => $this->wpService->__('of', 'modularity-frontend-form'),
-            'step'                      => $this->wpService->__('Step', 'modularity-frontend-form'),
-            'completed'                 => $this->wpService->__('Completed', 'modularity-frontend-form'),
-            'noResultsFound'            => $this->wpService->__('No results found', 'modularity-frontend-form'),
-            'searchPlaceholder'         => $this->wpService->__('Search location...', 'modularity-frontend-form'),
-            'nameOfTheLocation'         => $this->wpService->__('Name of the location', 'modularity-frontend-form'),
-            'removeRow'                 => $this->wpService->__('Remove row', 'modularity-frontend-form'),
-            'atLeastOneValueIsRequired' => $this->wpService->__('At least one value is required', 'modularity-frontend-form'),
-            'loading'                   => $this->wpService->__('Loading', 'modularity-frontend-form'),
-            'newRow'                    => $this->wpService->__('New row', 'modularity-frontend-form'),
+            'edit'                          => $this->wpService->__('Edit', 'modularity-frontend-form'),
+            'submit'                        => $this->wpService->__('Submit', 'modularity-frontend-form'),
+            'previous'                      => $this->wpService->__('Previous', 'modularity-frontend-form'),
+            'next'                          => $this->wpService->__('Next', 'modularity-frontend-form'),
+            'of'                            => $this->wpService->__('of', 'modularity-frontend-form'),
+            'step'                          => $this->wpService->__('Step', 'modularity-frontend-form'),
+            'return'                        => $this->wpService->__('Return', 'modularity-frontend-form'),
+            'completed'                     => $this->wpService->__('Completed', 'modularity-frontend-form'),
+            'noResultsFound'                => $this->wpService->__('No results found', 'modularity-frontend-form'),
+            'searchPlaceholder'             => $this->wpService->__('Search location...', 'modularity-frontend-form'),
+            'nameOfTheLocation'             => $this->wpService->__('Name of the location', 'modularity-frontend-form'),
+            'removeRow'                     => $this->wpService->__('Remove row', 'modularity-frontend-form'),
+            'atLeastOneValueIsRequired'     => $this->wpService->__('At least one value is required', 'modularity-frontend-form'),
+            'loading'                       => $this->wpService->__('Loading', 'modularity-frontend-form'),
+            'newRow'                        => $this->wpService->__('New row', 'modularity-frontend-form'),
+            'followingFieldIsNotSupported'  => $this->wpService->__('The following field is not supported', 'modularity-frontend-form'),
+            'loadingSuccessful'             => $this->wpService->__('Loading successful', 'modularity-frontend-form'),
+            'repeaterNoRows'                => $this->wpService->__('No rows', 'modularity-frontend-form'),
+            'goToStep'                      => $this->wpService->__('Go to step ', 'modularity-frontend-form'),
+            'repeaterNoRowsIconLabel'       => $this->wpService->__('No rows added', 'modularity-frontend-form'),
 
             // Error Messages for fields
             'errorRequired'            => $this->wpService->__('This field is required', 'modularity-frontend-form'),
-            'errorEmail'               => $this->wpService->__('Please enter a valid email address','modularity-frontend-form'),
-            'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. https://website.com)', 'modularity-frontend-form'),
+            'errorMap'                 => $this->wpService->__('Please choose a place on the map', 'modularity-frontend-form'),
+            'errorWysiwyg'             => $this->wpService->__('Please add some content', 'modularity-frontend-form'),
+            'errorSelect'              => $this->wpService->__('Please select an option', 'modularity-frontend-form'),
+            'errorEmail'               => $this->wpService->__('Please enter a valid email address (ex. %s)', 'modularity-frontend-form'),
+            'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. %s)', 'modularity-frontend-form'),
             'errorPhone'               => $this->wpService->__('Please enter a valid phone number', 'modularity-frontend-form'),
-            'errorDate'                => $this->wpService->__('Please enter a valid date', 'modularity-frontend-form'),
+            'errorDate'                => $this->wpService->__('Please enter a valid date (ex. yyyy-mm-dd)', 'modularity-frontend-form'),
+            'errorDateRangeUnderflow'  => $this->wpService->__('Please enter a date after %s', 'modularity-frontend-form'),
+            'errorDateRangeOverflow'   => $this->wpService->__('Please enter a date before %s', 'modularity-frontend-form'),
             'errorDateTime'            => $this->wpService->__('Please enter a valid date and time', 'modularity-frontend-form'),
-            'errorTime'                => $this->wpService->__('Please enter a valid time', 'modularity-frontend-form'),
+            'errorGalleryMinFiles'      => $this->wpService->__('A minimum of %s files is required', 'modularity-frontend-form'),
+            'errorTime'                => $this->wpService->__('Please enter a valid time (ex. hh:mm)', 'modularity-frontend-form'),
+            'errorTimeRangeUnderflow'  => $this->wpService->__('Please enter a time after %s', 'modularity-frontend-form'),
+            'errorTimeRangeOverflow'   => $this->wpService->__('Please enter a time before %s', 'modularity-frontend-form'),
             'errorNumber'              => $this->wpService->__('Please enter a valid number', 'modularity-frontend-form'),
+            'errorNumberUnderflow'     => $this->wpService->__('Please enter a number greater than or equal to %s', 'modularity-frontend-form'),
+            'errorNumberOverflow'      => $this->wpService->__('Please enter a number smaller than or equal to %s', 'modularity-frontend-form'),
+            'errorNumberStepMismatch'  => $this->wpService->__('Please enter a number in increments of %s', 'modularity-frontend-form'),
+
+            'followingFilesCouldNotBeUploaded' => $this->wpService->__('The following files could not be uploaded', 'modularity-frontend-form'),
 
             'statusTitleLoading'       => $this->wpService->__('Loading', 'modularity-frontend-form'),
             'statusTitleError'         => $this->wpService->__('Error', 'modularity-frontend-form'),
@@ -174,7 +217,7 @@ class FrontendForm extends \Modularity\Module
             'submitInit'               => $this->wpService->__('Preparing', 'modularity-frontend-form'),
             'submitSuccess'            => $this->wpService->__('Form submitted successfully.', 'modularity-frontend-form'),
             'submitUrlError'           => $this->wpService->__('Form submission failed: Cound not find path.', 'modularity-frontend-form'),
-            'submitError'              => $this->wpService->__('An error occurred while submitting the form.', 'modularity-frontend-form'),
+            'submitError'              => $this->wpService->__('An unknown error occurred while submitting the form.', 'modularity-frontend-form'),
 
             'communicationError'       => $this->wpService->__('Communication error', 'modularity-frontend-form'),
 
@@ -182,7 +225,101 @@ class FrontendForm extends \Modularity\Module
             'nonceUrlMissing'          => $this->wpService->__('Could not secure connection – link missing.', 'modularity-frontend-form'),
             'nonceRequestSuccess'      => $this->wpService->__('Securing', 'modularity-frontend-form'),
             'nonceRequestFailed'       => $this->wpService->__('Could not secure connection – please try again.', 'modularity-frontend-form'),
+
+            // wysiwyg
+            'bold'              => $this->wpService->__('Bold', 'modularity-frontend-form'),
+            'italic'            => $this->wpService->__('Italic', 'modularity-frontend-form'),
+            'underline'         => $this->wpService->__('Underline', 'modularity-frontend-form'),
+            'strikeThrough'     => $this->wpService->__('Strikethrough', 'modularity-frontend-form'),
+            'ulist'             => $this->wpService->__('Bullet list', 'modularity-frontend-form'),
+            'olist'             => $this->wpService->__('Numbered list', 'modularity-frontend-form'),
+            'link'              => $this->wpService->__('Link', 'modularity-frontend-form'),
+            'blockquote'        => $this->wpService->__('Blockquote', 'modularity-frontend-form'),
+            'heading'           => $this->wpService->__('Heading', 'modularity-frontend-form'),
+            'subheading'        => $this->wpService->__('Subheading', 'modularity-frontend-form'),
         ];
+    }
+
+    /**
+     * Creates the disclaimer text by replacing placeholders with actual values from the fields.
+     *
+     * @param object|null $fields The fields containing data for replacements.
+     * @return string The constructed disclaimer text.
+     */
+    private function createDisclaimerText(object|null $fields): string
+    {
+        $disclaimer  = $this->wpService->__(
+            "By submitting this form, you agree to our terms and conditions. You also consent to your personal data being processed by <mark>{{data_processors}}</mark> in accordance with GDPR. Additionally, you confirm that you have the full rights to all content you provide. We need to process this data with the following reason(s): <mark>{{data_categories}}</mark>. Your data will be permanently deleted after <mark>{{data_retention_period}}</mark> days, calculated from the date of the last modification or expiration.",
+            'modularity-frontend-form'
+        );
+
+        //Replace placeholders with actual values
+        $dataProcessors = [
+            'replacementKey' => '{{data_processors}}',
+            'fieldName'      => 'dataProcessingProcessors',
+            'defaultValue'   => $this->wpService->__('us', 'modularity-frontend-form')
+        ];
+
+        $dataCategories = [
+            'replacementKey' => '{{data_categories}}',
+            'fieldName'      => 'dataProcessingCategories',
+            'defaultValue'   => $this->wpService->__('relevant processing requirements', 'modularity-frontend-form')
+        ];
+
+        $dataRetentionPeriod = [
+            'replacementKey' => '{{data_retention_period}}',
+            'fieldName'      => 'dataProcessingRetentionTime',
+            'defaultValue'   => $this->wpService->__('30', 'modularity-frontend-form')
+        ];
+
+        //Array of all replacements
+        $allReplacements = [
+            $dataProcessors,
+            $dataCategories,
+            $dataRetentionPeriod,
+        ];
+
+        //Perform replacements
+        foreach ($allReplacements as $replacement) {
+            $fieldValue = $fields->{$replacement['fieldName']} ?? null;
+            $fieldValue = $this->reduceTaxonomyToString($fieldValue);
+            $fieldValue = $fieldValue ?: $replacement['defaultValue'];
+            $disclaimer = str_replace(
+                $replacement['replacementKey'],
+                esc_html($fieldValue),
+                $disclaimer
+            );
+        }
+
+        return $disclaimer;
+    }
+
+    /**
+     * Reduces an array of taxonomy terms to a human-readable string.
+     *
+     * @param array $taxonomyTerms The array of taxonomy terms.
+     * @return string The reduced string.
+     */
+    public function reduceTaxonomyToString($taxonomyTerms): string
+    {
+        if (empty($taxonomyTerms)) {
+            return '';
+        }
+
+        if (!is_array($taxonomyTerms)) {
+            return $taxonomyTerms;
+        }
+
+        $and           = $this->wpService->__('and', 'modularity-frontend-form');
+        $names         = array_map(fn($item) => $item->name ?? '', $taxonomyTerms);
+        $numberOfNames = count($names);
+
+        $reducedString = match (true) {
+            $numberOfNames > 1  => implode(', ', array_slice($names, 0, -1)) . ' ' . $and . ' ' . end($names),
+            $numberOfNames === 1 => $names[0],
+            default      => '',
+        };
+        return $reducedString;
     }
 
     public function template(): string
@@ -205,8 +342,8 @@ class FrontendForm extends \Modularity\Module
 
         $this->wpService->wpRegisterStyle(
             $this->getScriptHandle(),
-            MODULARITYFRONTENDFORM_URL . '/dist/' . 
-            $this->cacheBust->name('css/main.css')
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('css/main.css')
         );
 
         $this->wpService->wpEnqueueStyle($this->getScriptHandle());
@@ -224,17 +361,18 @@ class FrontendForm extends \Modularity\Module
         if (!$this->hasModule()) {
             return;
         }
+
         // Register the script
         $this->wpService->wpRegisterScript(
             $this->getScriptHandle(),
-            MODULARITYFRONTENDFORM_URL . '/dist/' . 
-            $this->cacheBust->name('js/init.js')
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('js/init.js')
         );
 
         $this->addAttributesToScriptTag($this->getScriptHandle(), [
             'type' => 'module'
         ]);
-        
+
         // Language strings
         $this->wpService->wpLocalizeScript(
             $this->getScriptHandle(),
@@ -255,6 +393,37 @@ class FrontendForm extends \Modularity\Module
         $this->wpService->wpEnqueueScript($this->getScriptHandle());
     }
 
+    public function adminEnqueue(): void
+    {
+        // Register admin script
+        $this->wpService->wpRegisterScript(
+            $this->getScriptHandle('admin'),
+            MODULARITYFRONTENDFORM_URL . '/dist/' .
+                $this->cacheBust->name('js/admin.js')
+        );
+
+        $this->addAttributesToScriptTag($this->getScriptHandle('admin'), [
+            'type' => 'module'
+        ]);
+
+        // Localize admin script
+        $this->wpService->wpLocalizeScript(
+            $this->getScriptHandle('admin'),
+            'modularityFrontendFormAdminData',
+            [
+                'modularityFrontendFormAcfGroups'          => $this->groupHelper->getGroups() ?? [],
+                'modularityFrontendFormWordpressFieldsKey' => $this->wordpressStandardFieldsKey
+            ]
+        );
+
+        // Enqueue admin script
+        $this->wpService->wpEnqueueScript(
+            $this->getScriptHandle('admin'),
+            false,
+            ['jquery', 'acf-input']
+        );
+    }
+
     /**
      * Retrieves the script data.
      *
@@ -265,11 +434,11 @@ class FrontendForm extends \Modularity\Module
     private function getScriptData(): array
     {
         return $this->wpService->applyFilters(
-            'Modularity/Module/FrontendForm/Assets/Data', 
+            'Modularity/Module/FrontendForm/Assets/Data',
             [
                 'placeSearchApiUrl' => $this->wpService->getRestUrl(null, 'placesearch/v1/openstreetmap'),
             ]
-        ); 
+        );
     }
 
     /**
@@ -313,8 +482,9 @@ class FrontendForm extends \Modularity\Module
      * @param array $attributes Key-value pairs of attributes to add to the script tag.
      * @return void
      */
-    private function addAttributesToScriptTag(string $handle, array $attributes): void {
-        $this->wpService->addFilter('script_loader_tag', function($tag, $tag_handle) use ($handle, $attributes) {
+    private function addAttributesToScriptTag(string $handle, array $attributes): void
+    {
+        $this->wpService->addFilter('script_loader_tag', function ($tag, $tag_handle) use ($handle, $attributes) {
             if ($tag_handle === $handle) {
                 foreach ($attributes as $key => $value) {
                     $tag = str_replace(' src=', sprintf(' %s="%s" src=', esc_attr($key), esc_attr($value)), $tag);

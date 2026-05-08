@@ -24,7 +24,7 @@ class ModuleConfig implements ModuleConfigInterface
     if(!$this->wpService->getPost($this->moduleId)) {
       throw new \Exception('Module not found');
     }
-    if(!$this->wpService->getPostType($this->moduleId) === $this->config->getModuleSlug()) {
+    if($this->wpService->getPostType($this->moduleId) !== $this->config->getModuleSlug()) {
       throw new \Exception('Module is not of type ' . $this->config->getModuleSlug());
     }
   }
@@ -91,12 +91,48 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
+  public function getDynamicPostFeatures(): array
+  {
+    //If key existance, correspond to capability
+    $dynamicCapabilityMapper = [
+      'post_title'    => 'title',
+      'post_content'  => 'editor'
+    ];
+    $dynamicCapabilities = [];
+
+    $steps = $this->acfService->getField('formSteps', $this->getModuleId());
+
+    if (is_countable($steps) === false || count($steps) === 0) {
+      return [];
+    }
+
+    foreach($steps as $step) {
+      foreach ($dynamicCapabilityMapper as $field => $capability) {
+        if (in_array($field, $step['formStepGroup'] ?? [])) {
+          $dynamicCapabilities[] = $capability;
+        }
+      }
+    }
+    return array_values(array_unique($dynamicCapabilities));
+  }
+
+  /**
+   * @inheritdoc
+   */
   public function getWpDbHandlerConfig(): ?object
   {
     if(in_array('WpDbHandler', $this->getActivatedHandlers()) === false) {
       return null;
     }
-    return (object) $this->acfService->getField('WpDbHandlerConfig', $this->getModuleId());
+    $groupData = $this->acfService->getField('WpDbHandlerConfig', $this->getModuleId());
+    if($groupData === null || !is_array($groupData)) {
+      return null;
+    }
+    $groupData['saveToPostType'] = $this->acfService->getField(
+      'saveToPostType',
+      $this->getModuleId()
+    );
+    return (object) $groupData;
   }
 
   /**
@@ -124,7 +160,11 @@ class ModuleConfig implements ModuleConfigInterface
   /**
    * @inheritdoc
    */
-  public function getFieldKeysRegisteredAsFormFields(): ?array
+  public function getFieldKeysRegisteredAsFormFields(
+    string $property = 'key', 
+    bool $includeConditionalFields = true,
+    bool $onlyIncludeRequiredFields = false
+  ): ?array
   {
     $steps = $this->acfService->getField('formSteps', $this->getModuleId());
     if ($steps === null) {
@@ -136,12 +176,42 @@ class ModuleConfig implements ModuleConfigInterface
             continue;
         }
 
-        $fields = acf_get_fields($step['formStepGroup'][0]); //TODO: Implement in acfService
+        foreach($step['formStepGroup'] as $group) {
+          if(!isset($fields)) {
+            $fields = [];
+          }
+          $fields = array_merge($fields, acf_get_fields($group));
+        }
+
+        if (!$includeConditionalFields) {
+            $fields = array_filter($fields, function ($field) {
+              
+                $hasConditionalLogic   = (empty($field['conditional_logic']) || $field['conditional_logic'] === 0) ? false : true;
+                if($hasConditionalLogic) {
+                  return false;
+                }
+
+                $isNotRequiredRepeater = (!$field['required'] && $field['type'] !== 'repeater');
+                if(!$isNotRequiredRepeater) {
+                  return false;
+                }
+
+                return true;
+            });
+        }
+
+        if($onlyIncludeRequiredFields) {
+            $fields = array_filter($fields, function ($field) {
+                return isset($field['required']) && ($field['required'] === 1 || $field['required'] === 'true');
+            });
+        }
+
         if (!is_array($fields)) {
             continue;
         }
+
         foreach ($fields as $field) {
-            $fieldKeys = array_merge($fieldKeys, $this->getFieldKeysRecursive($field));
+            $fieldKeys = array_merge($fieldKeys, $this->getFieldKeysRecursive($field, $property));
         }
     }
 
@@ -155,21 +225,21 @@ class ModuleConfig implements ModuleConfigInterface
    *
    * @return array The field keys
    */
-  private function getFieldKeysRecursive(array $field): array
+  private function getFieldKeysRecursive(array $field, string $property = 'key'): array
   {
-    $keys = [];
+    $items = [];
 
-    if (isset($field['key']) && str_starts_with($field['key'], 'field_')) {
-        $keys[] = $field['key'];
+    if (isset($field[$property]) && str_starts_with($field['key'], 'field_')) {
+        $items[] = $field[$property];
     }
 
     if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
         foreach ($field['sub_fields'] as $subField) {
-            $keys = array_merge($keys, $this->getFieldKeysRecursive($subField));
+            $items = array_merge($items, $this->getFieldKeysRecursive($subField, $property));
         }
     }
 
-    return $keys;
+    return $items;
   }
 
   /**

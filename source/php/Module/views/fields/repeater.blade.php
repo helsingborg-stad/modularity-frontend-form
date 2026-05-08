@@ -1,9 +1,8 @@
 @if (!empty($field['fields']))
     @element([
-        'classList' => [
-            'mod-frontend-form__repeater'
-        ],
-        'attributeList' => $field['attributeList'] ?? [],
+        'attributeList' => $field['attributeList'],
+        'classList' => $field['classList'],
+        'id' => $field['id'],
     ])
         @include('partials.repeaterHeader')
         @element([
@@ -14,8 +13,29 @@
                 'data-js-repeater-row-container' => 'true'
             ]
         ])
+            @if($lang->repeaterNoRows ?? false)
+                @element([
+                    'classList' => [
+                        'mod-frontend-form__repeater-placeholder',
+                    ],
+                    'attributeList' => [
+                        'data-js-repeater-placeholder' => 'true',
+                    ]
+                ])
+                    @icon([
+                        'icon' => 'format_list_bulleted',
+                        'size' => 'lg',
+                        'classList' => [
+                            'mod-frontend-form__repeater-no-rows'
+                        ],
+                        'attributeList' => [
+                            'aria-label' => $lang->repeaterNoRowsIconLabel
+                        ]
+                    ])
+                    @endicon
+                @endelement
+            @endif
 
-        {{-- Repeater Row Template --}}
             @element([
                 'componentElement' => 'template',
                 'attributeList' => [
@@ -26,10 +46,11 @@
             @endelement
         @endelement
         @button([
-            'text' => $lang->newRow,
+            'text' => $field['buttonLabel'],
             'icon' => 'playlist_add',
             'color' => 'secondary',
             'style' => 'filled',
+            'size' => 'sm',
             'attributeList' => [
                 'data-js-repeater-add-row' => 'true'
             ],

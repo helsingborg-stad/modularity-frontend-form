@@ -5,13 +5,6 @@ namespace ModularityFrontendForm;
 use AcfService\AcfService;
 use WpService\WpService;
 
-use ModularityFrontendForm\Api\RestApiEndpointsRegistry;
-use ModularityFrontendForm\Api\Submit\Post;
-use ModularityFrontendForm\Api\Submit\Update;
-use ModularityFrontendForm\Api\Read\Get;
-use ModularityFrontendForm\Config\Config;
-
-use \Modularity\HooksRegistrar\Hookable;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 
@@ -19,7 +12,7 @@ use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
  * Class App
  * @package ModularityFrontendForm
  */
-class App implements \Modularity\HooksRegistrar\Hookable {
+class App implements \Municipio\HooksRegistrar\Hookable {
 
     public function __construct(
         private WpService $wpService, 
@@ -34,7 +27,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
      */
     public function addHooks(): void
     {
-        $this->wpService->addAction('plugins_loaded', array($this, 'registerModule'));
+        $this->wpService->addAction('init', array($this, 'registerModule'));
 
         //Register the API routes
         foreach (['rest_api_init','init'] as $action) {
@@ -46,6 +39,24 @@ class App implements \Modularity\HooksRegistrar\Hookable {
             $this->wpService,
             Api\RestApiEndpointsRegistry::class
         ))->addHooks();
+
+        // Set up admin interface
+        $this->setUpAdminInterface();
+
+        // Set up taxonomies
+        $this->setUpTaxonomies();
+
+        // Set up post types
+        $this->setUpPostTypes();
+
+        // Set up options pages
+        $this->setUpOptionsPages();
+
+        // Ensure no submissions exist before deletion
+        $this->ensureNoSubmissionsBeforeDeletion();
+
+        // Set up field formatting
+        $this->setUpFieldFormatting();
     }
 
     /**
@@ -74,7 +85,7 @@ class App implements \Modularity\HooksRegistrar\Hookable {
             new Api\Submit\Post($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Submit\Update($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Read\Get($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
-            new Api\Nonce\Get($this->wpService, $this->config, $this->moduleConfigFactory),
+            new Api\Nonce\Get($this->wpService, $this->config, $this->moduleConfigFactory)
         ];
 
         $this->wpService->applyFilters(
@@ -89,5 +100,86 @@ class App implements \Modularity\HooksRegistrar\Hookable {
         if ($this->wpService->currentAction() === 'rest_api_init') {
             Api\RestApiEndpointsRegistry::register();
         }
+    }
+
+    public function setUpAdminInterface(): void
+    {
+        (new Admin\DisplayEditLinkInterfaceNotice(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+
+        (new Admin\HideIrrelevantComponents(
+            $this->config,
+            $this->wpService,
+            $this->moduleConfigFactory
+        ))->addHooks();
+
+        (new Admin\DisableGutenbergOnSubmissions(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+    }
+
+    public function setUpTaxonomies(): void
+    {
+        (new Admin\LegalFormDataTaxonomiesRegistrar(
+            $this->config,
+            $this->wpService, 
+            $this->acfService
+        ))->addHooks();
+    }
+
+    public function setUpPostTypes(): void
+    {
+        (new Admin\SubmissionsPostTypeRegistrar(
+            $this->config,
+            $this->wpService,
+            $this->acfService
+        ))->addHooks();
+    }
+
+    public function setUpOptionsPages(): void
+    {
+        (new Admin\PluginOptionsPageRegistrar(
+            $this->config,
+            $this->wpService,
+            $this->acfService
+        ))->addHooks();
+    }
+
+    public function ensureNoSubmissionsBeforeDeletion(): void
+    {
+        /**
+         * Ensure no submissions exist before deletion
+         */
+        (new EnsureNoSubmissionsBeforeDeletion\EnsureNoSubmissionsBeforeDeletion(
+            $this->config,
+            $this->wpService,
+        ))->addHooks();
+
+        /**
+         * Alter wp_redirect to add notice when deletion is prevented
+         */
+        (new EnsureNoSubmissionsBeforeDeletion\AlterTrashedRedirectToAllowCustomNotice(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+
+        /**
+         * Add notice when deletion is prevented
+         */
+        (new EnsureNoSubmissionsBeforeDeletion\AdminNotices(
+            $this->config,
+            $this->wpService
+        ))->addHooks();
+
+    }
+
+    public function setUpFieldFormatting(): void
+    {
+        (new FieldFormatting\FormatMapFieldOnSubmit(
+            $this->wpService
+        ))->addHooks();
     }
 }

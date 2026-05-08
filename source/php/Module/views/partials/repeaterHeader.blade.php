@@ -1,17 +1,20 @@
 @element([
     'classList' => [
+        'c-field',
         'mod-frontend-form__repeater-header'
     ],
 ])
     @typography([
-        'element' => 'h2',
-        'variant' => 'h4',
+        'element' => 'div',
+        'variant' => 'label',
         'classList' => [
-            'u-margin__top--0'
+            'c-field__label',
+            'u-margin--0'
         ],
     ])
         {{ $field['label'] }}
     @endtypography
+
     @if(isset($field['min'], $field['max']))
         @element([
             'classList' => [
@@ -24,14 +27,18 @@
                     'data-js-repeater-row-counter' => 'true'
                 ]
             ])
+                <!-- min -->
                 {{ $field['min'] }}
             @endelement
+
             &nbsp;/&nbsp;
+
             @element([
                 'componentElement' => 'span'
             ])
                 {{ $field['max'] }}
             @endelement
+
         @endelement
     @endif
 @endelement

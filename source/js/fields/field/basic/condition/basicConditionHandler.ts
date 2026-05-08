@@ -1,13 +1,16 @@
 class BasicConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
-	private parent: BasicInterface|SelectInterface|TextAreaInterface|null = null;
+	private parent: BasicInterface | SelectInterface | TextAreaInterface | null =
+		null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
-	constructor(private unstructuredConditions: any) {
-	}
+	constructor(private unstructuredConditions: any) {}
 
-	public init(parent: BasicInterface|SelectInterface|TextAreaInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(
+		parent: BasicInterface | SelectInterface | TextAreaInterface,
+		conditionsBuilder: ConditionBuilderInterface,
+	): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 	}
@@ -16,8 +19,10 @@ class BasicConditionsHandler implements ConditionsHandlerInterface {
 		if (this.parent && this.isDisabled !== disabled) {
 			this.isDisabled = disabled;
 
-            this.parent.getFieldContainer().classList.toggle('u-display--none', disabled);
-            this.parent.getField().disabled = disabled;
+			this.parent
+				.getFieldContainer()
+				.classList.toggle("u-display--none", disabled);
+			this.parent.getField().disabled = disabled;
 
 			this.checkConditions();
 		}
@@ -44,9 +49,9 @@ class BasicConditionsHandler implements ConditionsHandlerInterface {
 		return this.conditions;
 	}
 
-    public addValueChangeListener(field: FieldInterface): void {
+	public addValueChangeListener(field: FieldInterface): void {
 		this.fieldsObject[field.getName()] = field;
-    }
+	}
 
 	public checkConditions(): void {
 		for (const fieldName in this.fieldsObject) {

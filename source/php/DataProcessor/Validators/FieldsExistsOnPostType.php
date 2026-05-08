@@ -11,6 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 class FieldsExistsOnPostType implements ValidatorInterface
 {
@@ -26,7 +27,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
       //All submitted keys
       $fieldKeys = array_keys($data);
@@ -39,7 +40,7 @@ class FieldsExistsOnPostType implements ValidatorInterface
       );
   
       // If there are any stray keys, set an error
-      if($strayKeys = array_diff($fieldKeys, $validKeys)) {
+      if ($strayKeys = array_diff($fieldKeys, $validKeys)) {
         $this->validationResult->setError(
           new WP_Error(
             RestApiResponseStatusEnums::ValidationError->value, 
@@ -72,13 +73,13 @@ class FieldsExistsOnPostType implements ValidatorInterface
         $fieldGroups = $this->acfService->getFieldGroups(['post_type' => $postType]);
 
         foreach ($fieldGroups as $group) {
-            if(!isset($group['key'])) {
+            if (!isset($group['key'])) {
                 continue;
             }
 
             $fields = $this->acfService->acfGetFields($group['key']);
 
-            if(!is_array($fields)) {
+            if (!is_array($fields)) {
                 continue;
             }
 

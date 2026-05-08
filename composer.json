@@ -1,34 +1,44 @@
 {
-    "name": "helsingborg-stad/modularity-frontend-form",
-    "description": "Frontend Form for Modularity.",
-    "type": "wordpress-plugin",
-    "license": "MIT",
-    "scripts": {
-        "test": "./vendor/bin/phpunit --testdox",
-        "test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testdox",
-        "minimal": "./vendor/bin/phpunit"
-    },
-    "authors": [
-        {
-            "name": "Niclas Norin",
-            "email": "niclas.norin@helsingborg.se"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "ModularityFrontendForm\\": "source/php/"
-        }
-    },
-    "minimum-stability": "stable",
-    "require": {
-        "helsingborg-stad/wpservice": "^2.0",
-        "helsingborg-stad/acfservice": "^1.0.1"
-    },
-    "require-dev": {
-        "brain/monkey": "^2.6",
-        "codedungeon/phpunit-result-printer": "^0.31.0",
-        "phpunit/phpunit": "^9.5",
-        "php-stubs/wordpress-stubs": "^6.8"
-    },
-    "version": "0.51.4"
+	"name": "helsingborg-stad/modularity-frontend-form",
+	"description": "Frontend Form for Modularity.",
+	"type": "wordpress-plugin",
+	"license": "MIT",
+	"scripts": {
+		"test": "./vendor/bin/phpunit --testdox",
+		"test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testdox",
+		"minimal": "./vendor/bin/phpunit",
+		"make-pot": "wp i18n make-pot --allow-root ./source/php ./languages/modularity-frontend-form.pot --slug=modularity-frontend-form",
+		"update-po": "wp i18n update-po --allow-root ./languages/modularity-frontend-form.pot ./languages/modularity-frontend-form-sv_SE.po",
+		"make-mo": "wp i18n make-mo --allow-root ./languages/modularity-frontend-form-sv_SE.po"
+	},
+	"authors": [
+		{
+			"name": "Niclas Norin",
+			"email": "niclas.norin@helsingborg.se"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"ModularityFrontendForm\\": "source/php/"
+		}
+	},
+	"minimum-stability": "stable",
+	"require": {
+		"helsingborg-stad/wpservice": "^2.0",
+		"helsingborg-stad/acfservice": "^1.3.0"
+	},
+	"suggest": {
+		"helsingborg-stad/municipio": "^5.177"
+	},
+	"require-dev": {
+		"brain/monkey": "^2.6",
+		"codedungeon/phpunit-result-printer": "^0.31.0",
+		"phpunit/phpunit": "^9.5",
+		"php-stubs/wordpress-stubs": "^6.8"
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
+		}
+	}
 }

@@ -1,10 +1,13 @@
 @imageinput([
     'label'    => $field['label'],
-    'name'     => $field['name'],
+    'name'     => $field['name'] . '[]',
     'required' => $field['required'],
     'accept'   => $field['accept'],
+    'id'       => $field['id'],
     'attributeList' => $field['attributeList'],
     'description' => $field['description'],
-    'maxSize' => $field['maxSize']
+    'maxSize' => $field['maxSize'],
+    'classList' => $field['classList'],
+    'uploadErrorMessage' => $lang->followingFilesCouldNotBeUploaded . ': '
 ])
 @endimageinput

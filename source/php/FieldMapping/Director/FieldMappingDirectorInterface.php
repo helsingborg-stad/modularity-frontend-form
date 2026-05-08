@@ -5,5 +5,5 @@ use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
 interface FieldMappingDirectorInterface
 {
-    public function resolveMapper(array $field): FieldMapperInterface;
+    public function resolveMapper(mixed $field): FieldMapperInterface;
 }

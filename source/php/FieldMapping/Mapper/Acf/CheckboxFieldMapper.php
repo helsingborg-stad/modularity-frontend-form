@@ -1,0 +1,41 @@
+<?php
+
+namespace ModularityFrontendForm\FieldMapping\Mapper\Acf;
+
+use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperConstruct;
+use ModularityFrontendForm\FieldMapping\Mapper\Traits\FieldMapperGetInstance;
+
+class CheckboxFieldMapper implements FieldMapperInterface
+{
+    use FieldMapperConstruct;
+    use FieldMapperGetInstance;
+
+    public function map(): array
+    {
+        $mapped = (new BasicFieldMapper($this->field, $this->lang, 'checkbox'))->map();
+
+        $mapped['choices'] = [];
+        if ($mapped['required']) {
+            $mapped['attributeList']['data-js-required'] = 'true';
+        }
+
+        if($this->field['layout'] === 'horizontal') {
+            $mapped['classList'][] = 'mod-frontend-form__field--checkbox--horizontal';
+        } else {
+            $mapped['classList'][] = 'mod-frontend-form__field--checkbox--vertical';
+        }
+
+        foreach ($this->field['choices'] as $key => $value) {
+            $mapped['choices'][$key] = [
+                'type'     => $mapped['type'],
+                'label'    => $value,
+                'name'     => $this->config->getFieldNamespace($this->field['key']).'[]',
+                'value'    => $key,
+                'checked'  => in_array($key, $this->field['default_value'] ?? [], true),
+            ];
+        }
+
+        return $mapped;
+    }
+}

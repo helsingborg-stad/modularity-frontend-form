@@ -1,12 +1,14 @@
 class MessageConditionsHandler implements ConditionsHandlerInterface {
-	private parent: FieldInterface|null = null;
+	private parent: FieldInterface | null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
-	constructor(private unstructuredConditions: any) {
-	}
+	constructor(private unstructuredConditions: any) {}
 
-	public init(parent: FieldInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(
+		parent: FieldInterface,
+		conditionsBuilder: ConditionBuilderInterface,
+	): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 	}
@@ -15,7 +17,9 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 		if (this.parent && this.isDisabled !== disabled) {
 			this.isDisabled = disabled;
 
-            this.parent.getFieldContainer().classList.toggle('u-display--none', disabled);
+			this.parent
+				.getFieldContainer()
+				.classList.toggle("u-display--none", disabled);
 		}
 	}
 
@@ -39,9 +43,9 @@ class MessageConditionsHandler implements ConditionsHandlerInterface {
 		return this.conditions;
 	}
 
-    public addValueChangeListener(field: FieldInterface): void {
+	public addValueChangeListener(field: FieldInterface): void {
 		return;
-    }
+	}
 
 	public checkConditions(): void {
 		return;

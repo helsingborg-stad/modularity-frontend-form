@@ -1,13 +1,15 @@
 class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 	private fieldsObject: FieldsObject = {};
-	private parent: RepeaterInterface|null = null;
+	private parent: RepeaterInterface | null = null;
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
-	constructor(private unstructuredConditions: any) {
-	}
+	constructor(private unstructuredConditions: any) {}
 
-	public init(parent: RepeaterInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(
+		parent: RepeaterInterface,
+		conditionsBuilder: ConditionBuilderInterface,
+	): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 	}
@@ -16,7 +18,9 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 		if (this.parent && this.isDisabled !== disabled) {
 			this.isDisabled = disabled;
 
-            this.parent.getFieldContainer().classList.toggle('u-display--none', disabled);
+			this.parent
+				.getFieldContainer()
+				.classList.toggle("u-display--none", disabled);
 			this.checkConditions();
 		}
 	}
@@ -42,9 +46,9 @@ class RepeaterConditionsHandler implements ConditionsHandlerInterface {
 		return this.conditions;
 	}
 
-    public addValueChangeListener(field: FieldInterface): void {
+	public addValueChangeListener(field: FieldInterface): void {
 		this.fieldsObject[field.getName()] = field;
-    }
+	}
 
 	public checkConditions(): void {
 		for (const fieldName in this.fieldsObject) {

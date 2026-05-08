@@ -52,6 +52,7 @@ class Post extends RestApiEndpoint
             'args' => (
                 new RestApiParams($this->wpService, $this->config, $this->moduleConfigFactory)
             )->getParamSpecification(
+                RestApiParamEnums::HoldingPostId,
                 RestApiParamEnums::ModuleId,
                 RestApiParamEnums::Nonce,
             )
@@ -73,8 +74,7 @@ class Post extends RestApiEndpoint
             $this->moduleConfigFactory)
         )->getValuesFromRequest($request);
 
-        // Data to be submitted
-        $data = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
+        $data = $request->get_params();
 
         // Handler factories
         $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
@@ -83,11 +83,11 @@ class Post extends RestApiEndpoint
         // Creates the data processor
         $dataProcessor = new DataProcessor(
             $validatorFactory->createInsertValidators($params->moduleId),
-            $handlerFactory->createHandlers($params->moduleId),
-            $handlerFactory->createNullHandler($params->moduleId),
+            $handlerFactory->createHandlers($params, $request),
+            $handlerFactory->createNullHandler($params),
         );
 
-        $dataProcessorResult = $dataProcessor->process($data);
+        $dataProcessorResult = $dataProcessor->process($data, $request);
 
         if($dataProcessorResult !== true) {
             return $this->wpService->restEnsureResponse(

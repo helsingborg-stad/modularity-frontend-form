@@ -3,14 +3,17 @@
 namespace ModularityFrontendForm\DataProcessor\Handlers;
 
 use WpService\WpService; 
-use AcfService\AcfService; 
+use AcfService\AcfService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
+use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
 use WP_Error;
+use WP_REST_Request;
 
 class WebHookHandler implements HandlerInterface {
 
@@ -21,8 +24,13 @@ class WebHookHandler implements HandlerInterface {
       private AcfService $acfService,
       private ConfigInterface $config,
       private ModuleConfigInterface $moduleConfigInstance,
-      private HandlerResultInterface $handlerResult = new HandlerResult()
+      private object $params,
+      private HandlerResultInterface $handlerResult = new HandlerResult(),
+      private ?FileHandlerInterface $fileHandler = null
   ) {
+    if($this->fileHandler === null) {
+      $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
+    }
   }
 
   /**
@@ -31,7 +39,7 @@ class WebHookHandler implements HandlerInterface {
    * @param array $data The data to handle
    * @return HandlerResultInterface|null The result of the handling
    */
-  public function handle(array $data): ?HandlerResultInterface
+  public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
   {
     $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
 
@@ -69,10 +77,10 @@ class WebHookHandler implements HandlerInterface {
     $headers = @get_headers($url);
     if ($headers === false) {
       $this->handlerResult->setError(
-      new WP_Error(
-        RestApiResponseStatusEnums::HandlerError->value, 
-        $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
-      )
+        new WP_Error(
+          RestApiResponseStatusEnums::HandlerError->value, 
+          $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
+        )
       );
       return false;
     }

@@ -6,157 +6,184 @@ import FormMode from "../form/formModeEnum";
 import StatusRendererInterface from "../formStatus/renderInterface";
 
 class Submit implements SubmitInterface {
-    constructor(
-        private form: Form,
-        private modularityFrontendFormData: ModularityFrontendFormData,
-        private modularityFrontendFormLang: ModularityFrontendFormLang,
-        private asyncNonce: AsyncNonce,
-        private statusHandler: StatusHandler,
-        private statusRenderer: StatusRendererInterface
-    ) {
-        this.disableFormSubmission();
-    }
+	constructor(
+		private form: Form,
+		private modularityFrontendFormData: ModularityFrontendFormData,
+		private modularityFrontendFormLang: ModularityFrontendFormLang,
+		private asyncNonce: AsyncNonce,
+		private statusHandler: StatusHandler,
+		private statusRenderer: StatusRendererInterface,
+	) {
+		this.disableFormSubmission();
+	}
 
-    public retry(): void {
-        this.statusRenderer.reset();
-        this.submit();
-    }
+	public retry(): void {
+		this.statusRenderer.reset();
+		this.submit();
+	}
 
-    /**
-     * Disable the form submission to prevent default behavior.
-     */
-    private disableFormSubmission(): void {
-        const message = 'Form submission is disabled';
-        this.form.formElement.addEventListener('submit', (e) => {
-            console.warn(message);
-            e.preventDefault();
-        });
+	public return(): void {
+		this.statusRenderer.reset();
+	}
 
-        this.form.formElement.submit = function () {
-            console.warn(message);
-            return;
-        };
-    }
+	/**
+	 * Disable the form submission to prevent default behavior.
+	 */
+	private disableFormSubmission(): void {
+		const message = "Form submission is disabled";
+		this.form.formElement.addEventListener("submit", (e) => {
+			console.warn(message);
+			e.preventDefault();
+		});
 
-    /**
-     * Setup the submit functionality.
-     * @param form The form element to be submitted.
-     * 
-     * @returns A promise that resolves when the form is submitted.
-     */
-    public async submit(): Promise<void> {
-        // this.statusHandler.setCurrentAction();
-        // Set the initial status to working
-        this.statusHandler.setStatus(
-            SubmitStatus.Working,
-            this.modularityFrontendFormLang?.submitInit ?? "Submitting your form, please wait...",
-            'send',
-            10
-        );
+		this.form.formElement.submit = function () {
+			console.warn(message);
+			return;
+		};
+	}
 
-        // Respect the form mode, set endpoint accordingly
-        const url = this.form.mode === FormMode.Post
-            ? this.modularityFrontendFormData.apiRoutes?.submitForm
-            : this.form.mode === FormMode.Update
-                ? this.modularityFrontendFormData.apiRoutes?.updateForm
-                : null;
+	/**
+	 * Setup the submit functionality.
+	 * @param form The form element to be submitted.
+	 *
+	 * @returns A promise that resolves when the form is submitted.
+	 */
+	public async submit(): Promise<void> {
+		// this.statusHandler.setCurrentAction();
+		// Set the initial status to working
+		this.statusHandler.setStatus(
+			SubmitStatus.Working,
+			this.modularityFrontendFormLang?.submitInit ??
+				"Submitting your form, please wait...",
+			"send",
+			10,
+		);
 
-        if (!url) {
-            this.statusHandler.setStatus(
-                SubmitStatus.Error,
-                this.modularityFrontendFormLang?.submitUrlError ?? "Could not find the submit URL. Please check your configuration.",
-                'link_off',
-                0,
-                4000,
-                true,
-                this
-            );
-            return;
-        }
+		// Respect the form mode, set endpoint accordingly
+		const url =
+			this.form.mode === FormMode.Post
+				? this.modularityFrontendFormData.apiRoutes?.submitForm
+				: this.form.mode === FormMode.Update
+					? this.modularityFrontendFormData.apiRoutes?.updateForm
+					: null;
 
-        const nonce = await this.asyncNonce.get(this.statusHandler, this.form.formId);
+		if (!url) {
+			this.statusHandler.setStatus(
+				SubmitStatus.Error,
+				this.modularityFrontendFormLang?.submitUrlError ??
+					"Could not find the submit URL. Please check your configuration.",
+				"link_off",
+				0,
+				4000,
+				this,
+				this,
+			);
+			return;
+		}
 
-        try {
-            const urlWithParams = new URL(url);
+		const nonce = await this.asyncNonce.get(
+			this.statusHandler,
+			this.form.formId,
+		);
 
-            //Params common to all requests
-            urlWithParams.searchParams.append("module-id", this.form.formId.toString());
-            urlWithParams.searchParams.append("nonce", nonce?.toString() || "");
+		try {
+			const urlWithParams = new URL(url);
 
-            //If in update mode, append postId & token to the URL
-            if (this.form.mode === FormMode.Update && this.form.formUpdateId) {
-                const token = (() => {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    return urlParams.get('token') ?? null;
-                })();
-                if (token) {
-                    urlWithParams.searchParams.append("token", token);
-                }
-                urlWithParams.searchParams.append("post-id", this.form.formUpdateId.toString());
-            }
+			//Module ID
+			urlWithParams.searchParams.append(
+				"module-id",
+				this.form.formId.toString(),
+			);
 
-            const finalUrl = urlWithParams.toString();
+			//Nonce
+			urlWithParams.searchParams.append(
+				"nonce", nonce?.toString() || ""
+			);
 
-            const response = await fetch(finalUrl, {
-                method: "POST",
-                body: new FormData(this.form.formElement)
-            });
+			//Post ID of current page (holding post)
+			urlWithParams.searchParams.append(
+				"holding-post-id",
+				(this.form.holdingPostId ?? 0).toString(),
+			);
 
-            const json = await response.json();
+			//If in update mode, append postId & token to the URL
+			if (this.form.mode === FormMode.Update && this.form.formUpdateId) {
+				const token = (() => {
+					const urlParams = new URLSearchParams(window.location.search);
+					return urlParams.get("token") ?? null;
+				})();
+				if (token) {
+					urlWithParams.searchParams.append("token", token);
+				}
+				urlWithParams.searchParams.append(
+					"post-id",
+					this.form.formUpdateId.toString(),
+				);
+			}
 
-            // Failed
-            if (!response.ok) {
-                if (json.code == "invalid_field_values") {
-                    this.statusHandler.setStatus(
-                        SubmitStatus.Error,
-                        json?.message ?? this.modularityFrontendFormLang?.submitError,
-                        'data_alert',
-                        0,
-                        2000,
-                        true,
-                        this
-                    );
-                    return;
-                }
+			const finalUrl = urlWithParams.toString();
 
-                this.statusHandler.setStatus(
-                    SubmitStatus.Error,
-                    json?.message ?? this.modularityFrontendFormLang?.submitError,
-                    'error',
-                    0,
-                    3000,
-                    true,
-                    this
-                );
-                return;
-            }
+			const response = await fetch(finalUrl, {
+				method: "POST",
+				body: new FormData(this.form.formElement),
+			});
 
-            // Success
-            if (response.ok) {
-                this.statusHandler.setStatus(
-                    SubmitStatus.Success,
-                    this.modularityFrontendFormLang?.submitSuccess ?? "Form submitted successfully! Thank you for your submission.",
-                    'celebration',
-                    100,
-                    4000,
-                    true,
-                    false
-                );
+			const json = await response.json();
 
-            }
+			// Failed
+			if (!response.ok) {
+				if (json.code == "invalid_field_values") {
+					this.statusHandler.setStatus(
+						SubmitStatus.Error,
+						json?.message ?? this.modularityFrontendFormLang?.submitError,
+						"data_alert",
+						0,
+						2000,
+						this,
+						this,
+					);
+					return;
+				}
 
-        } catch (error: any) {
-            console.error("Error submitting form:", error);
-            this.statusHandler.setStatus(
-                SubmitStatus.Error,
-                this.modularityFrontendFormLang?.submitError ?? "Form submission failed. Please try again." + (error?.message ? ` (${error.message})` : ""),
-                'error',
-                0,
-                4000,
-                true,
-                this
-            );
-        }
-    }
+				this.statusHandler.setStatus(
+					SubmitStatus.Error,
+					json?.message ?? this.modularityFrontendFormLang?.submitError,
+					"error",
+					0,
+					3000,
+					this,
+					this,
+				);
+				return;
+			}
+
+			// Success
+			if (response.ok) {
+				this.statusHandler.setStatus(
+					SubmitStatus.Success,
+					this.modularityFrontendFormLang?.submitSuccess ??
+						"Form submitted successfully! Thank you for your submission.",
+					"celebration",
+					100,
+					4000,
+					this,
+					false,
+				);
+			}
+		} catch (error: any) {
+			console.error("Error submitting form:", error);
+			this.statusHandler.setStatus(
+				SubmitStatus.Error,
+				this.modularityFrontendFormLang?.submitError ??
+					"Form submission failed. Please try again." +
+						(error?.message ? ` (${error.message})` : ""),
+				"error",
+				0,
+				4000,
+				this,
+				this,
+			);
+		}
+	}
 }
 export default Submit;

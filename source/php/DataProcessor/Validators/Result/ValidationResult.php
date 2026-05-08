@@ -31,7 +31,7 @@ class ValidationResult implements ValidationResultInterface
    */
   public function setError(WP_Error $error): void
   {
-    if(RestApiResponseStatusEnums::from($error->get_error_code())) {
+    if (RestApiResponseStatusEnums::from($error->get_error_code())) {
       $this->errors[] = $error;
     }
   }

@@ -4,10 +4,12 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 	private conditions: ConditionInterface[] = [];
 	private isDisabled: boolean = false;
 
-	constructor(private unstructuredConditions: any) {
-	}
+	constructor(private unstructuredConditions: any) {}
 
-	public init(parent: RadioInterface, conditionsBuilder: ConditionBuilderInterface): void {
+	public init(
+		parent: RadioInterface,
+		conditionsBuilder: ConditionBuilderInterface,
+	): void {
 		this.parent = parent;
 		this.conditions = conditionsBuilder.build(this.unstructuredConditions);
 	}
@@ -18,9 +20,11 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 
 			this.parent?.getChoices().forEach((checkbox, index) => {
 				if (index === 0) {
-					this.parent?.getFieldContainer().classList.toggle('u-display--none', disabled)
+					this.parent
+						?.getFieldContainer()
+						.classList.toggle("u-display--none", disabled);
 				}
-				
+
 				checkbox.disabled = disabled;
 			});
 
@@ -48,9 +52,9 @@ class RadioConditionsHandler implements ConditionsHandlerInterface {
 		return this.conditions;
 	}
 
-    public addValueChangeListener(field: FieldInterface): void {
+	public addValueChangeListener(field: FieldInterface): void {
 		this.fieldsObject[field.getName()] = field;
-    }
+	}
 
 	public checkConditions(): void {
 		for (const fieldName in this.fieldsObject) {

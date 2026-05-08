@@ -10,19 +10,17 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
 use ModularityFrontendForm\Api\RestApiParams;
 use ModularityFrontendForm\Api\RestApiParamEnums;
-use WP;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 use WpService\WpService;
+use Municipio\Schema\Schema;
 
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 
-use function AcfService\Implementations\get_fields;
+use ModularityFrontendForm\Api\Read\GetReturnTypeEnum;
 
 class Get extends RestApiEndpoint
 {
@@ -68,16 +66,19 @@ class Get extends RestApiEndpoint
      */
     public function handleRequest(WP_REST_Request $request): WP_REST_Response|WP_Error
     {
+        $this->filterReturnTypeSetting();
+
         $params = (new RestApiParams(
-            $this->wpService, 
-            $this->config, 
-            $this->moduleConfigFactory)
-        )->getValuesFromRequest($request);
+            $this->wpService,
+            $this->config,
+            $this->moduleConfigFactory
+        ))->getValuesFromRequest($request);
 
         //Get fields from post id 
-        $fieldData       = $this->acfService->getFields($params->postId, true, false);
-        $fieldData       = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
-        $fieldData       = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
+        $fieldData = get_field_objects($params->postId, false);
+        $fieldData = $this->retrieveValues($fieldData);
+        $fieldData = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
+        $fieldData = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
         //Add post title
         $fieldData       = $this->prependPostTitleToFieldData($fieldData, $params->postId);
@@ -98,6 +99,106 @@ class Get extends RestApiEndpoint
             ],
             WP_Http::NOT_FOUND
         );
+    }
+
+    private function retrieveValues(array $fieldData): array
+    {
+        $fields = [];
+        foreach ($fieldData as $field) {
+            switch ($field['type']) {
+                case 'gallery':
+                case 'file':
+                case 'image':
+                    $fields[$field['name']] = $this->retrieveValuesFileField($field);
+                    break;
+                case 'google_map':
+                    $fields[$field['name']] = $this->convertGoogleMapFieldValueToSchema($field);
+                    break;
+                default:
+                    $fields[$field['name']] = $field['value'];
+                    break;
+            }
+        }
+
+        return $fields;
+    }
+
+    private function convertGoogleMapFieldValueToSchema(array $field): ?\Municipio\Schema\Place
+    {
+        if (empty($field['value']) || !is_array($field['value'])) {
+            return null;
+        }
+
+        $value = $field['value'];
+        $streetAddress = $value['street_name'] . ' ' . ($value['street_number'] ?? '');
+        $name = trim(implode(', ', array_filter([
+            $streetAddress,
+            ($value['post_code'] ?? '') . ' ' . ($value['city'] ?? ''),
+            ($value['country'] ?? '')
+        ])));
+
+        $postalAddress = Schema::postalAddress();
+        $postalAddress->addressCountry($value['country'] ?? null);
+        $postalAddress->addressLocality($value['city'] ?? null);
+        $postalAddress->streetAddress(!empty(trim($streetAddress)) ? $streetAddress : null);
+        $postalAddress->postalCode($value['post_code'] ?? null);
+        $postalAddress->addressRegion($value['state'] ?? null);
+        $postalAddress->name($name);
+        $postalAddress->toArray();
+
+        $place = Schema::place();
+        $place->latitude($value['lat'] ?? null);
+        $place->longitude($value['lng'] ?? null);
+        $place->address($postalAddress);
+        $place->name($name);
+
+        $place->toArray();
+
+        return $place;
+    }
+
+    private function retrieveValuesFileField(array $field): array
+    {
+        $values = [];
+
+        if (empty($field['value'])) {
+            return $values;
+        }
+
+        if (!is_array($field['value'])) {
+            $field['value'] = [$field['value']];
+        }
+
+        foreach ($field['value'] as $imageId) {
+            $attachment = $this->wpService->wpPrepareAttachmentForJs($imageId);
+
+            $values[] = [
+                'id' => $imageId,
+                'url' => $attachment['url'],
+                'type' => $attachment['mime'] ?? 'image/jpeg',
+                'size' => $attachment['filesizeInBytes'] ?? "0",
+                'name' => $attachment['filename'] ?? '',
+            ];
+        }
+
+        return $values;
+    }
+
+    /**
+     * Adds a filter to ACF taxonomy fields to always return IDs
+     */
+    private function filterReturnTypeSetting(): void
+    {
+        $this->wpService->addFilter('acf/load_field', function ($field) {
+            switch ($field['type']) {
+                case 'taxonomy':
+                    $field['return_format'] = GetReturnTypeEnum::ID->value;
+                    break;
+                default:
+                    return $field;
+            }
+            return $field;
+        });
     }
 
     /**
@@ -124,8 +225,7 @@ class Get extends RestApiEndpoint
     private function translateFieldNamesToFieldKeys(int $postId, array $fields): array
     {
         $translatedFields = [];
-
-        foreach($fields as $key => $fieldValue) {
+        foreach ($fields as $key => $fieldValue) {
             $translatedFields[$this->translateFieldNameToFieldKey($postId, $key)] = $fieldValue;
         }
         return $translatedFields;
@@ -151,9 +251,9 @@ class Get extends RestApiEndpoint
      * @param string $postType The post type to check against
      * @param array $defaultKeys The default keys to include, if any.
      */
-    private function filterUnmappedFieldKeysForPostType($moduleId, $fieldData): array
+    private function filterUnmappedFieldKeysForPostType(int $postId, $fieldData): array
     {
-        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($moduleId)->getFieldKeysRegisteredAsFormFields();
+        $fieldKeysRegisteredAsFormFields = $this->getModuleConfigInstance($postId)->getFieldKeysRegisteredAsFormFields();
 
         $fieldData = array_intersect_key(
             $fieldData,

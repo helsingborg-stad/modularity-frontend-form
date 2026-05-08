@@ -1,16 +1,16 @@
-import AnimateStepHelper from './animation/animateStepHelper';
-import Step from './step';
+import Step from "./step";
 
 class StepFactory {
-    public static createStep(stepContainer: HTMLElement, editButton: HTMLElement, step: HTMLElement, id: number): Step {
-        return new Step(
-            stepContainer,
-            editButton,
-            step,
-            new AnimateStepHelper(step),
-            id
-        );
-    }
+	public static createStep(
+		stepContainer: HTMLElement,
+		step: HTMLElement,
+		editItem: HTMLElement | null,
+		editItemIcon: HTMLElement | null,
+		id: number,
+		validator: StepValidatorInterface,
+	): Step {
+		return new Step(stepContainer, step, editItem, editItemIcon, id, validator);
+	}
 }
 
 export default StepFactory;

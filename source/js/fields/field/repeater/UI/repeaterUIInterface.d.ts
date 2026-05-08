@@ -1,18 +1,20 @@
 interface RepeaterUIInterface {
-    init(repeater: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void;
-    getRowCount(): number;
-    getRowIndex(): number;
-    addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void;
+	init(repeater: RepeaterInterface, conditionBuilder: ConditionBuilderInterface): void;
+	getRowCount(): number;
+	getRowIndex(): number;
+	addRowChangeListener(rowCountChangeListener: RowCountChangeListener): void;
+	buildRow(includeRemoveRowButton?: boolean, focusNewRow?: boolean): void;
+	getRows(): RowFieldsObject;
 }
 
 interface RowBuilderInterface {
-    createRow(id: string, includeRemoveRowButton: boolean = true): HTMLElement;
-    deleteRow(row: HTMLElement): void;
+	createRow(id: string, includeRemoveRowButton: boolean = true): HTMLElement;
+	deleteRow(row: HTMLElement): void;
 }
 
 type RemoveRepeaterRowListeners = (id: string) => void;
 type RowCountChangeListener = (rowCount: number) => void;
 
 type RowFieldsObject = {
-    [key: string]: FieldsObject;
-}
+	[key: string]: FieldsObject;
+};

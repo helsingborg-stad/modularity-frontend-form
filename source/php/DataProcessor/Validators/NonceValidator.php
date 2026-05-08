@@ -11,6 +11,7 @@ use WP_Error;
 use WpService\WpService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use WP_REST_Request;
 
 class NonceValidator implements ValidatorInterface
 {
@@ -28,7 +29,7 @@ class NonceValidator implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    public function validate($data): ?ValidationResultInterface
+    public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
         if ($this->checkNoncePresence($data) === false) {
             return $this->validationResult;

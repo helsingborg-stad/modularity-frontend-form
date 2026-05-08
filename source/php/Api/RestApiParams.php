@@ -55,14 +55,44 @@ class RestApiParams implements RestApiParamsInterface
 
       foreach ($enums as $enum) {
         $specifications[$enum->value] = match ($enum) {
-          RestApiParamEnums::PostId   => self::getPostIdSpecification(),
-          RestApiParamEnums::ModuleId => self::getModuleIdSpecification(),
-          RestApiParamEnums::Token    => self::getTokenSpecification(),
-          RestApiParamEnums::Nonce    => self::getNonceSpecification(),
+          RestApiParamEnums::HoldingPostId => self::getHoldingPostIdSpecification(),
+          RestApiParamEnums::PostId        => self::getPostIdSpecification(),
+          RestApiParamEnums::ModuleId      => self::getModuleIdSpecification(),
+          RestApiParamEnums::Token         => self::getTokenSpecification(),
+          RestApiParamEnums::Nonce         => self::getNonceSpecification(),
         };
       }
 
       return $specifications;
+  }
+
+  /**
+   * Specification for the post id parameter.
+   * 
+   * @return WP_Error|true
+   */
+  private function getHoldingPostIdSpecification(): array
+  {
+    return [
+      'description' => __('The post id that shows the form (holding post).', 'modularity-frontend-form'),
+      'type'        => 'integer',
+      'format'      => 'uri',
+      'required'    => true,
+      'sanitize_callback' => function ($holdingPostId) {
+          return intval($holdingPostId);
+      },
+      'validate_callback' => function ($holdingPostId) {
+          $result =  $this->wpService->getPost($holdingPostId) !== null;
+          if($result === false) {
+            return new WP_Error(
+              'invalid_holding_post_id',
+              __('The page was not submitted from a valid source post id.', 'modularity-frontend-form'),
+              ['status' => 404]
+            );
+          }
+          return true;
+      }
+    ];
   }
 
   /**

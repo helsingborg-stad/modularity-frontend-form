@@ -10,6 +10,7 @@ namespace ModularityFrontendForm\DataProcessor;
 
 use ModularityFrontendForm\DataProcessor\DataProcessorInterface;
 use WP_Error;
+use WP_REST_Request;
 
 class DataProcessor implements DataProcessorInterface {
 
@@ -25,11 +26,11 @@ class DataProcessor implements DataProcessorInterface {
     /**
      * @inheritDoc
      */
-    public function process(array $data): bool {
+    public function process(array $data, WP_REST_Request $request): bool {
 
         //1. Validate the data
         foreach ($this->validators as $validator) {
-            $validationResult = $validator->validate($data);
+            $validationResult = $validator->validate($data, $request);
 
             if($validationResult->getIsValid()) {
                 continue;
@@ -47,7 +48,7 @@ class DataProcessor implements DataProcessorInterface {
 
             foreach ($this->handlers as $handler) {
 
-                $handlerResult = $handler->handle($data);
+                $handlerResult = $handler->handle($data, $request);
 
                 if($handlerResult->isOk()) {continue;}
 

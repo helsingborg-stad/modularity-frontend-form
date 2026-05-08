@@ -5,28 +5,23 @@ import NullFieldConditionValidator from "./condition/nullFieldConditionValidator
 import NullField from "./nullField";
 
 class NullFieldFactory {
-    public static create(
-        field: HTMLElement,
-        type: string,
-        name: string,
-        unstructuredConditions: any,
-        notices: NoticeInterface,
-        stepId: string
-    ): FieldInterface {
-
-        return new NullField(
-            field,
-            type,
-            name,
-            new NullFieldConditionValidator(),
-            new NullFieldConditionsHandler(unstructuredConditions),
-            new FieldValidator(
-                new FieldValidatorUIHandler(notices),
-                [
-                ]
-            )
-        );
-    }
+	public static create(
+		field: HTMLElement,
+		type: string,
+		name: string,
+		unstructuredConditions: any,
+		notices: NoticeInterface,
+		stepId: string,
+	): FieldInterface {
+		return new NullField(
+			field,
+			type,
+			name,
+			new NullFieldConditionValidator(),
+			new NullFieldConditionsHandler(unstructuredConditions),
+			new FieldValidator(new FieldValidatorUIHandler(notices), []),
+		);
+	}
 }
 
 export default NullFieldFactory;

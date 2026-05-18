@@ -57,6 +57,9 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
         // Set up field formatting
         $this->setUpFieldFormatting();
+
+        // Allow fields to be hidden from frontend-/backend forms.
+        $this->allowFieldsToBeHiddenFromFrontendOrBackendForms();
     }
 
     /**
@@ -179,6 +182,12 @@ class App implements \Municipio\HooksRegistrar\Hookable {
     public function setUpFieldFormatting(): void
     {
         (new FieldFormatting\FormatMapFieldOnSubmit(
+            $this->wpService
+        ))->addHooks();
+    }
+
+    public function allowFieldsToBeHiddenFromFrontendOrBackendForms(): void {
+        (new FieldVisibility\AllowFieldsToBeHiddenFromFrontendOrBackendForms(
             $this->wpService
         ))->addHooks();
     }

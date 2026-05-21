@@ -12,6 +12,7 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
+use ModularityFrontendForm\Hydratable\JsonDotHydrator;
 use WP_Error;
 use WP_REST_Request;
 
@@ -47,7 +48,7 @@ class WebHookHandler implements HandlerInterface {
       return $this->handlerResult;
     }
 
-    if($this->trySendRequest($config->callbackUrl, $data)) {
+    if($this->trySendRequest($config->callbackUrl, $this->createBody($data, $config), $this->createHeaders($data, $config))) {
       return $this->handlerResult;
     }
 
@@ -95,14 +96,13 @@ class WebHookHandler implements HandlerInterface {
    * @param array $data The data to send in the request
    * @return bool True if the request was sent successfully, false otherwise
    */
-  private function trySendRequest(string $url, array $data): bool
+  private function trySendRequest(string $url, array $data, array $headers = []): bool
   {
+    error_log(print_r($headers, true));
     $response = $this->wpService->wpRemotePost($url, [
-      'body' => $data,
+      'body' => \json_encode($data),
       'timeout' => 20,
-      'headers' => [
-        'Content-Type' => 'application/json',
-      ],
+      'headers' => $headers
     ]);
 
     if($this->wpService->isWpError($response)) {
@@ -116,5 +116,40 @@ class WebHookHandler implements HandlerInterface {
     }
 
     return true;
+  }
+
+    private function createBody(array $data, object $config): array {
+    $formData = $this->parseFormData($data['mod-frontend-form']);
+    return empty($config->body) 
+      ? $formData 
+      : \json_decode(
+        (new JsonDotHydrator())->hydrate($config->body, $formData), 
+        true
+      );
+  }
+
+  private function parseFormData(array $formData): array {
+    $dataAsJson = \json_encode($formData);
+    preg_match_all('/field_[a-zA-Z0-9_]+/', $dataAsJson, $matches);
+    $replaceIdWithNames = array_map(
+      fn($v) => $this->acfService->getFieldObject($v)['name'], 
+      array_combine($matches[0], $matches[0])
+    );
+    
+    $dataAfterReplace = \json_decode(
+      strtr($dataAsJson, $replaceIdWithNames), 
+      true
+    );
+
+    return $dataAfterReplace;
+  }
+  
+  private function createHeaders(array $data, object $config): array {
+    return array_merge(
+      [
+        'Content-Type' => 'application/json',
+      ],
+      array_column($config->headers ?? [], 'value', 'header')
+    );
   }
 }

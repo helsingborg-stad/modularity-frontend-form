@@ -17,18 +17,6 @@ class JsonDotHydrator implements Hydratable
         return json_encode($this->replace($decoded, new Dot($data)));
     }
 
-    private function resolveValue(string $key, Dot $values): mixed
-    {
-        $sentinel = new \stdClass();
-        $resolved = $values->get($key, $sentinel);
-
-        if ($resolved === $sentinel || $resolved === null) {
-            return '';
-        }
-
-        return $resolved;
-    }
-
     private function replace(mixed $data, Dot $values): mixed
     {
         if (is_array($data)) {
@@ -53,5 +41,17 @@ class JsonDotHydrator implements Hydratable
         }
 
         return $data;
+    }
+
+    private function resolveValue(string $key, Dot $values): mixed
+    {
+        $sentinel = new \stdClass();
+        $resolved = $values->get($key, $sentinel);
+
+        if ($resolved === $sentinel || $resolved === null) {
+            return '';
+        }
+
+        return $resolved;
     }
 }

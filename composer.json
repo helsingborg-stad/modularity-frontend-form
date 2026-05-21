@@ -25,7 +25,8 @@
 	"minimum-stability": "stable",
 	"require": {
 		"helsingborg-stad/wpservice": "^2.0",
-		"helsingborg-stad/acfservice": "^1.3.0"
+		"helsingborg-stad/acfservice": "^1.3.0",
+		"adbario/php-dot-notation": "^3.5"
 	},
 	"suggest": {
 		"helsingborg-stad/municipio": "^5.177"

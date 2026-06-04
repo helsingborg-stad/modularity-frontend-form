@@ -495,7 +495,16 @@
                     'name' => 'body',
                     'aria-label' => '',
                     'type' => 'textarea',
-                    'instructions' => __('JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals "{{field_name}}", all form field can be accessed using dot-notation. Example: "{"name": "{{user.name}}", "message": "{{message}}"}".', 'modularity-frontend-form'),
+                    'instructions' => __('JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals "{{field_name}}", all form fields can be accessed using dot-notation with field names as identifier or {{*}} to output all fields. 
+
+Example: 
+{
+        "name": "{{user.name}}",
+        "message": "{{message}}",
+        "object": "{{user}}",
+        "array": "{{user.hobbies}}",
+        "all": "{{*}}"
+}', 'modularity-frontend-form'),
                     'required' => 0,
                     'conditional_logic' => 0,
                     'wrapper' => array(

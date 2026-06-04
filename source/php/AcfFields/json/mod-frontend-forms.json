@@ -490,7 +490,7 @@
                     "name": "body",
                     "aria-label": "",
                     "type": "textarea",
-                    "instructions": "JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals \"{{field_name}}\", all form field can be accessed using dot-notation. Example: \"{\"name\": \"{{user.name}}\", \"message\": \"{{message}}\"}\".",
+                    "instructions": "JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals \"{{field_name}}\", all form fields can be accessed using dot-notation with field names as identifier or {{*}} to output all fields. \r\n\r\nExample: \r\n{\r\n    \"name\": \"{{user.name}}\",\r\n    \"message\": \"{{message}}\",\r\n    \"object\": \"{{user}}\",\r\n    \"array\": \"{{user.hobbies}}\",\r\n    \"all\": \"{{*}}\"\r\n}",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {

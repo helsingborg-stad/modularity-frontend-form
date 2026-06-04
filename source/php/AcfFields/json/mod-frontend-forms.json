@@ -486,11 +486,11 @@
                 },
                 {
                     "key": "field_6a0abc4eef652",
-                    "label": "Body",
+                    "label": "Body (JSON)",
                     "name": "body",
                     "aria-label": "",
                     "type": "textarea",
-                    "instructions": "",
+                    "instructions": "JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals \"{{field_name}}\", all form field can be accessed using dot-notation. Example: \"{\"name\": \"{{user.name}}\", \"message\": \"{{message}}\"}\".",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {

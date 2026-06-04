@@ -491,11 +491,11 @@
                 ),
                 2 => array(
                     'key' => 'field_6a0abc4eef652',
-                    'label' => __('Body', 'modularity-frontend-form'),
+                    'label' => __('Body (JSON)', 'modularity-frontend-form'),
                     'name' => 'body',
                     'aria-label' => '',
                     'type' => 'textarea',
-                    'instructions' => '',
+                    'instructions' => __('JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals "{{field_name}}", all form field can be accessed using dot-notation. Example: "{"name": "{{user.name}}", "message": "{{message}}"}".', 'modularity-frontend-form'),
                     'required' => 0,
                     'conditional_logic' => 0,
                     'wrapper' => array(

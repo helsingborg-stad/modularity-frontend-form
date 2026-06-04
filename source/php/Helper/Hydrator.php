@@ -1,8 +1,8 @@
 <?php
 
-namespace ModularityFrontendForm\Hydratable;
+namespace ModularityFrontendForm\Helper;
 
-interface Hydratable
+interface Hydrator
 {
     public function hydrate(string $template, array $data): string;
 }

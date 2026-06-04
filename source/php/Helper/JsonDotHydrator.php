@@ -1,10 +1,10 @@
 <?php
 
-namespace ModularityFrontendForm\Hydratable;
+namespace ModularityFrontendForm\Helper;
 
 use Adbar\Dot;
 
-class JsonDotHydrator implements Hydratable
+class JsonDotHydrator implements Hydrator
 {
     public function hydrate(string $template, array $data): string
     {

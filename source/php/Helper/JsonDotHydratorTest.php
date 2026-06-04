@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\Hydratable;
+namespace ModularityFrontendForm\Helper;
 
 use PHPUnit\Framework\TestCase;
 

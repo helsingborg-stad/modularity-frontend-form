@@ -12,7 +12,7 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
-use ModularityFrontendForm\Hydratable\JsonDotHydrator;
+use ModularityFrontendForm\Helper\JsonDotHydrator;
 use WP_Error;
 use WP_REST_Request;
 

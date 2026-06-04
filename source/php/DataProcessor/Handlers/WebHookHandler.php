@@ -45,53 +45,13 @@ class WebHookHandler implements HandlerInterface
   {
     $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
 
-    if ($this->validateCallbackUrl($config->callbackUrl) === false) {
-      return $this->handlerResult;
-    }
-
-    if ($this->trySendRequest(
+    $this->trySendRequest(
       $config->callbackUrl,
       $this->createBody($data, $config),
       $this->createHeaders($data, $config)
-    )) {
-      return $this->handlerResult;
-    }
+    );
 
     return $this->handlerResult;
-  }
-
-  /**
-   * Validate the callback URL
-   *
-   * @param string $url The URL to validate
-   * @return bool True if the URL is valid, false otherwise
-   */
-  private function validateCallbackUrl(string $url): bool
-  {
-    // Validate the URL format
-    if (!filter_var($url, FILTER_VALIDATE_URL)) {
-      $this->handlerResult->setError(
-        new WP_Error(
-          RestApiResponseStatusEnums::HandlerError->value,
-          $this->wpService->__('Invalid callback url format.', 'modularity-frontend-form')
-        )
-      );
-      return false;
-    }
-
-    // Check if the URL is reachable
-    $headers = @get_headers($url);
-    if ($headers === false) {
-      $this->handlerResult->setError(
-        new WP_Error(
-          RestApiResponseStatusEnums::HandlerError->value,
-          $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
-        )
-      );
-      return false;
-    }
-
-    return true;
   }
 
   /**

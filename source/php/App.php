@@ -122,6 +122,10 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->config,
             $this->wpService
         ))->addHooks();
+
+        (new Admin\AcfValidateJsonField(
+            $this->wpService,
+        ))->addHooks();
     }
 
     public function setUpTaxonomies(): void

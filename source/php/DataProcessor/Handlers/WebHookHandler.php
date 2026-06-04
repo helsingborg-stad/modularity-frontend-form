@@ -61,10 +61,10 @@ class WebHookHandler implements HandlerInterface
    * @param array $data The data to send in the request
    * @return bool True if the request was sent successfully, false otherwise
    */
-  private function trySendRequest(string $url, array $data, array $headers = []): bool
+  private function trySendRequest(string $url, array|null $data, array $headers = []): bool
   {
     $response = $this->wpService->wpRemotePost($url, [
-      'body' => \json_encode($data),
+      'body' => $data ? \json_encode($data) : null,
       'timeout' => 20,
       'headers' => $headers
     ]);
@@ -82,12 +82,13 @@ class WebHookHandler implements HandlerInterface
     return true;
   }
 
-  private function createBody(array $data, object $config): array
+  private function createBody(array $data, object $config): array|null
   {
     $formData = $this->parseFormData($data['mod-frontend-form']);
+    $formData['*'] = $formData;
 
     return empty($config->body)
-      ? $formData
+      ? null
       : \json_decode(
         (new JsonDotHydrator())->hydrate($config->body, $formData),
         true

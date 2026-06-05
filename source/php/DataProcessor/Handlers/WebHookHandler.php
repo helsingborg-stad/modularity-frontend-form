@@ -121,7 +121,8 @@ class WebHookHandler implements HandlerInterface
       $unserializer = in_array($fieldObject['type'], array_keys($unserializersByFieldType))
         ? $fieldObject['type']
         : 'null';
-      $formData[$fieldId] = $unserializersByFieldType[$unserializer]($formData[$fieldId]);
+      $unserializeFn = $unserializersByFieldType[$unserializer];
+      $formData[$fieldId] = $unserializeFn($formData[$fieldId]);
     }
 
     $dataAsJson = \json_encode($formData);

@@ -96,7 +96,7 @@ class WebHookHandler implements HandlerInterface
 
         $formData['*'] = $formData;
 
-        $this->logger->debug(\json_encode(array_keys($formData), \JSON_PRETTY_PRINT));
+        $this->logger->debug('Top level keys in normalized FormData: {data}', ['data' => array_keys($formData)]);
 
         $hydrator = new JsonDotHydrator();
         $formDataAsJson = $hydrator->hydrate($config->body, $formData);

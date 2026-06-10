@@ -39,7 +39,7 @@ class WithLogHandlerResult implements HandlerResultInterface
     foreach ( $error->get_error_codes() as $code ) {
         foreach ( $error->get_error_messages( $code ) as $message ) {
             $this->logger->error("$message  ($code)");
-            if ($error->get_error_data($code)) $this->logger->debug(\json_encode((array) $error->get_error_data($code), \JSON_PRETTY_PRINT));
+            if ($error->get_error_data($code)) $this->logger->debug('{data}', ['data' => $error->get_error_data($code)]);
         }
     }
   }

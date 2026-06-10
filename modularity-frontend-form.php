@@ -65,7 +65,7 @@ $config                 = ModularityFrontendForm\Config\ConfigFactory::create($w
 $moduleConfigFactory    = new ModularityFrontendForm\Config\ModuleConfigFactory($wpService, $acfService, $config);
 
 
-$loggerFactory = new LoggerFactory('modularity-frontend-form', [
+$loggerFactory = new LoggerFactory('ModularityFrontendForm', [
     [
         'logger' => defined('WP_DEBUG_LOG') && WP_DEBUG_LOG ? new WpDebugLogger() : new NullLogger(), 
         'logLevel' => defined('MODULARITYFRONTENDFORM_LOGLEVEL')
@@ -74,7 +74,7 @@ $loggerFactory = new LoggerFactory('modularity-frontend-form', [
     ]
 ]);
 $validatorFactory   = new ValidatorFactory($wpService, $acfService, $config, $moduleConfigFactory);
-$handlerFactory     = new HandlerFactory($wpService, $acfService, $config, $moduleConfigFactory, $loggerFactory->createLogger());
+$handlerFactory     = new HandlerFactory($wpService, $acfService, $config, $moduleConfigFactory, $loggerFactory->createLogger(['namespace' => 'DataProcessor']));
 
 // Start application
 $app = new ModularityFrontendForm\App(

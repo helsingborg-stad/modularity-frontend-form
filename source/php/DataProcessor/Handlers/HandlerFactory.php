@@ -20,13 +20,12 @@ use ModularityFrontendForm\DataProcessor\Handlers\WithLogHandler;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\WithLogHandlerResult;
 use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use WP_REST_Request;
 
 class HandlerFactory {
 
     use GetModuleConfigInstanceTrait;
-
-    private LoggerInterface $logger;
 
     public function __construct(
         private WpService $wpService,
@@ -34,9 +33,7 @@ class HandlerFactory {
         private ConfigInterface $config,
         private ModuleConfigFactoryInterface $moduleConfigFactory,
         private LoggerFactoryInterface&LoggerInterface $loggerFactory
-    ) {
-        $this->logger = $this->loggerFactory->createLogger();
-    }
+    ) {}
 
     /**
      * Creates an array of handlers for the given module ID
@@ -50,22 +47,23 @@ class HandlerFactory {
         $moduleConfig   = $this->getModuleConfigInstance($params->moduleId);
         $activeHandlers = $moduleConfig->getActivatedHandlers();
 
-        $handlerArgs     = $this->createHandlerInterfaceRequiredArguments($params);
-        $fileHandlerArgs = [$this->config, $moduleConfig, $this->wpService];
-
         foreach ($activeHandlers as $handler) {
+            $logger = $this->loggerFactory->createLogger(['namespace' => $handler]);
+            $handlerArgs     = $this->createHandlerInterfaceRequiredArguments($params, $logger);
+            $fileHandlerArgs = [$this->config, $moduleConfig, $this->wpService];
+            
             switch ($handler) {
                 case 'WpDbHandler':
                     $handlerArgs[] = new WpDbFileHandler(...$fileHandlerArgs);
-                    $handlers[]    = new WithLogHandler(new WpDbHandler(...$handlerArgs), $this->logger);
+                    $handlers[]    = new WithLogHandler(new WpDbHandler(...$handlerArgs), $logger);
                     break;
                 case 'MailHandler':
                     $handlerArgs[] = new NullFileHandler(...$fileHandlerArgs);
-                    $handlers[]    = new WithLogHandler(new MailHandler(...$handlerArgs), $this->logger);
+                    $handlers[]    = new WithLogHandler(new MailHandler(...$handlerArgs), $logger);
                     break;
                 case 'WebHookHandler':
                     $handlerArgs[] = new NullFileHandler(...$fileHandlerArgs);
-                    $handlers[]    = new WithLogHandler(new WebHookHandler(...$handlerArgs), $this->logger);
+                    $handlers[]    = new WithLogHandler(new WebHookHandler(...$handlerArgs), $logger);
                     break;
             }
         }
@@ -83,7 +81,8 @@ class HandlerFactory {
      */
     public function createNullHandler(object $params): HandlerInterface {
         return new NullHandler(...$this->createHandlerInterfaceRequiredArguments(
-            $params
+            $params,
+            new NullLogger()
         ));
     }
 
@@ -94,15 +93,15 @@ class HandlerFactory {
      * 
      * @return array An array of arguments
      */
-    private function createHandlerInterfaceRequiredArguments(object $params): array {
+    private function createHandlerInterfaceRequiredArguments(object $params, LoggerInterface $logger): array {
         return [
             $this->wpService,
             $this->acfService,
             $this->config,
             $this->getModuleConfigInstance($params->moduleId),
             $params,
-            new WithLogHandlerResult(new HandlerResult(), $this->logger),
-            $this->logger
+            new WithLogHandlerResult(new HandlerResult(), $logger),
+            $logger
         ];
     }
 }

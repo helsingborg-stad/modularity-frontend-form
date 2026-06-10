@@ -23,7 +23,11 @@ class WithLogHandler implements HandlerInterface {
    */
   public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
   {
-    $this->logger->info('Processing data using handler instance from mod-frontend-from configuration (module-id: {module-id}, holding-post-id: {holding-post-id})', $data);
+    $context = [
+      'moduleId' => $data['module-id'],
+      'holdingPostId' => $data['holding-post-id'],
+    ];
+    $this->logger->info('Processing data using handler instance from mod-frontend-from configuration (module-id: {moduleId}, holding-post-id: {holdingPostId})', $context);
     return $this->handler->handle($data, $request);
   }
 }

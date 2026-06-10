@@ -32,184 +32,75 @@ class WithBaseLoggerTest extends TestCase
     {
         $logger = new WithBaseLogger();
 
-        // Should not throw — NullLogger silently discards messages
         $logger->info('test');
         $this->addToAssertionCount(1);
     }
 
     /**
-     * @testdox log() delegates to the injected logger with the same level, message, and context
+     * @testdox log() delegates level, message, and context to the injected logger
      */
     public function testLogDelegatesToInjectedLogger(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithBaseLogger($spy);
 
         $logger->log(LogLevel::ERROR, 'something went wrong', ['key' => 'value']);
 
         $this->assertCount(1, $spy->records);
-        $this->assertSame(LogLevel::ERROR, $spy->records[0]['level']);
-        $this->assertSame('something went wrong', $spy->records[0]['message']);
-        $this->assertSame(['key' => 'value'], $spy->records[0]['context']);
+        $this->assertSame(LogLevel::ERROR,          $spy->records[0]['level']);
+        $this->assertSame('something went wrong',   $spy->records[0]['message']);
+        $this->assertSame(['key' => 'value'],        $spy->records[0]['context']);
     }
 
     /**
-     * @testdox emergency() calls log() with EMERGENCY level
+     * @testdox each PSR-3 convenience method calls log() with the correct level
      */
-    public function testEmergencyDelegatesToLogWithEmergencyLevel(): void
+    public static function levelMethodProvider(): array
     {
-        $spy = new InMemoryLogger();
+        return [
+            'emergency' => [LogLevel::EMERGENCY, 'emergency'],
+            'alert'     => [LogLevel::ALERT,     'alert'],
+            'critical'  => [LogLevel::CRITICAL,  'critical'],
+            'error'     => [LogLevel::ERROR,     'error'],
+            'warning'   => [LogLevel::WARNING,   'warning'],
+            'notice'    => [LogLevel::NOTICE,    'notice'],
+            'info'      => [LogLevel::INFO,      'info'],
+            'debug'     => [LogLevel::DEBUG,     'debug'],
+        ];
+    }
+
+    /**
+     * @dataProvider levelMethodProvider
+     */
+    public function testLevelMethodDelegatesToLog(string $level, string $method): void
+    {
+        $spy    = new InMemoryLogger();
         $logger = new WithBaseLogger($spy);
 
-        $logger->emergency('emergency message');
+        $logger->$method('msg');
 
-        $this->assertSame(LogLevel::EMERGENCY, $spy->records[0]['level']);
-        $this->assertSame('emergency message', $spy->records[0]['message']);
+        $this->assertSame($level, $spy->records[0]['level']);
     }
 
     /**
-     * @testdox alert() calls log() with ALERT level
+     * @testdox createLogger() returns an object implementing both LoggerInterface and LoggerFactoryInterface
      */
-    public function testAlertDelegatesToLogWithAlertLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->alert('alert message');
-
-        $this->assertSame(LogLevel::ALERT, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox critical() calls log() with CRITICAL level
-     */
-    public function testCriticalDelegatesToLogWithCriticalLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->critical('critical message');
-
-        $this->assertSame(LogLevel::CRITICAL, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox error() calls log() with ERROR level
-     */
-    public function testErrorDelegatesToLogWithErrorLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->error('error message');
-
-        $this->assertSame(LogLevel::ERROR, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox warning() calls log() with WARNING level
-     */
-    public function testWarningDelegatesToLogWithWarningLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->warning('warning message');
-
-        $this->assertSame(LogLevel::WARNING, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox notice() calls log() with NOTICE level
-     */
-    public function testNoticeDelegatesToLogWithNoticeLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->notice('notice message');
-
-        $this->assertSame(LogLevel::NOTICE, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox info() calls log() with INFO level
-     */
-    public function testInfoDelegatesToLogWithInfoLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->info('info message');
-
-        $this->assertSame(LogLevel::INFO, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox debug() calls log() with DEBUG level
-     */
-    public function testDebugDelegatesToLogWithDebugLevel(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->debug('debug message');
-
-        $this->assertSame(LogLevel::DEBUG, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox log() passes context array through to the inner logger
-     */
-    public function testLogPassesContextToInnerLogger(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithBaseLogger($spy);
-
-        $logger->info('msg', ['foo' => 'bar', 'baz' => 42]);
-
-        $this->assertSame(['foo' => 'bar', 'baz' => 42], $spy->records[0]['context']);
-    }
-
-    /**
-     * @testdox createLogger() returns an object implementing LoggerInterface
-     */
-    public function testCreateLoggerReturnsLoggerInterface(): void
+    public function testCreateLoggerReturnsLoggerAndFactoryInterface(): void
     {
         $logger = new WithBaseLogger();
 
-        $this->assertInstanceOf(LoggerInterface::class, $logger->createLogger());
+        $child = $logger->createLogger();
+
+        $this->assertInstanceOf(LoggerInterface::class, $child);
+        $this->assertInstanceOf(LoggerFactoryInterface::class, $child);
     }
 
     /**
-     * @testdox createLogger() returns an object implementing LoggerFactoryInterface
-     */
-    public function testCreateLoggerReturnsLoggerFactoryInterface(): void
-    {
-        $logger = new WithBaseLogger();
-
-        $this->assertInstanceOf(LoggerFactoryInterface::class, $logger->createLogger());
-    }
-
-    /**
-     * @testdox createLogger() delegates to the injected factory
-     */
-    public function testCreateLoggerDelegatesToInjectedFactory(): void
-    {
-        $spy = $this->createSpyFactory();
-        $logger = new WithBaseLogger(new NullLogger(), $spy);
-
-        $logger->createLogger();
-
-        $this->assertCount(1, $spy->calls);
-    }
-
-    /**
-     * @testdox createLogger() passes args through to the factory
+     * @testdox createLogger() delegates to the injected factory and passes args through
      */
     public function testCreateLoggerPassesArgsToFactory(): void
     {
-        $spy = $this->createSpyFactory();
+        $spy    = $this->createSpyFactory();
         $logger = new WithBaseLogger(new NullLogger(), $spy);
 
         $logger->createLogger(['namespace' => 'custom']);

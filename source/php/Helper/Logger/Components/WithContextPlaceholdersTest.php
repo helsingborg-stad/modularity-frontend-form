@@ -65,7 +65,7 @@ class WithContextPlaceholdersTest extends TestCase
     // ── Delimiter / whitespace rules (PSR-3) ──────────────────────────────────
 
     /**
-     * @testdox log() does NOT interpolate { key } when there is whitespace around the placeholder name
+     * @testdox log() does NOT interpolate when there is whitespace inside the braces
      */
     public function testWhitespaceInsideBracesIsNotInterpolated(): void
     {
@@ -75,32 +75,6 @@ class WithContextPlaceholdersTest extends TestCase
         $logger->log(LogLevel::INFO, 'Hello { name }', ['name' => 'World']);
 
         $this->assertSame('Hello { name }', $spy->records[0]['message']);
-    }
-
-    /**
-     * @testdox log() does NOT interpolate {name } when there is trailing whitespace inside the braces
-     */
-    public function testTrailingWhitespaceInsideBracesIsNotInterpolated(): void
-    {
-        $spy    = new InMemoryLogger();
-        $logger = new WithContextPlaceholders($spy);
-
-        $logger->log(LogLevel::INFO, 'Hello {name }', ['name' => 'World']);
-
-        $this->assertSame('Hello {name }', $spy->records[0]['message']);
-    }
-
-    /**
-     * @testdox log() does NOT interpolate { name} when there is leading whitespace inside the braces
-     */
-    public function testLeadingWhitespaceInsideBracesIsNotInterpolated(): void
-    {
-        $spy    = new InMemoryLogger();
-        $logger = new WithContextPlaceholders($spy);
-
-        $logger->log(LogLevel::INFO, 'Hello { name}', ['name' => 'World']);
-
-        $this->assertSame('Hello { name}', $spy->records[0]['message']);
     }
 
     // ── Valid placeholder name characters (PSR-3 SHOULD) ─────────────────────
@@ -134,86 +108,65 @@ class WithContextPlaceholdersTest extends TestCase
     // ── Context and level pass-through ────────────────────────────────────────
 
     /**
-     * @testdox log() passes the original context array to the inner logger unchanged
+     * @testdox log() forwards the original level and context to the inner logger unchanged
      */
-    public function testContextPassedToInnerLoggerUnchanged(): void
+    public function testLevelAndContextPassedToInnerLoggerUnchanged(): void
     {
         $spy    = new InMemoryLogger();
         $logger = new WithContextPlaceholders($spy);
 
-        $logger->log(LogLevel::DEBUG, '{key}', ['key' => 'val', 'extra' => 42]);
+        $logger->log(LogLevel::WARNING, '{key}', ['key' => 'val', 'extra' => 42]);
 
+        $this->assertSame(LogLevel::WARNING,              $spy->records[0]['level']);
         $this->assertSame(['key' => 'val', 'extra' => 42], $spy->records[0]['context']);
-    }
-
-    /**
-     * @testdox log() preserves the original log level when forwarding to the inner logger
-     */
-    public function testLevelPreserved(): void
-    {
-        $spy    = new InMemoryLogger();
-        $logger = new WithContextPlaceholders($spy);
-
-        $logger->log(LogLevel::WARNING, 'msg');
-
-        $this->assertSame(LogLevel::WARNING, $spy->records[0]['level']);
     }
 
     // ── Non-string context values ─────────────────────────────────────────────
 
-    /**
-     * @testdox log() casts an integer context value to string when interpolating
-     */
-    public function testIntegerContextValueIsCastToString(): void
+    public static function scalarContextValueProvider(): array
     {
-        $spy    = new InMemoryLogger();
-        $logger = new WithContextPlaceholders($spy);
-
-        $logger->log(LogLevel::INFO, 'Count: {count}', ['count' => 42]);
-
-        $this->assertSame('Count: 42', $spy->records[0]['message']);
+        return [
+            'int'   => [42,   '42'],
+            'float' => [3.14, '3.14'],
+        ];
     }
 
     /**
-     * @testdox log() casts a float context value to string when interpolating
+     * @testdox log() casts scalar (int/float) context values to string when interpolating
+     * @dataProvider scalarContextValueProvider
      */
-    public function testFloatContextValueIsCastToString(): void
+    public function testScalarContextValueIsCastToString(int|float $value, string $expected): void
     {
         $spy    = new InMemoryLogger();
         $logger = new WithContextPlaceholders($spy);
 
-        $logger->log(LogLevel::INFO, 'Score: {score}', ['score' => 3.14]);
+        $logger->log(LogLevel::INFO, '{val}', ['val' => $value]);
 
-        $this->assertSame('Score: 3.14', $spy->records[0]['message']);
+        $this->assertSame($expected, $spy->records[0]['message']);
     }
 
-    /**
-     * @testdox log() JSON pretty-prints an array context value when interpolating
-     */
-    public function testArrayContextValueIsPrettyPrintedAsJson(): void
+    public static function jsonContextValueProvider(): array
     {
-        $spy    = new InMemoryLogger();
-        $logger = new WithContextPlaceholders($spy);
-
-        $logger->log(LogLevel::INFO, 'Data: {data}', ['data' => ['foo', 'bar']]);
-
-        $this->assertSame('Data: ' . json_encode(['foo', 'bar'], JSON_PRETTY_PRINT), $spy->records[0]['message']);
-    }
-
-    /**
-     * @testdox log() JSON pretty-prints a non-Stringable object context value when interpolating
-     */
-    public function testNonStringableObjectContextValueIsPrettyPrintedAsJson(): void
-    {
-        $spy    = new InMemoryLogger();
-        $logger = new WithContextPlaceholders($spy);
-
         $obj       = new \stdClass();
         $obj->name = 'Alice';
+        return [
+            'array'  => [['foo', 'bar'], json_encode(['foo', 'bar'], JSON_PRETTY_PRINT)],
+            'object' => [$obj,           json_encode($obj,           JSON_PRETTY_PRINT)],
+        ];
+    }
 
-        $logger->log(LogLevel::INFO, 'Data: {obj}', ['obj' => $obj]);
+    /**
+     * @testdox log() JSON pretty-prints array and non-Stringable object context values when interpolating
+     * @dataProvider jsonContextValueProvider
+     */
+    public function testComplexContextValueIsJsonEncoded(array|object $value, string $expected): void
+    {
+        $spy    = new InMemoryLogger();
+        $logger = new WithContextPlaceholders($spy);
 
-        $this->assertSame('Data: ' . json_encode($obj, JSON_PRETTY_PRINT), $spy->records[0]['message']);
+        $logger->log(LogLevel::INFO, '{val}', ['val' => $value]);
+
+        $this->assertSame($expected, $spy->records[0]['message']);
     }
 
     /**

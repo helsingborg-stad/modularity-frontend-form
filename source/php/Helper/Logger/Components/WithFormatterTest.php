@@ -5,33 +5,22 @@ namespace ModularityFrontendForm\Helper\Logger\Components;
 use ModularityFrontendForm\Helper\Logger\Loggers\InMemoryLogger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 class WithFormatterTest extends TestCase
 {
     /**
-     * @testdox log() preserves the original (lowercase) level passed to the inner logger
+     * @testdox log() forwards the original level and context to the inner logger unchanged
      */
-    public function testLogPreservesOriginalLevel(): void
+    public function testLogForwardsLevelAndContext(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter($spy, 'ns');
 
-        $logger->log(LogLevel::WARNING, 'msg');
+        $logger->log(LogLevel::WARNING, 'msg', ['foo' => 'bar']);
 
         $this->assertSame(LogLevel::WARNING, $spy->records[0]['level']);
-    }
-
-    /**
-     * @testdox log() passes context array through to the inner logger unchanged
-     */
-    public function testLogPassesContextUnchanged(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithFormatter($spy, 'ns');
-
-        $logger->log(LogLevel::DEBUG, 'msg', ['foo' => 'bar', 'baz' => 42]);
-
-        $this->assertSame(['foo' => 'bar', 'baz' => 42], $spy->records[0]['context']);
+        $this->assertSame(['foo' => 'bar'],  $spy->records[0]['context']);
     }
 
     /**
@@ -39,7 +28,7 @@ class WithFormatterTest extends TestCase
      */
     public function testLogAcceptsStringable(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter($spy, 'ns');
 
         $stringable = new class implements \Stringable {
@@ -58,7 +47,7 @@ class WithFormatterTest extends TestCase
      */
     public function testStringNamespacePassedThrough(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter($spy, 'MyService');
 
         $logger->log(LogLevel::INFO, 'msg');
@@ -71,7 +60,7 @@ class WithFormatterTest extends TestCase
      */
     public function testArrayNamespaceJoinedWithSlash(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter($spy, ['App', 'Handler', 'Form'], breadcrumbMaxCount: 10);
 
         $logger->log(LogLevel::INFO, 'msg');
@@ -86,7 +75,7 @@ class WithFormatterTest extends TestCase
      */
     public function testNullFormatStrUsesDefault(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter($spy, 'ns');
 
         $logger->log(LogLevel::ERROR, 'hello');
@@ -99,7 +88,7 @@ class WithFormatterTest extends TestCase
      */
     public function testCustomFormatStrIsApplied(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter($spy, 'ns', formatStr: '%2$s|%1$s|%3$s');
 
         $logger->log(LogLevel::INFO, 'hello');
@@ -107,30 +96,35 @@ class WithFormatterTest extends TestCase
         $this->assertSame('ns|INFO|hello', $spy->records[0]['message']);
     }
 
-    // ── breadcrumbDirection ───────────────────────────────────────────────────
+    // ── breadcrumbPaths ───────────────────────────────────────────────────────
 
-    /**
-     * @testdox direction='left' keeps the last element when maxCount=1
-     */
-    public function testBreadcrumbLeftMaxCountOneKeepsLastElement(): void
+    public static function breadcrumbPathsProvider(): array
     {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
-
-        $result = $formatter->breadcrumbPaths(['first', 'middle', 'last'], 'left', 1);
-
-        $this->assertSame(['last'], $result);
+        return [
+            // maxCount=1: left picks last, right picks first
+            'left  maxCount=1' => [['first', 'middle', 'last'], 'left',  1, ['last']],
+            'right maxCount=1' => [['first', 'middle', 'last'], 'right', 1, ['first']],
+            // maxCount=2: always first + last regardless of direction
+            'left  maxCount=2' => [['a', 'b', 'c', 'd'], 'left',  2, ['a', 'd']],
+            'right maxCount=2' => [['a', 'b', 'c', 'd'], 'right', 2, ['a', 'd']],
+            // maxCount=3: one middle element; left keeps rightmost, right keeps leftmost
+            'left  maxCount=3' => [['a', 'b', 'c', 'd', 'e'], 'left',  3, ['a', 'd', 'e']],
+            'right maxCount=3' => [['a', 'b', 'c', 'd', 'e'], 'right', 3, ['a', 'b', 'e']],
+            // maxCount=4: two middle elements; left keeps rightmost two, right keeps leftmost two
+            'left  maxCount=4' => [['a', 'b', 'c', 'd', 'e'], 'left',  4, ['a', 'c', 'd', 'e']],
+            'right maxCount=4' => [['a', 'b', 'c', 'd', 'e'], 'right', 4, ['a', 'b', 'c', 'e']],
+        ];
     }
 
     /**
-     * @testdox direction='right' keeps the first element when maxCount=1
+     * @testdox breadcrumbPaths() trims the path correctly for a given direction and maxCount
+     * @dataProvider breadcrumbPathsProvider
      */
-    public function testBreadcrumbRightMaxCountOneKeepsFirstElement(): void
+    public function testBreadcrumbPaths(array $paths, string $direction, int $maxCount, array $expected): void
     {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
+        $formatter = new WithFormatter(new NullLogger(), 'ns');
 
-        $result = $formatter->breadcrumbPaths(['first', 'middle', 'last'], 'right', 1);
-
-        $this->assertSame(['first'], $result);
+        $this->assertSame($expected, $formatter->breadcrumbPaths($paths, $direction, $maxCount));
     }
 
     /**
@@ -138,79 +132,14 @@ class WithFormatterTest extends TestCase
      */
     public function testBreadcrumbInvalidDirectionFallsBackToRight(): void
     {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
+        $formatter = new WithFormatter(new NullLogger(), 'ns');
 
         $left  = $formatter->breadcrumbPaths(['first', 'middle', 'last'], 'left',    1);
         $right = $formatter->breadcrumbPaths(['first', 'middle', 'last'], 'right',   1);
         $bad   = $formatter->breadcrumbPaths(['first', 'middle', 'last'], 'invalid', 1);
 
-        $this->assertNotSame($left, $bad, 'invalid direction should not behave like left');
-        $this->assertSame($right, $bad,   'invalid direction should behave like right');
-    }
-
-    /**
-     * @testdox direction='left' keeps rightmost middle elements when trimming
-     */
-    public function testBreadcrumbLeftKeepsRightmostMiddle(): void
-    {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
-
-        // ['a','b','c','d','e'], maxCount=3 → first + rightmost-middle + last
-        $result = $formatter->breadcrumbPaths(['a', 'b', 'c', 'd', 'e'], 'left', 3);
-
-        $this->assertSame(['a', 'd', 'e'], $result);
-    }
-
-    /**
-     * @testdox direction='right' keeps leftmost middle elements when trimming
-     */
-    public function testBreadcrumbRightKeepsLeftmostMiddle(): void
-    {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
-
-        // ['a','b','c','d','e'], maxCount=3 → first + leftmost-middle + last
-        $result = $formatter->breadcrumbPaths(['a', 'b', 'c', 'd', 'e'], 'right', 3);
-
-        $this->assertSame(['a', 'b', 'e'], $result);
-    }
-
-    // ── breadcrumbMaxCount combined with breadcrumbDirection ──────────────────
-
-    /**
-     * @testdox breadcrumbMaxCount=2 always returns first and last elements regardless of direction
-     */
-    public function testMaxCountTwoReturnsFirstAndLast(): void
-    {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
-
-        $this->assertSame(['a', 'd'], $formatter->breadcrumbPaths(['a', 'b', 'c', 'd'], 'left',  2));
-        $this->assertSame(['a', 'd'], $formatter->breadcrumbPaths(['a', 'b', 'c', 'd'], 'right', 2));
-    }
-
-    /**
-     * @testdox breadcrumbMaxCount=4 with direction='left' keeps the two rightmost middle elements
-     */
-    public function testMaxCountFourLeftKeepsTwoRightmostMiddleElements(): void
-    {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
-
-        // ['a','b','c','d','e'], middle=['b','c','d'], rightmost 2 of middle = ['c','d']
-        $result = $formatter->breadcrumbPaths(['a', 'b', 'c', 'd', 'e'], 'left', 4);
-
-        $this->assertSame(['a', 'c', 'd', 'e'], $result);
-    }
-
-    /**
-     * @testdox breadcrumbMaxCount=4 with direction='right' keeps the two leftmost middle elements
-     */
-    public function testMaxCountFourRightKeepsTwoLeftmostMiddleElements(): void
-    {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
-
-        // ['a','b','c','d','e'], middle=['b','c','d'], leftmost 2 of middle = ['b','c']
-        $result = $formatter->breadcrumbPaths(['a', 'b', 'c', 'd', 'e'], 'right', 4);
-
-        $this->assertSame(['a', 'b', 'c', 'e'], $result);
+        $this->assertNotSame($left,  $bad, 'invalid direction should not behave like left');
+        $this->assertSame($right, $bad,    'invalid direction should behave like right');
     }
 
     /**
@@ -218,23 +147,19 @@ class WithFormatterTest extends TestCase
      */
     public function testMaxCountLargerThanPathCountReturnsAll(): void
     {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
+        $formatter = new WithFormatter(new NullLogger(), 'ns');
 
-        $result = $formatter->breadcrumbPaths(['a', 'b', 'c'], 'left', 10);
-
-        $this->assertSame(['a', 'b', 'c'], $result);
+        $this->assertSame(['a', 'b', 'c'], $formatter->breadcrumbPaths(['a', 'b', 'c'], 'left', 10));
     }
 
     /**
      * @testdox breadcrumbMaxCount<=0 is clamped to 1 and direction='left' returns the last element
      */
-    public function testMaxCountZeroClampedToOneLeft(): void
+    public function testMaxCountZeroClampedToOne(): void
     {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
+        $formatter = new WithFormatter(new NullLogger(), 'ns');
 
-        $result = $formatter->breadcrumbPaths(['first', 'last'], 'left', 0);
-
-        $this->assertSame(['last'], $result);
+        $this->assertSame(['last'], $formatter->breadcrumbPaths(['first', 'last'], 'left', 0));
     }
 
     /**
@@ -242,7 +167,7 @@ class WithFormatterTest extends TestCase
      */
     public function testEmptyPathsReturnsEmptyArray(): void
     {
-        $formatter = new WithFormatter(new \Psr\Log\NullLogger(), 'ns');
+        $formatter = new WithFormatter(new NullLogger(), 'ns');
 
         $this->assertSame([], $formatter->breadcrumbPaths([], 'left',  3));
         $this->assertSame([], $formatter->breadcrumbPaths([], 'right', 3));
@@ -253,7 +178,7 @@ class WithFormatterTest extends TestCase
      */
     public function testArrayNamespaceUsesDirectionAndMaxCount(): void
     {
-        $spy = new InMemoryLogger();
+        $spy    = new InMemoryLogger();
         $logger = new WithFormatter(
             $spy,
             ['a', 'b', 'c', 'd', 'e'],

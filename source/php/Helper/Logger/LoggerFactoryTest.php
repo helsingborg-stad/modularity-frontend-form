@@ -76,36 +76,56 @@ class LoggerFactoryTest extends TestCase
     }
 
     /**
-     * @testdox createLogger() args override constructor defaults
+     * @testdox createLogger() args cannot override the target logger — constructor-registered loggers are always used
      */
-    public function testCreateLoggerArgsOverrideConstructorDefaults(): void
+    public function testCreateLoggerArgsCannotOverrideLogger(): void
     {
         $spy = new InMemoryLogger();
-        $logger = (new LoggerFactory('default-ns', [['logger' => new NullLogger(), 'logLevel' => LogLevel::ERROR]]))->createLogger([
-            'logger'    => $spy,
-            'logLevel'  => LogLevel::DEBUG,
-            'namespace' => 'override',
+        // Construct with spy at DEBUG; pass NullLogger via args — 'logger' is stripped, spy is still used.
+        $logger = (new LoggerFactory(loggers: [['logger' => $spy, 'logLevel' => LogLevel::DEBUG]]))->createLogger([
+            'logger'   => new NullLogger(),
+            'logLevel' => LogLevel::ERROR,
         ]);
 
         $logger->debug('test');
 
         $this->assertCount(1, $spy->records);
-        $this->assertStringContainsString('override', $spy->records[0]['message']);
     }
 
     /**
-     * @testdox createLogger() args partially override constructor defaults
+     * @testdox createLogger() args cannot override the log level threshold — per-logger constructor logLevel is used
      */
-    public function testCreateLoggerArgsPartiallyOverrideConstructorDefaults(): void
+    public function testCreateLoggerArgsCannotOverrideLogLevel(): void
     {
         $spy = new InMemoryLogger();
-        $logger = (new LoggerFactory(loggers: [['logger' => $spy, 'logLevel' => LogLevel::DEBUG]]))->createLogger([
-            'namespace' => 'partial-override',
+        // Constructor sets logger=$spy at ERROR; args try to lower to DEBUG — 'logLevel' arg is stripped.
+        $logger = (new LoggerFactory(loggers: [['logger' => $spy, 'logLevel' => LogLevel::ERROR]]))->createLogger([
+            'logLevel' => LogLevel::DEBUG,
         ]);
 
         $logger->debug('test');
+        $this->assertCount(0, $spy->records);
 
-        $this->assertStringContainsString('partial-override', $spy->records[0]['message']);
+        $logger->error('test');
+        $this->assertCount(1, $spy->records);
+    }
+
+    /**
+     * @testdox namespace arg passed to createLogger() extends the breadcrumb path for the next logger level
+     */
+    public function testNamespaceArgExtendsChildBreadcrumbPath(): void
+    {
+        $spy = new InMemoryLogger();
+        $factory = new LoggerFactory('App', [['logger' => $spy, 'logLevel' => LogLevel::DEBUG]]);
+
+        // namespace='Handler' is recorded by the child factory; the grandchild logger uses the full path.
+        $grandchild = $factory->createLogger()
+                              ->createLogger(['namespace' => 'Handler'])
+                              ->createLogger();
+
+        $grandchild->debug('msg');
+
+        $this->assertStringContainsString('App/Handler', $spy->records[0]['message']);
     }
 
     /**

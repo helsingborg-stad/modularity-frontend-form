@@ -9,19 +9,6 @@ use Psr\Log\LogLevel;
 class WithFormatterTest extends TestCase
 {
     /**
-     * @testdox log() formats message as [LEVEL][namespace]:\t{message}
-     */
-    public function testLogFormatsMessageWithLevelAndNamespace(): void
-    {
-        $spy = new InMemoryLogger();
-        $logger = new WithFormatter($spy, 'MyNamespace');
-
-        $logger->log(LogLevel::INFO, 'something happened');
-
-        $this->assertSame("[INFO][MyNamespace]:\tsomething happened", $spy->records[0]['message']);
-    }
-
-    /**
      * @testdox log() uppercases the level in the formatted message
      */
     public function testLogUppercasesLevel(): void

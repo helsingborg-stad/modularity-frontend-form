@@ -20,6 +20,6 @@ class WithFormatter extends NullLogger implements LoggerInterface
             $message
         ];
 
-        $this->logger->log($level, \sprintf("[%s][%s]:\t%s", ...$args),$context);
+        $this->logger->log($level, \sprintf("[%s] [%s] %s", ...$args),$context);
     }
 }

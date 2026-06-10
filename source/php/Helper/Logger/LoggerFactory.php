@@ -34,11 +34,12 @@ class LoggerFactory implements LoggerFactoryInterface
         return new WithBaseLogger(
             new WithComposite(
                 array_map(
-                    fn($loggerConfig) => $this->composeFromConfig([
-                        ...['logLevel' => $this->logLevel, 'namespace' => $this->namespace],
-                        ...$loggerConfig,
-                        ...$this->toOnlyOverridable($args)
-                    ]),
+                    fn($loggerConfiguration) => 
+                        $this->composeFromConfig([
+                            ...['logLevel' => $this->logLevel, 'namespace' => $this->namespace],
+                            ...$loggerConfiguration,
+                            ...$this->reduceToOverridables($args)
+                        ]),
                     $this->loggers
                 )
             ),
@@ -60,11 +61,10 @@ class LoggerFactory implements LoggerFactoryInterface
         );
     }
 
-    private function toOnlyOverridable(array $args)
+    private function reduceToOverridables(array $args)
     {
         unset($args['logger']);
         unset($args['logLevel']);
-
         return $args;
     }
 

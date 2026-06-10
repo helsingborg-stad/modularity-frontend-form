@@ -10,7 +10,6 @@ use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
 use ModularityFrontendForm\Api\RestApiParams;
 use ModularityFrontendForm\Api\RestApiParamEnums;
-use WP;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
@@ -21,7 +20,7 @@ use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
-use ModularityFrontendForm\DataProcessor\Handlers\NullHandler;
+use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
 
 class Update extends RestApiEndpoint
 {
@@ -35,7 +34,11 @@ class Update extends RestApiEndpoint
         private WpService $wpService,
         private AcfService $acfService,
         private ConfigInterface $config,
-        private ModuleConfigFactoryInterface $moduleConfigFactory
+        private ModuleConfigFactoryInterface $moduleConfigFactory,
+        private ValidatorFactory $validatorFactory,
+        private HandlerFactory $handlerFactory,
+        private LoggerFactoryInterface $loggerFactory,
+
     ) {}
 
     /**
@@ -79,15 +82,11 @@ class Update extends RestApiEndpoint
         // Data to be submitted
         $data = $request->get_params()[$this->config->getFieldNamespace()]   ?? null;
 
-        // Handler factories
-        $validatorFactory   = new ValidatorFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
-        $handlerFactory     = new HandlerFactory($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory);
-
         // Creates the data processor
         $dataProcessor = new DataProcessor(
-            $validatorFactory->createInsertValidators($params->moduleId),
-            $handlerFactory->createHandlers($params, $request),
-            $handlerFactory->createNullHandler($params),
+            $this->validatorFactory->createInsertValidators($params->moduleId),
+            $this->handlerFactory->createHandlers($params, $request),
+            $this->handlerFactory->createNullHandler($params),
         );
 
         $dataProcessorResult = $dataProcessor->process($data, $request);

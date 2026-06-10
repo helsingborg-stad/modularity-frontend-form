@@ -7,6 +7,10 @@ use WpService\WpService;
 
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
+use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
+use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
+use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class App
@@ -18,7 +22,10 @@ class App implements \Municipio\HooksRegistrar\Hookable {
         private WpService $wpService, 
         private AcfService $acfService, 
         private ConfigInterface $config, 
-        private ModuleConfigFactoryInterface $moduleConfigFactory
+        private ModuleConfigFactoryInterface $moduleConfigFactory,
+        private LoggerInterface&LoggerFactoryInterface $logger,
+        private ValidatorFactory $validatorFactory,
+        private HandlerFactory $handlerFactory
     ){}
 
     /**
@@ -85,8 +92,8 @@ class App implements \Municipio\HooksRegistrar\Hookable {
     public function registerApi()
     {
         $restEndpoints = [
-            new Api\Submit\Post($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
-            new Api\Submit\Update($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
+            new Api\Submit\Post($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory, $this->validatorFactory, $this->handlerFactory, $this->logger),
+            new Api\Submit\Update($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory, $this->validatorFactory, $this->handlerFactory, $this->logger),
             new Api\Read\Get($this->wpService, $this->acfService, $this->config, $this->moduleConfigFactory),
             new Api\Nonce\Get($this->wpService, $this->config, $this->moduleConfigFactory)
         ];

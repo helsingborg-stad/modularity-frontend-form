@@ -14,6 +14,12 @@
  */
 
 use AcfService\Implementations\NativeAcfService;
+use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
+use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
+use ModularityFrontendForm\Helper\Logger\LoggerFactory;
+use ModularityFrontendForm\Helper\Logger\Loggers\WpDebugLogger;
+use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 use WpService\Implementations\NativeWpService;
 
  // Protect agains direct file access
@@ -58,11 +64,26 @@ $wpService->addAction('acf/init', function () {
 $config                 = ModularityFrontendForm\Config\ConfigFactory::create($wpService); 
 $moduleConfigFactory    = new ModularityFrontendForm\Config\ModuleConfigFactory($wpService, $acfService, $config);
 
+
+$loggerFactory = new LoggerFactory('modularity-frontend-form', [
+    [
+        'logger' => defined('WP_DEBUG_LOG') && WP_DEBUG_LOG ? new WpDebugLogger() : new NullLogger(), 
+        'logLevel' => defined('MODULARITYFRONTENDFORM_LOGLEVEL')
+            ? MODULARITYFRONTENDFORM_LOGLEVEL
+            : LogLevel::ERROR
+    ]
+]);
+$validatorFactory   = new ValidatorFactory($wpService, $acfService, $config, $moduleConfigFactory);
+$handlerFactory     = new HandlerFactory($wpService, $acfService, $config, $moduleConfigFactory, $loggerFactory->createLogger());
+
 // Start application
 $app = new ModularityFrontendForm\App(
     $wpService, 
     $acfService,
     $config,
-    $moduleConfigFactory
+    $moduleConfigFactory,
+    $loggerFactory->createLogger(),
+    $validatorFactory,
+    $handlerFactory 
 );
 $app->addHooks();

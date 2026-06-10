@@ -16,18 +16,26 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerInterface;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\WpDbFileHandler;
+use ModularityFrontendForm\DataProcessor\Handlers\WithLogHandler;
+use ModularityFrontendForm\DataProcessor\Handlers\Result\WithLogHandlerResult;
+use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
+use Psr\Log\LoggerInterface;
 use WP_REST_Request;
 
 class HandlerFactory {
 
     use GetModuleConfigInstanceTrait;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
         private ConfigInterface $config,
-        private ModuleConfigFactoryInterface $moduleConfigFactory
+        private ModuleConfigFactoryInterface $moduleConfigFactory,
+        private LoggerFactoryInterface&LoggerInterface $loggerFactory
     ) {
+        $this->logger = $this->loggerFactory->createLogger();
     }
 
     /**
@@ -49,15 +57,15 @@ class HandlerFactory {
             switch ($handler) {
                 case 'WpDbHandler':
                     $handlerArgs[] = new WpDbFileHandler(...$fileHandlerArgs);
-                    $handlers[]    = new WpDbHandler(...$handlerArgs);
+                    $handlers[]    = new WithLogHandler(new WpDbHandler(...$handlerArgs), $this->logger);
                     break;
                 case 'MailHandler':
                     $handlerArgs[] = new NullFileHandler(...$fileHandlerArgs);
-                    $handlers[]    = new MailHandler(...$handlerArgs);
+                    $handlers[]    = new WithLogHandler(new MailHandler(...$handlerArgs), $this->logger);
                     break;
                 case 'WebHookHandler':
                     $handlerArgs[] = new NullFileHandler(...$fileHandlerArgs);
-                    $handlers[]    = new WebHookHandler(...$handlerArgs);
+                    $handlers[]    = new WithLogHandler(new WebHookHandler(...$handlerArgs), $this->logger);
                     break;
             }
         }
@@ -93,7 +101,8 @@ class HandlerFactory {
             $this->config,
             $this->getModuleConfigInstance($params->moduleId),
             $params,
-            new HandlerResult(),
+            new WithLogHandlerResult(new HandlerResult(), $this->logger),
+            $this->logger
         ];
     }
 }

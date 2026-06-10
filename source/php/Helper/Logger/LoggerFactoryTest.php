@@ -121,11 +121,12 @@ class LoggerFactoryTest extends TestCase
         // namespace='Handler' is recorded by the child factory; the grandchild logger uses the full path.
         $grandchild = $factory->createLogger()
                               ->createLogger(['namespace' => 'Handler'])
-                              ->createLogger();
+                              ->createLogger()
+                              ->createLogger(['namespace' => 'HandlerTwo']);
 
         $grandchild->debug('msg');
 
-        $this->assertStringContainsString('App/Handler', $spy->records[0]['message']);
+        $this->assertStringContainsString('App/Handler/HandlerTwo', $spy->records[0]['message']);
     }
 
     /**

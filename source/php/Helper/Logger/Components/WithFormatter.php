@@ -12,8 +12,8 @@ class WithFormatter extends NullLogger implements LoggerInterface
     public function __construct(
         private LoggerInterface $logger, 
         private string|array $namespace, 
-        private string $breadcrumbDirection = 'left', 
-        private int $breadcrumbMaxCount = 3,
+        private ?string $breadcrumbDirection = 'left', 
+        private ?int $breadcrumbMaxCount = 2,
         private ?string $formatStr = null
     ){}
 
@@ -30,7 +30,7 @@ class WithFormatter extends NullLogger implements LoggerInterface
 
     private function formatNs(string|array $namespace): string {
         if (\is_string($namespace)) return $namespace;        
-        return implode("/", $this->breadcrumbPaths($namespace, $this->breadcrumbDirection, $this->breadcrumbMaxCount));
+        return implode("/", $this->breadcrumbPaths($namespace, $this->breadcrumbDirection ?? 'left', $this->breadcrumbMaxCount ?? 2));
     }
 
     function breadcrumbPaths(array $paths, string $direction, int $maxCount): array

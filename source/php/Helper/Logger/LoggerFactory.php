@@ -26,7 +26,7 @@ class LoggerFactory implements LoggerFactoryInterface
         private array $namespacePath = [],
         private string $logLevel = LogLevel::ERROR
     )  {
-        if (empty($namespacePath) || $namespacePath[array_key_last($namespacePath)] !== $namespace) $this->namespacePath[] = $namespace;
+        $this->namespacePath = $this->effectivePath($namespace);
     }
 
     public function createLogger(array $args = []): LoggerInterface&LoggerFactoryInterface
@@ -34,15 +34,15 @@ class LoggerFactory implements LoggerFactoryInterface
         return new WithBaseLogger(
             new WithComposite(
                 array_map(
-                    fn($logger) => $this->composeFromConfig([
-                        ...['logLevel' => $this->logLevel],
-                        ...$logger,
+                    fn($loggerConfig) => $this->composeFromConfig([
+                        ...['logLevel' => $this->logLevel, 'namespace' => $this->namespace],
+                        ...$loggerConfig,
                         ...$this->toOnlyOverridable($args)
-                    ]), 
+                    ]),
                     $this->loggers
                 )
             ),
-            new self($args['namespace'] ?? $this->namespace,$this->loggers, $this->namespacePath, $this->logLevel)
+            new self($args['namespace'] ?? $this->namespace, $this->loggers, $this->namespacePath, $this->logLevel)
         );
     }
 
@@ -51,10 +51,12 @@ class LoggerFactory implements LoggerFactoryInterface
             new WithContextPlaceholders(
                 new WithFormatter(
                         $args['logger'],
-                        $this->namespacePath
-                    ),
+                        $this->effectivePath($args['namespace'] ?? $this->namespace),
+                        $args['breadcrumbDirection'] ?? null,
+                        $args['breadcrumbMaxCount'] ?? null,
+                ),
             ),
-            LogLevelPrio::LEVELS[$args['logLevel'] ?? LogLevel::ERROR] ?? LogLevelPrio::LEVELS[LogLevel::ERROR] 
+            LogLevelPrio::LEVELS[$args['logLevel'] ?? LogLevel::ERROR] ?? LogLevelPrio::LEVELS[LogLevel::ERROR]
         );
     }
 
@@ -64,6 +66,16 @@ class LoggerFactory implements LoggerFactoryInterface
         unset($args['logLevel']);
 
         return $args;
+    }
+
+    private function effectivePath(string $namespace)
+    {
+        $effectivePath  = $this->namespacePath;
+        if (empty($effectivePath) || $effectivePath[array_key_last($effectivePath)] !== $namespace) {
+            $effectivePath[] = $namespace;
+        }
+
+        return $effectivePath;
     }
 }
 

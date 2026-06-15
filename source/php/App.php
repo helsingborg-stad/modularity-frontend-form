@@ -8,6 +8,7 @@ use WpService\WpService;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
+use ModularityFrontendForm\DataProcessor\Handlers\Webhook\AcfValidateJsonField;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use PsrLogger\Contracts\LoggerFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -130,7 +131,7 @@ class App implements \Municipio\HooksRegistrar\Hookable {
             $this->wpService
         ))->addHooks();
 
-        (new Admin\AcfValidateJsonField(
+        (new AcfValidateJsonField(
             $this->wpService,
         ))->addHooks();
     }

@@ -101,6 +101,25 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 - **Add a handler**: Implement a PHP handler in `/source/php/DataProcessor/Handlers/`.
 - **Add a REST endpoint**: Extend `/source/php/Api/`.
 
+## Logging
+
+Logging is disabled by default. Set `WP_DEBUG_LOG` to `true` to write logs via `error_log()`.
+
+Control the minimum log level with these constants (PSR-3 levels: `emergency` › `alert` › `critical` › `error` › `warning` › `notice` › `info` › `debug`):
+
+| Constant | Default | Description |
+|---|---|---|
+| `MODULARITY_FRONTEND_FORM_LOG_LEVEL` | — | Log level for this plugin. Overrides `APP_LOG_LEVEL`. |
+| `APP_LOG_LEVEL` | `error` | Global fallback log level. |
+
+```php
+// wp-config.php — enable debug logging for this plugin
+define('WP_DEBUG_LOG', true);
+define('MODULARITY_FRONTEND_FORM_LOG_LEVEL', 'debug');
+```
+
+---
+
 ## Actions
 ### ModularityFrontendForm/afterInsertPost
 * ```@param int|WP_Error $result``` 

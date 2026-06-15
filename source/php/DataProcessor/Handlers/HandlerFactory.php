@@ -18,7 +18,7 @@ use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\WpDbFileHandler;
 use ModularityFrontendForm\DataProcessor\Handlers\WithLogHandler;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\WithLogHandlerResult;
-use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
+use PsrLogger\Contracts\LoggerFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use WP_REST_Request;

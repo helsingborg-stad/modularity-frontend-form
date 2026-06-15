@@ -9,7 +9,7 @@ use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
+use PsrLogger\Contracts\LoggerFactoryInterface;
 use Psr\Log\LoggerInterface;
 
 /**

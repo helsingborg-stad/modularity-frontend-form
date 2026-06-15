@@ -16,10 +16,10 @@
 use AcfService\Implementations\NativeAcfService;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\Helper\Logger\LoggerFactory;
-use ModularityFrontendForm\Helper\Logger\Loggers\WpDebugLogger;
+use PsrLogger\Loggers\WpDebugLogger;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
+use PsrLogger\LoggerFactory;
 use WpService\Implementations\NativeWpService;
 
  // Protect agains direct file access

@@ -6,7 +6,7 @@ use AcfService\Implementations\FakeAcfService;
 use ModularityFrontendForm\Config\NullConfig;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
-use ModularityFrontendForm\Helper\Logger\NullLoggerFactory;
+use PsrLogger\NullLoggerFactory;
 use PHPUnit\Framework\TestCase;
 use WpService\Implementations\FakeWpService;
 

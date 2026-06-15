@@ -20,7 +20,7 @@ use WpService\WpService;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\Validators\ValidatorFactory;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerFactory;
-use ModularityFrontendForm\Helper\Logger\Contracts\LoggerFactoryInterface;
+use PsrLogger\Contracts\LoggerFactoryInterface;
 
 class Update extends RestApiEndpoint
 {

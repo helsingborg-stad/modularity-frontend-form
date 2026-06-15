@@ -2,7 +2,7 @@
 
 namespace ModularityFrontendForm\DataProcessor\Handlers;
 
-use WpService\WpService; 
+use WpService\WpService;
 use AcfService\AcfService;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\Config\ConfigInterface;
@@ -12,109 +12,148 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
+use ModularityFrontendForm\DataProcessor\Handlers\Webhook\JsonDotHydrator;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use WP_Error;
 use WP_REST_Request;
 
-class WebHookHandler implements HandlerInterface {
+class WebHookHandler implements HandlerInterface
+{
 
-  use GetModuleConfigInstanceTrait;
+    use GetModuleConfigInstanceTrait;
 
-  public function __construct(
-      private WpService $wpService,
-      private AcfService $acfService,
-      private ConfigInterface $config,
-      private ModuleConfigInterface $moduleConfigInstance,
-      private object $params,
-      private HandlerResultInterface $handlerResult = new HandlerResult(),
-      private ?FileHandlerInterface $fileHandler = null
-  ) {
-    if($this->fileHandler === null) {
-      $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
-    }
-  }
-
-  /**
-   * Handle the data
-   *
-   * @param array $data The data to handle
-   * @return HandlerResultInterface|null The result of the handling
-   */
-  public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
-  {
-    $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
-
-    if($this->validateCallbackUrl($config->callbackUrl) === false) {
-      return $this->handlerResult;
+    public function __construct(
+        private WpService $wpService,
+        private AcfService $acfService,
+        private ConfigInterface $config,
+        private ModuleConfigInterface $moduleConfigInstance,
+        private object $params,
+        private HandlerResultInterface $handlerResult = new HandlerResult(),
+        private LoggerInterface $logger = new NullLogger,
+        private ?FileHandlerInterface $fileHandler = null
+    ) {
+        if ($this->fileHandler === null) {
+            $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
+        }
     }
 
-    if($this->trySendRequest($config->callbackUrl, $data)) {
-      return $this->handlerResult;
+    /**
+     * Handle the data
+     *
+     * @param array $data The data to handle
+     * @return HandlerResultInterface|null The result of the handling
+     */
+    public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
+    {
+        $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
+        $this->trySendRequest(
+            $config->callbackUrl,
+            $this->createBody($data, $config),
+            $this->createHeaders($data, $config)
+        );
+
+        return $this->handlerResult;
     }
 
-    return $this->handlerResult;
-  }
+    /**
+     * Send the request to the webhook URL
+     *
+     * @param string $url The URL to send the request to
+     * @param array $data The data to send in the request
+     * @return bool True if the request was sent successfully, false otherwise
+     */
+    private function trySendRequest(string $url, array|null $data, array $headers = []): bool
+    {
+        $response = $this->wpService->wpRemotePost($url, [
+            'body' => $data ? \json_encode($data) : null,
+            'timeout' => 20,
+            'headers' => $headers
+        ]);
 
-  /**
-   * Validate the callback URL
-   *
-   * @param string $url The URL to validate
-   * @return bool True if the URL is valid, false otherwise
-   */
-  private function validateCallbackUrl(string $url): bool
-  {
-    // Validate the URL format
-    if (!filter_var($url, FILTER_VALIDATE_URL)) {
-      $this->handlerResult->setError(
-        new WP_Error(
-          RestApiResponseStatusEnums::HandlerError->value, 
-          $this->wpService->__('Invalid callback url format.', 'modularity-frontend-form')
-        )
-      );
-      return false;
+        if ($this->wpService->isWpError($response)) {
+            $this->handlerResult->setError(
+                new WP_Error(
+                    RestApiResponseStatusEnums::HandlerError->value,
+                    $response->get_error_message(),
+                    ['response' => $response],
+                )
+            );
+
+            return false;
+        }
+
+        return true;
     }
 
-    // Check if the URL is reachable
-    $headers = @get_headers($url);
-    if ($headers === false) {
-      $this->handlerResult->setError(
-        new WP_Error(
-          RestApiResponseStatusEnums::HandlerError->value, 
-          $this->wpService->__('Callback url is not reachable.', 'modularity-frontend-form')
-        )
-      );
-      return false;
+    private function createBody(array $data, object $config): array|null
+    {
+        if (empty($config->body)) return null;
+
+        $formData = $this->replaceAcfIdsWithNames(
+            $this->normalizeAcfFormData($data['mod-frontend-form'])
+        );
+
+        $formData['*'] = $formData;
+
+        $this->logger->debug('Top level keys in normalized FormData: {data}', ['data' => array_keys($formData)]);
+
+        $hydrator = new JsonDotHydrator();
+        $formDataAsJson = $hydrator->hydrate($config->body, $formData);
+        return \json_decode($formDataAsJson, true);
     }
 
-    return true;
-  }
-
-  /**
-   * Send the request to the webhook URL
-   *
-   * @param string $url The URL to send the request to
-   * @param array $data The data to send in the request
-   * @return bool True if the request was sent successfully, false otherwise
-   */
-  private function trySendRequest(string $url, array $data): bool
-  {
-    $response = $this->wpService->wpRemotePost($url, [
-      'body' => $data,
-      'timeout' => 20,
-      'headers' => [
-        'Content-Type' => 'application/json',
-      ],
-    ]);
-
-    if($this->wpService->isWpError($response)) {
-      $this->handlerResult->setError(
-        new WP_Error(
-          RestApiResponseStatusEnums::HandlerError->value, 
-          $this->wpService->__('Failed to send data to webhook.', 'modularity-frontend-form')
-        )
-      );
-      return false;
+    private function createHeaders(array $_data, object $config): array
+    {
+        return [
+            ...['Content-Type' => 'application/json',],
+            ...array_column($config->headers ?? [], 'value', 'header')
+        ];
     }
 
-    return true;
-  }
+    private function normalizeAcfFormData(array $formData): array
+    {
+        $normalizersByType = [
+            'true_false'  => fn($v) => (bool)(int) $v,
+            'null'        => fn($v) => $v,
+            'repeater'    => fn($arr) => array_map(fn($v) => $this->normalizeAcfFormData($v), $arr ?? []),
+        ];
+
+        $fieldObjects = array_map(
+            fn($fieldId) => $this->acfService->getFieldObject($fieldId),
+            array_combine(array_keys($formData), array_keys($formData))
+        );
+
+        foreach ($fieldObjects as $fieldId => $fieldObject) {
+            $fieldType = $fieldObject['type'] ?? 'null';
+            $hasNormalizer = fn($t) => in_array($t, array_keys($normalizersByType));
+            $normalizeFn = $hasNormalizer($fieldType) ? $normalizersByType[$fieldType] : $normalizersByType['null'];
+            $formData[$fieldId] = $normalizeFn($formData[$fieldId]);
+        }
+        
+        return $formData;
+    }
+
+    private function replaceAcfIdsWithNames(array $formData): array
+    {
+        $result = [];
+
+        foreach ($formData as $key => $value) {
+            $newKey = $key;
+            if (is_string($key) && str_starts_with($key, 'field_')) {
+                $fieldObj = $this->acfService->getFieldObject($key);
+                $newKey = is_array($fieldObj)
+                    ? ($fieldObj['name'] ?? $key)
+                    : $key;
+            }
+
+            if (is_array($value)) {
+                $value = $this->replaceAcfIdsWithNames($value);
+            }
+
+            $result[$newKey] = $value;
+        }
+
+        return $result;
+    }
 }

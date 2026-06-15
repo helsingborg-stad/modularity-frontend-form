@@ -17,11 +17,6 @@ class FieldsExists implements ValidatorInterface
 {
     use GetModuleConfigInstanceTrait;
 
-    //Data keys that should be ignored during validation of this validator
-    private array $bypassValidationForKeys = [
-      'nonce'
-    ];
-
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
@@ -36,14 +31,13 @@ class FieldsExists implements ValidatorInterface
      */
     public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
-      foreach ($data as $key => $value) {
-
-          // Check if the field key is in the bypass list
-          if (in_array($key, $this->bypassValidationForKeys)) {
+      $formData = is_array($data['mod-frontend-form'] ?? null) ? $data['mod-frontend-form'] : [];
+      foreach ($formData as $key => $_value) {
+          if (in_array($key, ['post_title', 'post_content'])) {
             continue;
           }
 
-          if (acf_get_field($key) === false) { //TODO: Add to acf service
+          if (\acf_get_field($key) === false) { //Todo: implement in acf service
             $this->validationResult->setError(
               new WP_Error(
                 RestApiResponseStatusEnums::ValidationError->value, 

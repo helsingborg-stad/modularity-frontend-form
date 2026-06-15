@@ -1,10 +1,8 @@
 <?php
 
-namespace ModularityFrontendForm\Admin;
+namespace ModularityFrontendForm\DataProcessor\Handlers\Webhook;
 
-use ModularityFrontendForm\Config\ConfigInterface;
 use WpService\WpService;
-use AcfService\AcfService;
 
 class AcfValidateJsonField implements \Municipio\HooksRegistrar\Hookable
 {

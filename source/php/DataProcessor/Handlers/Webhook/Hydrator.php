@@ -1,6 +1,6 @@
 <?php
 
-namespace ModularityFrontendForm\Helper;
+namespace ModularityFrontendForm\DataProcessor\Handlers\Webhook;
 
 interface Hydrator
 {

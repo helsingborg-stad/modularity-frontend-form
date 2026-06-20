@@ -37,7 +37,7 @@
         "@types/jquery": "^3.5.33",
         "cross-env": "^7.0.3",
         "import-glob-loader": "^1.1.0",
-        "jest-environment-jsdom": "^29.7.0",
+        "jest-environment-jsdom": "^30.2.0",
         "sass": "^1.49.7",
         "ts-jest": "^29.3.2",
         "ts-loader": "^9.5.1",

@@ -189,7 +189,9 @@ class RestApiParams implements RestApiParamsInterface
           }
 
           // Unprotected post
-          if(empty($post->post_password)) {
+          $editToken = $this->wpService->getPostMeta($postId, $this->config->getMetaDataNamespace('edit_token'), true);
+
+          if(empty($editToken)) {
             return new WP_Error(
               'asset_not_protected',
               __('The resource you are trying to access is not editable.', 'modularity-frontend-form'),
@@ -198,7 +200,7 @@ class RestApiParams implements RestApiParamsInterface
           }
 
           //Not matching the token
-          if($token !== $post->post_password) {
+          if($token !== $editToken) {
             return new WP_Error(
               'invalid_token',
               __('The token provided, does not match the asset.', 'modularity-frontend-form'),

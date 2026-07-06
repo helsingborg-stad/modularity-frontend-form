@@ -79,7 +79,7 @@ class DisplayEditLinkInterfaceNotice implements \Municipio\HooksRegistrar\Hookab
      */
     private function getPostPasswordToken(int $postId): string
     {
-        return $this->wpService->getPost($postId)->post_password ?? '';
+        return $this->wpService->getPostMeta($postId, $this->config->getMetaDataNamespace('edit_token'), true) ?? '';
     }
 
     /**

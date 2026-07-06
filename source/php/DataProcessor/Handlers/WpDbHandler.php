@@ -112,14 +112,14 @@ class WpDbHandler implements HandlerInterface {
         'post_content'  => $postContent ?: '',
         'post_type'     => $moduleConfig->saveToPostType,
         'post_status'   => $moduleConfig->saveToPostTypeStatus,
-        'post_password' => $this->createPostPassword(),
         'meta_input'    => [
           $this->config->getMetaDataNamespace('holding_post_id') => (
             $params->holdingPostId ?? null
           ),
-          $this->config->getMetaDataNamespace('module_id')  => $moduleID,
-          $this->config->getMetaDataNamespace('nonce')      => $fieldMeta['nonce'] ?? '',
-          $this->config->getMetaDataNamespace('submission') => true
+          $this->config->getMetaDataNamespace('module_id')   => $moduleID,
+          $this->config->getMetaDataNamespace('nonce')       => $fieldMeta['nonce'] ?? '',
+          $this->config->getMetaDataNamespace('submission')  => true,
+          $this->config->getMetaDataNamespace('edit_token')  => $this->createPostPassword(),
         ],
     ]);
 

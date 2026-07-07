@@ -27,6 +27,7 @@ class GoogleMapFieldMapper implements FieldMapperInterface
         $mapped['classList'][] = 'mod-frontend-form__openstreetmap';
         // openstreetmap class is needed
         $mapped['classList'][] = 'openstreetmap';
+        $mapped['classList'][] = 'c-field';
 
         $mapped['attributeList']['style'] = sprintf(
             'min-height: %spx; position: relative',

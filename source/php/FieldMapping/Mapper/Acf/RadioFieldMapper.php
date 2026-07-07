@@ -28,6 +28,8 @@ class RadioFieldMapper implements FieldMapperInterface
             $mapped['classList'][] = 'mod-frontend-form__field--radio--vertical';
         }
 
+        $mapped['classList'][] = 'c-field';
+
         foreach ($this->field['choices'] as $key => $value) {
             $mapped['choices'][$key] = [
                 'type'     => $mapped['type'],

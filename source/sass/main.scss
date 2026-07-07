@@ -46,15 +46,6 @@
         margin-top: 4px;
     }
 
-    .mod-frontend-form__custom-label {
-        color: var(--c-field-label-color, var(--color-darker, #565656));
-        font-size: var(--c-field-label-font-size, .75rem);
-        font-weight: var(--c-field-label-font-weight, 700);
-        letter-spacing: .05rem;
-        margin-bottom: calc(var(--base, 8px) / 2);
-        text-transform: var(--c-field-label-text-transform, uppercase);
-    }
-
     .mod-frontend-form__disclaimer mark {
         font-style: italic;
         background: unset;

@@ -7,7 +7,7 @@
         @typography([
             'element' => 'span',
             'classList' => [
-                'mod-frontend-form__custom-label'
+                'c-field__label'
             ],
         ])
             {{ $field['label'] }} {!! !empty($field['attributeList']['data-js-required']) ? '<span class="u-color__text--danger">*</span>' : '' !!}

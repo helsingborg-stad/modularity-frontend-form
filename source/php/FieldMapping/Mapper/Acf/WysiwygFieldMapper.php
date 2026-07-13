@@ -20,6 +20,7 @@ class WysiwygFieldMapper implements FieldMapperInterface
             unset($mapped['required']);
         }
 
+        $mapped['classList'][] = 'c-field';
         $mapped['classList'][] = 'mod-frontend-form__wysiwyg';
 
         return $mapped;

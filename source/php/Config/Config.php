@@ -56,7 +56,18 @@ class Config implements ConfigInterface
             $this->createFilterKey(__FUNCTION__),
             'mod-frontend-form'
         );
-        return $fieldName ? "{$namespace}[{$fieldName}]" : $namespace;
+
+        if (empty($fieldName)) {
+            return $namespace;
+        }
+
+        // Repeater sub-field keys can already be wrapped in brackets, e.g.
+        // [field_parent][row][field_child]. Avoid creating double brackets.
+        if (str_starts_with($fieldName, '[')) {
+            return $namespace . $fieldName;
+        }
+
+        return "{$namespace}[{$fieldName}]";
     }
 
     /**

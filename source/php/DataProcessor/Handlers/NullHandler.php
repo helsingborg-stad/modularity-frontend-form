@@ -12,6 +12,8 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use WP_Error;
 use WP_REST_Request;
 
@@ -26,6 +28,7 @@ class NullHandler implements HandlerInterface {
       private ModuleConfigInterface $moduleConfigInstance,
       private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult(),
+      private LoggerInterface $logger = new NullLogger,
       private ?FileHandlerInterface $fileHandler = null
   ) {
     if($this->fileHandler === null) {

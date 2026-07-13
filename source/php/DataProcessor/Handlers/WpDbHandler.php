@@ -12,6 +12,8 @@ use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
 use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use WP;
 use WP_Error;
 use WP_REST_Request;
@@ -27,6 +29,7 @@ class WpDbHandler implements HandlerInterface {
       private ModuleConfigInterface $moduleConfigInstance,
       private object $params,
       private HandlerResultInterface $handlerResult = new HandlerResult(),
+      private LoggerInterface $logger = new NullLogger,
       private ?FileHandlerInterface $fileHandler = null
   ) {
     if($this->fileHandler === null) {
@@ -152,6 +155,8 @@ class WpDbHandler implements HandlerInterface {
     //Store fields
     $this->storeFields($fieldMeta, $result);
 
+    $this->wpService->doAction('ModularityFrontendForm/afterInsertPost', $result);
+
     return true;
   }
 
@@ -247,7 +252,9 @@ class WpDbHandler implements HandlerInterface {
     }
 
     foreach ($reducedSideloadedAttachments as $fieldKey => $attachmentIds) {
-      $fields[$fieldKey] = $attachmentIds;
+      $fieldObject = $this->acfService->getFieldObject($fieldKey);
+      $isImageField = $fieldObject && $fieldObject['type'] === 'image';
+      $fields[$fieldKey] = $isImageField ? $attachmentIds[0] ?? null : $attachmentIds;
     }
 
     return $fields;

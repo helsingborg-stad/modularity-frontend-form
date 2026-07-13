@@ -8,7 +8,7 @@ interface ConfigInterface
 {
 
     public function getModuleSlug(): string;
-    public function getFieldNamespace(): string;
+    public function getFieldNamespace(?string $fieldName = null): string;
     public function getMetaDataNamespace(?string $key = null): string;
     public function getFilterPrefix(): string;
     public function getUnprintableKeys(): array;

@@ -1,4 +1,5 @@
 import FieldGroupSetup from './acf/fieldGroupSetup';
+import { initializeFormBuilder } from './acf/formBuilder';
 import Store from './acf/store';
 
 declare const acf: any;
@@ -15,6 +16,7 @@ class Admin {
 	private initAcfSelects(): void {
 		if (typeof acf !== 'undefined') {
 			new FieldGroupSetup(Store.initStore(), modularityFrontendFormAdminData).init();
+			initializeFormBuilder();
 		}
 	}
 }

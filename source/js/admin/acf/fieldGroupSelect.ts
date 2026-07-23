@@ -16,7 +16,7 @@ class FieldGroupSelect implements FieldGroupSelectInterface {
 		this.select = this.field.querySelector('select') as HTMLSelectElement;
 		this.wordpressDefaultFields =
 			this.modularityFrontendFormAdminData.modularityFrontendFormAcfGroups[
-				this.modularityFrontendFormAdminData.modularityFrontendFormWordpressFieldsKey
+			this.modularityFrontendFormAdminData.modularityFrontendFormWordpressFieldsKey
 			] || {};
 
 		if (this.group?.postTypeSelect || !this.select) {

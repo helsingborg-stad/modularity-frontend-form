@@ -47,6 +47,18 @@ class WebHookHandler implements HandlerInterface
     public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
     {
         $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
+
+        if (!is_string($config?->callbackUrl ?? null) || trim($config->callbackUrl) === '') {
+            $this->handlerResult->setError(
+                new WP_Error(
+                    RestApiResponseStatusEnums::HandlerError->value,
+                    __('Webhook configuration requires a callback URL.', 'modularity-frontend-form')
+                )
+            );
+
+            return $this->handlerResult;
+        }
+
         $this->trySendRequest(
             $config->callbackUrl,
             $this->createBody($data, $config),
@@ -91,7 +103,7 @@ class WebHookHandler implements HandlerInterface
         if (empty($config->body)) return null;
 
         $formData = $this->replaceAcfIdsWithNames(
-            $this->normalizeAcfFormData($data['mod-frontend-form'])
+            $this->normalizeAcfFormData($data[$this->config->getFieldNamespace()] ?? $data)
         );
 
         $formData['*'] = $formData;
@@ -107,7 +119,7 @@ class WebHookHandler implements HandlerInterface
     {
         return [
             ...['Content-Type' => 'application/json',],
-            ...array_column($config->headers ?? [], 'value', 'header')
+            ...array_column(is_array($config->headers ?? null) ? $config->headers : [], 'value', 'header')
         ];
     }
 

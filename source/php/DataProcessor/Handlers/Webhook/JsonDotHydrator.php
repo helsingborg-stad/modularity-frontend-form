@@ -20,6 +20,17 @@ class JsonDotHydrator implements Hydrator
     private function replace(mixed $data, Dot $values): mixed
     {
         if (is_array($data)) {
+            // Only an exact wrapper opts into nulling a whole template value.
+            if (count($data) === 2
+                && isset($data['$optional']) && is_string($data['$optional'])
+                && array_key_exists('$value', $data)
+            ) {
+                $source = $values->get($data['$optional'], null);
+                return in_array($source, [null, '', false, []], true)
+                    ? null
+                    : $this->replace($data['$value'], $values);
+            }
+
             foreach ($data as $key => $value) {
                 $data[$key] = $this->replace($value, $values);
             }

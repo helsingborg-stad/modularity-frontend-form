@@ -127,6 +127,10 @@ class WebHookHandler implements HandlerInterface
     {
         $normalizersByType = [
             'true_false'  => fn($v) => (bool)(int) $v,
+            'google_map'  => function ($value) {
+                $value = is_string($value) ? json_decode($value, true) : $value;
+                return is_array($value) ? $value : null;
+            },
             'null'        => fn($v) => $v,
             'repeater'    => fn($arr) => array_map(fn($v) => $this->normalizeAcfFormData($v), $arr ?? []),
         ];

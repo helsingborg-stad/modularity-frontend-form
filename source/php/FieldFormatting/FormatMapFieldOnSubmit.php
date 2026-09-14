@@ -31,16 +31,13 @@ class FormatMapFieldOnSubmit implements Hookable
     /**
      * Format map field value on submit
      *
-     * @param string $value
+     * @param mixed $value
      * 
-     * @return string
+     * @return mixed
      */
-    public function formatMapFieldValue($value) : string|array
+    public function formatMapFieldValue($value) : mixed
     {
-      $isFrontendRequest  = $this->isFrontendApi();
-      $isSchemaFormat     = $this->isSchemaFormat($value);
-
-      if($isFrontendRequest && $isSchemaFormat) {
+      if($this->isFrontendApi() && is_string($value) && $this->isSchemaFormat($value)) {
         return $this->formatSchemaObjectToAcfGoogleMapsGeoData($value);
       }
 
@@ -51,7 +48,7 @@ class FormatMapFieldOnSubmit implements Hookable
      * Format schema.org object to ACF Google Maps field format
      *
      * @param string $schemaString
-     * @return string
+     * @return array
      */
     private function formatSchemaObjectToAcfGoogleMapsGeoData(string $schemaString) : array
     {
@@ -139,9 +136,10 @@ class FormatMapFieldOnSubmit implements Hookable
         }
 
         $hasType    = isset($data['@type']) && $data['@type'] === 'Place';
-        $hasLat     = isset($data['latitude']);
-        $hasLng     = isset($data['longitude']);
-        $hasAddress = isset($data['address']) && is_array($data['address']);
+        $hasLat     = isset($data['latitude']) && is_numeric($data['latitude']);
+        $hasLng     = isset($data['longitude']) && is_numeric($data['longitude']);
+        $hasAddress = isset($data['address']) && is_array($data['address'])
+            && (!isset($data['address']['name']) || is_string($data['address']['name']));
 
         return $hasContext && $hasType && $hasLat && $hasLng && $hasAddress;
     }

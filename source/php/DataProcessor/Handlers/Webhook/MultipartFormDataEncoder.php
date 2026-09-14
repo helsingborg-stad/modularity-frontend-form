@@ -10,12 +10,19 @@ use InvalidArgumentException;
  * Encodes a hydrated nested payload together with referenced file uploads into
  * a binary-safe multipart/form-data request body.
  *
- * Protocol:
+ * Protocol (version 1):
  *  - Scalars and nested arrays/maps flatten into bracket parameter names
- *    (`field`, `field[child]`, `list[]`, `map[key]`).
+ *    (`field`, `field[child]`, `list[0]`, `map[key]`). Numeric list positions
+ *    are preserved as explicit index segments (`gallery[0]`, `gallery[1]`)
+ *    instead of `[]` so every path is deterministic: null/empty markers and
+ *    mixed galleries of existing attachment IDs and new uploads keep their
+ *    exact positions end to end.
  *  - A `null` value is not emitted as a normal parameter. Its bracket path is
  *    appended to the reserved `_acf_rest_nulls[]` list instead so the receiver
  *    can still distinguish "absent" from "explicit null".
+ *  - An empty array is not emitted either. Its bracket path is appended to the
+ *    reserved `_acf_rest_empty[]` list so the receiver can apply a clear
+ *    "empty list" value instead of silently dropping the field.
  *  - A string that exactly matches `$file:<key>` with a safe key
  *    (`[A-Za-z0-9_-]+`) marks a file reference. The literal token is kept as a
  *    normal parameter so the receiver can map the field to its upload, while
@@ -25,6 +32,10 @@ use InvalidArgumentException;
  *  - Files present in the map but never referenced are not sent.
  *  - A referenced file that is absent from the map, or whose `tmp_name` is
  *    missing/unreadable, raises an InvalidArgumentException.
+ *  - A payload root key colliding with a reserved protocol field
+ *    (`_acf_rest_nulls`, `_acf_rest_empty`, `_acf_rest_files`), or a map key
+ *    containing bracket characters that would corrupt the path structure,
+ *    raises an InvalidArgumentException.
  *
  * The encoder is dependency-free and safe for PHP 8.2.
  */
@@ -33,6 +44,8 @@ final class MultipartFormDataEncoder
     public const FILE_REFERENCE_PREFIX = '$file:';
 
     public const NULLS_FIELD = '_acf_rest_nulls';
+
+    public const EMPTY_LISTS_FIELD = '_acf_rest_empty';
 
     public const FILES_FIELD = '_acf_rest_files';
 
@@ -58,17 +71,31 @@ final class MultipartFormDataEncoder
      */
     public function encode(array $payload, array $files = []): array
     {
+        foreach (array_keys($payload) as $rootKey) {
+            if (is_string($rootKey) && in_array($rootKey, self::reservedFields(), true)) {
+                throw new InvalidArgumentException(
+                    sprintf('Payload key "%s" collides with a reserved protocol field.', $rootKey)
+                );
+            }
+        }
+
         /** @var array<int, string> $parts */
         $parts = [];
         /** @var array<array-key, true> $fileKeys */
         $fileKeys = [];
         /** @var array<int, string> $nullPaths */
         $nullPaths = [];
+        /** @var array<int, string> $emptyPaths */
+        $emptyPaths = [];
 
-        $this->flatten($payload, '', $parts, $fileKeys, $nullPaths);
+        $this->flatten($payload, '', $parts, $fileKeys, $nullPaths, $emptyPaths);
 
         foreach ($nullPaths as $path) {
             $parts[] = $this->scalarPart(self::NULLS_FIELD . '[]', $path);
+        }
+
+        foreach ($emptyPaths as $path) {
+            $parts[] = $this->scalarPart(self::EMPTY_LISTS_FIELD . '[]', $path);
         }
 
         foreach (array_keys($fileKeys) as $key) {
@@ -113,13 +140,15 @@ final class MultipartFormDataEncoder
      * @param array<int, string> $parts
      * @param array<array-key, true> $fileKeys
      * @param array<int, string> $nullPaths
+     * @param array<int, string> $emptyPaths
      */
     private function flatten(
         mixed $value,
         string $path,
         array &$parts,
         array &$fileKeys,
-        array &$nullPaths
+        array &$nullPaths,
+        array &$emptyPaths
     ): void {
         if ($value === null) {
             // Null is signalled out-of-band so it is not confused with an
@@ -130,18 +159,41 @@ final class MultipartFormDataEncoder
         }
 
         if (is_array($value)) {
-            foreach ($value as $key => $child) {
-                if (is_int($key)) {
-                    // List entries keep their bracket syntax.
-                    $childPath = $path . '[]';
-                } elseif ($path === '') {
-                    // Root map keys are plain parameter names, not [key].
-                    $childPath = (string) $key;
-                } else {
-                    $childPath = $path . '[' . $key . ']';
+            if ($value === []) {
+                // An empty list is signalled out-of-band so the receiver can
+                // apply an explicit "empty" value instead of dropping it.
+                if ($path !== '') {
+                    $emptyPaths[] = $path;
                 }
 
-                $this->flatten($child, $childPath, $parts, $fileKeys, $nullPaths);
+                return;
+            }
+
+            foreach ($value as $key => $child) {
+                if (is_int($key)) {
+                    // List entries keep their numeric position as an explicit
+                    // index segment so paths stay deterministic end to end.
+                    $childPath = $path . '[' . $key . ']';
+                } else {
+                    if (str_contains($key, '[') || str_contains($key, ']')) {
+                        throw new InvalidArgumentException(
+                            sprintf(
+                                'Key "%s" at path "%s" contains a bracket and cannot be encoded as a field name.',
+                                $key,
+                                $path
+                            )
+                        );
+                    }
+
+                    if ($path === '') {
+                        // Root map keys are plain parameter names, not [key].
+                        $childPath = $key;
+                    } else {
+                        $childPath = $path . '[' . $key . ']';
+                    }
+                }
+
+                $this->flatten($child, $childPath, $parts, $fileKeys, $nullPaths, $emptyPaths);
             }
 
             return;
@@ -215,9 +267,29 @@ final class MultipartFormDataEncoder
      * (`[A-Za-z0-9_-]+`). Values such as `$file:` or `$file:foo!` stay ordinary
      * scalar strings.
      */
-    private static function isFileReference(string $value): bool
+    public static function isFileReference(string $value): bool
     {
         return preg_match('/^' . preg_quote(self::FILE_REFERENCE_PREFIX, '/') . '[A-Za-z0-9_-]+$/', $value) === 1;
+    }
+
+    /**
+     * The file reference key of a recognised `$file:<key>` value.
+     */
+    public static function fileReferenceKey(string $value): string
+    {
+        return substr($value, strlen(self::FILE_REFERENCE_PREFIX));
+    }
+
+    /**
+     * Reserved top-level parameter names owned by protocol version 1. A
+     * hydrated payload key colliding with any of these is rejected before a
+     * body is built.
+     *
+     * @return array<int, string>
+     */
+    public static function reservedFields(): array
+    {
+        return [self::NULLS_FIELD, self::EMPTY_LISTS_FIELD, self::FILES_FIELD];
     }
 
     private static function stringify(bool|int|float|string $value): string

@@ -18,6 +18,10 @@ use AcfService\AcfService;
  * exposed through a deterministic key (file_0, file_1, ...). Each record keeps
  * the originating ACF field key, its converted field name and the index inside
  * an indexed (gallery) list.
+ *
+ * A selected upload (UPLOAD_ERR_OK with a name) that cannot be read or
+ * snapshotted sets a failure flag instead of being silently dropped, so
+ * the webhook handler can abort the send fail-closed.
  */
 final class UploadedFileSnapshots
 {
@@ -34,6 +38,14 @@ final class UploadedFileSnapshots
 
     /** @var array<int, string> */
     private array $snapshotPaths = [];
+
+    /**
+     * Set when a selected upload (UPLOAD_ERR_OK, named) could not be
+     * snapshotted or read. The webhook handler must treat this as a
+     * send-blocking error instead of silently dropping part of the
+     * submission.
+     */
+    private bool $hasFailures = false;
 
     private int $nextIndex = 0;
 
@@ -109,7 +121,7 @@ final class UploadedFileSnapshots
      */
     private function registerShutdownCleanup(): void
     {
-        if ($this->snapshots === [] || $this->shutdownCleanupRegistered) {
+        if (($this->snapshots === [] && !$this->hasFailures) || $this->shutdownCleanupRegistered) {
             return;
         }
 
@@ -148,23 +160,30 @@ final class UploadedFileSnapshots
             return;
         }
 
+        $fieldKey = $this->resolveFieldKey($path);
+
         $error = $this->pluck($files, 'error', $path, UPLOAD_ERR_NO_FILE);
         if ((int) $error !== UPLOAD_ERR_OK) {
+            // A failed upload was never selected, so this is not a snapshot
+            // failure; upload errors are reported by the validators.
             return;
         }
 
         $tmpName = $this->pluck($files, 'tmp_name', $path);
         if (!is_string($tmpName) || $tmpName === '' || !is_file($tmpName) || !is_readable($tmpName)) {
+            $this->hasFailures = true;
+
             return;
         }
 
         $snapshotPath = $this->snapshotFile($tmpName);
         if ($snapshotPath === null) {
+            $this->hasFailures = true;
+
             return;
         }
 
-        $fieldKey = $this->resolveFieldKey($path);
-        $key      = self::FILE_KEY_PREFIX . $this->nextIndex;
+        $key = self::FILE_KEY_PREFIX . $this->nextIndex;
 
         $this->snapshots[] = [
             'key'       => $key,
@@ -311,7 +330,10 @@ final class UploadedFileSnapshots
     /**
      * Hydration references keyed by both the ACF field key and the converted
      * field name. Singleton uploads map to a single `$file:<key>` string and
-     * indexed (gallery) uploads map to an ordered list of references.
+     * indexed (gallery) uploads map to a list ordered by, and keyed with, the
+     * original numeric index. Keeping the index keys lets the webhook handler
+     * merge references into a submitted gallery without discarding existing
+     * destination attachment IDs at other positions.
      *
      * @return array<string, string|array<int, string>>
      */
@@ -357,17 +379,27 @@ final class UploadedFileSnapshots
                 continue;
             }
 
-            /** @var array<int, string> $ordered */
+            /**
+             * Keyed by the original upload index so positions match the
+             * submitted gallery values.
+             *
+             * @var array<int, string> $ordered
+             */
             $ordered = [];
             foreach ($snapshots as $snapshot) {
-                $ordered[$snapshot['index']] = MultipartFormDataEncoder::FILE_REFERENCE_PREFIX . $snapshot['key'];
+                $ordered[(int) $snapshot['index']] = MultipartFormDataEncoder::FILE_REFERENCE_PREFIX . $snapshot['key'];
             }
 
             ksort($ordered);
-            $references[$key] = array_values($ordered);
+            $references[$key] = $ordered;
         }
 
         return $references;
+    }
+
+    public function hasFailures(): bool
+    {
+        return $this->hasFailures;
     }
 
     /**

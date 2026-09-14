@@ -59,7 +59,8 @@ final class MultipartFormDataEncoderTest extends TestCase
         self::assertStringContainsString('name="active"', $body);
         self::assertStringContainsString("\r\n\r\n1\r\n", $body);
         self::assertStringContainsString('name="meta[color]"', $body);
-        self::assertStringContainsString('name="meta[tags][]"', $body);
+        self::assertStringContainsString('name="meta[tags][0]"', $body);
+        self::assertStringContainsString('name="meta[tags][1]"', $body);
         self::assertStringEndsWith('--' . self::BOUNDARY . "--\r\n", $body);
     }
 
@@ -73,14 +74,16 @@ final class MultipartFormDataEncoderTest extends TestCase
 
         self::assertStringNotContainsString('name="attachment"', $body);
         self::assertStringNotContainsString('name="meta[summary]"', $body);
-        self::assertStringNotContainsString('name="meta[list][]"', $body);
+        self::assertStringNotContainsString('name="meta[list][0]"', $body);
         self::assertStringContainsString('name="_acf_rest_nulls[]"', $body);
 
-        // Root null paths stay unbracketed, nested paths keep their brackets.
+        // Root null paths stay unbracketed, nested paths keep their brackets
+        // with explicit numeric indexes.
         self::assertStringContainsString("\r\n\r\nattachment\r\n", $body);
         self::assertStringNotContainsString("\r\n\r\n[attachment]\r\n", $body);
         self::assertStringContainsString("\r\n\r\nmeta[summary]\r\n", $body);
-        self::assertStringContainsString("\r\n\r\nmeta[list][]\r\n", $body);
+        self::assertStringContainsString("\r\n\r\nmeta[list][0]\r\n", $body);
+        self::assertStringNotContainsString("\r\n\r\nmeta[list][]\r\n", $body);
     }
 
     public function testIncludesReferencedBinaryOnceAndExcludesUnreferencedFiles(): void
@@ -194,6 +197,69 @@ final class MultipartFormDataEncoderTest extends TestCase
         )['body'];
 
         self::assertStringContainsString('name="_acf_rest_files[file_0-aB9]"', $body);
+    }
+
+    public function testNumericIndexSegmentsPreserveSparsePositions(): void
+    {
+        $body = (new MultipartFormDataEncoder(self::BOUNDARY))->encode([
+            'gallery' => [5 => '123', 7 => '456'],
+        ])['body'];
+
+        self::assertStringContainsString('name="gallery[5]"', $body);
+        self::assertStringContainsString('name="gallery[7]"', $body);
+        self::assertStringNotContainsString('name="gallery[]"', $body);
+    }
+
+    public function testEmptyArrayIsSignalledThroughReservedEmptyField(): void
+    {
+        $body = (new MultipartFormDataEncoder(self::BOUNDARY))->encode([
+            'title'   => 'Hello',
+            'gallery' => [],
+            'meta'    => ['tags' => []],
+        ])['body'];
+
+        self::assertStringContainsString('name="_acf_rest_empty[]"', $body);
+        self::assertStringContainsString("\r\n\r\ngallery\r\n", $body);
+        self::assertStringContainsString("\r\n\r\nmeta[tags]\r\n", $body);
+        self::assertStringNotContainsString('name="gallery"', $body);
+        self::assertStringNotContainsString('name="meta[tags]"', $body);
+    }
+
+    public function testThrowsWhenPayloadRootKeyCollidesWithReservedField(): void
+    {
+        $encoder = new MultipartFormDataEncoder(self::BOUNDARY);
+
+        foreach (MultipartFormDataEncoder::reservedFields() as $reserved) {
+            try {
+                $encoder->encode([$reserved => 'value']);
+                self::fail(sprintf('Expected reserved key "%s" to be rejected.', $reserved));
+            } catch (InvalidArgumentException $exception) {
+                self::assertStringContainsString('reserved protocol field', $exception->getMessage());
+            }
+        }
+    }
+
+    public function testThrowsWhenMapKeyContainsBrackets(): void
+    {
+        $encoder = new MultipartFormDataEncoder(self::BOUNDARY);
+
+        try {
+            $encoder->encode(['meta' => ['bad[key' => 'x']]);
+            self::fail('Expected a bracket key to be rejected.');
+        } catch (InvalidArgumentException $exception) {
+            self::assertStringContainsString('cannot be encoded as a field name', $exception->getMessage());
+        }
+
+        $this->expectException(InvalidArgumentException::class);
+        $encoder->encode(['bad]key' => 'x']);
+    }
+
+    public function testRecognizedFileReferenceKeyExtraction(): void
+    {
+        self::assertTrue(MultipartFormDataEncoder::isFileReference('$file:file_0-aB9'));
+        self::assertFalse(MultipartFormDataEncoder::isFileReference('$file:'));
+        self::assertFalse(MultipartFormDataEncoder::isFileReference('$file:foo!'));
+        self::assertSame('file_0', MultipartFormDataEncoder::fileReferenceKey('$file:file_0'));
     }
 
     private function makeTempFile(string $contents): string

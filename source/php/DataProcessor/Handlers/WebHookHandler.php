@@ -105,16 +105,35 @@ class WebHookHandler implements HandlerInterface
 
     private function sendMultipartRequest(object $config, array $data): void
     {
-        $payload = $this->createMultipartPayload($data, $config);
-        $files   = $this->uploadedFileSnapshots?->getFileMap() ?? [];
+        $files = $this->uploadedFileSnapshots?->getFileMap() ?? [];
 
-        if (!$this->withinUploadLimit($payload, $files)) {
+        // A selected upload that could not be snapshotted must not be sent
+        // as a partial submission. The finally-cleanup removes any partial
+        // snapshot files from disk. The error is intentionally generic: no
+        // upload names or field keys are attached.
+        if ($this->uploadedFileSnapshots?->hasFailures()) {
+            $this->handlerResult->setError(
+                new WP_Error(
+                    RestApiResponseStatusEnums::HandlerError->value,
+                    __('One or more selected uploads could not be prepared for the webhook. The submission was not sent.', 'modularity-frontend-form')
+                )
+            );
+
             return;
         }
 
         try {
+            $payload = $this->createMultipartPayload($data, $config);
+
+            if (!$this->withinUploadLimit($payload, $files)) {
+                return;
+            }
+
             $encoded = (new MultipartFormDataEncoder())->encode($payload, $files);
         } catch (InvalidArgumentException $exception) {
+            // Payload building (null/reference conflicts, reserved keys) and
+            // encoding failures abort the send with a handler error before
+            // any request is made.
             $this->handlerResult->setError(
                 new WP_Error(
                     RestApiResponseStatusEnums::HandlerError->value,
@@ -154,9 +173,26 @@ class WebHookHandler implements HandlerInterface
 
         $total = 0;
         foreach ($this->collectReferencedFileKeys($payload) as $key) {
-            if (isset($files[$key]['size'])) {
-                $total += (int) $files[$key]['size'];
+            $size = $this->resolveFileSize($files[$key] ?? null);
+
+            if ($size === null) {
+                // Fail closed: the whole body is built in memory, so an
+                // upload with an undeterminable size must not be sent.
+                $this->handlerResult->setError(
+                    new WP_Error(
+                        RestApiResponseStatusEnums::HandlerError->value,
+                        sprintf(
+                            /* translators: %s: file reference key. */
+                            __('The size of the selected upload "%s" could not be determined, so it was not sent.', 'modularity-frontend-form'),
+                            $key
+                        )
+                    )
+                );
+
+                return false;
             }
+
+            $total += $size;
         }
 
         if ($total <= (int) $limit) {
@@ -176,6 +212,36 @@ class WebHookHandler implements HandlerInterface
         );
 
         return false;
+    }
+
+    /**
+     * Resolve the size of a referenced upload from its record, falling back
+     * to the actual file on disk. Returns null when the size cannot be
+     * determined.
+     *
+     * @param array<string, mixed>|null $record
+     */
+    private function resolveFileSize(mixed $record): ?int
+    {
+        if (!is_array($record)) {
+            return null;
+        }
+
+        if (isset($record['size']) && is_numeric($record['size'])) {
+            return (int) $record['size'];
+        }
+
+        $tmpName = $record['tmp_name'] ?? null;
+
+        if (is_string($tmpName) && $tmpName !== '' && is_file($tmpName)) {
+            $size = filesize($tmpName);
+
+            if ($size !== false) {
+                return (int) $size;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -199,12 +265,9 @@ class WebHookHandler implements HandlerInterface
 
             if (
                 is_string($value)
-                && str_starts_with($value, MultipartFormDataEncoder::FILE_REFERENCE_PREFIX)
+                && MultipartFormDataEncoder::isFileReference($value)
             ) {
-                $key = substr($value, strlen(MultipartFormDataEncoder::FILE_REFERENCE_PREFIX));
-                if ($key !== '') {
-                    $keys[$key] = true;
-                }
+                $keys[MultipartFormDataEncoder::fileReferenceKey($value)] = true;
             }
         };
 
@@ -246,11 +309,13 @@ class WebHookHandler implements HandlerInterface
                     continue;
                 }
 
+                // The transport error message is kept, but the raw response
+                // object is not attached: it can echo credentials or body
+                // content into logs.
                 $this->handlerResult->setError(
                     new WP_Error(
                         RestApiResponseStatusEnums::HandlerError->value,
                         $response->get_error_message(),
-                        ['response' => $response],
                     )
                 );
 
@@ -260,7 +325,13 @@ class WebHookHandler implements HandlerInterface
             $statusCode = (int) $this->wpService->wpRemoteRetrieveResponseCode($response);
             $isFailure  = $statusCode < 200 || $statusCode >= 300;
 
-            if ($isFailure && $attempt < $maxRetries && $this->isRetryableStatus($statusCode)) {
+            $isInProgressConflict = $this->isUploadInProgressConflict($statusCode, $response);
+
+            if (
+                $isFailure
+                && $attempt < $maxRetries
+                && ($this->isRetryableStatus($statusCode) || $isInProgressConflict)
+            ) {
                 $attempt++;
                 $this->sleepBeforeRetry(
                     $attempt,
@@ -270,6 +341,7 @@ class WebHookHandler implements HandlerInterface
             }
 
             if ($isFailure) {
+                // Only bounded, non-sensitive response metadata is kept.
                 $this->handlerResult->setError(
                     new WP_Error(
                         RestApiResponseStatusEnums::HandlerError->value,
@@ -278,7 +350,7 @@ class WebHookHandler implements HandlerInterface
                             __('Webhook request failed. The server responded with HTTP status %d.', 'modularity-frontend-form'),
                             $statusCode
                         ),
-                        ['status' => $statusCode, 'response' => $response]
+                        ['status' => $statusCode]
                     )
                 );
             }
@@ -293,6 +365,43 @@ class WebHookHandler implements HandlerInterface
             || $statusCode === 425
             || $statusCode === 429
             || $statusCode >= 500;
+    }
+
+    /**
+     * A 409 is only retried when the receiver response is recognizable as an
+     * acf-rest-upload in-progress conflict (an active idempotency lock). Any
+     * other 409 is a terminal failure and is not retried.
+     *
+     * The response body is inspected in memory only and is never logged.
+     */
+    private function isUploadInProgressConflict(int $statusCode, array|WP_Error $response): bool
+    {
+        if ($statusCode !== 409) {
+            return false;
+        }
+
+        // Guard against WpService implementations without body retrieval.
+        if (!method_exists($this->wpService, 'wpRemoteRetrieveBody')) {
+            return false;
+        }
+
+        $body = $this->wpService->wpRemoteRetrieveBody($response);
+
+        if (!is_string($body) || $body === '') {
+            return false;
+        }
+
+        if (stripos($body, 'acf_rest_upload') === false && stripos($body, 'acf-rest-upload') === false) {
+            return false;
+        }
+
+        foreach (['in progress', 'in-progress', 'in_progress'] as $marker) {
+            if (stripos($body, $marker) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -382,15 +491,18 @@ class WebHookHandler implements HandlerInterface
 
     private function createMultipartPayload(array $data, object $config): array
     {
-        $formData = $this->replaceAcfIdsWithNames(
-            $this->normalizeAcfFormData($data[$this->config->getFieldNamespace()] ?? $data)
-        );
-        $formData = $this->addFileReferences($formData);
-        $formData['*'] = $formData;
-
         if (empty($config->body)) {
             return [];
         }
+
+        $formData = $this->replaceAcfIdsWithNames(
+            $this->normalizeAcfFormData($data[$this->config->getFieldNamespace()] ?? $data)
+        );
+
+        // Unlike the legacy JSON body, the multipart payload must not
+        // duplicate everything under a catch-all "*" key: every top level key
+        // becomes a transmitted form field.
+        $formData = $this->addFileReferences($formData);
 
         $formDataAsJson = (new JsonDotHydrator())->hydrate($config->body, $formData);
         $payload        = \json_decode($formDataAsJson, true);
@@ -398,6 +510,20 @@ class WebHookHandler implements HandlerInterface
         return is_array($payload) ? $payload : [];
     }
 
+    /**
+     * Inject `$file:` references from the upload snapshots into the hydration
+     * context.
+     *
+     * Singleton references replace the submitted scalar value (a new upload
+     * wins over an existing attachment ID). Indexed references are merged
+     * into an existing gallery array position by position so existing
+     * destination attachment IDs and their positions survive; the numeric
+     * indexes are preserved by UploadedFileSnapshots::getReferences().
+     *
+     * A reference colliding with an explicit null, or a scalar reference that
+     * would discard a submitted list, is a configuration conflict and aborts
+     * the send before any request is made.
+     */
     private function addFileReferences(array $formData): array
     {
         if ($this->uploadedFileSnapshots === null) {
@@ -409,10 +535,64 @@ class WebHookHandler implements HandlerInterface
                 continue;
             }
 
-            $formData[$key] = $reference;
+            // An absent key is a normal "not submitted" case: inject directly.
+            // Only an explicit null value in the submitted data conflicts.
+            if (!array_key_exists($key, $formData)) {
+                $formData[$key] = $reference;
+
+                continue;
+            }
+
+            $formData[$key] = $this->mergeFileReference($formData[$key], $reference, $key);
         }
 
         return $formData;
+    }
+
+    /**
+     * @param string|array<int, string> $reference
+     */
+    private function mergeFileReference(mixed $existing, mixed $reference, string $key): mixed
+    {
+        if (is_array($existing)) {
+            if (!is_array($reference)) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Upload reference for "%s" would replace a submitted list with a single value.',
+                        $key
+                    )
+                );
+            }
+
+            foreach ($reference as $index => $single) {
+                if (array_key_exists($index, $existing) && $existing[$index] === null) {
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'Upload reference for "%s" at index %s conflicts with an explicit null value.',
+                            $key,
+                            (string) $index
+                        )
+                    );
+                }
+
+                $existing[$index] = $single;
+            }
+
+            ksort($existing);
+
+            return $existing;
+        }
+
+        if ($existing === null) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Upload reference for "%s" conflicts with an explicit null value.',
+                    $key
+                )
+            );
+        }
+
+        return $reference;
     }
 
     private function createHeaders(array $_data, object $config): array
@@ -434,11 +614,19 @@ class WebHookHandler implements HandlerInterface
         $headers = [];
         foreach (is_array($config->headers ?? null) ? $config->headers : [] as $header) {
             $name = is_array($header) ? ($header['header'] ?? null) : null;
-            if (!is_string($name) || $name === '' || in_array(strtolower($name), $reserved, true)) {
+
+            if (!is_string($name)) {
                 continue;
             }
 
-            $headers[$name] = $header['value'] ?? '';
+            $name = trim($name);
+
+            if ($name === '' || in_array(strtolower($name), $reserved, true)) {
+                continue;
+            }
+
+            $value          = $header['value'] ?? '';
+            $headers[$name] = is_scalar($value) ? (string) $value : '';
         }
 
         // Multipart controls these headers itself, overriding any configured value.

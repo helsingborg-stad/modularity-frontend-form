@@ -65,10 +65,49 @@ final class UploadedFileSnapshotsTest extends TestCase
         ]);
 
         self::assertSame(
-            ['$file:file_0', '$file:file_1'],
+            [0 => '$file:file_0', 1 => '$file:file_1'],
             $snapshots->getReferences()['field_gallery']
         );
         self::assertCount(2, $snapshots->getFileMap());
+
+        $snapshots->cleanup();
+    }
+
+    public function testSparseGalleryUploadsKeepTheirOriginalIndexes(): void
+    {
+        $first = $this->makeTempFile('first');
+        $third = $this->makeTempFile('third');
+
+        $snapshots = new UploadedFileSnapshots([
+            'name'     => ['field_gallery' => [0 => 'first.jpg', 2 => 'third.jpg']],
+            'type'     => ['field_gallery' => [0 => 'image/jpeg', 2 => 'image/jpeg']],
+            'tmp_name' => ['field_gallery' => [0 => $first, 2 => $third]],
+            'error'    => ['field_gallery' => [0 => UPLOAD_ERR_OK, 2 => UPLOAD_ERR_OK]],
+            'size'     => ['field_gallery' => [0 => 5, 2 => 5]],
+        ]);
+
+        self::assertSame(
+            [0 => '$file:file_0', 2 => '$file:file_1'],
+            $snapshots->getReferences()['field_gallery']
+        );
+
+        $snapshots->cleanup();
+    }
+
+    public function testUnreadableSelectedUploadIsRecordedAsFailure(): void
+    {
+        $snapshots = new UploadedFileSnapshots([
+            'name'     => ['field_image' => 'broken.jpg'],
+            'type'     => ['field_image' => 'image/jpeg'],
+            'tmp_name' => ['field_image' => '/nonexistent/broken.jpg'],
+            'error'    => ['field_image' => UPLOAD_ERR_OK],
+            'size'     => ['field_image' => 0],
+        ]);
+
+        self::assertTrue($snapshots->hasFailures());
+
+        self::assertSame([], $snapshots->getFileMap());
+        self::assertSame([], $snapshots->getReferences());
 
         $snapshots->cleanup();
     }
@@ -110,6 +149,9 @@ final class UploadedFileSnapshotsTest extends TestCase
         self::assertSame([], $snapshots->getFileMap());
         self::assertSame([], $snapshots->getReferences());
         self::assertFalse($snapshots->hasFiles());
+
+        // A failed upload was never selected, so it is not a snapshot failure.
+        self::assertFalse($snapshots->hasFailures());
     }
 
     public function testCleanupIsIdempotent(): void

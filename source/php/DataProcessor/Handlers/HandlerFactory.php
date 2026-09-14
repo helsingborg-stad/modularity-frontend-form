@@ -50,12 +50,18 @@ class HandlerFactory {
 
         // Snapshot uploads before any handler runs so the Webhook handler can
         // still read them after e.g. the database handler consumes the originals.
+        // Only multipart webhooks consume the snapshots; JSON webhooks keep
+        // their previous behavior of never touching the uploads.
         $uploadedFileSnapshots = null;
         if (in_array('WebHookHandler', $activeHandlers, true)) {
-            $uploadedFileSnapshots = new UploadedFileSnapshots(
-                $request->get_file_params()[$this->config->getFieldNamespace()] ?? [],
-                $this->acfService
-            );
+            $webHookConfig = $moduleConfig->getWebHookHandlerConfig();
+
+            if (($webHookConfig->requestFormat ?? 'json') === 'multipart') {
+                $uploadedFileSnapshots = new UploadedFileSnapshots(
+                    $request->get_file_params()[$this->config->getFieldNamespace()] ?? [],
+                    $this->acfService
+                );
+            }
         }
 
         foreach ($activeHandlers as $handler) {

@@ -18,6 +18,7 @@ use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\WpDbFileHandler;
 use ModularityFrontendForm\DataProcessor\Handlers\WithLogHandler;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\WithLogHandlerResult;
+use ModularityFrontendForm\DataProcessor\Handlers\Webhook\UploadedFileSnapshots;
 use PsrLogger\Contracts\LoggerFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -47,6 +48,16 @@ class HandlerFactory {
         $moduleConfig   = $this->getModuleConfigInstance($params->moduleId);
         $activeHandlers = $moduleConfig->getActivatedHandlers();
 
+        // Snapshot uploads before any handler runs so the Webhook handler can
+        // still read them after e.g. the database handler consumes the originals.
+        $uploadedFileSnapshots = null;
+        if (in_array('WebHookHandler', $activeHandlers, true)) {
+            $uploadedFileSnapshots = new UploadedFileSnapshots(
+                $request->get_file_params()[$this->config->getFieldNamespace()] ?? [],
+                $this->acfService
+            );
+        }
+
         foreach ($activeHandlers as $handler) {
             $logger = $this->loggerFactory->createLogger(['namespace' => $handler]);
             $handlerArgs     = $this->createHandlerInterfaceRequiredArguments($params, $logger);
@@ -63,6 +74,7 @@ class HandlerFactory {
                     break;
                 case 'WebHookHandler':
                     $handlerArgs[] = new NullFileHandler(...$fileHandlerArgs);
+                    $handlerArgs[] = $uploadedFileSnapshots;
                     $handlers[]    = new WithLogHandler(new WebHookHandler(...$handlerArgs), $logger);
                     break;
             }

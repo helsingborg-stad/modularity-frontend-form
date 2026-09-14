@@ -504,6 +504,59 @@
                     "rows": "",
                     "placeholder": "",
                     "new_lines": ""
+                },
+                {
+                    "key": "field_6a0ac1d2ef653",
+                    "label": "Request Format",
+                    "name": "requestFormat",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Choose how the webhook request body is sent. JSON sends the payload as application/json. Multipart sends the payload as form-data and supports file uploads, such as images.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "json": "JSON",
+                        "multipart": "Multipart (form-data)"
+                    },
+                    "default_value": "json",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "allow_custom": 0,
+                    "search_placeholder": ""
+                },
+                {
+                    "key": "field_6a0ac1d3ef654",
+                    "label": "Timeout (seconds)",
+                    "name": "timeout",
+                    "aria-label": "",
+                    "type": "number",
+                    "instructions": "Maximum number of seconds to wait for the webhook response. Minimum 1, maximum 120.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 20,
+                    "min": 1,
+                    "max": 120,
+                    "step": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
                 }
             ]
         },

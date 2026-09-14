@@ -239,6 +239,7 @@ final class WebHookHandlerMultipartTest extends TestCase
     {
         $config = $this->multipartConfig();
         $config->requestFormat = 'json';
+        $config->body = '{"acf":{"image":"{{image}}"},"all":"{{*}}"}';
 
         $handler = $this->createHandler($config, null);
 
@@ -254,7 +255,7 @@ final class WebHookHandlerMultipartTest extends TestCase
         $decoded = json_decode($body, true);
 
         self::assertIsArray($decoded);
-        self::assertArrayHasKey('*', $decoded, 'Legacy JSON behavior keeps the "*" hydration key.');
+        self::assertSame(['image' => '999'], $decoded['all'], 'Legacy JSON templates can hydrate all fields through {{*}}.');
         self::assertSame('999', $decoded['acf']['image']);
         self::assertSame('application/json', $headers['Content-Type'] ?? null);
         self::assertArrayNotHasKey('Idempotency-Key', $headers);

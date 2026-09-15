@@ -525,7 +525,7 @@ Example:
                     'name' => 'requestFormat',
                     'aria-label' => '',
                     'type' => 'select',
-                    'instructions' => __('Choose how the webhook request body is sent. JSON sends the payload as application/json. Multipart sends the payload as form-data and supports file uploads, such as images.', 'modularity-frontend-form'),
+                    'instructions' => __('JSON is the default. Multipart uses version 1 with retries. Multipart create uses version 2 with one attempt. Resubmissions can create duplicates.', 'modularity-frontend-form'),
                     'required' => 0,
                     'conditional_logic' => 0,
                     'wrapper' => array(
@@ -536,6 +536,7 @@ Example:
                     'choices' => array(
                         'json' => __('JSON', 'modularity-frontend-form'),
                         'multipart' => __('Multipart (form-data)', 'modularity-frontend-form'),
+                        'multipart-create' => __('Multipart create (version 2, one attempt)', 'modularity-frontend-form'),
                     ),
                     'default_value' => 'json',
                     'return_format' => 'value',

@@ -33,6 +33,20 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 - Choose where submissions are sent: Database, E-Mail, Webhook.
 - Configure handler settings in the module admin (e.g., webhook URL, email recipient).
 
+#### Webhook request formats
+
+JSON remains the default. `multipart` retains protocol version 1 and its bounded retries.
+Select `multipart-create` for a compatible version-2 receiver that creates resources with one image per destination.
+This profile makes one HTTP transport attempt. It sends no `Idempotency-Key` and does not retry or fall back to JSON.
+Protocol version 2 is an application header value, not a requirement for HTTP/2 transport.
+
+A timeout does not prove that the receiver saved nothing.
+Manual or browser resubmissions are independent requests. They can duplicate posts, images, and notifications.
+This profile does not prevent duplicates or recover partial data after a crash.
+Check the destination before resubmitting.
+
+See [the multipart protocol guide](docs/webhook-multipart-protocol.md) for mappings, limits, and compatibility rules.
+
 ### 3. Display the Form
 
 - Use the module in any Modularity-enabled area (template, block, shortcode).

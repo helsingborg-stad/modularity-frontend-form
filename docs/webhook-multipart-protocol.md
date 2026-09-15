@@ -1,4 +1,4 @@
-# Webhook multipart upload protocol (version 1)
+# Webhook multipart upload profiles
 
 This document describes the outgoing webhook formats of the sender side of the
 frontend-form webhook integration, the opt-in multipart mode for file/image
@@ -14,13 +14,52 @@ is opt-in per webhook and JSON remains the default.
 |------|---------|--------------|---------------------|
 | `json` | Yes | `application/json` | No |
 | `multipart` | No (per-webhook `Request Format` setting) | `multipart/form-data; boundary=...` | Yes |
+| `multipart-create` | No (per-webhook `Request Format` setting) | `multipart/form-data; boundary=...` | Yes, for compatible version-2 creates |
 
 - JSON mode is unchanged: the configured body template is hydrated with the
   legacy catch-all `*` context key, JSON-encoded and sent as before. Protocol
   and idempotency headers are not added in JSON mode. Uploads are never
   snapshotted or read in JSON mode.
-- Multipart mode sends the hydrated payload flattened into native PHP/WordPress
-  bracket parameter names plus binary file parts, in one POST request.
+- Both multipart profiles use the existing encoder for bracket parameters and binary file parts.
+
+## Protocol v2 (multipart-create)
+
+Select `multipart-create` only for a compatible create-only receiver.
+Sponsor destinations accept collection POST creates with at most one referenced image per request.
+Updates, galleries, nested uploads, and generic files are not supported by that receiver.
+
+The sender controls these headers:
+
+```text
+Content-Type: multipart/form-data; boundary=<boundary>
+X-ACF-Rest-Upload-Version: 2
+```
+
+The value `2` is the application protocol version. It does not require HTTP/2 transport.
+The sender removes configured `Idempotency-Key` headers and sends no replacement.
+Configured content-type and protocol-version headers cannot override these values.
+Other configured headers, including authentication, remain available.
+
+An image template such as `{"acf":{"image":"{{image.0}}"}}` produces an ordinary `acf[image]` parameter.
+Its scalar value is `$file:<key>`. The selected bytes appear in `_acf_rest_files[<key>]`.
+The key is an internal reference, not a destination identity.
+Absent optional image inputs use the omission rule described below.
+Existing attachment IDs remain ordinary values and require native receiver validation.
+
+The sender performs exactly one HTTP transport attempt.
+Transport errors and all non-2xx responses fail the handler without retry or JSON fallback.
+This includes timeouts, HTTP 425, HTTP 429, HTTP 5xx, and incompatible-version rejections.
+A timeout does not prove that the receiver saved nothing.
+Every manual or browser resubmission is independent and can duplicate posts, images, and notifications.
+There is no duplicate-prevention or crash-recovery guarantee. Check the destination before resubmitting.
+
+Both profiles preserve snapshots across Database handling and remove them after webhook success or failure.
+Preparation failures stop transport. The 8 MiB aggregate file limit and 1 MiB parameter limit apply to both profiles.
+A lower origin upload limit takes precedence.
+
+The shared encoder retains version-1 null and empty-list markers.
+The version-2 receiver rejects those reserved markers. Do not configure null or empty-list templates for this profile.
+Do not use version-1 gallery or clearing features with the version-2 receiver.
 
 ## Protocol v1 (multipart)
 
@@ -96,12 +135,12 @@ Behavior that differs from earlier webhook releases:
    response bodies and headers are never logged or attached to errors.
 2. **Timeout is configurable** per webhook (1–120 seconds, default 20).
    Previously it was fixed at 20 seconds.
-3. **Retries** (multipart mode only): transport failures and HTTP 408, 425,
+3. **Retries** (`multipart` version 1 only): transport failures and HTTP 408, 425,
    429, 5xx are retried twice with bounded exponential backoff (0.5 s base,
    30 s cap), honoring `Retry-After`. A 409 is retried only when the response
    body is recognizable as an `acf-rest-upload` in-progress conflict (an
    active idempotency lock); any other 409 fails immediately. JSON mode sends
-   exactly once, as before.
+   exactly once, as before. `multipart-create` also sends exactly once.
 4. **Aggregate upload guard**: the total size of referenced uploads is checked
    against the lower of the origin `wp_max_upload_size()` and **8 MiB** before
    the in-memory body is built. JSON-encoded multipart parameter data is
@@ -114,13 +153,13 @@ Behavior that differs from earlier webhook releases:
    being silently dropped. Snapshots are cleaned up in a `finally` handler and
    by a shutdown guard.
 
-Automatic transport retries reuse the same operation ID. A new browser
+In version 1, automatic transport retries reuse the same operation ID. A new browser
 submission creates a new ID and is not a replay of a timed-out submission.
 Check the original operation before manually submitting again. The receiver
 returns 409 for changed data under an already-used key and 410 when a retained
 completed claim points to a deleted resource. Neither response is retried.
 
-## Sender lifecycle (multipart)
+## Sender lifecycle (both multipart profiles)
 
 1. Existing validators run first; uploads are snapshotted before handlers.
 2. `$file:` references are merged into the hydration context, keyed by ACF

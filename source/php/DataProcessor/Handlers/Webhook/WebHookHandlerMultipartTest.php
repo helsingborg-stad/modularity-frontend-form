@@ -157,6 +157,34 @@ final class WebHookHandlerMultipartTest extends TestCase
         ];
     }
 
+    public function testLegacyMultipartTransportRetriesKeepTheSameHeadersAndBytes(): void
+    {
+        $error = $this->createMock(WP_Error::class);
+        $error->method('get_error_message')->willReturn('Transport timed out.');
+        $this->responses = [$error];
+        $result = $this->createHandler($this->multipartConfig(), $this->snapshotsForSingleImage())
+            ->handle([], new WP_REST_Request());
+        self::assertFalse($result?->isOk());
+        self::assertCount(3, $this->requests);
+        self::assertSame($this->requests[0], $this->requests[1]);
+        self::assertSame($this->requests[0], $this->requests[2]);
+        self::assertSame('1', $this->requests[0]['args']['headers']['X-ACF-Rest-Upload-Version']);
+        self::assertNotEmpty($this->requests[0]['args']['headers']['Idempotency-Key']);
+    }
+
+    public function testMissingFormatDefaultsToJson(): void
+    {
+        $config = $this->multipartConfig();
+        unset($config->requestFormat);
+        $config->headers = [];
+        $config->body = '{"title":"{{title}}"}';
+        $result = $this->createHandler($config, null)->handle(['title' => 'Default JSON'], new WP_REST_Request());
+        self::assertTrue($result?->isOk());
+        self::assertCount(1, $this->requests);
+        self::assertSame('application/json', $this->requests[0]['args']['headers']['Content-Type']);
+        self::assertSame(['title' => 'Default JSON'], json_decode($this->requests[0]['args']['body'], true));
+    }
+
     public function testMultipartCreateSnapshotFailurePreventsTransport(): void
     {
         $config = $this->multipartConfig();

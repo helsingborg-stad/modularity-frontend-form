@@ -27,6 +27,7 @@ class WebHookHandler implements HandlerInterface
     use GetModuleConfigInstanceTrait;
 
     private const REQUEST_FORMAT_MULTIPART = 'multipart';
+    private const REQUEST_FORMAT_MULTIPART_CREATE = 'multipart-create';
 
     private const DEFAULT_TIMEOUT     = 20;
     private const MIN_TIMEOUT         = 1;
@@ -80,7 +81,7 @@ class WebHookHandler implements HandlerInterface
                 return $this->handlerResult;
             }
 
-            if (($config->requestFormat ?? 'json') === self::REQUEST_FORMAT_MULTIPART) {
+            if (in_array($config->requestFormat ?? 'json', [self::REQUEST_FORMAT_MULTIPART, self::REQUEST_FORMAT_MULTIPART_CREATE], true)) {
                 $this->sendMultipartRequest($config, $data);
             } else {
                 $this->sendJsonRequest($config, $data);
@@ -151,7 +152,7 @@ class WebHookHandler implements HandlerInterface
             $encoded['body'],
             $this->createMultipartHeaders($config, $encoded['contentType']),
             $this->resolveTimeout($config),
-            true
+            ($config->requestFormat ?? 'json') === self::REQUEST_FORMAT_MULTIPART
         );
     }
 
@@ -816,8 +817,12 @@ class WebHookHandler implements HandlerInterface
 
         // Multipart controls these headers itself, overriding any configured value.
         $headers['Content-Type']                       = $contentType;
-        $headers[self::IDEMPOTENCY_HEADER]             = $this->generateUuid();
-        $headers[self::PROTOCOL_VERSION_HEADER]        = self::PROTOCOL_VERSION;
+        if (($config->requestFormat ?? 'json') === self::REQUEST_FORMAT_MULTIPART_CREATE) {
+            $headers[self::PROTOCOL_VERSION_HEADER] = '2';
+        } else {
+            $headers[self::IDEMPOTENCY_HEADER] = $this->generateUuid();
+            $headers[self::PROTOCOL_VERSION_HEADER] = self::PROTOCOL_VERSION;
+        }
 
         return $headers;
     }

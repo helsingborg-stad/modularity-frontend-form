@@ -46,7 +46,7 @@ final class WebHookHandlerMultipartTest extends TestCase
     /** @var array<int, array{url:string, args:array<string, mixed>}> */
     private array $requests = [];
 
-    /** @var array<int, array<string, mixed>> */
+    /** @var array<int, array<string, mixed>|WP_Error> */
     private array $responses = [];
 
     /** @var array<int, string> */
@@ -61,6 +61,28 @@ final class WebHookHandlerMultipartTest extends TestCase
         }
 
         $this->tempFiles = [];
+    }
+
+    public function testMultipartCreateSendsVersionTwoAndSelectedBytesWithoutIdempotency(): void
+    {
+        $config = $this->multipartConfig(['header' => ' IdEmPoTeNcY-KeY ', 'value' => 'ignored']);
+        $config->requestFormat = 'multipart-create';
+        $config->body = '{"title":"Create example","acf":{"image":"{{image}}"}}';
+        $snapshots = $this->snapshotsForSingleImage();
+        $paths = array_column($snapshots->getFileMap(), 'tmp_name');
+        $result = $this->createHandler($config, $snapshots)->handle([], new WP_REST_Request());
+
+        self::assertTrue($result?->isOk());
+        self::assertCount(1, $this->requests);
+        $args = $this->requests[0]['args'];
+        self::assertSame('2', $args['headers']['X-ACF-Rest-Upload-Version'] ?? null);
+        self::assertArrayNotHasKey('idempotency-key', array_change_key_case($args['headers']));
+        $parts = $this->captureMultipartParts($args);
+        self::assertSame('Create example', $parts['title']);
+        self::assertSame('aaaa', $this->referencedBinary($parts, 'acf[image]'));
+        foreach ($paths as $path) {
+            self::assertFileDoesNotExist($path);
+        }
     }
 
     public function testMultipartPayloadOmitsLegacyCatchAllKeyAndSendsReferenceAndFile(): void
@@ -93,6 +115,101 @@ final class WebHookHandlerMultipartTest extends TestCase
         self::assertSame('1', $headers['X-ACF-Rest-Upload-Version'] ?? null);
         self::assertStringStartsWith('multipart/form-data; boundary=', (string) $headers['Content-Type']);
         self::assertSame('secret', $headers['Authorization'] ?? null);
+    }
+
+    /** @dataProvider createFailureProvider */
+    public function testMultipartCreateFailsAfterOneAttempt(?int $status): void
+    {
+        $error = $this->createMock(WP_Error::class);
+        $error->method('get_error_message')->willReturn('Transport timed out.');
+        $this->responses = [$status === null ? $error : [
+            'response' => ['code' => $status],
+            'headers' => ['retry-after' => '0'],
+            'body' => '{"code":"acf_rest_upload_unsupported_version"}',
+        ]];
+        $config = $this->multipartConfig();
+        $config->requestFormat = 'multipart-create';
+        $snapshots = $this->snapshotsForSingleImage();
+        $paths = array_column($snapshots->getFileMap(), 'tmp_name');
+
+        $result = $this->createHandler($config, $snapshots)->handle([], new WP_REST_Request());
+
+        self::assertFalse($result?->isOk());
+        self::assertCount(1, $result?->getErrors());
+        self::assertCount(1, $this->requests, 'No transport retry or JSON fallback is permitted.');
+        self::assertSame('2', $this->requests[0]['args']['headers']['X-ACF-Rest-Upload-Version']);
+        foreach ($paths as $path) {
+            self::assertFileDoesNotExist($path);
+        }
+    }
+
+    public static function createFailureProvider(): array
+    {
+        return [
+            'transport error' => [null],
+            'incompatible version' => [400],
+            'too early' => [425],
+            'rate limited' => [429],
+            'internal error' => [500],
+            'bad gateway' => [502],
+            'unavailable' => [503],
+            'gateway timeout' => [504],
+        ];
+    }
+
+    public function testMultipartCreateSnapshotFailurePreventsTransport(): void
+    {
+        $config = $this->multipartConfig();
+        $config->requestFormat = 'multipart-create';
+        $result = $this->createHandler($config, $this->snapshotsForUnreadableUpload())
+            ->handle([], new WP_REST_Request());
+        self::assertFalse($result?->isOk());
+        self::assertSame([], $this->requests);
+    }
+
+    /** @dataProvider createLimitProvider */
+    public function testMultipartCreatePreservesLimits(int $fileBytes, int $originLimit, int $parameterBytes): void
+    {
+        $config = $this->multipartConfig();
+        $config->requestFormat = 'multipart-create';
+        $config->body = '{"acf":{"image":"{{image}}"},"title":"{{title}}"}';
+        $snapshots = $this->snapshotsForSingleImage($fileBytes);
+        foreach ($snapshots->getFileMap() as $file) {
+            $handle = fopen($file['tmp_name'], 'c+b');
+            ftruncate($handle, $fileBytes);
+            fclose($handle);
+        }
+        $result = $this->createHandler($config, $snapshots, ['wpMaxUploadSize' => $originLimit])
+            ->handle(['acf' => ['title' => str_repeat('x', $parameterBytes)]], new WP_REST_Request());
+        self::assertFalse($result?->isOk());
+        self::assertSame([], $this->requests);
+        self::assertSame([], $snapshots->getFileMap());
+    }
+
+    public static function createLimitProvider(): array
+    {
+        return [
+            'hard file limit' => [8 * 1024 * 1024 + 1, 64 * 1024 * 1024, 0],
+            'lower origin limit' => [4, 3, 0],
+            'parameter limit' => [4, 8 * 1024 * 1024, 1024 * 1024 + 1],
+        ];
+    }
+
+    public function testMultipartCreatePreservesOptionalImageDestinations(): void
+    {
+        $config = $this->multipartConfig();
+        $config->requestFormat = 'multipart-create';
+        $config->body = '{"acf":{"image_a":"{{image_a.0}}","image_b":"{{image_b.0}}","image_c":"{{image_c.0}}"}}';
+        $snapshots = $this->snapshotsForOptionalImages([
+            'field_image_b' => "selected-b\x00\xff",
+            'field_image_c' => "selected-c\r\n",
+        ]);
+        $result = $this->createHandler($config, $snapshots)->handle([], new WP_REST_Request());
+        self::assertTrue($result?->isOk());
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+        self::assertArrayNotHasKey('acf[image_a]', $parts);
+        self::assertSame("selected-b\x00\xff", $this->referencedBinary($parts, 'acf[image_b]'));
+        self::assertSame("selected-c\r\n", $this->referencedBinary($parts, 'acf[image_c]'));
     }
 
     public function testMultipartOmitsAnAbsentOptionalImageWithoutShiftingSelectedImages(): void
@@ -486,7 +603,7 @@ final class WebHookHandlerMultipartTest extends TestCase
             }
         );
 
-        $wpService->method('isWpError')->willReturn(false);
+        $wpService->method('isWpError')->willReturnCallback(static fn($response): bool => $response instanceof WP_Error);
         $wpService->method('wpRemoteRetrieveResponseCode')->willReturnCallback(
             static fn($response): int => (int) ($response['response']['code'] ?? 500)
         );

@@ -32,6 +32,8 @@ class WebHookHandler implements HandlerInterface
     private const MIN_TIMEOUT         = 1;
     private const MAX_TIMEOUT         = 120;
     private const MAX_MULTIPART_RETRY = 2;
+    private const MAX_MULTIPART_FILE_BYTES = 8 * 1024 * 1024;
+    private const MAX_MULTIPART_DATA_BYTES = 1024 * 1024;
 
     private const IDEMPOTENCY_HEADER     = 'Idempotency-Key';
     private const PROTOCOL_VERSION_HEADER = 'X-ACF-Rest-Upload-Version';
@@ -155,21 +157,29 @@ class WebHookHandler implements HandlerInterface
 
     /**
      * Compare the aggregate size of the files referenced by the hydrated
-     * payload against the origin WordPress upload limit.
+     * payload against the origin limit and the buffered protocol budget.
      *
      * @param array<string, mixed> $payload
      * @param array<string, array{name:string, type:string, tmp_name:string, size:int}> $files
      */
     private function withinUploadLimit(array $payload, array $files): bool
     {
+        $structured = json_encode($payload);
+        if ($structured === false || strlen($structured) > self::MAX_MULTIPART_DATA_BYTES) {
+            $this->handlerResult->setError(new WP_Error(
+                RestApiResponseStatusEnums::HandlerError->value,
+                __('Multipart parameter data must be valid JSON and no larger than 1 MiB.', 'modularity-frontend-form')
+            ));
+            return false;
+        }
         if ($files === []) {
             return true;
         }
 
-        $limit = $this->wpService->wpMaxUploadSize();
-        if (!is_numeric($limit) || (int) $limit <= 0) {
-            return true;
-        }
+        $originLimit = $this->wpService->wpMaxUploadSize();
+        $limit = is_numeric($originLimit) && (int) $originLimit > 0
+            ? min((int) $originLimit, self::MAX_MULTIPART_FILE_BYTES)
+            : self::MAX_MULTIPART_FILE_BYTES;
 
         $total = 0;
         foreach ($this->collectReferencedFileKeys($payload) as $key) {

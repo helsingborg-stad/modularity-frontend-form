@@ -209,6 +209,30 @@ final class WebHookHandlerMultipartTest extends TestCase
         self::assertCount(0, $this->requests, 'Uploads above the aggregate limit must abort the send.');
     }
 
+    public function testProtocolBudgetAppliesEvenWhenOriginAllowsLargerUploads(): void
+    {
+        $size = 9 * 1024 * 1024;
+        $snapshots = $this->snapshotsForSingleImage($size);
+        foreach ($snapshots->getFileMap() as $file) {
+            $handle = fopen($file['tmp_name'], 'c+b');
+            ftruncate($handle, $size);
+            fclose($handle);
+        }
+        $handler = $this->createHandler($this->multipartConfig(), $snapshots, ['wpMaxUploadSize' => 64 * 1024 * 1024]);
+        self::assertFalse($handler->handle(['acf' => ['image' => '999']], new WP_REST_Request())?->isOk());
+        self::assertSame([], $this->requests);
+    }
+
+    public function testStructuredMultipartBudgetAppliesWithoutFiles(): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"description":"{{description}}"}}';
+        $handler = $this->createHandler($config, null);
+        $result = $handler->handle(['acf' => ['description' => str_repeat('x', 1024 * 1024 + 1)]], new WP_REST_Request());
+        self::assertFalse($result?->isOk());
+        self::assertSame([], $this->requests);
+    }
+
     public function testNonSuccessResponseIsAnErrorAndRawResponseIsNotAttached(): void
     {
         $this->responses = [

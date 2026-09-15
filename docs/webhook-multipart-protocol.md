@@ -92,12 +92,22 @@ Behavior that differs from earlier webhook releases:
    active idempotency lock); any other 409 fails immediately. JSON mode sends
    exactly once, as before.
 4. **Aggregate upload guard**: the total size of referenced uploads is checked
-   against the origin `wp_max_upload_size()` before the in-memory body is
-   built. Uploads with an undeterminable size fail closed.
+   against the lower of the origin `wp_max_upload_size()` and **8 MiB** before
+   the in-memory body is built. JSON-encoded multipart parameter data is
+   limited to **1 MiB**, including requests without files. Uploads with an
+   undeterminable size fail closed. Reserve at least 256 MiB of PHP memory
+   for the buffered transport and normal image processing; arbitrary-size
+   files and unbounded decoded image dimensions are not supported.
 5. **Snapshot failures abort the send**: a selected upload (HTTP `UPLOAD_ERR_OK`)
    that cannot be read or copied to a snapshot fails the handler instead of
    being silently dropped. Snapshots are cleaned up in a `finally` handler and
    by a shutdown guard.
+
+Automatic transport retries reuse the same operation ID. A new browser
+submission creates a new ID and is not a replay of a timed-out submission.
+Check the original operation before manually submitting again. The receiver
+returns 409 for changed data under an already-used key and 410 when a retained
+completed claim points to a deleted resource. Neither response is retried.
 
 ## Sender lifecycle (multipart)
 

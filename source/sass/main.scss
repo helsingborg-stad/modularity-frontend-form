@@ -1,7 +1,7 @@
 @use "sass:meta";
 @use "./variables.scss" as *;
 
-@layer generic {
+@layer icons {
     @include meta.load-css("./repeater.scss");
     @include meta.load-css("./wysiwyg.scss");
     @include meta.load-css("./step.scss");

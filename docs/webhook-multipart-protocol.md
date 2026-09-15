@@ -74,6 +74,17 @@ _acf_rest_empty[] = acf[gallery]
   (`_acf_rest_nulls`, `_acf_rest_empty`, `_acf_rest_files`) aborts the send.
 - A field that is both explicitly `null` in the submitted data and the target
   of a file reference is a conflict; the send aborts before any request.
+- An exact image template reference, such as `{{image.0}}`, omits its
+  destination property when ACF identifies the source as an image field and
+  its submitted value is empty with no selected upload. This avoids sending an
+  empty string for an unselected optional image. Selected image fields keep
+  their own destination property and binary part. This rule applies only to
+  multipart image references. JSON hydration and non-image empty strings,
+  `false`, zero and empty lists retain their existing behavior.
+  Completely absent inputs are identified using the form's registered field
+  keys, so omission does not depend on ACF finding a saved value by field name.
+  Explicit submitted nulls retain their legacy multipart representation; this
+  omission rule does not introduce an image-clearing operation.
 
 ## Failure handling and compatibility changes
 

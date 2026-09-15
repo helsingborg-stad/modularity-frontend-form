@@ -95,6 +95,188 @@ final class WebHookHandlerMultipartTest extends TestCase
         self::assertSame('secret', $headers['Authorization'] ?? null);
     }
 
+    public function testMultipartOmitsAnAbsentOptionalImageWithoutShiftingSelectedImages(): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"image_a":"{{image_a.0}}","image_b":"{{image_b.0}}","image_c":"{{image_c.0}}"}}';
+
+        $handler = $this->createHandler(
+            $config,
+            $this->snapshotsForOptionalImages([
+                'field_image_b' => 'binary-content-for-image-b',
+                'field_image_c' => 'binary-content-for-image-c',
+            ])
+        );
+
+        $result = $handler->handle(
+            [
+                'acf' => [
+                    'field_image_b' => [''],
+                    'field_image_c' => [''],
+                ],
+            ],
+            new WP_REST_Request()
+        );
+
+        self::assertTrue($result?->isOk());
+        self::assertCount(1, $this->requests);
+
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+
+        self::assertArrayNotHasKey('acf[image_a]', $parts);
+        self::assertSame(
+            'binary-content-for-image-b',
+            $this->referencedBinary($parts, 'acf[image_b]')
+        );
+        self::assertSame(
+            'binary-content-for-image-c',
+            $this->referencedBinary($parts, 'acf[image_c]')
+        );
+    }
+
+    /**
+     * @dataProvider optionalImageSelectionProvider
+     *
+     * @param array<string, string> $selectedImages
+     */
+    public function testMultipartOptionalImageSelectionsKeepTheirDestinationFields(array $selectedImages): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"image_a":"{{image_a.0}}","image_b":"{{image_b.0}}","image_c":"{{image_c.0}}"}}';
+
+        $handler = $this->createHandler($config, $this->snapshotsForOptionalImages($selectedImages));
+        $result = $handler->handle(
+            [
+                'acf' => array_fill_keys(array_keys($selectedImages), ['']),
+            ],
+            new WP_REST_Request()
+        );
+
+        self::assertTrue($result?->isOk());
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+
+        foreach (['image_a', 'image_b', 'image_c'] as $image) {
+            $field = 'acf[' . $image . ']';
+            if (!array_key_exists('field_' . $image, $selectedImages)) {
+                self::assertArrayNotHasKey($field, $parts);
+                continue;
+            }
+
+            self::assertSame($selectedImages['field_' . $image], $this->referencedBinary($parts, $field));
+        }
+    }
+
+    /**
+     * @return array<string, array{0: array<string, string>}>
+     */
+    public static function optionalImageSelectionProvider(): array
+    {
+        return [
+            'all empty' => [[]],
+            'only first selected' => [[
+                'field_image_a' => 'binary-content-for-image-a',
+            ]],
+            'only last selected' => [[
+                'field_image_c' => 'binary-content-for-image-c',
+            ]],
+            'all selected' => [[
+                'field_image_a' => 'binary-content-for-image-a',
+                'field_image_b' => 'binary-content-for-image-b',
+                'field_image_c' => 'binary-content-for-image-c',
+            ]],
+        ];
+    }
+
+    public function testMultipartKeepsAnExistingOptionalImageAttachmentId(): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"image_a":"{{image_a.0}}","image_b":"{{image_b.0}}"}}';
+
+        $handler = $this->createHandler(
+            $config,
+            $this->snapshotsForOptionalImages(['field_image_b' => 'binary-content-for-image-b'])
+        );
+        $result = $handler->handle(
+            [
+                'acf' => [
+                    'field_image_a' => [123],
+                    'field_image_b' => [''],
+                ],
+            ],
+            new WP_REST_Request()
+        );
+
+        self::assertTrue($result?->isOk());
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+
+        self::assertSame('123', $parts['acf[image_a]'] ?? null);
+        self::assertSame('binary-content-for-image-b', $this->referencedBinary($parts, 'acf[image_b]'));
+    }
+
+    public function testMultipartKeepsNonImageEmptyValuesFalseZeroAndLists(): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"optional_image":"{{optional_image.0}}"},"empty_text":"{{text}}","false_value":"{{toggle}}","zero_value":"{{zero}}","items":"{{items}}"}';
+
+        $handler = $this->createHandler($config, null);
+        $result = $handler->handle(
+            [
+                'acf' => [
+                    'field_optional_image' => [''],
+                    'field_text' => '',
+                    'field_toggle' => '0',
+                    'field_zero' => 0,
+                    'field_items' => [],
+                ],
+            ],
+            new WP_REST_Request()
+        );
+
+        self::assertTrue($result?->isOk());
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+
+        self::assertArrayNotHasKey('acf[optional_image]', $parts);
+        self::assertSame('', $parts['empty_text'] ?? null);
+        self::assertSame('0', $parts['false_value'] ?? null);
+        self::assertSame('0', $parts['zero_value'] ?? null);
+        self::assertSame('items', $parts['_acf_rest_empty[]'] ?? null);
+    }
+
+    public function testMultipartKeepsAnExistingImageSubmittedByName(): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"image_a":"{{image_a.0}}"}}';
+
+        $result = $this->createHandler($config, null)->handle(
+            ['acf' => ['image_a' => [123]]],
+            new WP_REST_Request()
+        );
+
+        self::assertTrue($result?->isOk());
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+        self::assertSame('123', $parts['acf[image_a]'] ?? null);
+    }
+
+    public function testMultipartOmissionLeavesLiteralAndUnknownReferencesUnchanged(): void
+    {
+        $config = $this->multipartConfig();
+        $config->body = '{"acf":{"image_a":"{{image_a.0}}"},"literal":"","unknown":"{{unknown.0}}","text":"{{text}}","embedded":"before {{image_a.0}} after","null_image":"{{optional_image.0}}"}';
+
+        $result = $this->createHandler($config, null)->handle(
+            ['acf' => ['field_text' => '', 'field_optional_image' => [null]]],
+            new WP_REST_Request()
+        );
+
+        self::assertTrue($result?->isOk());
+        $parts = $this->captureMultipartParts($this->requests[0]['args']);
+        self::assertArrayNotHasKey('acf[image_a]', $parts);
+        self::assertSame('', $parts['literal'] ?? null);
+        self::assertSame('', $parts['unknown'] ?? null);
+        self::assertSame('', $parts['text'] ?? null);
+        self::assertSame('before  after', $parts['embedded'] ?? null);
+        self::assertSame('', $parts['null_image'] ?? null);
+    }
+
     public function testMixedGalleryMergesReferencesWithoutDiscardingExistingIds(): void
     {
         $handler = $this->createHandler(
@@ -320,11 +502,25 @@ final class WebHookHandlerMultipartTest extends TestCase
 
         $acfService = $this->createMock(AcfService::class);
         $acfService->method('getFieldObject')->willReturnCallback(
-            static fn($key): array => [
-                'key'  => $key,
-                'name' => str_replace('field_', '', (string) $key),
-                'type' => 'image',
-            ]
+            static function ($key): array|false {
+                $key = (string) $key;
+
+                // ACF cannot resolve a name without a saved post field reference.
+                if (!str_starts_with($key, 'field_')) {
+                    return false;
+                }
+
+                return [
+                    'key'  => $key,
+                    'name' => str_replace('field_', '', $key),
+                    'type' => $key === 'field_toggle'
+                        ? 'true_false'
+                        : (str_starts_with($key, 'field_image')
+                            || $key === 'field_optional_image'
+                                ? 'image'
+                                : 'text'),
+                ];
+            }
         );
 
         $configMock = $this->createMock(ConfigInterface::class);
@@ -332,6 +528,9 @@ final class WebHookHandlerMultipartTest extends TestCase
 
         $moduleConfig = $this->createMock(ModuleConfigInterface::class);
         $moduleConfig->method('getWebHookHandlerConfig')->willReturn($config);
+        $moduleConfig->method('getFieldKeysRegisteredAsFormFields')->willReturn([
+            'field_image_a', 'field_image_b', 'field_image_c', 'field_optional_image',
+        ]);
 
         return new WebHookHandler(
             $wpService,
@@ -397,6 +596,30 @@ final class WebHookHandlerMultipartTest extends TestCase
         );
     }
 
+    /**
+     * @param array<string, string> $files Field keys mapped to distinct binary contents.
+     */
+    private function snapshotsForOptionalImages(array $files): UploadedFileSnapshots
+    {
+        $params = [
+            'name'     => [],
+            'type'     => [],
+            'tmp_name' => [],
+            'error'    => [],
+            'size'     => [],
+        ];
+
+        foreach ($files as $fieldKey => $contents) {
+            $params['name'][$fieldKey] = [0 => $fieldKey . '.jpg'];
+            $params['type'][$fieldKey] = [0 => 'image/jpeg'];
+            $params['tmp_name'][$fieldKey] = [0 => $this->makeTempFile($contents)];
+            $params['error'][$fieldKey] = [0 => UPLOAD_ERR_OK];
+            $params['size'][$fieldKey] = [0 => strlen($contents)];
+        }
+
+        return new UploadedFileSnapshots($params, $this->createAcfServiceForSnapshotNames());
+    }
+
     private function snapshotsForUnreadableUpload(): UploadedFileSnapshots
     {
         return new UploadedFileSnapshots(
@@ -437,5 +660,43 @@ final class WebHookHandlerMultipartTest extends TestCase
         $this->tempFiles[] = $path;
 
         return $path;
+    }
+
+    /**
+     * @param array<string, mixed> $requestArgs
+     * @return array<string, string>
+     */
+    private function captureMultipartParts(array $requestArgs): array
+    {
+        $contentType = (string) ($requestArgs['headers']['Content-Type'] ?? '');
+        preg_match('/boundary=(.+)$/', $contentType, $match);
+        self::assertArrayHasKey(1, $match);
+
+        $parts = [];
+        foreach (explode('--' . $match[1], (string) $requestArgs['body']) as $part) {
+            $segments = explode("\r\n\r\n", $part, 2);
+            if (count($segments) !== 2 || !preg_match('/name="([^"]+)"/', $segments[0], $partMatch)) {
+                continue;
+            }
+
+            $parts[$partMatch[1]] = substr($segments[1], 0, -2);
+        }
+
+        return $parts;
+    }
+
+    /**
+     * @param array<string, string> $parts
+     */
+    private function referencedBinary(array $parts, string $field): string
+    {
+        $reference = $parts[$field] ?? null;
+        self::assertIsString($reference);
+        self::assertMatchesRegularExpression('/^\$file:[A-Za-z0-9_-]+$/', $reference);
+
+        $filePart = '_acf_rest_files[' . substr($reference, strlen('$file:')) . ']';
+        self::assertArrayHasKey($filePart, $parts);
+
+        return $parts[$filePart];
     }
 }

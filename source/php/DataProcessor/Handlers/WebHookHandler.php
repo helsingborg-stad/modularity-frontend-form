@@ -505,9 +505,10 @@ class WebHookHandler implements HandlerInterface
             return [];
         }
 
-        $formData = $this->replaceAcfIdsWithNames(
-            $this->normalizeAcfFormData($data[$this->config->getFieldNamespace()] ?? $data)
+        $submittedFormData = $this->normalizeAcfFormData(
+            $data[$this->config->getFieldNamespace()] ?? $data
         );
+        $formData = $this->replaceAcfIdsWithNames($submittedFormData);
 
         // Unlike the legacy JSON body, the multipart payload must not
         // duplicate everything under a catch-all "*" key: every top level key
@@ -517,7 +518,181 @@ class WebHookHandler implements HandlerInterface
         $formDataAsJson = (new JsonDotHydrator())->hydrate($config->body, $formData);
         $payload        = \json_decode($formDataAsJson, true);
 
-        return is_array($payload) ? $payload : [];
+        return is_array($payload)
+            ? $this->omitAbsentOptionalImageProperties($payload, $config->body, $submittedFormData)
+            : [];
+    }
+
+    /**
+     * JsonDotHydrator preserves legacy JSON semantics by rendering a missing
+     * template value as an empty string. In multipart mode only, an empty
+     * single-image input must instead omit its destination property. Determine
+     * image identity through ACF and leave every non-image template value
+     * unchanged.
+     *
+     * @param array<string, mixed> $payload
+     * @param array<string, mixed> $submittedFormData
+     * @return array<string, mixed>
+     */
+    private function omitAbsentOptionalImageProperties(
+        array $payload,
+        string $template,
+        array $submittedFormData
+    ): array {
+        $decodedTemplate = json_decode($template, true);
+        if (!is_array($decodedTemplate)) {
+            return $payload;
+        }
+
+        foreach ($this->absentOptionalImagePaths($decodedTemplate, $submittedFormData) as $path) {
+            $this->unsetPayloadPath($payload, $path);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param array<string, mixed> $template
+     * @param array<string, mixed> $submittedFormData
+     * @param array<int, string|int> $path
+     * @return array<int, array<int, string|int>>
+     */
+    private function absentOptionalImagePaths(
+        array $template,
+        array $submittedFormData,
+        array $path = []
+    ): array {
+        $paths = [];
+
+        foreach ($template as $key => $value) {
+            $valuePath = [...$path, $key];
+
+            if (is_array($value)) {
+                $paths = [...$paths, ...$this->absentOptionalImagePaths($value, $submittedFormData, $valuePath)];
+                continue;
+            }
+
+            if (
+                is_string($value)
+                && preg_match('/^\{\{\s*([^{}]+?)\s*\}\}$/', $value, $match) === 1
+                && $this->isAbsentOptionalImage($match[1], $submittedFormData)
+            ) {
+                $paths[] = $valuePath;
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
+     * @param array<string, mixed> $submittedFormData
+     */
+    private function isAbsentOptionalImage(string $templatePath, array $submittedFormData): bool
+    {
+        $source = explode('.', trim($templatePath))[0] ?? '';
+        if ($source === '') {
+            return false;
+        }
+
+        // Missing inputs have no submitted key. Resolve them using this form's
+        // registered keys: ACF name lookups require an existing post reference.
+        $fieldKeys = array_unique([
+            ...array_keys($submittedFormData),
+            ...($this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields() ?? []),
+        ]);
+
+        foreach ($fieldKeys as $fieldKey) {
+            if (!is_string($fieldKey)) {
+                continue;
+            }
+
+            $field = $this->acfService->getFieldObject($fieldKey);
+            if (!is_array($field) || ($field['type'] ?? null) !== 'image') {
+                continue;
+            }
+
+            $fieldName = $field['name'] ?? null;
+            if ($source !== $fieldKey && (!is_string($fieldName) || $source !== $fieldName)) {
+                continue;
+            }
+
+            $submittedKey = array_key_exists($source, $submittedFormData) ? $source : $fieldKey;
+
+            return (!array_key_exists($submittedKey, $submittedFormData)
+                    || !$this->hasSubmittedImageValue($submittedFormData[$submittedKey]))
+                && !$this->hasSelectedImageUpload($fieldKey, $fieldName);
+        }
+
+        // A browser can omit an unselected optional input altogether. Resolve
+        // that source through ACF as well, rather than treating its name or the
+        // hydrator's resulting empty string as image evidence.
+        $field = $this->acfService->getFieldObject($source);
+        if (!is_array($field) || ($field['type'] ?? null) !== 'image') {
+            return false;
+        }
+
+        $fieldKey = is_string($field['key'] ?? null) ? $field['key'] : $source;
+        $fieldName = $field['name'] ?? null;
+
+        return !$this->hasSelectedImageUpload($fieldKey, $fieldName);
+    }
+
+    private function hasSubmittedImageValue(mixed $value): bool
+    {
+        if ($value === '') {
+            return false;
+        }
+
+        if (!is_array($value)) {
+            // Null is an explicit submitted value. Keep its legacy multipart
+            // representation rather than treating it as an omitted input.
+            return true;
+        }
+
+        foreach ($value as $item) {
+            if ($this->hasSubmittedImageValue($item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasSelectedImageUpload(string $fieldKey, mixed $fieldName): bool
+    {
+        if ($this->uploadedFileSnapshots === null) {
+            return false;
+        }
+
+        $references = $this->uploadedFileSnapshots->getReferences();
+
+        return array_key_exists($fieldKey, $references)
+            || (is_string($fieldName) && array_key_exists($fieldName, $references));
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     * @param array<int, string|int> $path
+     */
+    private function unsetPayloadPath(array &$payload, array $path): void
+    {
+        $key = array_pop($path);
+        if ($key === null) {
+            return;
+        }
+
+        $target = &$payload;
+        foreach ($path as $segment) {
+            if (!is_array($target) || !array_key_exists($segment, $target)) {
+                return;
+            }
+
+            $target = &$target[$segment];
+        }
+
+        if (is_array($target)) {
+            unset($target[$key]);
+        }
     }
 
     /**

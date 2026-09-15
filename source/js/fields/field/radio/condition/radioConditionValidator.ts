@@ -6,24 +6,24 @@ class RadioConditionValidator implements ConditionValidatorInterface {
 	}
 
 	public validate(condition: Condition): boolean {
-		const selected = this.parent?.getSelectedChoice() ?? "";
+		const selected = this.parent?.getSelectedChoice() ?? '';
 
 		switch (condition.operator) {
-			case "==":
-			case "=":
-			case "===":
-			case "==contains":
+			case '==':
+			case '=':
+			case '===':
+			case '==contains':
 				return selected === condition.value;
-			case "!=":
-			case "!==":
-			case "!=contains":
+			case '!=':
+			case '!==':
+			case '!=contains':
 				return selected !== condition.value;
-			case "==empty":
+			case '==empty':
 				return Number(selected) === 0;
-			case "!=empty":
+			case '!=empty':
 				return Number(selected) > 0;
 			default:
-				console.error("Invalid operator:", condition.operator);
+				console.error('Invalid operator:', condition.operator);
 				return false;
 		}
 	}

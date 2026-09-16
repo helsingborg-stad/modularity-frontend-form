@@ -497,7 +497,9 @@
                     'type' => 'textarea',
                     'instructions' => __('JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals "{{field_name}}", all form fields can be accessed using dot-notation with field names as identifier or {{*}} to output all fields. 
 
-Example: 
+In Multipart mode, {{*}} includes ordinary field values but omits image fields. To send an image, map its field explicitly. Use {{image_field}} as the complete value of an object property. Only top-level image fields are supported.
+
+Example:
 {
         "name": "{{user.name}}",
         "message": "{{message}}",
@@ -525,7 +527,7 @@ Example:
                     'name' => 'requestFormat',
                     'aria-label' => '',
                     'type' => 'select',
-                    'instructions' => __('JSON is the default. Multipart uses version 1 with retries. Multipart create uses version 2 with one attempt. Resubmissions can create duplicates.', 'modularity-frontend-form'),
+                    'instructions' => __('JSON is the default. Multipart sends mapped JSON and explicitly referenced images using version 3 with one attempt. Resubmissions can create duplicates.', 'modularity-frontend-form'),
                     'required' => 0,
                     'conditional_logic' => 0,
                     'wrapper' => array(
@@ -534,9 +536,8 @@ Example:
                         'id' => '',
                     ),
                     'choices' => array(
-                        'json' => __('JSON', 'modularity-frontend-form'),
-                        'multipart' => __('Multipart (form-data)', 'modularity-frontend-form'),
-                        'multipart-create' => __('Multipart create (version 2, one attempt)', 'modularity-frontend-form'),
+                        'json' => __('JSON (no image support)', 'modularity-frontend-form'),
+                        'multipart-json' => __('Multipart (image support)', 'modularity-frontend-form'),
                     ),
                     'default_value' => 'json',
                     'return_format' => 'value',

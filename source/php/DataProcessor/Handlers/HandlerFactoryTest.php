@@ -41,6 +41,7 @@ final class HandlerFactoryTest extends TestCase
             $config->method('getFieldNamespace')->willReturn('acf');
             $module = $this->createMock(ModuleConfigInterface::class);
             $module->method('getModuleId')->willReturn($id);
+            $module->method('getFieldKeysRegisteredAsFormFields')->willReturn(['field_image']);
             $module->method('getActivatedHandlers')->willReturn(['WpDbHandler', 'WebHookHandler']);
             $module->method('getWpDbHandlerConfig')->willReturn((object) [
                 'saveToPostType' => 'submission', 'saveToPostTypeStatus' => 'draft',
@@ -48,7 +49,7 @@ final class HandlerFactoryTest extends TestCase
             $module->method('getWebHookHandlerConfig')->willReturn((object) [
                 'requestFormat' => $format,
                 'callbackUrl' => 'https://destination.test/create',
-                'body' => '{"acf":{"image":"{{image.0}}"}}',
+                'body' => '{"acf":{"image":"{{image}}"}}',
             ]);
             $moduleFactory = $this->createMock(ModuleConfigFactoryInterface::class);
             $moduleFactory->method('create')->willReturn($module);
@@ -68,7 +69,8 @@ final class HandlerFactoryTest extends TestCase
                         self::assertSame(['acf' => ['image' => '']], json_decode($args['body'], true));
                     } else {
                         self::assertSame($version, $args['headers']['X-ACF-Rest-Upload-Version']);
-                        self::assertStringContainsString('name="acf[image]"', $args['body']);
+                        self::assertStringContainsString('name="_acf_rest_payload"', $args['body']);
+                        self::assertStringContainsString('{"acf":{"image":"$file:file_0"}}', $args['body']);
                         self::assertStringContainsString("selected-image\x00\xff", $args['body']);
                     }
                     return ['response' => ['code' => 201]];
@@ -107,6 +109,6 @@ final class HandlerFactoryTest extends TestCase
 
     public static function formatProvider(): array
     {
-        return [['multipart-create', '2'], ['multipart', '1'], ['json', null]];
+        return [['multipart-json', '3'], ['json', null]];
     }
 }

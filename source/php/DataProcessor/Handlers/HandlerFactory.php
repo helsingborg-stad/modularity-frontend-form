@@ -56,10 +56,12 @@ class HandlerFactory {
         if (in_array('WebHookHandler', $activeHandlers, true)) {
             $webHookConfig = $moduleConfig->getWebHookHandlerConfig();
 
-            if (in_array($webHookConfig->requestFormat ?? 'json', ['multipart', 'multipart-create'], true)) {
+            if (($webHookConfig->requestFormat ?? 'json') === 'multipart-json') {
                 $uploadedFileSnapshots = new UploadedFileSnapshots(
                     $request->get_file_params()[$this->config->getFieldNamespace()] ?? [],
-                    $this->acfService
+                    $this->acfService,
+                    $webHookConfig->body ?? '{}',
+                    $moduleConfig->getFieldKeysRegisteredAsFormFields() ?? []
                 );
             }
         }

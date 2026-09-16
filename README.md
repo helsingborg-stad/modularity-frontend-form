@@ -91,6 +91,23 @@ See [the multipart protocol guide](docs/webhook-multipart-protocol.md) for mappi
 - **Tests**: Unit tests are next to source files. Run with `npm test` (JS/TS) or `composer test` (PHP).
 - **Linting**: Use `npm run lint` for JS/TS.
 
+### Production build
+
+Run `php build.php --cleanup` from the root of a disposable source copy only.
+It installs locked npm and production Composer dependencies, builds assets, and
+removes build inputs. Do not run cleanup in a deployed plugin or working checkout.
+The locked OpenStreetMap package requires authorized GitHub npm registry access.
+Supply build credentials through approved configuration outside the source copy;
+do not place them in artifacts or logs. A registry failure is an incomplete build,
+not permission to substitute an old asset or change dependencies.
+
+Check generated assets and production autoloading without development vendors.
+Verify that plugin and dependency tests, PHPUnit configuration, local verification
+helpers, and credentials are absent. Service contracts ending in `Test.php` remain
+runtime code. Record source/lockfile identities, artifact checksums, commands and
+audit findings. PHP-only packaging checks do not prove a complete asset build or
+effective web/proxy upload limits. Building does not authorize deployment.
+
 ---
 
 ## Accessibility & UX

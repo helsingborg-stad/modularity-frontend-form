@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace ModularityFrontendForm\DataProcessor\Handlers\Webhook;
 
-use AcfService\AcfService;
+use AcfService\Implementations\FakeAcfService;
 use ModularityFrontendForm\Config\Config;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\WebHookHandler;
-use PHPUnit\Framework\TestCase;
+use ModularityFrontendForm\DataProcessor\Handlers\HandlerTestCase;
 use WP_REST_Request;
-use WpService\WpService;
+use WpService\Implementations\FakeWpService;
 
 require_once dirname(__DIR__, 4) . '/tests/PhpMultipartParser.php';
+require_once dirname(__DIR__, 4) . '/tests/HandlerTestCase.php';
 
-final class WebHookV3Test extends TestCase
+final class WebHookV3Test extends HandlerTestCase
 {
     private array $requests = [];
     private array $uploads = [];
@@ -24,28 +25,17 @@ final class WebHookV3Test extends TestCase
     private array $headers = [];
     private array $snapshotsDuringSend = [];
     private int $uploadLimit = 8388608;
+    private mixed $response = ['response' => ['code' => 201]];
+    private array $errors = [];
 
     protected function tearDown(): void
     {
+        parent::tearDown();
         foreach ($this->temporaryFiles as $path) {
             if (is_file($path)) {
                 unlink($path);
             }
         }
-    }
-
-    public function testAbsentASelectedBCPreserveIdentity(): void
-    {
-        $this->upload('field_b', "B\x00\xff\r\nbytes");
-        $this->upload('field_c', "C\x00\xfe\r\nbytes");
-        self::assertTrue($this->send('{"acf":{"a":"{{a}}","b":"{{b}}","c":"{{c}}"}}'));
-        self::assertCount(1, $this->requests);
-        $request = $this->requests[0];
-        self::assertSame('3', $request['headers']['X-ACF-Rest-Upload-Version'] ?? null);
-        self::assertStringContainsString('name="_acf_rest_payload"', $request['body']);
-        self::assertStringContainsString('{"acf":{"b":"$file:file_0","c":"$file:file_1"}}', $request['body']);
-        self::assertStringContainsString("B\x00\xff\r\nbytes", $request['body']);
-        self::assertStringContainsString("C\x00\xfe\r\nbytes", $request['body']);
     }
 
     /** @dataProvider selections */
@@ -55,6 +45,7 @@ final class WebHookV3Test extends TestCase
             $this->upload('field_' . $name, strtoupper($name) . "\x00\xff\r\nbytes");
         }
         self::assertTrue($this->send('{"acf":{"a":"{{a}}","b":"{{b}}","c":"{{c}}"}}'));
+        self::assertCount(1, $this->requests);
         $parsed = PhpMultipartParser::parse($this->requests[0]);
         self::assertSame('3', $parsed['version']);
         self::assertSame(['_acf_rest_payload'], array_keys($parsed['post']));
@@ -78,6 +69,37 @@ final class WebHookV3Test extends TestCase
             'B and C' => [['b', 'c'], ['b' => '$file:file_0', 'c' => '$file:file_1']],
             'all' => [['a', 'b', 'c'], ['a' => '$file:file_0', 'b' => '$file:file_1', 'c' => '$file:file_2']],
         ];
+    }
+
+    /** @dataProvider transportOutcomes */
+    public function testOneAttemptAndSanitizedOutcome(int $status, bool $ok): void
+    {
+        $secret = 'credential-image-response-secret';
+        $this->upload('field_b', $secret);
+        $this->headers = [['header' => 'Authorization', 'value' => $secret]];
+        $this->response = ['response' => ['code' => $status], 'headers' => ['Retry-After' => '1'],
+            'body' => json_encode(['code' => 'acf_rest_upload_in_progress', 'message' => $secret])];
+        if ($status === 0) {
+            $this->response = $this->createMock(\WP_Error::class);
+            $this->response->method('get_error_message')->willReturn($secret);
+        } elseif ($status === -1) {
+            $this->response = new \RuntimeException($secret);
+        }
+        self::assertSame($ok, $this->send('{"image":"{{b}}"}'));
+        self::assertCount(1, $this->requests);
+        self::assertArrayNotHasKey('Idempotency-Key', $this->requests[0]['headers']);
+        if (!$ok) {
+            $errors = json_encode($this->errors);
+            self::assertStringContainsString('remote operation may have succeeded', $errors);
+            self::assertStringNotContainsString($secret, $errors);
+        }
+    }
+
+    public static function transportOutcomes(): array
+    {
+        return [[200, true], [201, true], [204, true], [299, true], [0, false], [-1, false],
+            [100, false], [302, false], [400, false], [409, false], [425, false], [429, false],
+            [500, false], [502, false], [503, false], [504, false]];
     }
 
     public function testRepeatedSourceUsesOneSnapshotAndBinary(): void
@@ -154,10 +176,88 @@ final class WebHookV3Test extends TestCase
 
     public function testPartialSelectedUploadFailsWithoutTransport(): void
     {
+        $before = glob(sys_get_temp_dir() . '/mff-webhook-*');
+        $this->upload('field_b', 'complete');
         $this->upload('field_a', 'partial');
         $this->uploads['error']['field_a'][0] = UPLOAD_ERR_PARTIAL;
-        self::assertFalse($this->send('{"image":"{{a}}"}'));
+        self::assertFalse($this->send('{"first":"{{b}}","image":"{{a}}"}'));
         self::assertSame([], $this->requests);
+        self::assertSame($before, glob(sys_get_temp_dir() . '/mff-webhook-*'));
+        self::assertStringContainsString('not sent', json_encode($this->errors));
+    }
+
+    /** @dataProvider cleanupPhases */
+    public function testCleanupFailureRetainsOwnershipAndReportsWhetherTransportRan(bool $afterTransport, int $status = 201): void
+    {
+        $this->upload('field_b', 'private image bytes');
+        $this->upload('field_c', 'other handler resource');
+        $snapshots = new UploadedFileSnapshots($this->uploads, new FakeAcfService([
+            'getFieldObject' => ['key' => 'field_b', 'name' => 'b', 'type' => 'image'],
+        ]), '{"image":"{{b}}"}', ['field_b']);
+        $path = $snapshots->getFileMap()['file_0']['tmp_name'];
+        $blockDeletion = static function () use ($path, $status): array {
+            unlink($path);
+            mkdir($path); // A directory cannot be unlinked, even when tests run as root.
+            return ['response' => ['code' => $status]];
+        };
+        try {
+            if ($afterTransport) {
+                $this->response = $blockDeletion;
+            } else {
+                $blockDeletion();
+            }
+            self::assertFalse($this->send('{"image":"{{b}}"}', snapshots: $snapshots));
+            self::assertCount($afterTransport ? 1 : 0, $this->requests);
+            $errors = json_encode($this->errors);
+            self::assertStringContainsString('cleanup failed', $errors);
+            self::assertStringContainsString($afterTransport ? 'remote operation may have succeeded' : 'not sent', $errors);
+            self::assertStringNotContainsString('private image bytes', $errors);
+            self::assertStringNotContainsString($path, $errors);
+            self::assertCount($afterTransport && $status === 201 ? 1 : 2, $this->errors);
+            self::assertDirectoryExists($path);
+            self::assertFalse($snapshots->cleanup());
+            self::assertCount(1, $snapshots->getFileMap());
+        } finally {
+            rmdir($path);
+            self::assertTrue($snapshots->cleanup());
+            self::assertTrue($snapshots->cleanup());
+        }
+    }
+
+    public static function cleanupPhases(): array
+    {
+        return [[false], [true], [true, 500]];
+    }
+
+    /** @dataProvider byteBudgets */
+    public function testActualBytesAndSerializedBudget(int $bytes, int $limit, int $jsonBytes, bool $ok): void
+    {
+        $this->uploadLimit = $limit;
+        if ($bytes > 0) {
+            $this->upload('field_a', str_repeat('a', intdiv($bytes, 2)));
+            $this->upload('field_b', str_repeat('b', $bytes - intdiv($bytes, 2)));
+            $this->uploads['size'] = ['field_a' => [1], 'field_b' => [PHP_INT_MAX]];
+        }
+        $text = $jsonBytes < 0 ? "\xff" : str_repeat('x', $jsonBytes - 11);
+        self::assertSame($ok, $this->send('{"text":"{{text}}","a":"{{a}}","b":"{{b}}"}', ['text' => $text]));
+        self::assertCount($ok ? 1 : 0, $this->requests);
+        if (!$ok) {
+            self::assertStringContainsString('not sent', json_encode($this->errors));
+        }
+    }
+
+    public static function byteBudgets(): array
+    {
+        return [
+            'image boundary' => [8388608, 67108864, 11, true],
+            'image excess' => [8388609, 67108864, 11, false],
+            'lower origin boundary' => [4, 4, 11, true],
+            'lower origin excess' => [5, 4, 11, false],
+            'empty snapshot' => [1, 4, 11, false],
+            'JSON boundary' => [0, 8388608, 1048576, true],
+            'JSON excess' => [0, 8388608, 1048577, false],
+            'serialization failure' => [0, 8388608, -1, false],
+        ];
     }
 
     public function testScalarBrowserUploadAndUnreadableSnapshotChecks(): void
@@ -192,6 +292,28 @@ final class WebHookV3Test extends TestCase
         self::assertTrue($this->send('{"all":"{{*}}"}', ['text' => '$file:file_0', 'field_a' => 123], null));
         self::assertSame(['all' => ['text' => '$file:file_0', 'a' => 123]], json_decode($this->requests[0]['body'], true));
         self::assertSame(['Content-Type' => 'application/custom+json'], $this->requests[0]['headers']);
+    }
+
+    public function testDefaultAndExplicitJsonKeepLegacyMappingAndHeaders(): void
+    {
+        foreach ([null, 'json'] as $format) {
+            $this->requests = [];
+            self::assertTrue($this->send('{"title":"{{title}}","image":"{{image}}","all":"{{*}}"}',
+                ['acf' => ['title' => 'Default JSON', 'image' => '999']], $format));
+            self::assertCount(1, $this->requests);
+            self::assertSame(['Content-Type' => 'application/json'], $this->requests[0]['headers']);
+            self::assertSame(['title' => 'Default JSON', 'image' => '999', 'all' => ['title' => 'Default JSON', 'image' => '999']],
+                json_decode($this->requests[0]['body'], true));
+        }
+    }
+
+    public function testJsonRetainsItsExistingTransportError(): void
+    {
+        $this->response = $this->createMock(\WP_Error::class);
+        $this->response->method('get_error_message')->willReturn('legacy transport error');
+        self::assertFalse($this->send('{"title":"Example"}', [], 'json'));
+        self::assertCount(1, $this->requests);
+        self::assertSame(['handler_error' => ['legacy transport error']], $this->errors[0]->errors);
     }
 
     /** @dataProvider reservedValues */
@@ -303,23 +425,28 @@ final class WebHookV3Test extends TestCase
         return [['multipart'], ['multipart-create'], ['unknown'], ['']];
     }
 
-    private function send(string $body, array $data = [], ?string $format = 'multipart-json'): bool
+    private function send(string $body, array $data = [], ?string $format = 'multipart-json', ?UploadedFileSnapshots $snapshots = null): bool
     {
-        $wp = $this->createMock(WpService::class);
-        $wp->method('wpRemotePost')->willReturnCallback(function ($url, $args): array {
-            $this->requests[] = $args;
-            $this->snapshotsDuringSend = glob(sys_get_temp_dir() . '/mff-webhook-*') ?: [];
-            return ['response' => ['code' => 201]];
-        });
-        $wp->method('wpRemoteRetrieveResponseCode')->willReturn(201);
-        $wp->method('wpMaxUploadSize')->willReturn($this->uploadLimit);
-        $acf = $this->createMock(AcfService::class);
+        $originals = array_filter($this->temporaryFiles, 'is_file');
+        $contents = array_map('file_get_contents', $originals);
+        $wp = new FakeWpService([
+            'wpRemotePost' => function ($url, $args) {
+                $this->requests[] = $args;
+                $this->snapshotsDuringSend = glob(sys_get_temp_dir() . '/mff-webhook-*') ?: [];
+                $response = is_callable($this->response) ? ($this->response)() : $this->response;
+                return $response instanceof \Throwable ? throw $response : $response;
+            },
+            'isWpError' => static fn($response) => $response instanceof \WP_Error,
+            'wpRemoteRetrieveResponseCode' => static fn($response) => $response['response']['code'],
+            'wpMaxUploadSize' => $this->uploadLimit,
+            '__' => static fn($text) => $text,
+        ]);
         $fields = [];
         foreach (['a', 'b', 'c'] as $name) {
             $fields['field_' . $name] = ['key' => 'field_' . $name, 'name' => $name, 'type' => 'image', 'parent' => 'group_form'];
         }
         $fields = [...$fields, ...$this->extraFields];
-        $acf->method('getFieldObject')->willReturnCallback(static fn($key) => $fields[$key] ?? false);
+        $acf = new FakeAcfService(['getFieldObject' => static fn($key) => $fields[$key] ?? false]);
         $config = $this->createMock(Config::class);
         $config->method('getFieldNamespace')->willReturn('acf');
         $module = $this->createMock(ModuleConfigInterface::class);
@@ -330,15 +457,18 @@ final class WebHookV3Test extends TestCase
         }
         $module->method('getWebHookHandlerConfig')->willReturn($settings);
         $module->method('getFieldKeysRegisteredAsFormFields')->willReturn(array_keys($fields));
-        $ok = true;
+        $this->errors = [];
         $result = $this->createMock(HandlerResultInterface::class);
-        $result->method('setError')->willReturnCallback(static function () use (&$ok): void { $ok = false; });
+        $result->method('setError')->willReturnCallback(function ($error): void { $this->errors[] = $error; });
         $request = $this->createMock(WP_REST_Request::class);
         $request->method('get_file_params')->willReturn(['acf' => $this->uploads]);
-        (new WebHookHandler($wp, $acf, $config, $module, (object) [], $result))->handle($data, $request);
-        foreach ($this->snapshotsDuringSend as $path) {
+        (new WebHookHandler($wp, $acf, $config, $module, (object) [], $result, uploadedFileSnapshots: $snapshots))->handle($data, $request);
+        foreach ($snapshots === null ? $this->snapshotsDuringSend : [] as $path) {
             self::assertFileDoesNotExist($path);
         }
-        return $ok;
+        foreach ($originals as $index => $path) {
+            self::assertSame($contents[$index], file_get_contents($path));
+        }
+        return $this->errors === [];
     }
 }

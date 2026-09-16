@@ -10,7 +10,6 @@ use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
 use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Webhook\JsonDotHydrator;
 use ModularityFrontendForm\DataProcessor\Handlers\Webhook\MultipartFormDataEncoder;
@@ -24,6 +23,8 @@ class WebHookHandler implements HandlerInterface
 {
     use GetModuleConfigInstanceTrait;
 
+    private bool $transportAttempted = false;
+
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
@@ -32,25 +33,22 @@ class WebHookHandler implements HandlerInterface
         private object $params,
         private HandlerResultInterface $handlerResult = new HandlerResult(),
         private LoggerInterface $logger = new NullLogger,
-        private ?FileHandlerInterface $fileHandler = null,
+        ?FileHandlerInterface $fileHandler = null,
         private ?UploadedFileSnapshots $uploadedFileSnapshots = null
-    ) {
-        if ($this->fileHandler === null) {
-            $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
-        }
-    }
+    ) {}
 
     public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
     {
+        $this->transportAttempted = false;
         try {
             $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
             if (!is_string($config?->callbackUrl ?? null) || trim($config->callbackUrl) === '') {
-                $this->error(__('Webhook configuration requires a callback URL.', 'modularity-frontend-form'));
+                $this->error($this->wpService->__('Webhook configuration requires a callback URL.', 'modularity-frontend-form'));
                 return $this->handlerResult;
             }
             $format = $config->requestFormat ?? 'json';
             if (!in_array($format, ['json', 'multipart-json'], true)) {
-                $this->error(__('Unsupported webhook request format. Select JSON or Multipart (image support).', 'modularity-frontend-form'));
+                $this->error($this->wpService->__('Unsupported webhook request format. Select JSON or Multipart (image support).', 'modularity-frontend-form'));
                 return $this->handlerResult;
             }
             if ($format === 'multipart-json') {
@@ -61,7 +59,11 @@ class WebHookHandler implements HandlerInterface
             }
             return $this->handlerResult;
         } finally {
-            $this->uploadedFileSnapshots?->cleanup();
+            if ($this->uploadedFileSnapshots !== null && !$this->uploadedFileSnapshots->cleanup()) {
+                $this->error($this->transportAttempted
+                    ? $this->wpService->__('Webhook snapshot cleanup failed after transport. The remote operation may have succeeded.', 'modularity-frontend-form')
+                    : $this->wpService->__('Webhook snapshot cleanup failed. The submission was not sent.', 'modularity-frontend-form'));
+            }
         }
     }
 
@@ -85,28 +87,37 @@ class WebHookHandler implements HandlerInterface
                 is_numeric($limit) && (int) $limit > 0 ? min((int) $limit, 8388608) : 8388608
             );
         } catch (\Throwable) {
-            $this->error(__('Webhook mapping, image preparation or payload limits failed. The submission was not sent.', 'modularity-frontend-form'));
+            $this->error($this->wpService->__('Webhook mapping, image preparation or payload limits failed. The submission was not sent.', 'modularity-frontend-form'));
             return;
         }
-        $this->sendRequest($config, $encoded['body'], $this->createMultipartHeaders($config, $encoded['contentType']));
+        try {
+            $this->sendRequest($config, $encoded['body'], $this->createMultipartHeaders($config, $encoded['contentType']), true);
+        } catch (\Throwable) {
+            $this->error($this->wpService->__('Webhook transport failed. The remote operation may have succeeded.', 'modularity-frontend-form'));
+        }
     }
 
-    private function sendRequest(object $config, ?string $body, array $headers): void
+    private function sendRequest(object $config, ?string $body, array $headers, bool $multipart = false): void
     {
+        $this->transportAttempted = true;
         $response = $this->wpService->wpRemotePost($config->callbackUrl, [
             'body' => $body,
             'timeout' => max(1, min(120, isset($config->timeout) ? (int) $config->timeout : 20)),
             'headers' => $headers,
         ]);
         if ($this->wpService->isWpError($response)) {
-            $this->error($response->get_error_message());
+            $this->error($multipart
+                ? $this->wpService->__('Webhook transport failed. The remote operation may have succeeded.', 'modularity-frontend-form')
+                : $response->get_error_message());
             return;
         }
         $status = (int) $this->wpService->wpRemoteRetrieveResponseCode($response);
         if ($status < 200 || $status >= 300) {
             $this->handlerResult->setError(new WP_Error(
                 RestApiResponseStatusEnums::HandlerError->value,
-                sprintf(__('Webhook request failed. The server responded with HTTP status %d.', 'modularity-frontend-form'), $status),
+                sprintf($multipart
+                    ? $this->wpService->__('Webhook request failed with HTTP status %d. The remote operation may have succeeded.', 'modularity-frontend-form')
+                    : $this->wpService->__('Webhook request failed. The server responded with HTTP status %d.', 'modularity-frontend-form'), $status),
                 ['status' => $status]
             ));
         }

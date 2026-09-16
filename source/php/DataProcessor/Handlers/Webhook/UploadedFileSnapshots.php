@@ -12,18 +12,17 @@ final class UploadedFileSnapshots
 {
     private array $files = [];
     private array $references = [];
-    private bool $failed = false;
     private ?ImageMapping $mapping = null;
 
-    public function __construct(array $fileParams, AcfService $acf, string $template, array $fieldKeys)
+    public function __construct(mixed $fileParams, AcfService $acf, mixed $template, array $fieldKeys)
     {
         try {
-            $this->mapping = new ImageMapping($template, $fieldKeys, $acf);
-            foreach ($this->mapping->sources() as $key => $field) {
+            $mapping = new ImageMapping($template, $fieldKeys, $acf);
+            foreach ($mapping->sources() as $key => $field) {
                 $this->capture($fileParams, $key, $field['name'] ?? $key);
             }
+            $this->mapping = $mapping;
         } catch (Throwable) {
-            $this->failed = true;
             $this->cleanup();
         }
         if ($this->files !== []) {
@@ -72,7 +71,7 @@ final class UploadedFileSnapshots
 
     public function payload(array $data): \stdClass
     {
-        if ($this->failed || $this->mapping === null) {
+        if ($this->mapping === null) {
             throw new \InvalidArgumentException('Webhook image preparation failed. The submission was not sent.');
         }
         return $this->mapping->hydrate($data, $this->references);
@@ -83,18 +82,16 @@ final class UploadedFileSnapshots
         return $this->files;
     }
 
-    public function hasFailures(): bool
+    public function cleanup(): bool
     {
-        return $this->failed;
-    }
-
-    public function cleanup(): void
-    {
-        foreach ($this->files as $file) {
-            if (is_file($file['tmp_name'])) {
-                @unlink($file['tmp_name']);
+        foreach ($this->files as $key => $file) {
+            $path = $file['tmp_name'];
+            if ((!file_exists($path) && !is_link($path)) || @unlink($path)) {
+                unset($this->files[$key]);
             }
         }
-        $this->files = $this->references = [];
+        $this->mapping = null;
+        $this->references = [];
+        return $this->files === [];
     }
 }

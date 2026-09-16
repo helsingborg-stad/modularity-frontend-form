@@ -10,6 +10,11 @@
          verbose="true"
          printerClass="Codedungeon\PHPUnitPrettyResultPrinter\Printer">
 
+  <php>
+    <!-- Patchwork instruments the WordPress stubs for observable error assertions. -->
+    <ini name="memory_limit" value="512M"/>
+  </php>
+
   <coverage processUncoveredFiles="false">
     <include>
       <directory suffix=".php">./source/php</directory>

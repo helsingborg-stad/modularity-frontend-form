@@ -21,7 +21,7 @@ final class PhpMultipartParser
         $process = proc_open([PHP_BINARY, '-d', 'upload_tmp_dir=' . $directory,
             '-d', 'post_max_size=12M', '-d', 'upload_max_filesize=8M', '-S', $address,
             __DIR__ . '/multipart-parser.php'], [0 => ['pipe', 'r'],
-            1 => ['file', "$directory/server.log", 'a'], 2 => ['file', "$directory/server.log", 'a']], $pipes);
+            1 => ['pipe', 'w'], 2 => ['redirect', 1]], $pipes);
         if (!is_resource($process)) {
             throw new \RuntimeException('Could not start the isolated PHP parser.');
         }
@@ -57,8 +57,8 @@ final class PhpMultipartParser
         } finally {
             curl_close($curl);
             proc_terminate($process);
+            fclose($pipes[1]);
             proc_close($process);
-            unlink("$directory/server.log");
             rmdir($directory);
         }
     }

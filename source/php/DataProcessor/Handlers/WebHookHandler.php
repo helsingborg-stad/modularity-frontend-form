@@ -44,11 +44,11 @@ class WebHookHandler implements HandlerInterface
                 return $this->handlerResult;
             }
             $format = $config->requestFormat ?? 'json';
-            if (!in_array($format, ['json', 'multipart-json'], true)) {
+            if (!in_array($format, ['json', 'multipart-native'], true)) {
                 $this->error($this->wpService->__('Unsupported webhook request format. Select JSON or Multipart (image support).', 'modularity-frontend-form'));
                 return $this->handlerResult;
             }
-            if ($format === 'multipart-json') {
+            if ($format === 'multipart-native') {
                 $this->sendMultipartRequest($config, $data, $request);
             } else {
                 $body = $this->createBody($data, $config);
@@ -76,11 +76,11 @@ class WebHookHandler implements HandlerInterface
             $formData = $this->replaceAcfIdsWithNames(
                 $this->normalizeAcfFormData($data[$this->config->getFieldNamespace()] ?? $data)
             );
-            $payload = $this->uploadedFileSnapshots->payload($formData);
+            $payload = $this->uploadedFileSnapshots->nativePayload($formData);
             $limit = $this->wpService->wpMaxUploadSize();
             $encoded = (new MultipartFormDataEncoder())->encode(
-                $payload,
-                $this->uploadedFileSnapshots->getFileMap(),
+                $payload['values'],
+                $payload['files'],
                 is_numeric($limit) && (int) $limit > 0 ? min((int) $limit, 8388608) : 8388608
             );
         } catch (\Throwable) {
@@ -166,7 +166,7 @@ class WebHookHandler implements HandlerInterface
             $headers[$name] = is_scalar($value) ? (string) $value : '';
         }
         $headers['Content-Type'] = $contentType;
-        $headers['X-ACF-Rest-Upload-Version'] = '3';
+        $headers['X-ACF-Rest-Upload-Version'] = '4';
         return $headers;
     }
 

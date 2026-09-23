@@ -28,7 +28,8 @@ final class PhpMultipartParser
         fclose($pipes[0]);
         $curl = curl_init('http://' . $address);
         try {
-            curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 1, CURLOPT_TIMEOUT => 5]);
+            curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 1, CURLOPT_TIMEOUT => 5,
+                CURLOPT_NOPROXY => '*']);
             $ready = false;
             for ($attempt = 0; $attempt < 40; $attempt++) {
                 if (!proc_get_status($process)['running']) {

@@ -87,7 +87,7 @@ final class ImageMapping
             if (!$this->containsUpload($field)) {
                 continue;
             }
-            if (!$this->isTopLevelImage($field) || count($segments) !== 1
+            if (!$this->isTopLevelImage($field) || count($segments) !== 1 || count($path) !== 2 || $path[0] !== 'acf'
                 || $inList || $path === [] || preg_match('/^\{\{\s*[^{}]*?\s*\}\}$/', $value) !== 1) {
                 throw new InvalidArgumentException('Images require an unindexed top-level source and a complete object property.');
             }
@@ -154,6 +154,119 @@ final class ImageMapping
             }
         }
         return $payload;
+    }
+
+    /** Build native multipart values and map each ACF image destination to its snapshot. */
+    public function nativePayload(array $data, array $references, array $snapshots): array
+    {
+        $template = $this->pruneOptional(json_decode($this->template, true), $data);
+        if ($template === self::omitted()) { $template = new stdClass(); }
+        $submitted = $data;
+        foreach ($this->sources as $key => $field) {
+            if (isset($references[$key])) {
+                unset($data[$field['name'] ?? $key], $data[$key]);
+            }
+        }
+        $wildcard = $data;
+        foreach ($this->fields as $alias => $field) {
+            if (($field['type'] ?? '') === 'image') { unset($wildcard[$alias]); }
+        }
+        $data['*'] = $wildcard;
+        $payload = $template instanceof stdClass
+            ? $template
+            : json_decode((new JsonDotHydrator())->hydrate(json_encode($template), $data));
+        if (!$payload instanceof stdClass) {
+            throw new InvalidArgumentException('Multipart payload must be a JSON object template.');
+        }
+        $files = [];
+        foreach ($this->destinations as [$path, $source]) {
+            $destination = self::bracketName($path);
+            $value = $this->sourceValue($submitted, $this->sources[$source]);
+            if (isset($references[$source])) {
+                if ($value !== null && $value !== '' && $value !== []) {
+                    throw new InvalidArgumentException('An image destination cannot have both a value and an upload.');
+                }
+                if (!isset($snapshots[$references[$source]]) || isset($files[$destination])) {
+                    throw new InvalidArgumentException('Multipart image destination is invalid.');
+                }
+                if ($this->unsetPath($payload, $path)) {
+                    $files[$destination] = $snapshots[$references[$source]];
+                }
+                continue;
+            }
+            if (!self::isAttachmentId($value)) {
+                $this->unsetPath($payload, $path);
+            }
+        }
+        return ['values' => $payload, 'files' => $files];
+    }
+
+    private function pruneOptional(mixed $value, array $data): mixed
+    {
+        if (is_array($value)) {
+            if (count($value) === 2 && isset($value['$optional']) && is_string($value['$optional']) && array_key_exists('$value', $value)) {
+                $source = $this->dotValue($data, $value['$optional']);
+                return $source === self::omitted() || in_array($source, [null, '', false, []], true)
+                    ? self::omitted()
+                    : $this->pruneOptional($value['$value'], $data);
+            }
+            $count = count($value);
+            foreach ($value as $key => $child) {
+                $child = $this->pruneOptional($child, $data);
+                if ($child === self::omitted()) { unset($value[$key]); } else { $value[$key] = $child; }
+            }
+            if ($count > 0 && $value === []) { return self::omitted(); }
+        }
+        return $value;
+    }
+
+    private function dotValue(array $data, string $path): mixed
+    {
+        $value = $data;
+        foreach (explode('.', $path) as $segment) {
+            if (!is_array($value) || !array_key_exists($segment, $value)) { return self::omitted(); }
+            $value = $value[$segment];
+        }
+        return $value;
+    }
+
+    private function sourceValue(array $data, array $field): mixed
+    {
+        foreach ([$field['name'] ?? null, $field['key'] ?? null] as $name) {
+            if (is_string($name) && array_key_exists($name, $data)) { return $data[$name]; }
+        }
+        return null;
+    }
+
+    private function unsetPath(stdClass $payload, array $path): bool
+    {
+        $parent = $payload;
+        foreach (array_slice($path, 0, -1) as $segment) {
+            if (!$parent instanceof stdClass || !property_exists($parent, (string) $segment)) { return false; }
+            $parent = $parent->{$segment};
+        }
+        $property = (string) end($path);
+        if (!$parent instanceof stdClass || !property_exists($parent, $property)) { return false; }
+        unset($parent->{$property});
+        return true;
+    }
+
+    private static function bracketName(array $path): string
+    {
+        $name = (string) array_shift($path);
+        foreach ($path as $segment) { $name .= '[' . $segment . ']'; }
+        return $name;
+    }
+
+    private static function isAttachmentId(mixed $value): bool
+    {
+        return is_int($value) ? $value > 0 : is_string($value) && ctype_digit($value) && (int) $value > 0;
+    }
+
+    private static function omitted(): object
+    {
+        static $omitted;
+        return $omitted ??= new stdClass();
     }
 
     private static function rejectReferences(mixed $value): void

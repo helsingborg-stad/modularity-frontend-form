@@ -66,15 +66,15 @@ final class UploadedFileSnapshots
         if (!@copy($record['tmp_name'], $path) || !@chmod($path, 0600)) {
             throw new \RuntimeException('Snapshot copy failed.');
         }
-        $this->references[$fieldKey] = '$file:' . $key;
+        $this->references[$fieldKey] = $key;
     }
 
-    public function payload(array $data): \stdClass
+    public function nativePayload(array $data): array
     {
         if ($this->mapping === null) {
             throw new \InvalidArgumentException('Webhook image preparation failed. The submission was not sent.');
         }
-        return $this->mapping->hydrate($data, $this->references);
+        return $this->mapping->nativePayload($data, $this->references, $this->files);
     }
 
     public function getFileMap(): array

@@ -36,9 +36,9 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 #### Webhook request formats
 
 `json` is the default. It defaults to `Content-Type: application/json` and never attaches files.
-Select `multipart-json` to send images to a compatible version-3 receiver.
-The multipart body contains one `_acf_rest_payload` JSON part plus one `_acf_rest_files[<key>]` part per referenced image.
-Multipart requests send `Content-Type: multipart/form-data` and `X-ACF-Rest-Upload-Version: 3`.
+Select `multipart-native` to send fields to a compatible version-4 receiver.
+The multipart body uses PHP-compatible field names such as `title`, `acf[location][lat]`, and `acf[image]`; uploaded images use their destination field name as the file part.
+Multipart requests send `Content-Type: multipart/form-data` and `X-ACF-Rest-Upload-Version: 4`.
 
 This profile makes exactly one HTTP transport attempt. It sends no idempotency key and does not retry or fall back to JSON.
 
@@ -49,7 +49,7 @@ Check the destination before resubmitting.
 
 Map an image with `{{image}}` as the complete value of an object property. Indexed placeholders such as `{{image.0}}` are rejected.
 In multipart mode, `{{*}}` includes ordinary field values but omits image fields. Only top-level image fields are supported.
-Wrap an optional value as `{"$optional":"<field>","$value":...}` to send it only when the field is present.
+Wrap an optional value as `{"$optional":"<field>","$value":...}` to omit its whole subtree when the field is absent. Multipart cannot represent explicitly authored `null`, empty arrays, or empty objects.
 
 ### 3. Display the Form
 

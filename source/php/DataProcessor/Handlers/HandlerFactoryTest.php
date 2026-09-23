@@ -77,8 +77,7 @@ final class HandlerFactoryTest extends HandlerTestCase
                         self::assertSame(['acf' => ['image' => '']], json_decode($args['body'], true));
                     } else {
                         self::assertSame($version, $args['headers']['X-ACF-Rest-Upload-Version']);
-                        self::assertStringContainsString('name="_acf_rest_payload"', $args['body']);
-                        self::assertStringContainsString('{"acf":{"image":"$file:file_0"}}', $args['body']);
+                        self::assertStringContainsString('name="acf[image]"; filename="selected.png"', $args['body']);
                         self::assertStringContainsString("selected-image\x00\xff", $args['body']);
                     }
                     return ['response' => ['code' => 201]];
@@ -141,10 +140,10 @@ final class HandlerFactoryTest extends HandlerTestCase
     public static function formatProvider(): array
     {
         return [
-            'Database consumption' => ['multipart-json', '3'],
+            'Database consumption' => ['multipart-native', '4'],
             'ordinary JSON' => ['json', null],
-            'independent handlers after mapping failure' => ['multipart-json', '3', '{"image":["{{image}}"]}'],
-            'independent handlers after malformed configuration' => ['multipart-json', '3', ['invalid-template']],
+            'independent handlers after mapping failure' => ['multipart-native', '4', '{"image":["{{image}}"]}'],
+            'independent handlers after malformed configuration' => ['multipart-native', '4', ['invalid-template']],
         ];
     }
 
@@ -154,6 +153,6 @@ final class HandlerFactoryTest extends HandlerTestCase
      */
     public function testSkippedWebhookCleansAtShutdown(): void
     {
-        $this->testSnapshotsSurviveDatabaseConsumptionOnlyForMultipart('multipart-json', '3', false, true);
+        $this->testSnapshotsSurviveDatabaseConsumptionOnlyForMultipart('multipart-native', '4', false, true);
     }
 }

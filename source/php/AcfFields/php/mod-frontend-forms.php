@@ -527,7 +527,7 @@ Example:
                     'name' => 'requestFormat',
                     'aria-label' => '',
                     'type' => 'select',
-                    'instructions' => __('JSON is the default. Multipart sends mapped JSON and explicitly referenced images using version 3 with one attempt. Resubmissions can create duplicates.', 'modularity-frontend-form'),
+                    'instructions' => __('JSON is the default. Native multipart sends mapped fields and explicitly referenced images using version 4 with one attempt. Resubmissions can create duplicates.', 'modularity-frontend-form'),
                     'required' => 0,
                     'conditional_logic' => 0,
                     'wrapper' => array(
@@ -537,7 +537,7 @@ Example:
                     ),
                     'choices' => array(
                         'json' => __('JSON (no image support)', 'modularity-frontend-form'),
-                        'multipart-json' => __('Multipart (image support)', 'modularity-frontend-form'),
+                        'multipart-native' => __('Native multipart (image support)', 'modularity-frontend-form'),
                     ),
                     'default_value' => 'json',
                     'return_format' => 'value',

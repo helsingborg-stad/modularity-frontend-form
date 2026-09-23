@@ -302,6 +302,8 @@ final class WebHookV3Test extends HandlerTestCase
                 ['acf' => ['title' => 'Default JSON', 'image' => '999']], $format));
             self::assertCount(1, $this->requests);
             self::assertSame(['Content-Type' => 'application/json'], $this->requests[0]['headers']);
+            self::assertArrayNotHasKey('Idempotency-Key', $this->requests[0]['headers']);
+            self::assertArrayNotHasKey('X-ACF-Rest-Upload-Version', $this->requests[0]['headers']);
             self::assertSame(['title' => 'Default JSON', 'image' => '999', 'all' => ['title' => 'Default JSON', 'image' => '999']],
                 json_decode($this->requests[0]['body'], true));
         }
@@ -462,7 +464,7 @@ final class WebHookV3Test extends HandlerTestCase
         $result->method('setError')->willReturnCallback(function ($error): void { $this->errors[] = $error; });
         $request = $this->createMock(WP_REST_Request::class);
         $request->method('get_file_params')->willReturn(['acf' => $this->uploads]);
-        (new WebHookHandler($wp, $acf, $config, $module, (object) [], $result, uploadedFileSnapshots: $snapshots))->handle($data, $request);
+        (new WebHookHandler($wp, $acf, $config, $module, $result, uploadedFileSnapshots: $snapshots))->handle($data, $request);
         foreach ($snapshots === null ? $this->snapshotsDuringSend : [] as $path) {
             self::assertFileDoesNotExist($path);
         }

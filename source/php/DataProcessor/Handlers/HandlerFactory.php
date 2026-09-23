@@ -81,9 +81,7 @@ class HandlerFactory {
                     $handlers[]    = new WithLogHandler(new MailHandler(...$handlerArgs), $logger);
                     break;
                 case 'WebHookHandler':
-                    $handlerArgs[] = new NullFileHandler(...$fileHandlerArgs);
-                    $handlerArgs[] = $uploadedFileSnapshots;
-                    $handlers[]    = new WithLogHandler(new WebHookHandler(...$handlerArgs), $logger);
+                    $handlers[]    = new WithLogHandler(new WebHookHandler($this->wpService, $this->acfService, $this->config, $moduleConfig, new WithLogHandlerResult(new HandlerResult(), $logger), $logger, $uploadedFileSnapshots), $logger);
                     break;
             }
         }

@@ -35,17 +35,21 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 
 #### Webhook request formats
 
-JSON remains the default. `multipart` retains protocol version 1 and its bounded retries.
-Select `multipart-create` for a compatible version-2 receiver that creates resources with one image per destination.
-This profile makes one HTTP transport attempt. It sends no `Idempotency-Key` and does not retry or fall back to JSON.
-Protocol version 2 is an application header value, not a requirement for HTTP/2 transport.
+`json` is the default. It defaults to `Content-Type: application/json` and never attaches files.
+Select `multipart-json` to send images to a compatible version-3 receiver.
+The multipart body contains one `_acf_rest_payload` JSON part plus one `_acf_rest_files[<key>]` part per referenced image.
+Multipart requests send `Content-Type: multipart/form-data` and `X-ACF-Rest-Upload-Version: 3`.
+
+This profile makes exactly one HTTP transport attempt. It sends no idempotency key and does not retry or fall back to JSON.
 
 A timeout does not prove that the receiver saved nothing.
 Manual or browser resubmissions are independent requests. They can duplicate posts, images, and notifications.
 This profile does not prevent duplicates or recover partial data after a crash.
 Check the destination before resubmitting.
 
-See [the multipart protocol guide](docs/webhook-multipart-protocol.md) for mappings, limits, and compatibility rules.
+Map an image with `{{image}}` as the complete value of an object property. Indexed placeholders such as `{{image.0}}` are rejected.
+In multipart mode, `{{*}}` includes ordinary field values but omits image fields. Only top-level image fields are supported.
+Wrap an optional value as `{"$optional":"<field>","$value":...}` to send it only when the field is present.
 
 ### 3. Display the Form
 
@@ -165,7 +169,7 @@ do_action('ModularityFrontendForm/afterInsertPost', $result);
 - Fork, branch, and submit pull requests for all changes.
 - Write clear commit messages.
 - Review code for style, security, and performance.
-- Follow the standards in `.github/copilot-instructions.md`.
+- Follow the existing coding standards used throughout the source and tests.
 
 ---
 
@@ -175,4 +179,4 @@ MIT
 
 ---
 
-For more details, see `.github/copilot-instructions.md` and the source code. All code, documentation, and contributions must follow workspace guidelines.
+For more details, see the source code. All code, documentation, and contributions must follow the workspace guidelines.

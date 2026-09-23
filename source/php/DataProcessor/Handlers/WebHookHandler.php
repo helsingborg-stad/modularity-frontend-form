@@ -10,7 +10,6 @@ use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Webhook\JsonDotHydrator;
 use ModularityFrontendForm\DataProcessor\Handlers\Webhook\MultipartFormDataEncoder;
 use ModularityFrontendForm\DataProcessor\Handlers\Webhook\UploadedFileSnapshots;
@@ -30,10 +29,8 @@ class WebHookHandler implements HandlerInterface
         private AcfService $acfService,
         private ConfigInterface $config,
         private ModuleConfigInterface $moduleConfigInstance,
-        private object $params,
         private HandlerResultInterface $handlerResult = new HandlerResult(),
         private LoggerInterface $logger = new NullLogger,
-        ?FileHandlerInterface $fileHandler = null,
         private ?UploadedFileSnapshots $uploadedFileSnapshots = null
     ) {}
 

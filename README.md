@@ -95,23 +95,6 @@ Wrap an optional value as `{"$optional":"<field>","$value":...}` to omit its who
 - **Tests**: Unit tests are next to source files. Run with `npm test` (JS/TS) or `composer test` (PHP).
 - **Linting**: Use `npm run lint` for JS/TS.
 
-### Production build
-
-Run `php build.php --cleanup` from the root of a disposable source copy only.
-It installs locked npm and production Composer dependencies, builds assets, and
-removes build inputs. Do not run cleanup in a deployed plugin or working checkout.
-The locked OpenStreetMap package requires authorized GitHub npm registry access.
-Supply build credentials through approved configuration outside the source copy;
-do not place them in artifacts or logs. A registry failure is an incomplete build,
-not permission to substitute an old asset or change dependencies.
-
-Check generated assets and production autoloading without development vendors.
-Verify that plugin and dependency tests, PHPUnit configuration, local verification
-helpers, and credentials are absent. Service contracts ending in `Test.php` remain
-runtime code. Record source/lockfile identities, artifact checksums, commands and
-audit findings. PHP-only packaging checks do not prove a complete asset build or
-effective web/proxy upload limits. Building does not authorize deployment.
-
 ---
 
 ## Accessibility & UX
@@ -169,7 +152,7 @@ do_action('ModularityFrontendForm/afterInsertPost', $result);
 - Fork, branch, and submit pull requests for all changes.
 - Write clear commit messages.
 - Review code for style, security, and performance.
-- Follow the existing coding standards used throughout the source and tests.
+- Follow the standards in `.github/copilot-instructions.md`.
 
 ---
 
@@ -179,4 +162,4 @@ MIT
 
 ---
 
-For more details, see the source code. All code, documentation, and contributions must follow the workspace guidelines.
+For more details, see `.github/copilot-instructions.md` and the source code. All code, documentation, and contributions must follow workspace guidelines.

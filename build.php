@@ -1,6 +1,5 @@
 #!/bin/php
 <?php
-declare(strict_types=1);
 // Only allow run from cli.
 if (php_sapi_name() !== 'cli') {
     exit(0);
@@ -20,7 +19,7 @@ $buildCommands = [];
 //Dump autloader. 
 //Only if composer.json exists.
 if (file_exists('composer.json')) {
-    if (is_array($argv) && !in_array('--no-composer', $argv, true)) {
+    if (is_array($argv) && !in_array('--no-composer', $argv)) {
         $buildCommands[] = 'composer install --prefer-dist --no-progress --no-dev';
     }
 
@@ -36,7 +35,7 @@ if (file_exists('composer.json')) {
 
 //Run npm if package.json is found
 if (file_exists('package.json') && file_exists('package-lock.json')) {
-    if (is_array($argv) && !in_array('--install-npm', $argv, true)) {
+    if (is_array($argv) && !in_array('--install-npm', $argv)) {
         $buildCommands[] = 'npm ci --no-progress --no-audit';
         $buildCommands[] = 'npm run build';
     } else {
@@ -46,7 +45,7 @@ if (file_exists('package.json') && file_exists('package-lock.json')) {
         $buildCommands[] = "mv node_modules/$npmPackage->name/dist ./";
     }
 } elseif (file_exists('package.json') && !file_exists('package-lock.json')) {
-    if (is_array($argv) && !in_array('--install-npm', $argv, true)) {
+    if (is_array($argv) && !in_array('--install-npm', $argv)) {
         $buildCommands[] = 'npm install --no-progress --no-audit';
         $buildCommands[] = 'npm run build';
     } else {
@@ -93,7 +92,7 @@ $removables = [
     'phpunit-log.xml'
 ];
 
-if (is_array($argv) && !in_array('--release', $argv, true)) {
+if (is_array($argv) && !in_array('--release', $argv)) {
     $removables = array_merge($removables, ['.git']);
 }
 
@@ -114,7 +113,7 @@ foreach ($buildCommands as $buildCommand) {
 }
 
 // Remove files and directories if '--cleanup' argument is supplied to save local developers from disasters.
-if (is_array($argv) && in_array('--cleanup', $argv, true)) {
+if (is_array($argv) && in_array('--cleanup', $argv)) {
     $removables = array_merge($removables, glob('vendor/*/*/.devcontainer'), glob('vendor/*/*/.github'), glob('vendor/*/*/phpunit*.xml*'));
     foreach ($removables as $removable) {
         if (file_exists($removable)) {
@@ -150,7 +149,7 @@ function executeCommand($command)
         $liveOutput     = fread($proc, 4096);
         $completeOutput = $completeOutput . $liveOutput;
         print $liveOutput;
-        flush();
+        @flush();
     }
 
     pclose($proc);

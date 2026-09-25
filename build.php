@@ -27,8 +27,10 @@ if (file_exists('composer.json')) {
     if (in_array('--cleanup', $argv, true)) {
         $buildCommands[] = "find source/php -type f \\( -name '*Test.php' -o -name '*.test.php' \\) -delete";
         // Service archives include tests; *Test.php also names real service contracts.
-        $buildCommands[] = "find vendor -type f -name '*.test.php' -delete";
-        $buildCommands[] = 'find vendor -mindepth 3 -maxdepth 3 -type d -name tests -exec rm -rf -- {} +';
+        if (is_dir('vendor')) {
+            $buildCommands[] = "find vendor -type f -name '*.test.php' -delete";
+            $buildCommands[] = 'find vendor -mindepth 3 -maxdepth 3 -type d -name tests -exec rm -rf -- {} +';
+        }
     }
     $buildCommands[] = 'composer dump-autoload --no-dev';
 }

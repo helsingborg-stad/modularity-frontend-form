@@ -16,7 +16,7 @@ use WpService\Implementations\FakeWpService;
 require_once dirname(__DIR__, 4) . '/tests/PhpMultipartParser.php';
 require_once dirname(__DIR__, 4) . '/tests/HandlerTestCase.php';
 
-final class WebHookV3Test extends HandlerTestCase
+final class MultipartWebhookTest extends HandlerTestCase
 {
     private array $uploads = [];
     private array $paths = [];
@@ -28,13 +28,13 @@ final class WebHookV3Test extends HandlerTestCase
         parent::tearDown();
     }
 
-    public function testNativeMultipartUsesPhpFieldsAndDestinationNamedFiles(): void
+    public function testMultipartUsesPhpFieldsAndDestinationNamedFiles(): void
     {
         $this->upload('field_image', 'image bytes');
         self::assertTrue($this->send('{"title":"{{title}}","status":"draft","acf":{"image":"{{image}}","location":{"lat":"{{location.lat}}","lng":"{{location.lng}}"}}}',
             ['title' => 'Sponsor', 'location' => ['lat' => 56.1, 'lng' => 12.2]]));
         $parsed = $this->parse($this->requests[0]);
-        self::assertSame('4', $parsed['version']);
+        self::assertSame('true', $parsed['upload']);
         self::assertSame(['title' => 'Sponsor', 'status' => 'draft', 'acf' => ['location' => ['lat' => '56.1', 'lng' => '12.2']]], $parsed['post']);
         self::assertSame(['acf'], $parsed['fileFields']);
         self::assertSame('field_image.png', $parsed['files']['image']['name']);
@@ -62,7 +62,7 @@ final class WebHookV3Test extends HandlerTestCase
         self::assertSame(['acf' => ['image' => '494']], $this->parse($request)['post']);
     }
 
-    public function testDefaultJsonIsUnchangedAndRetiredV3DoesNotSend(): void
+    public function testDefaultJsonIsUnchangedAndUnsupportedFormatsDoNotSend(): void
     {
         self::assertTrue($this->send('{"title":"{{title}}"}', ['title' => 'JSON'], 'json'));
         self::assertSame(['Content-Type' => 'application/json'], $this->requests[0]['headers']);
@@ -72,7 +72,7 @@ final class WebHookV3Test extends HandlerTestCase
         self::assertSame([], $this->requests);
     }
 
-    public function testNativeWildcardOmitsImagesAndFieldsHaveABudget(): void
+    public function testMultipartWildcardOmitsImagesAndFieldsHaveABudget(): void
     {
         self::assertTrue($this->send('{"all":"{{*}}"}', ['title' => 'Example', 'image' => 494]));
         self::assertStringContainsString('name="all[title]"', $this->requests[0]['body']);
@@ -84,7 +84,7 @@ final class WebHookV3Test extends HandlerTestCase
 
     private function upload(string $field, string $bytes): void
     {
-        $path = tempnam(sys_get_temp_dir(), 'v4-fixture-');
+        $path = tempnam(sys_get_temp_dir(), 'multipart-fixture-');
         $this->paths[] = $path;
         file_put_contents($path, $bytes);
         foreach (['name' => "$field.png", 'type' => 'image/png', 'tmp_name' => $path,
@@ -105,7 +105,7 @@ final class WebHookV3Test extends HandlerTestCase
         }
     }
 
-    private function send(string $body, array $data = [], string $format = 'multipart-native'): bool
+    private function send(string $body, array $data = [], string $format = 'multipart'): bool
     {
         $wp = new FakeWpService(['wpRemotePost' => function ($url, $args) { $this->requests[] = $args; return ['response' => ['code' => 201]]; },
             'isWpError' => false, 'wpRemoteRetrieveResponseCode' => 201, 'wpMaxUploadSize' => 8388608, '__' => static fn ($text) => $text]);

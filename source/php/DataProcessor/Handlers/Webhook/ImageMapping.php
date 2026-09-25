@@ -156,7 +156,7 @@ final class ImageMapping
         return $payload;
     }
 
-    /** Build native multipart values and map each ACF image destination to its snapshot. */
+    /** Build multipart values and map each ACF image destination to its snapshot. */
     public function nativePayload(array $data, array $references, array $snapshots): array
     {
         $template = $this->pruneOptional(json_decode($this->template, true), $data);

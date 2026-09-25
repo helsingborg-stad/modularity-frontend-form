@@ -36,9 +36,9 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 #### Webhook request formats
 
 `json` is the default. It defaults to `Content-Type: application/json` and never attaches files.
-Select `multipart-native` to send fields to a compatible version-4 receiver.
+Select `multipart` to send fields to a compatible multipart receiver.
 The multipart body uses PHP-compatible field names such as `title`, `acf[location][lat]`, and `acf[image]`; uploaded images use their destination field name as the file part.
-Multipart requests send `Content-Type: multipart/form-data` and `X-ACF-Rest-Upload-Version: 4`.
+Multipart requests send `Content-Type: multipart/form-data` and `X-ACF-Rest-Upload: true`.
 
 This profile makes exactly one HTTP transport attempt. It sends no idempotency key and does not retry or fall back to JSON.
 

@@ -44,11 +44,11 @@ class WebHookHandler implements HandlerInterface
                 return $this->handlerResult;
             }
             $format = $config->requestFormat ?? 'json';
-            if (!in_array($format, ['json', 'multipart-native'], true)) {
+            if (!in_array($format, ['json', 'multipart'], true)) {
                 $this->error($this->wpService->__('Unsupported webhook request format. Select JSON or Multipart (image support).', 'modularity-frontend-form'));
                 return $this->handlerResult;
             }
-            if ($format === 'multipart-native') {
+            if ($format === 'multipart') {
                 $this->sendMultipartRequest($config, $data, $request);
             } else {
                 $body = $this->createBody($data, $config);
@@ -144,10 +144,15 @@ class WebHookHandler implements HandlerInterface
 
     private function createHeaders(array $_data, object $config): array
     {
-        return [
-            ...['Content-Type' => 'application/json',],
-            ...array_column(is_array($config->headers ?? null) ? $config->headers : [], 'value', 'header')
-        ];
+        $headers = ['Content-Type' => 'application/json'];
+        foreach (is_array($config->headers ?? null) ? $config->headers : [] as $header) {
+            $name = is_array($header) ? ($header['header'] ?? null) : null;
+            if (!is_string($name) || strtolower(trim($name)) === 'x-acf-rest-upload') {
+                continue;
+            }
+            $headers[$name] = is_scalar($header['value'] ?? null) ? (string) $header['value'] : '';
+        }
+        return $headers;
     }
 
     private function createMultipartHeaders(object $config, string $contentType): array
@@ -159,14 +164,14 @@ class WebHookHandler implements HandlerInterface
                 continue;
             }
             $name = trim($name);
-            if ($name === '' || in_array(strtolower($name), ['content-type', 'x-acf-rest-upload-version'], true)) {
+            if ($name === '' || in_array(strtolower($name), ['content-type', 'x-acf-rest-upload'], true)) {
                 continue;
             }
             $value = $header['value'] ?? '';
             $headers[$name] = is_scalar($value) ? (string) $value : '';
         }
         $headers['Content-Type'] = $contentType;
-        $headers['X-ACF-Rest-Upload-Version'] = '4';
+        $headers['X-ACF-Rest-Upload'] = 'true';
         return $headers;
     }
 

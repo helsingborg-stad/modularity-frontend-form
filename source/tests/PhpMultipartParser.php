@@ -9,7 +9,7 @@ final class PhpMultipartParser
 {
     public static function parse(array $request): array
     {
-        $directory = sys_get_temp_dir() . '/v3-parser-' . bin2hex(random_bytes(8));
+        $directory = sys_get_temp_dir() . '/multipart-parser-' . bin2hex(random_bytes(8));
         mkdir($directory, 0700);
         $address = '127.0.0.1:' . (getenv('SENDER_PARSER_PORT') ?: '18733');
         $reservation = @stream_socket_server('tcp://' . $address, $errno, $error);

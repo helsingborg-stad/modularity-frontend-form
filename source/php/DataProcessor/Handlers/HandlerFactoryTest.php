@@ -21,7 +21,7 @@ require_once dirname(__DIR__, 3) . '/tests/HandlerTestCase.php';
 final class HandlerFactoryTest extends HandlerTestCase
 {
     /** @dataProvider formatProvider */
-    public function testSnapshotsSurviveDatabaseConsumptionOnlyForMultipart(string $format, ?string $version, mixed $invalid = false, bool $skip = false): void
+    public function testSnapshotsSurviveDatabaseConsumptionOnlyForMultipart(string $format, ?string $multipartHeader, mixed $invalid = false, bool $skip = false): void
     {
         static $moduleId = 5000;
         $id = ++$moduleId;
@@ -71,12 +71,12 @@ final class HandlerFactoryTest extends HandlerTestCase
                 'wpInsertPost' => 123, 'wpMail' => true, '__' => static fn($text) => $text,
                 'sanitizeTextField' => static fn($text) => $text, 'wpGeneratePassword' => 'test-password',
                 'isWpError' => false, 'wpMaxUploadSize' => 8388608, 'wpRemoteRetrieveResponseCode' => 201,
-                'wpRemotePost' => static function ($url, $args) use ($version): array {
-                    if ($version === null) {
+                'wpRemotePost' => static function ($url, $args) use ($multipartHeader): array {
+                    if ($multipartHeader === null) {
                         self::assertSame('application/json', $args['headers']['Content-Type']);
                         self::assertSame(['acf' => ['image' => '']], json_decode($args['body'], true));
                     } else {
-                        self::assertSame($version, $args['headers']['X-ACF-Rest-Upload-Version']);
+                        self::assertSame($multipartHeader, $args['headers']['X-ACF-Rest-Upload']);
                         self::assertStringContainsString('name="acf[image]"; filename="selected.png"', $args['body']);
                         self::assertStringContainsString("selected-image\x00\xff", $args['body']);
                     }
@@ -88,7 +88,7 @@ final class HandlerFactoryTest extends HandlerTestCase
             $handlers = (new HandlerFactory($wp, $acf, $config, $moduleFactory, $logger))->createHandlers($params, $request);
             self::assertCount($skip ? 1 : 3, $handlers);
             $snapshots = array_values(array_diff(glob(sys_get_temp_dir() . '/mff-webhook-*') ?: [], $before));
-            self::assertCount($version === null || $invalid ? 0 : 1, $snapshots);
+            self::assertCount($multipartHeader === null || $invalid ? 0 : 1, $snapshots);
             if ($skip) {
                 // Runs after the owner's shutdown fallback; failure makes the child process fail.
                 register_shutdown_function(static function () use ($snapshots, $original): void {
@@ -140,10 +140,10 @@ final class HandlerFactoryTest extends HandlerTestCase
     public static function formatProvider(): array
     {
         return [
-            'Database consumption' => ['multipart-native', '4'],
+            'Database consumption' => ['multipart', 'true'],
             'ordinary JSON' => ['json', null],
-            'independent handlers after mapping failure' => ['multipart-native', '4', '{"image":["{{image}}"]}'],
-            'independent handlers after malformed configuration' => ['multipart-native', '4', ['invalid-template']],
+            'independent handlers after mapping failure' => ['multipart', 'true', '{"image":["{{image}}"]}'],
+            'independent handlers after malformed configuration' => ['multipart', 'true', ['invalid-template']],
         ];
     }
 
@@ -153,6 +153,6 @@ final class HandlerFactoryTest extends HandlerTestCase
      */
     public function testSkippedWebhookCleansAtShutdown(): void
     {
-        $this->testSnapshotsSurviveDatabaseConsumptionOnlyForMultipart('multipart-native', '4', false, true);
+        $this->testSnapshotsSurviveDatabaseConsumptionOnlyForMultipart('multipart', 'true', false, true);
     }
 }

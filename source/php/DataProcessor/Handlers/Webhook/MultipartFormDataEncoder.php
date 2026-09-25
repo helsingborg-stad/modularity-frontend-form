@@ -6,7 +6,7 @@ namespace ModularityFrontendForm\DataProcessor\Handlers\Webhook;
 
 use InvalidArgumentException;
 
-/** Protocol v4: native PHP-compatible fields and destination-named binary parts. */
+/** Native PHP-compatible fields and destination-named binary parts. */
 final class MultipartFormDataEncoder
 {
     public function encode(array|object $payload, array $files = [], int $fileLimit = 8388608): array

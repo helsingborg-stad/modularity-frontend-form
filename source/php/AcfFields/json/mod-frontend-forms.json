@@ -490,7 +490,7 @@
                     "name": "body",
                     "aria-label": "",
                     "type": "textarea",
-                    "instructions": "JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals \"{{field_name}}\", all form fields can be accessed using dot-notation with field names as identifier or {{*}} to output all fields. \r\n\r\nExample: \r\n{\r\n    \"name\": \"{{user.name}}\",\r\n    \"message\": \"{{message}}\",\r\n    \"object\": \"{{user}}\",\r\n    \"array\": \"{{user.hobbies}}\",\r\n    \"all\": \"{{*}}\"\r\n}",
+                    "instructions": "JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals \"{{field_name}}\", all form fields can be accessed using dot-notation with field names as identifier or {{*}} to output all fields. \r\n\r\nIn Multipart mode, {{*}} includes ordinary field values but omits image fields. To send an image, map its field explicitly. Use {{image_field}} as the complete value of an object property. Only top-level image fields are supported.\r\n\r\nExample: \r\n{\r\n    \"name\": \"{{user.name}}\",\r\n    \"message\": \"{{message}}\",\r\n    \"object\": \"{{user}}\",\r\n    \"array\": \"{{user.hobbies}}\",\r\n    \"all\": \"{{*}}\"\r\n}",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -504,6 +504,59 @@
                     "rows": "",
                     "placeholder": "",
                     "new_lines": ""
+                },
+                {
+                    "key": "field_6a0ac1d2ef653",
+                    "label": "Request Format",
+                    "name": "requestFormat",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "JSON is the default. Multipart sends mapped fields and explicitly referenced images with one attempt. Resubmissions can create duplicates.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "json": "JSON (no image support)",
+                        "multipart": "Multipart (image support)"
+                    },
+                    "default_value": "json",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "allow_in_bindings": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "allow_custom": 0,
+                    "search_placeholder": ""
+                },
+                {
+                    "key": "field_6a0ac1d3ef654",
+                    "label": "Timeout (seconds)",
+                    "name": "timeout",
+                    "aria-label": "",
+                    "type": "number",
+                    "instructions": "Maximum number of seconds to wait for the webhook response. Minimum 1, maximum 120.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 20,
+                    "min": 1,
+                    "max": 120,
+                    "step": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
                 }
             ]
         },
@@ -662,4 +715,3 @@
     "show_in_rest": 0,
     "display_title": ""
 }]
-

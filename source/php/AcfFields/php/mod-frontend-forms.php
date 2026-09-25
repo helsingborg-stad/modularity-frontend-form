@@ -497,7 +497,9 @@
                     'type' => 'textarea',
                     'instructions' => __('JSON Body payload that will be included in the request when event hook fires. Leave empty to have no body. The payload allows templates literals "{{field_name}}", all form fields can be accessed using dot-notation with field names as identifier or {{*}} to output all fields. 
 
-Example: 
+In Multipart mode, {{*}} includes ordinary field values but omits image fields. To send an image, map its field explicitly. Use {{image_field}} as the complete value of an object property. Only top-level image fields are supported.
+
+Example:
 {
         "name": "{{user.name}}",
         "message": "{{message}}",
@@ -518,6 +520,59 @@ Example:
                     'rows' => '',
                     'placeholder' => '',
                     'new_lines' => '',
+                ),
+                3 => array(
+                    'key' => 'field_6a0ac1d2ef653',
+                    'label' => __('Request Format', 'modularity-frontend-form'),
+                    'name' => 'requestFormat',
+                    'aria-label' => '',
+                    'type' => 'select',
+                    'instructions' => __('JSON is the default. Multipart sends mapped fields and explicitly referenced images with one attempt. Resubmissions can create duplicates.', 'modularity-frontend-form'),
+                    'required' => 0,
+                    'conditional_logic' => 0,
+                    'wrapper' => array(
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ),
+                    'choices' => array(
+                        'json' => __('JSON (no image support)', 'modularity-frontend-form'),
+                        'multipart' => __('Multipart (image support)', 'modularity-frontend-form'),
+                    ),
+                    'default_value' => 'json',
+                    'return_format' => 'value',
+                    'multiple' => 0,
+                    'allow_null' => 0,
+                    'allow_in_bindings' => 0,
+                    'ui' => 0,
+                    'ajax' => 0,
+                    'placeholder' => '',
+                    'create_options' => 0,
+                    'save_options' => 0,
+                    'allow_custom' => 0,
+                    'search_placeholder' => '',
+                ),
+                4 => array(
+                    'key' => 'field_6a0ac1d3ef654',
+                    'label' => __('Timeout (seconds)', 'modularity-frontend-form'),
+                    'name' => 'timeout',
+                    'aria-label' => '',
+                    'type' => 'number',
+                    'instructions' => __('Maximum number of seconds to wait for the webhook response. Minimum 1, maximum 120.', 'modularity-frontend-form'),
+                    'required' => 0,
+                    'conditional_logic' => 0,
+                    'wrapper' => array(
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ),
+                    'default_value' => 20,
+                    'min' => 1,
+                    'max' => 120,
+                    'step' => '',
+                    'placeholder' => '',
+                    'prepend' => '',
+                    'append' => '',
                 ),
             ),
         ),

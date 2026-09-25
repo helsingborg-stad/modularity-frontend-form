@@ -23,7 +23,14 @@ if (file_exists('composer.json')) {
         $buildCommands[] = 'composer install --prefer-dist --no-progress --no-dev';
     }
 
-    $buildCommands[] = 'composer dump-autoload';
+    // Colocated tests are not part of the production artifact.
+    if (in_array('--cleanup', $argv, true)) {
+        $buildCommands[] = "find source/php -type f \\( -name '*Test.php' -o -name '*.test.php' \\) -delete";
+        // Service archives include tests; *Test.php also names real service contracts.
+        $buildCommands[] = "find vendor -type f -name '*.test.php' -delete";
+        $buildCommands[] = 'find vendor -mindepth 3 -maxdepth 3 -type d -name tests -exec rm -rf -- {} +';
+    }
+    $buildCommands[] = 'composer dump-autoload --no-dev';
 }
 
 //Run npm if package.json is found
@@ -64,6 +71,12 @@ $removables = [
     'package-lock.json',
     'package.json',
     'phpunit.xml.dist',
+    'phpunit.xml',
+    'bootstrap.php',
+    'jest.config.js',
+    'patchwork.json',
+    'source/tests',
+    '.playwright-cli',
     'README.md',
     './node_modules/',
     './source/sass/',
@@ -101,10 +114,14 @@ foreach ($buildCommands as $buildCommand) {
 
 // Remove files and directories if '--cleanup' argument is supplied to save local developers from disasters.
 if (is_array($argv) && in_array('--cleanup', $argv)) {
+    $removables = array_merge($removables, glob('vendor/*/*/.devcontainer'), glob('vendor/*/*/.github'), glob('vendor/*/*/phpunit*.xml*'));
     foreach ($removables as $removable) {
         if (file_exists($removable)) {
             print "Removing $removable from $dirName\n";
-            shell_exec("rm -rf $removable");
+            $exitCode = executeCommand('rm -rf -- ' . escapeshellarg($removable));
+            if ($exitCode !== 0) {
+                exit($exitCode);
+            }
         }
     }
 }

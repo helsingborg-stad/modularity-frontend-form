@@ -33,6 +33,24 @@ A modular, accessible, and extensible multi-step frontend form system for WordPr
 - Choose where submissions are sent: Database, E-Mail, Webhook.
 - Configure handler settings in the module admin (e.g., webhook URL, email recipient).
 
+#### Webhook request formats
+
+`json` is the default. It defaults to `Content-Type: application/json` and never attaches files.
+Select `multipart` to send fields to a compatible multipart receiver.
+The multipart body uses PHP-compatible field names such as `title`, `acf[location][lat]`, and `acf[image]`; uploaded images use their destination field name as the file part.
+Multipart requests send `Content-Type: multipart/form-data` and `X-ACF-Rest-Upload: true`.
+
+This profile makes exactly one HTTP transport attempt. It sends no idempotency key and does not retry or fall back to JSON.
+
+A timeout does not prove that the receiver saved nothing.
+Manual or browser resubmissions are independent requests. They can duplicate posts, images, and notifications.
+This profile does not prevent duplicates or recover partial data after a crash.
+Check the destination before resubmitting.
+
+Map an image with `{{image}}` as the complete value of an object property. Indexed placeholders such as `{{image.0}}` are rejected.
+In multipart mode, `{{*}}` includes ordinary field values but omits image fields. Only top-level image fields are supported.
+Wrap an optional value as `{"$optional":"<field>","$value":...}` to omit its whole subtree when the field is absent. Multipart cannot represent explicitly authored `null`, empty arrays, or empty objects.
+
 ### 3. Display the Form
 
 - Use the module in any Modularity-enabled area (template, block, shortcode).

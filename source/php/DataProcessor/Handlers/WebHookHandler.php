@@ -10,9 +10,9 @@ use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResult;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
-use ModularityFrontendForm\DataProcessor\FileHandlers\NullFileHandler;
-use ModularityFrontendForm\DataProcessor\FileHandlers\FileHandlerInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\Webhook\JsonDotHydrator;
+use ModularityFrontendForm\DataProcessor\Handlers\Webhook\MultipartFormDataEncoder;
+use ModularityFrontendForm\DataProcessor\Handlers\Webhook\UploadedFileSnapshots;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use WP_Error;
@@ -20,82 +20,109 @@ use WP_REST_Request;
 
 class WebHookHandler implements HandlerInterface
 {
-
     use GetModuleConfigInstanceTrait;
+
+    private bool $transportAttempted = false;
 
     public function __construct(
         private WpService $wpService,
         private AcfService $acfService,
         private ConfigInterface $config,
         private ModuleConfigInterface $moduleConfigInstance,
-        private object $params,
         private HandlerResultInterface $handlerResult = new HandlerResult(),
         private LoggerInterface $logger = new NullLogger,
-        private ?FileHandlerInterface $fileHandler = null
-    ) {
-        if ($this->fileHandler === null) {
-            $this->fileHandler = new NullFileHandler($this->config, $this->moduleConfigInstance, $this->wpService);
-        }
-    }
+        private ?UploadedFileSnapshots $uploadedFileSnapshots = null
+    ) {}
 
-    /**
-     * Handle the data
-     *
-     * @param array $data The data to handle
-     * @return HandlerResultInterface|null The result of the handling
-     */
     public function handle(array $data, WP_REST_Request $request): ?HandlerResultInterface
     {
-        $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
-
-        if (!is_string($config?->callbackUrl ?? null) || trim($config->callbackUrl) === '') {
-            $this->handlerResult->setError(
-                new WP_Error(
-                    RestApiResponseStatusEnums::HandlerError->value,
-                    __('Webhook configuration requires a callback URL.', 'modularity-frontend-form')
-                )
-            );
-
+        $this->transportAttempted = false;
+        try {
+            $config = $this->moduleConfigInstance->getWebHookHandlerConfig();
+            if (!is_string($config?->callbackUrl ?? null) || trim($config->callbackUrl) === '') {
+                $this->error($this->wpService->__('Webhook configuration requires a callback URL.', 'modularity-frontend-form'));
+                return $this->handlerResult;
+            }
+            $format = $config->requestFormat ?? 'json';
+            if (!in_array($format, ['json', 'multipart'], true)) {
+                $this->error($this->wpService->__('Unsupported webhook request format. Select JSON or Multipart (image support).', 'modularity-frontend-form'));
+                return $this->handlerResult;
+            }
+            if ($format === 'multipart') {
+                $this->sendMultipartRequest($config, $data, $request);
+            } else {
+                $body = $this->createBody($data, $config);
+                $this->sendRequest($config, $body ? json_encode($body) : null, $this->createHeaders($data, $config));
+            }
             return $this->handlerResult;
+        } finally {
+            if ($this->uploadedFileSnapshots !== null && !$this->uploadedFileSnapshots->cleanup()) {
+                $this->error($this->transportAttempted
+                    ? $this->wpService->__('Webhook snapshot cleanup failed after transport. The remote operation may have succeeded.', 'modularity-frontend-form')
+                    : $this->wpService->__('Webhook snapshot cleanup failed. The submission was not sent.', 'modularity-frontend-form'));
+            }
         }
-
-        $this->trySendRequest(
-            $config->callbackUrl,
-            $this->createBody($data, $config),
-            $this->createHeaders($data, $config)
-        );
-
-        return $this->handlerResult;
     }
 
-    /**
-     * Send the request to the webhook URL
-     *
-     * @param string $url The URL to send the request to
-     * @param array $data The data to send in the request
-     * @return bool True if the request was sent successfully, false otherwise
-     */
-    private function trySendRequest(string $url, array|null $data, array $headers = []): bool
+    private function sendMultipartRequest(object $config, array $data, WP_REST_Request $request): void
     {
-        $response = $this->wpService->wpRemotePost($url, [
-            'body' => $data ? \json_encode($data) : null,
-            'timeout' => 20,
-            'headers' => $headers
-        ]);
-
-        if ($this->wpService->isWpError($response)) {
-            $this->handlerResult->setError(
-                new WP_Error(
-                    RestApiResponseStatusEnums::HandlerError->value,
-                    $response->get_error_message(),
-                    ['response' => $response],
-                )
+        try {
+            $this->uploadedFileSnapshots ??= new UploadedFileSnapshots(
+                $request->get_file_params()[$this->config->getFieldNamespace()] ?? [],
+                $this->acfService,
+                $config->body ?? '{}',
+                $this->moduleConfigInstance->getFieldKeysRegisteredAsFormFields() ?? []
             );
-
-            return false;
+            $formData = $this->replaceAcfIdsWithNames(
+                $this->normalizeAcfFormData($data[$this->config->getFieldNamespace()] ?? $data)
+            );
+            $payload = $this->uploadedFileSnapshots->nativePayload($formData);
+            $limit = $this->wpService->wpMaxUploadSize();
+            $encoded = (new MultipartFormDataEncoder())->encode(
+                $payload['values'],
+                $payload['files'],
+                is_numeric($limit) && (int) $limit > 0 ? min((int) $limit, 8388608) : 8388608
+            );
+        } catch (\Throwable) {
+            $this->error($this->wpService->__('Webhook mapping, image preparation or payload limits failed. The submission was not sent.', 'modularity-frontend-form'));
+            return;
         }
+        try {
+            $this->sendRequest($config, $encoded['body'], $this->createMultipartHeaders($config, $encoded['contentType']), true);
+        } catch (\Throwable) {
+            $this->error($this->wpService->__('Webhook transport failed. The remote operation may have succeeded.', 'modularity-frontend-form'));
+        }
+    }
 
-        return true;
+    private function sendRequest(object $config, ?string $body, array $headers, bool $multipart = false): void
+    {
+        $this->transportAttempted = true;
+        $response = $this->wpService->wpRemotePost($config->callbackUrl, [
+            'body' => $body,
+            'timeout' => max(1, min(120, isset($config->timeout) ? (int) $config->timeout : 20)),
+            'headers' => $headers,
+        ]);
+        if ($this->wpService->isWpError($response)) {
+            $this->error($multipart
+                ? $this->wpService->__('Webhook transport failed. The remote operation may have succeeded.', 'modularity-frontend-form')
+                : $response->get_error_message());
+            return;
+        }
+        $status = (int) $this->wpService->wpRemoteRetrieveResponseCode($response);
+        if ($status < 200 || $status >= 300) {
+            $this->handlerResult->setError(new WP_Error(
+                RestApiResponseStatusEnums::HandlerError->value,
+                sprintf($multipart
+                    ? $this->wpService->__('Webhook request failed with HTTP status %d. The remote operation may have succeeded.', 'modularity-frontend-form')
+                    : $this->wpService->__('Webhook request failed. The server responded with HTTP status %d.', 'modularity-frontend-form'), $status),
+                ['status' => $status]
+            ));
+        }
+    }
+
+    private function error(?string $message): void
+    {
+        $this->handlerResult->setError(new WP_Error(RestApiResponseStatusEnums::HandlerError->value, $message));
     }
 
     private function createBody(array $data, object $config): array|null
@@ -117,10 +144,35 @@ class WebHookHandler implements HandlerInterface
 
     private function createHeaders(array $_data, object $config): array
     {
-        return [
-            ...['Content-Type' => 'application/json',],
-            ...array_column(is_array($config->headers ?? null) ? $config->headers : [], 'value', 'header')
-        ];
+        $headers = ['Content-Type' => 'application/json'];
+        foreach (is_array($config->headers ?? null) ? $config->headers : [] as $header) {
+            $name = is_array($header) ? ($header['header'] ?? null) : null;
+            if (!is_string($name) || strtolower(trim($name)) === 'x-acf-rest-upload') {
+                continue;
+            }
+            $headers[$name] = is_scalar($header['value'] ?? null) ? (string) $header['value'] : '';
+        }
+        return $headers;
+    }
+
+    private function createMultipartHeaders(object $config, string $contentType): array
+    {
+        $headers = [];
+        foreach (is_array($config->headers ?? null) ? $config->headers : [] as $header) {
+            $name = is_array($header) ? ($header['header'] ?? null) : null;
+            if (!is_string($name)) {
+                continue;
+            }
+            $name = trim($name);
+            if ($name === '' || in_array(strtolower($name), ['content-type', 'x-acf-rest-upload'], true)) {
+                continue;
+            }
+            $value = $header['value'] ?? '';
+            $headers[$name] = is_scalar($value) ? (string) $value : '';
+        }
+        $headers['Content-Type'] = $contentType;
+        $headers['X-ACF-Rest-Upload'] = 'true';
+        return $headers;
     }
 
     private function normalizeAcfFormData(array $formData): array
@@ -153,23 +205,17 @@ class WebHookHandler implements HandlerInterface
     private function replaceAcfIdsWithNames(array $formData): array
     {
         $result = [];
-
         foreach ($formData as $key => $value) {
             $newKey = $key;
             if (is_string($key) && str_starts_with($key, 'field_')) {
                 $fieldObj = $this->acfService->getFieldObject($key);
-                $newKey = is_array($fieldObj)
-                    ? ($fieldObj['name'] ?? $key)
-                    : $key;
+                $newKey = is_array($fieldObj) ? ($fieldObj['name'] ?? $key) : $key;
             }
-
             if (is_array($value)) {
                 $value = $this->replaceAcfIdsWithNames($value);
             }
-
             $result[$newKey] = $value;
         }
-
         return $result;
     }
 }

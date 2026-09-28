@@ -87,9 +87,15 @@ final class ImageMapping
             if (!$this->containsUpload($field)) {
                 continue;
             }
-            if (!$this->isTopLevelImage($field) || count($segments) !== 1 || count($path) !== 2 || $path[0] !== 'acf'
+            if (!$this->isTopLevelImage($field) || count($segments) !== 1
                 || $inList || $path === [] || preg_match('/^\{\{\s*[^{}]*?\s*\}\}$/', $value) !== 1) {
                 throw new InvalidArgumentException('Images require an unindexed top-level source and a complete object property.');
+            }
+            // Image properties are removed before the encoder validates ordinary field names.
+            foreach ($path as $segment) {
+                if ((string) $segment === '' || strpbrk((string) $segment, "[]\0") !== false) {
+                    throw new InvalidArgumentException('Multipart field names are invalid.');
+                }
             }
             $key = $field['key'];
             $this->sources[$key] = $field;
@@ -156,7 +162,7 @@ final class ImageMapping
         return $payload;
     }
 
-    /** Build multipart values and map each ACF image destination to its snapshot. */
+    /** Build multipart values and map each template image destination to its snapshot. */
     public function nativePayload(array $data, array $references, array $snapshots): array
     {
         $template = $this->pruneOptional(json_decode($this->template, true), $data);

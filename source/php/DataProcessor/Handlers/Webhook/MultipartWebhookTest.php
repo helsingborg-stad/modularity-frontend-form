@@ -10,6 +10,7 @@ use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerTestCase;
 use ModularityFrontendForm\DataProcessor\Handlers\Result\HandlerResultInterface;
 use ModularityFrontendForm\DataProcessor\Handlers\WebHookHandler;
+use Psr\Log\LoggerInterface;
 use WP_REST_Request;
 use WpService\Implementations\FakeWpService;
 
@@ -49,6 +50,71 @@ final class MultipartWebhookTest extends HandlerTestCase
         self::assertFalse($this->send('{"acf":{"location":null}}'));
         self::assertSame([], $this->requests);
         self::assertSame([], $this->parse($request)['post']);
+    }
+
+    /** @dataProvider imageDestinations */
+    public function testImageDestinationFollowsTemplate(string $template, string $destination): void
+    {
+        $this->upload('field_image', "PRIVATE_IMAGE\x00\xff");
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())->method('debug')->with(
+            'Prepared multipart webhook structure: {structure}',
+            self::callback(static function (array $context) use ($destination): bool {
+                $structure = json_decode($context['structure'], true);
+                self::assertSame([$destination], $structure['fileFields']);
+                self::assertSame(['message'], $structure['fieldNames']);
+                foreach (['PRIVATE_IMAGE', 'PRIVATE_MESSAGE', 'field_image.png', 'tmp_name', 'https://'] as $private) {
+                    self::assertStringNotContainsString($private, $context['structure']);
+                }
+                return true;
+            })
+        );
+        self::assertTrue($this->send($template, ['message' => 'PRIVATE_MESSAGE'], 'multipart', $logger));
+        self::assertCount(1, $this->requests);
+        self::assertStringContainsString('name="' . $destination . '"; filename="field_image.png"', $this->requests[0]['body']);
+        self::assertStringContainsString("PRIVATE_IMAGE\x00\xff", $this->requests[0]['body']);
+        self::assertSame(1, substr_count($this->requests[0]['body'], 'filename='));
+    }
+
+    public static function imageDestinations(): array
+    {
+        return [
+            'root' => ['{"message":"{{message}}","image":"{{image}}"}', 'image'],
+            'ACF compatibility' => ['{"message":"{{message}}","acf":{"image":"{{image}}"}}', 'acf[image]'],
+            'custom object' => ['{"message":"{{message}}","data":{"photo":"{{image}}"}}', 'data[photo]'],
+            'deep object' => ['{"message":"{{message}}","data":{"media":{"photo":"{{image}}"}}}', 'data[media][photo]'],
+        ];
+    }
+
+    public function testCustomDestinationOmitsMissingImageAndPreservesExistingId(): void
+    {
+        $template = '{"message":"kept","data":{"photo":"{{image}}"}}';
+        self::assertTrue($this->send($template));
+        self::assertStringNotContainsString('data[photo]', $this->requests[0]['body']);
+        self::assertTrue($this->send($template, ['image' => 494]));
+        self::assertStringContainsString("name=\"data[photo]\"\r\n\r\n494\r\n", $this->requests[1]['body']);
+        $this->upload('field_image', 'image bytes');
+        self::assertFalse($this->send($template, ['image' => 494]));
+        self::assertCount(2, $this->requests);
+    }
+
+    /** @dataProvider invalidImageMappings */
+    public function testInvalidImageMappingStillDoesNotSend(string $template): void
+    {
+        $this->upload('field_image', 'image bytes');
+        self::assertFalse($this->send($template));
+        self::assertSame([], $this->requests);
+    }
+
+    public static function invalidImageMappings(): array
+    {
+        return [
+            ['{"image":"{{image.0}}"}'],
+            ['{"image":"prefix {{image}}"}'],
+            ['{"data":[{"image":"{{image}}"}]}'],
+            ['{"data[photo]":"{{image}}"}'],
+            ['{"":"{{image}}"}'],
+        ];
     }
 
     public function testExistingImageIdIsAnOrdinaryFieldAndConflictsWithUpload(): void
@@ -105,7 +171,7 @@ final class MultipartWebhookTest extends HandlerTestCase
         }
     }
 
-    private function send(string $body, array $data = [], string $format = 'multipart'): bool
+    private function send(string $body, array $data = [], string $format = 'multipart', ?LoggerInterface $logger = null): bool
     {
         $wp = new FakeWpService(['wpRemotePost' => function ($url, $args) { $this->requests[] = $args; return ['response' => ['code' => 201]]; },
             'isWpError' => false, 'wpRemoteRetrieveResponseCode' => 201, 'wpMaxUploadSize' => 8388608, '__' => static fn ($text) => $text]);
@@ -121,7 +187,7 @@ final class MultipartWebhookTest extends HandlerTestCase
         $result->method('setError')->willReturnCallback(static function ($error) use (&$errors): void { $errors[] = $error; });
         $request = $this->createMock(WP_REST_Request::class);
         $request->method('get_file_params')->willReturn(['acf' => $this->uploads]);
-        (new WebHookHandler($wp, $acf, $config, $module, $result))->handle(['acf' => $data], $request);
+        (new WebHookHandler($wp, $acf, $config, $module, $result, $logger ?? new \Psr\Log\NullLogger()))->handle(['acf' => $data], $request);
         return $errors === [];
     }
 }

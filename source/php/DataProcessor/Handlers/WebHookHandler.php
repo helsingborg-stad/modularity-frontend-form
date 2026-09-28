@@ -88,6 +88,14 @@ class WebHookHandler implements HandlerInterface
             return;
         }
         try {
+            // Log structure only: never values, filenames, paths, headers or file bytes.
+            $this->logger->debug('Prepared multipart webhook structure: {structure}', [
+                'structure' => json_encode([
+                    'topLevelTypes' => array_map('get_debug_type', (array) $payload['values']),
+                    'fieldNames' => $encoded['fieldNames'],
+                    'fileFields' => $encoded['fileFields'],
+                ], JSON_INVALID_UTF8_SUBSTITUTE),
+            ]);
             $this->sendRequest($config, $encoded['body'], $this->createMultipartHeaders($config, $encoded['contentType']), true);
         } catch (\Throwable) {
             $this->error($this->wpService->__('Webhook transport failed. The remote operation may have succeeded.', 'modularity-frontend-form'));

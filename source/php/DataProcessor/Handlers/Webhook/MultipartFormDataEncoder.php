@@ -45,7 +45,12 @@ final class MultipartFormDataEncoder
             $body .= "--$boundary\r\nContent-Disposition: form-data; name=\"" . self::token($destination) . "\"; filename=\"$name\"\r\n"
                 . "Content-Type: $type\r\n\r\n$bytes\r\n";
         }
-        return ['body' => $body . "--$boundary--\r\n", 'contentType' => "multipart/form-data; boundary=$boundary"];
+        return [
+            'body' => $body . "--$boundary--\r\n",
+            'contentType' => "multipart/form-data; boundary=$boundary",
+            'fieldNames' => array_map([self::class, 'token'], array_keys($fields)),
+            'fileFields' => array_map([self::class, 'token'], array_keys($files)),
+        ];
     }
 
     private function flatten(mixed $value, array $path, array &$fields): void

@@ -48,6 +48,7 @@ This profile does not prevent duplicates or recover partial data after a crash.
 Check the destination before resubmitting.
 
 Map an image with `{{image}}` as the complete value of an object property. Indexed placeholders such as `{{image.0}}` are rejected.
+The template determines the destination: `{"image":"{{image}}"}` sends a file part named `image`, while `{"data":{"photo":"{{image}}"}}` sends `data[photo]`. Image destinations can be nested objects, but cannot be inside arrays.
 In multipart mode, `{{*}}` includes ordinary field values but omits image fields. Only top-level image fields are supported.
 Wrap an optional value as `{"$optional":"<field>","$value":...}` to omit its whole subtree when the field is absent. Multipart cannot represent explicitly authored `null`, empty arrays, or empty objects.
 
@@ -124,6 +125,8 @@ Wrap an optional value as `{"$optional":"<field>","$value":...}` to omit its who
 Logging is disabled by default. Set `WP_DEBUG_LOG` to `true` to write logs via `error_log()`.
 
 Control the minimum log level with these constants (PSR-3 levels: `emergency` › `alert` › `critical` › `error` › `warning` › `notice` › `info` › `debug`):
+
+At debug level, prepared multipart webhooks log top-level value types and the encoded field/file-part names. Field values, uploaded filenames, local paths, headers, and file contents are not included in this diagnostic.
 
 | Constant | Default | Description |
 |---|---|---|

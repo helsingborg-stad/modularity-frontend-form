@@ -37,9 +37,6 @@ class FrontendForm extends \Modularity\Module
     public $cacheTtl = 0;
     public CacheBust $cacheBust;
 
-    private $formStepQueryParam         = 'step'; // The query parameter for the form steps.
-    private $formIdQueryParam           = 'formid'; // The query parameter for the form id.
-    private $formTokenQueryParam        = 'token';  // The query parameter for the form token.
     private $wordpressStandardFieldsKey = 'wp-standard-fields';
     private GroupHelper $groupHelper;
 
@@ -105,8 +102,6 @@ class FrontendForm extends \Modularity\Module
             return $field;
         });
 
-        //Add query vars that should be allowed in context.
-        $this->wpService->addFilter('query_vars', [$this, 'registerFormQueryVars']);
     }
 
     /**
@@ -452,27 +447,6 @@ class FrontendForm extends \Modularity\Module
     private function getScriptHandle($suffix = null): string
     {
         return 'modularity-' . $this->slug . ($suffix ? '-' . $suffix : '');
-    }
-
-    /**
-     * Registers multiple query variables for the form in order to be able to access them in get_query_var.
-     *
-     * This method takes an array of registered query variables and adds
-     * the form step, form ID, and form token keys to it.
-     *
-     * @param array $registeredQueryVars The array of registered query variables.
-     * @return array The updated array of registered query variables.
-     */
-    public function registerFormQueryVars(array $registeredQueryVars): array
-    {
-        return array_merge(
-            $registeredQueryVars,
-            [
-                $this->formStepQueryParam,
-                $this->formIdQueryParam,
-                $this->formTokenQueryParam
-            ]
-        );
     }
 
     /**

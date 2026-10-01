@@ -437,6 +437,7 @@ class FrontendForm extends \Modularity\Module
             'Modularity/Module/FrontendForm/Assets/Data',
             [
                 'placeSearchApiUrl' => $this->wpService->getRestUrl(null, 'placesearch/v1/openstreetmap'),
+                'mapStyle' => $this->wpService->getThemeMod('map_style', 'default'),
             ]
         );
     }

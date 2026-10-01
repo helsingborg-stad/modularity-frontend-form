@@ -1,5 +1,6 @@
 type ModularityFrontendFormData = {
 	placeSearchApiUrl: string;
+	mapStyle?: string;
 	apiRoutes?: array;
 };
 

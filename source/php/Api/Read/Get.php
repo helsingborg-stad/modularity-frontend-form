@@ -80,8 +80,8 @@ class Get extends RestApiEndpoint
         $fieldData = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
         $fieldData = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 
-        //Add post title
-        $fieldData       = $this->prependPostTitleToFieldData($fieldData, $params->postId);
+        // Add standard WordPress fields after filtering ACF fields.
+        $fieldData       = $this->prependPostFieldsToFieldData($fieldData, $params->postId, $params->moduleId);
 
         if ($fieldData !== false) {
             return new WP_REST_Response(
@@ -202,16 +202,25 @@ class Get extends RestApiEndpoint
     }
 
     /**
-     * Prepend the post title to the field data
+     * Prepend the post title and configured post content to the field data
      *
      * @param array $fieldData The field data
      * @param int $postId The post ID
      *
-     * @return array The field data with the post title prepended
+     * @param int $moduleId The form module ID
+     * @return array The field data with standard post fields prepended
      */
-    private function prependPostTitleToFieldData(array $fieldData, int $postId): array
+    private function prependPostFieldsToFieldData(array $fieldData, int $postId, int $moduleId): array
     {
-        return ['post_title' => $this->wpService->getPost($postId)->post_title ?? null] + $fieldData;
+        $post = $this->wpService->getPost($postId);
+        $postFields = ['post_title' => $post->post_title ?? null];
+
+        // Extra response fields cause the frontend populator to reject the data.
+        if (in_array('editor', $this->getModuleConfigInstance($moduleId)->getDynamicPostFeatures(), true)) {
+            $postFields['post_content'] = $post->post_content ?? '';
+        }
+
+        return $postFields + $fieldData;
     }
 
     /**

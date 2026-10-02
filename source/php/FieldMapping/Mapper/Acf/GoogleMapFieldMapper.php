@@ -24,6 +24,27 @@ class GoogleMapFieldMapper implements FieldMapperInterface
         $mapped['lat'] = $this->field['center_lat'] ?: '59.32932';
         $mapped['lng'] = $this->field['center_lng'] ?: '18.06858';
         $mapped['zoom'] = $this->field['zoom'] ?: '14';
+
+        // Prefer Municipio's site-wide defaults when configured in Customizer.
+        $center = $this->wpService->getThemeMod('map_start_lat_lng', '');
+        if (is_string($center)) {
+            $coordinates = array_map('trim', explode(',', $center));
+            if (
+                count($coordinates) === 2
+                && is_numeric($coordinates[0])
+                && is_numeric($coordinates[1])
+                && abs((float) $coordinates[0]) <= 90
+                && abs((float) $coordinates[1]) <= 180
+            ) {
+                $mapped['lat'] = (float) $coordinates[0];
+                $mapped['lng'] = (float) $coordinates[1];
+            }
+        }
+
+        $zoom = $this->wpService->getThemeMod('map_start_zoom', null);
+        if (is_numeric($zoom) && (float) $zoom >= 0 && (float) $zoom <= 18) {
+            $mapped['zoom'] = (int) $zoom;
+        }
         $mapped['classList'][] = 'mod-frontend-form__openstreetmap';
         // openstreetmap class is needed
         $mapped['classList'][] = 'openstreetmap';

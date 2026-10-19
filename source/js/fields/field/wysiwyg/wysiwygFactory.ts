@@ -18,7 +18,7 @@ class WysiwygFactory {
 		notices: NoticeInterface,
 		stepId: string,
 	): FieldInterface {
-		const actions = new Actions(modularityFrontendFormLang);
+		const actions = new Actions(modularityFrontendFormLang, field);
 		const editorConfig = new EditorConfig(actions, {
 			element: field,
 			actions: {

@@ -1,7 +1,10 @@
 class Actions implements ActionsInterface {
 	private isExecuting: boolean = false;
 	private defaultActions: EditorActions = {};
-	constructor(private modularityFrontend: ModularityFrontendFormLang) {
+	constructor(
+		private modularityFrontend: ModularityFrontendFormLang,
+		private field: HTMLElement,
+	) {
 		this.defaultActions = this.setDefaultActions();
 	}
 
@@ -27,7 +30,16 @@ class Actions implements ActionsInterface {
 	}
 
 	public createIcon(name: string): string {
-		return `<span class="c-icon c-icon--size-md material-symbols material-symbols-rounded material-symbols-sharp material-symbols-outlined" data-material-symbol="${name}"></span>`;
+		const template = this.field.querySelector<HTMLTemplateElement>(
+			`[data-js-wysiwyg-icon-template="${name}"]`,
+		);
+
+		if (!template) {
+			console.error(`Could not find WYSIWYG icon template: ${name}`);
+			return "";
+		}
+
+		return template.innerHTML;
 	}
 
 	public queryCommandState(command: string) {

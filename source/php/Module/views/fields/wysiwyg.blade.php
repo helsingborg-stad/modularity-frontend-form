@@ -22,5 +22,25 @@
         'disabled' => true
     ])
     @endfield
+    @foreach ([
+        'format_bold',
+        'format_italic',
+        'format_underlined',
+        'format_strikethrough',
+        'format_h1',
+        'format_h2',
+        'format_quote',
+        'format_list_numbered',
+        'format_list_bulleted',
+        'link'
+    ] as $icon)
+        <template data-js-wysiwyg-icon-template="{{ $icon }}">
+            @icon([
+                'icon' => $icon,
+                'size' => 'md'
+            ])
+            @endicon
+        </template>
+    @endforeach
 <!-- Wysiwyg -->
 @endelement

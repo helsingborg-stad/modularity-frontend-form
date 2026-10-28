@@ -3,6 +3,10 @@
 .mod-frontend-form__layout {
     display: flex;
 
+    .mod-frontend-form__content {
+        min-width: 0;
+    }
+
     /* Dusable visibility for scroollbars */
     .mod-frontend-form__progressbar {
         scrollbar-width: none;

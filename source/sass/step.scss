@@ -96,8 +96,40 @@
 .mod-frontend-form__step-buttons {
     z-index: 4;
     display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--base, 8px) * 1);
     justify-content: flex-end;
     margin-top: calc(var(--base, 8px) * 2);
+}
+
+/* Narrow containers (e.g. mobile or nested blocks) */
+@container (width < 500px) {
+
+    /* A 12-column grid with column gaps has a min-width of 11 gaps (264px), which overflows narrow cards */
+    .mod-frontend-form__step,
+    .mod-frontend-form__repeater-row-fields {
+        grid-template-columns: minmax(0, 1fr);
+
+        > * {
+            grid-column: 1 / -1;
+        }
+    }
+
+    /* Let inputs shrink below their intrinsic size */
+    .mod-frontend-form__field .c-field__inner > :is(input, select, textarea) {
+        min-width: 0;
+    }
+
+    /* Stack step buttons full width, primary action first */
+    .mod-frontend-form__step-buttons {
+        flex-direction: column-reverse;
+        align-items: stretch;
+
+        .c-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
 }
 
 /* Loading */

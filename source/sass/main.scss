@@ -2,6 +2,7 @@
 @use "./variables.scss" as *;
 
 @layer plugin {
+    @include meta.load-css("./animations.scss");
     @include meta.load-css("./repeater.scss");
     @include meta.load-css("./wysiwyg.scss");
     @include meta.load-css("./step.scss");

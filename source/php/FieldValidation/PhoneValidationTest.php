@@ -75,6 +75,32 @@ class PhoneValidationTest extends TestCase
         $this->assertIsString($this->validation->validate(true, [], ['phone_validation' => 'valid']));
     }
 
+    /** @dataProvider formatInputs */
+    public function testFormatRuleInBothModes(string $value, bool $accepted): void
+    {
+        foreach (['possible', 'valid'] as $mode) {
+            $result = $this->validation->validate(true, $value, ['phone_validation' => $mode]);
+            if ($accepted) {
+                $this->assertTrue($result);
+            } else {
+                $this->assertSame('Use digits, spaces, hyphens, dots or parentheses, with an optional + at the start.', $result);
+            }
+        }
+        $this->assertTrue($this->validation->validate(true, $value, ['phone_validation' => 'none']));
+        $this->assertSame('Earlier error', $this->validation->validate('Earlier error', $value, ['phone_validation' => 'valid']));
+    }
+
+    public static function formatInputs(): array
+    {
+        return [
+            ['070-123 45 67', true], ['070.123.45.67', true], ['070 (123) 45 67', true],
+            ['+46 70 123 45 67', true], ['0047 406 12 345', true],
+            ['070ABC4567', false], ['070/1234567', false], ['++46701234567', false],
+            ['070+1234567', false], ["0701234567\n", false], ["070\t1234567", false],
+            ['070ABC1234', false],
+        ];
+    }
+
     public static function possibleNumbers(): array
     {
         return array_map(fn($number) => [$number], [

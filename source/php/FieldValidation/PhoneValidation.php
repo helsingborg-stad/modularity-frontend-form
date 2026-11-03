@@ -88,6 +88,10 @@ class PhoneValidation
         }
 
         if (is_string($value)) {
+            if (preg_match('/\A\+?[0-9 ().-]+\z/', $value) !== 1) {
+                return $this->wpService->__('Use digits, spaces, hyphens, dots or parentheses, with an optional + at the start.', 'modularity-frontend-form');
+            }
+
             try {
                 $util = PhoneNumberUtil::getInstance();
                 $number = $util->parse($value, 'SE');

@@ -5,9 +5,37 @@ namespace ModularityFrontendForm\FieldValidation;
 use PHPUnit\Framework\TestCase;
 use WpService\WpService;
 
+function acf_get_field($key) {
+    return ['type' => $key === 'field_rows' ? 'repeater' : 'text', 'phone_validation' => $key === 'field_plain' ? 'none' : 'possible', 'maxlength' => 20];
+}
+function acf_add_validation_error($input, $message) {
+    PhoneValidationTest::$nativeErrors[$input] = $message;
+}
+
 class PhoneValidationTest extends TestCase
 {
     private PhoneValidation $validation;
+    public static array $nativeErrors = [];
+
+    public function testNativePreflightRejectsMalformedValuesWithoutChangingValidStrings(): void
+    {
+        $originalPost = $_POST;
+        try {
+            self::$nativeErrors = ['other' => 'Earlier error'];
+            $_POST['acf'] = ['field_phone' => ['123'], 'field_plain' => 'ordinary',
+                'field_rows' => [0 => ['field_phone' => '0046 70 123 45 67'], 1 => ['field_phone' => ['123']]]];
+            $this->validation->rejectMalformedNativeValues();
+            $this->assertArrayNotHasKey('field_phone', $_POST['acf']);
+            $this->assertSame('ordinary', $_POST['acf']['field_plain']);
+            $this->assertSame('0046 70 123 45 67', $_POST['acf']['field_rows'][0]['field_phone']);
+            $this->assertArrayNotHasKey('field_phone', $_POST['acf']['field_rows'][1]);
+            $this->assertSame('Earlier error', self::$nativeErrors['other']);
+            $this->assertArrayHasKey('acf[field_phone]', self::$nativeErrors);
+            $this->assertArrayHasKey('acf[field_rows][1][field_phone]', self::$nativeErrors);
+        } finally {
+            $_POST = $originalPost;
+        }
+    }
 
     protected function setUp(): void
     {

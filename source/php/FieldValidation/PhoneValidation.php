@@ -13,7 +13,34 @@ class PhoneValidation
     public function addHooks(): void
     {
         $this->wpService->addAction('acf/render_field_settings/type=text', [$this, 'renderSetting']);
+        $this->wpService->addAction('acf/validate_save_post', [$this, 'rejectMalformedNativeValues'], 4);
         $this->wpService->addFilter('acf/validate_value/type=text', [$this, 'validate'], 10, 3);
+    }
+
+    public function rejectMalformedNativeValues(): void
+    {
+        if (isset($_POST['acf']) && is_array($_POST['acf'])) {
+            $this->checkNativeValues($_POST['acf'], 'acf');
+        }
+    }
+
+    private function checkNativeValues(array &$values, string $prefix): void
+    {
+        foreach ($values as $key => &$value) {
+            $input = "{$prefix}[{$key}]";
+            $field = is_string($key) && str_starts_with($key, 'field_') ? acf_get_field($key) : false;
+            if ($field && ($field['type'] ?? '') === 'text'
+                && in_array($field['phone_validation'] ?? 'none', ['possible', 'valid'], true)
+                && !is_string($value) && $value !== null
+            ) {
+                acf_add_validation_error($input, $this->validate(true, $value, $field));
+                // ACF's native maxlength filter cannot handle arrays, even after validation fails.
+                unset($values[$key]);
+            } elseif (is_array($value)) {
+                $this->checkNativeValues($value, $input);
+            }
+        }
+        unset($value);
     }
 
     public function renderSetting(array $field): void

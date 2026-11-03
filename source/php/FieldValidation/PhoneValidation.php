@@ -13,10 +13,20 @@ class PhoneValidation
     public function addHooks(): void
     {
         $this->wpService->addAction('acf/render_field_settings/type=text', [$this, 'renderSetting']);
+        $this->wpService->addFilter('acf/load_field/type=text', [$this, 'migrateLegacyMode']);
+        $this->wpService->addFilter('acf/update_field/type=text', [$this, 'migrateLegacyMode']);
         $this->wpService->addAction('acf/validate_save_post', [$this, 'rejectMalformedNativeValues'], 4);
         $this->wpService->addFilter('acf/prepare_field/type=text', [$this, 'markPhoneField']);
         $this->wpService->addAction('acf/input/admin_enqueue_scripts', [$this, 'enqueueAccessibility']);
         $this->wpService->addFilter('acf/validate_value/type=text', [$this, 'validate'], 10, 3);
+    }
+
+    public function migrateLegacyMode(array $field): array
+    {
+        if (($field['phone_validation'] ?? 'none') === 'possible') {
+            $field['phone_validation'] = 'valid';
+        }
+        return $field;
     }
 
     public function markPhoneField(array $field): array
@@ -68,12 +78,11 @@ class PhoneValidation
     {
         acf_render_field_setting($field, [
             'label' => $this->wpService->__('Phone validation', 'modularity-frontend-form'),
-            'instructions' => $this->wpService->__('None disables phone validation. Possible is lenient and recommended when validation is wanted. Valid is strict. Neither proves that a number exists or is reachable. Use a country code starting with + or 00 for international numbers.', 'modularity-frontend-form'),
+            'instructions' => $this->wpService->__('None disables phone validation. Valid checks the format and numbering rules but does not prove that a number exists or is reachable. Use a country code starting with + or 00 for international numbers.', 'modularity-frontend-form'),
             'name' => 'phone_validation',
             'type' => 'select',
             'choices' => [
                 'none' => $this->wpService->__('None', 'modularity-frontend-form'),
-                'possible' => $this->wpService->__('Possible', 'modularity-frontend-form'),
                 'valid' => $this->wpService->__('Valid', 'modularity-frontend-form'),
             ],
             'default_value' => 'none',
@@ -95,7 +104,7 @@ class PhoneValidation
             try {
                 $util = PhoneNumberUtil::getInstance();
                 $number = $util->parse($value, 'SE');
-                if ($mode === 'valid' ? $util->isValidNumber($number) : $util->isPossibleNumber($number)) {
+                if ($util->isValidNumber($number)) {
                     return true;
                 }
             } catch (NumberParseException $exception) {

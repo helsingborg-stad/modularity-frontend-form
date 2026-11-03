@@ -1,4 +1,5 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
+import FieldError from "./fieldError";
 import StatusHandler from "../formStatus/handler";
 import { SubmitStatus } from "../formStatus/enum";
 import Form from "../form/form";
@@ -6,6 +7,7 @@ import FormMode from "../form/formModeEnum";
 import StatusRendererInterface from "../formStatus/renderInterface";
 
 class Submit implements SubmitInterface {
+	private fieldError: FieldError;
 	constructor(
 		private form: Form,
 		private modularityFrontendFormData: ModularityFrontendFormData,
@@ -14,6 +16,7 @@ class Submit implements SubmitInterface {
 		private statusHandler: StatusHandler,
 		private statusRenderer: StatusRendererInterface,
 	) {
+		this.fieldError = new FieldError(form.formElement, form.formElementContainer);
 		this.disableFormSubmission();
 	}
 
@@ -49,6 +52,7 @@ class Submit implements SubmitInterface {
 	 * @returns A promise that resolves when the form is submitted.
 	 */
 	public async submit(): Promise<void> {
+		this.fieldError.clear();
 		// this.statusHandler.setCurrentAction();
 		// Set the initial status to working
 		this.statusHandler.setStatus(
@@ -132,7 +136,8 @@ class Submit implements SubmitInterface {
 
 			// Failed
 			if (!response.ok) {
-				if (json.code == "invalid_field_values") {
+				if (json.code === "validation_error" || json.code === "invalid_field_values") {
+					this.fieldError.show(json?.data?.fields?.input, json?.message);
 					this.statusHandler.setStatus(
 						SubmitStatus.Error,
 						json?.message ?? this.modularityFrontendFormLang?.submitError,

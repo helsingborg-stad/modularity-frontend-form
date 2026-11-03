@@ -66,6 +66,8 @@ class App implements \Municipio\HooksRegistrar\Hookable {
         // Set up field formatting
         $this->setUpFieldFormatting();
 
+        (new FieldValidation\PhoneValidation($this->wpService))->addHooks();
+
         // Allow fields to be hidden from frontend-/backend forms.
         $this->allowFieldsToBeHiddenFromFrontendOrBackendForms();
     }

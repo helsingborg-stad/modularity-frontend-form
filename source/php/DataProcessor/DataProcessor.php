@@ -22,7 +22,7 @@ class DataProcessor implements DataProcessorInterface {
         private array $validators,
         private array $handlers,
         private $nullHandler,
-        private ?PhoneNormalizer $phoneNormalizer = null
+        private PhoneNormalizer $phoneNormalizer
     ) {}
 
     /**
@@ -45,7 +45,7 @@ class DataProcessor implements DataProcessorInterface {
 
         //2. If there are no errors, process the data
         if(empty($this->errors)) {
-            $data = $this->phoneNormalizer?->normalize($data) ?? $data;
+            $data = $this->phoneNormalizer->normalize($data);
 
             $this->useNullHandler = empty($this->handlers) ? true : false;
 

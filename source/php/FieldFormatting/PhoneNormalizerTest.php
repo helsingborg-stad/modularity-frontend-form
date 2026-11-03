@@ -24,7 +24,7 @@ require_once dirname(__DIR__, 2) . '/tests/HandlerTestCase.php';
 function acf_get_field($key) {
     $field = ['key' => $key, 'name' => substr($key, 6), 'label' => $key, 'type' => $key === 'field_rows' ? 'repeater' : 'text'];
     if ($key !== 'field_missing') {
-        $field['phone_validation'] = $key === 'field_none' ? 'none' : ($key === 'field_legacy' ? 'possible' : 'valid');
+        $field['phone_validation'] = $key === 'field_none' ? 'none' : 'valid';
     }
     return $field;
 }
@@ -70,12 +70,12 @@ class PhoneNormalizerTest extends HandlerTestCase
         $files = $this->createMock(FileHandlerInterface::class);
         $files->method('handle')->willReturn([]);
         $input = ['form' => [
-            'field_phone' => '070-123 45 67', 'field_legacy' => '0046 70 123 45 67',
+            'field_phone' => '070-123 45 67', 'field_international' => '0046 70 123 45 67',
             'field_none' => '070.123.45.67', 'field_missing' => 'ordinary text', 'field_empty' => '',
             'field_rows' => [0 => ['field_phone' => '0047 406 12 345'], 2 => ['field_phone' => '+46 70 123 45 67']],
         ]];
         $expected = $input['form'];
-        $expected['field_phone'] = $expected['field_legacy'] = '+46701234567';
+        $expected['field_phone'] = $expected['field_international'] = '+46701234567';
         $expected['field_rows'][0]['field_phone'] = '+4740612345';
         $expected['field_rows'][2]['field_phone'] = '+46701234567';
         $stored = [];
@@ -94,7 +94,7 @@ class PhoneNormalizerTest extends HandlerTestCase
         $wp->expects($this->once())->method('wpRemotePost')->willReturnCallback(function ($url, $args) {
             $data = json_decode($args['body'], true)['data'];
             $this->assertSame('+46701234567', $data['phone']);
-            $this->assertSame('+46701234567', $data['legacy']);
+            $this->assertSame('+46701234567', $data['international']);
             $this->assertSame('+4740612345', $data['rows'][0]['phone']);
             $this->assertSame('+46701234567', $data['rows'][2]['phone']);
             $this->assertSame('070.123.45.67', $data['none']);

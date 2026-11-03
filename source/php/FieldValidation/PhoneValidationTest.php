@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use WpService\WpService;
 
 function acf_get_field($key) {
-    return ['type' => $key === 'field_rows' ? 'repeater' : 'text', 'phone_validation' => $key === 'field_plain' ? 'none' : 'possible', 'maxlength' => 20];
+    return ['type' => $key === 'field_rows' ? 'repeater' : 'text', 'phone_validation' => $key === 'field_plain' ? 'none' : 'valid', 'maxlength' => 20];
 }
 function acf_add_validation_error($input, $message) {
     PhoneValidationTest::$nativeErrors[$input] = $message;
@@ -22,13 +22,8 @@ class PhoneValidationTest extends TestCase
     public static array $nativeErrors = [];
     public static array $renderedSetting = [];
 
-    public function testLegacyModeMigrationAndEditorChoices(): void
+    public function testEditorChoices(): void
     {
-        $legacy = ['phone_validation' => 'possible', 'label' => 'Phone'];
-        $this->assertSame(['phone_validation' => 'valid', 'label' => 'Phone'], $this->validation->migrateLegacyMode($legacy));
-        foreach ([[], ['phone_validation' => 'none'], ['phone_validation' => 'valid']] as $field) {
-            $this->assertSame($field, $this->validation->migrateLegacyMode($field));
-        }
         $this->validation->renderSetting([]);
         $this->assertSame(['none', 'valid'], array_keys(self::$renderedSetting['choices']));
         $this->assertSame('none', self::$renderedSetting['default_value']);
@@ -63,15 +58,13 @@ class PhoneValidationTest extends TestCase
 
     public function testNormalizationUsesE164OnlyForAcceptedEnabledValues(): void
     {
-        foreach (['valid', 'possible'] as $mode) {
-            $field = ['phone_validation' => $mode];
-            foreach (['070-123 45 67', '+46 70 123 45 67', '0046 70 123 45 67', '+46701234567'] as $value) {
-                $this->assertSame('+46701234567', $this->validation->normalizeValue($value, 1, $field));
-            }
-            $this->assertSame('+4740612345', $this->validation->normalizeValue('0047 406 12 345', 1, $field));
-            foreach (['', null, '0', '123', '070ABC1234', '++46701234567', [], '+46 10 000 00 00'] as $value) {
-                $this->assertSame($value, $this->validation->normalizeValue($value, 1, $field));
-            }
+        $field = ['phone_validation' => 'valid'];
+        foreach (['070-123 45 67', '+46 70 123 45 67', '0046 70 123 45 67', '+46701234567'] as $value) {
+            $this->assertSame('+46701234567', $this->validation->normalizeValue($value, 1, $field));
+        }
+        $this->assertSame('+4740612345', $this->validation->normalizeValue('0047 406 12 345', 1, $field));
+        foreach (['', null, '0', '123', '070ABC1234', '++46701234567', [], '+46 10 000 00 00'] as $value) {
+            $this->assertSame($value, $this->validation->normalizeValue($value, 1, $field));
         }
         foreach ([[], ['phone_validation' => 'none']] as $field) {
             $this->assertSame('070-123 45 67', $this->validation->normalizeValue('070-123 45 67', 1, $field));
@@ -82,19 +75,15 @@ class PhoneValidationTest extends TestCase
     {
         $plain = ['type' => 'text', 'wrapper' => ['class' => 'existing']];
         $this->assertSame($plain, $this->validation->markPhoneField($plain));
-        foreach (['possible', 'valid'] as $mode) {
-            $marked = $this->validation->markPhoneField($plain + ['phone_validation' => $mode]);
-            $this->assertSame('true', $marked['wrapper']['data-phone-validation']);
-            $this->assertSame('existing', $marked['wrapper']['class']);
-        }
+        $marked = $this->validation->markPhoneField($plain + ['phone_validation' => 'valid']);
+        $this->assertSame('true', $marked['wrapper']['data-phone-validation']);
+        $this->assertSame('existing', $marked['wrapper']['class']);
     }
 
     /** @dataProvider validNumbers */
-    public function testValidNumbersAndLegacyMode(string $number): void
+    public function testValidNumbers(string $number): void
     {
-        foreach (['valid', 'possible'] as $mode) {
-            $this->assertTrue($this->validation->validate(true, $number, ['phone_validation' => $mode]));
-        }
+        $this->assertTrue($this->validation->validate(true, $number, ['phone_validation' => 'valid']));
     }
 
     public function testStrictModeUsesLibraryValidityWithoutChangingOtherModes(): void
@@ -103,9 +92,7 @@ class PhoneValidationTest extends TestCase
             $this->assertTrue($this->validation->validate(true, $value, ['phone_validation' => 'valid']));
         }
         foreach (['+46 10 000 00 00', '73209899', '073209899', '+12223333333'] as $value) {
-            foreach (['valid', 'possible'] as $mode) {
-                $this->assertIsString($this->validation->validate(true, $value, ['phone_validation' => $mode]));
-            }
+            $this->assertIsString($this->validation->validate(true, $value, ['phone_validation' => 'valid']));
         }
         $this->assertTrue($this->validation->validate(true, '', ['phone_validation' => 'valid']));
         $this->assertSame('Required', $this->validation->validate('Required', '', ['phone_validation' => 'valid']));
@@ -114,15 +101,13 @@ class PhoneValidationTest extends TestCase
     }
 
     /** @dataProvider formatInputs */
-    public function testFormatRuleInBothModes(string $value, bool $accepted): void
+    public function testFormatRule(string $value, bool $accepted): void
     {
-        foreach (['possible', 'valid'] as $mode) {
-            $result = $this->validation->validate(true, $value, ['phone_validation' => $mode]);
-            if ($accepted) {
-                $this->assertTrue($result);
-            } else {
-                $this->assertSame('Use digits, spaces, hyphens, dots or parentheses, with an optional + at the start.', $result);
-            }
+        $result = $this->validation->validate(true, $value, ['phone_validation' => 'valid']);
+        if ($accepted) {
+            $this->assertTrue($result);
+        } else {
+            $this->assertSame('Use digits, spaces, hyphens, dots or parentheses, with an optional + at the start.', $result);
         }
         $this->assertTrue($this->validation->validate(true, $value, ['phone_validation' => 'none']));
         $this->assertSame('Earlier error', $this->validation->validate('Earlier error', $value, ['phone_validation' => 'valid']));
@@ -152,15 +137,15 @@ class PhoneValidationTest extends TestCase
     {
         $this->assertTrue($this->validation->validate(true, 'bad', []));
         $this->assertTrue($this->validation->validate(true, 'bad', ['phone_validation' => 'none']));
-        $this->assertTrue($this->validation->validate(true, '', ['phone_validation' => 'possible']));
-        $this->assertFalse($this->validation->validate(false, '', ['phone_validation' => 'possible']));
-        $this->assertSame('Earlier error', $this->validation->validate('Earlier error', 'bad', ['phone_validation' => 'possible']));
+        $this->assertTrue($this->validation->validate(true, '', ['phone_validation' => 'valid']));
+        $this->assertFalse($this->validation->validate(false, '', ['phone_validation' => 'valid']));
+        $this->assertSame('Earlier error', $this->validation->validate('Earlier error', 'bad', ['phone_validation' => 'valid']));
     }
 
     /** @dataProvider badNumbers */
     public function testRejectsBadNumbers(mixed $number): void
     {
-        $this->assertIsString($this->validation->validate(true, $number, ['phone_validation' => 'possible']));
+        $this->assertIsString($this->validation->validate(true, $number, ['phone_validation' => 'valid']));
     }
 
     public static function badNumbers(): array

@@ -14,8 +14,6 @@ class PhoneValidation
     public function addHooks(): void
     {
         $this->wpService->addAction('acf/render_field_settings/type=text', [$this, 'renderSetting']);
-        $this->wpService->addFilter('acf/load_field/type=text', [$this, 'migrateLegacyMode']);
-        $this->wpService->addFilter('acf/update_field/type=text', [$this, 'migrateLegacyMode']);
         $this->wpService->addAction('acf/validate_save_post', [$this, 'rejectMalformedNativeValues'], 4);
         $this->wpService->addFilter('acf/prepare_field/type=text', [$this, 'markPhoneField']);
         $this->wpService->addAction('acf/input/admin_enqueue_scripts', [$this, 'enqueueAccessibility']);
@@ -23,17 +21,9 @@ class PhoneValidation
         $this->wpService->addFilter('acf/update_value/type=text', [$this, 'normalizeValue'], 10, 3);
     }
 
-    public function migrateLegacyMode(array $field): array
-    {
-        if (($field['phone_validation'] ?? 'none') === 'possible') {
-            $field['phone_validation'] = 'valid';
-        }
-        return $field;
-    }
-
     public function markPhoneField(array $field): array
     {
-        if (in_array($field['phone_validation'] ?? 'none', ['possible', 'valid'], true)) {
+        if (($field['phone_validation'] ?? 'none') === 'valid') {
             $field['wrapper']['data-phone-validation'] = 'true';
         }
         return $field;
@@ -63,7 +53,7 @@ class PhoneValidation
             $input = "{$prefix}[{$key}]";
             $field = is_string($key) && str_starts_with($key, 'field_') ? acf_get_field($key) : false;
             if ($field && ($field['type'] ?? '') === 'text'
-                && in_array($field['phone_validation'] ?? 'none', ['possible', 'valid'], true)
+                && ($field['phone_validation'] ?? 'none') === 'valid'
                 && !is_string($value) && $value !== null
             ) {
                 acf_add_validation_error($input, $this->validate(true, $value, $field));
@@ -93,7 +83,7 @@ class PhoneValidation
 
     public function normalizeValue(mixed $value, mixed $postId, array $field): mixed
     {
-        if (!in_array($field['phone_validation'] ?? 'none', ['valid', 'possible'], true)
+        if (($field['phone_validation'] ?? 'none') !== 'valid'
             || !is_string($value) || $value === '' || $this->validate(true, $value, $field) !== true
         ) {
             return $value;
@@ -106,7 +96,7 @@ class PhoneValidation
     public function validate(mixed $valid, mixed $value, array $field): mixed
     {
         $mode = $field['phone_validation'] ?? 'none';
-        if ($valid !== true || !in_array($mode, ['possible', 'valid'], true) || $value === '' || $value === null) {
+        if ($valid !== true || $mode !== 'valid' || $value === '' || $value === null) {
             return $valid;
         }
 

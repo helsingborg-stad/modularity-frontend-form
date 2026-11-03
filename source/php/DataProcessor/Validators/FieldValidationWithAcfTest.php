@@ -6,6 +6,7 @@ use AcfService\AcfService;
 use ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigInterface;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
+use ModularityFrontendForm\FieldFormatting\PhoneNormalizer;
 use ModularityFrontendForm\DataProcessor\Handlers\HandlerTestCase;
 use WP_REST_Request;
 use WpService\WpService;
@@ -54,7 +55,7 @@ class FieldValidationWithAcfTest extends HandlerTestCase
         self::$errors = [['input' => 'unrelated', 'message' => 'Earlier']];
         self::$calls = [];
         $request = $this->createMock(WP_REST_Request::class);
-        $processor = new DataProcessor([$this->validator()], [], null);
+        $processor = new DataProcessor([$this->validator()], [], null, $this->createMock(PhoneNormalizer::class));
         $data = ['nonce' => 'ignored', 'form' => ['field_rows' => [
             ['field_phone' => '0047 406 12 345'], ['field_phone' => 'bad'], ['field_phone' => 'bad'],
         ]]];

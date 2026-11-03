@@ -140,6 +140,7 @@ class MailHandler implements HandlerInterface {
    */
   private function createEmailBody(array $data): string
   {
+      $data = $data[$this->config->getFieldNamespace()] ?? $data;
       $rows = [];
       foreach ($data as $acfKey => $value) {
           if (in_array($acfKey, $this->config->getUnprintableKeys())) {
@@ -199,6 +200,9 @@ class MailHandler implements HandlerInterface {
    */
   public function sanitizeFieldValue($value): string
   {
+    if (is_array($value)) {
+      return implode(', ', array_map([$this, 'sanitizeFieldValue'], $value));
+    }
     return $this->wpService->sanitizeTextField($value);
   }
 

@@ -44,6 +44,17 @@ class PhoneValidationTest extends TestCase
         $this->validation = new PhoneValidation($wp);
     }
 
+    public function testOnlyEnabledPhoneFieldsGetAccessibilityMarker(): void
+    {
+        $plain = ['type' => 'text', 'wrapper' => ['class' => 'existing']];
+        $this->assertSame($plain, $this->validation->markPhoneField($plain));
+        foreach (['possible', 'valid'] as $mode) {
+            $marked = $this->validation->markPhoneField($plain + ['phone_validation' => $mode]);
+            $this->assertSame('true', $marked['wrapper']['data-phone-validation']);
+            $this->assertSame('existing', $marked['wrapper']['class']);
+        }
+    }
+
     /** @dataProvider possibleNumbers */
     public function testPossibleNumbers(string $number): void
     {

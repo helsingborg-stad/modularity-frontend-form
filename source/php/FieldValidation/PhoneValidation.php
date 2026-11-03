@@ -14,7 +14,28 @@ class PhoneValidation
     {
         $this->wpService->addAction('acf/render_field_settings/type=text', [$this, 'renderSetting']);
         $this->wpService->addAction('acf/validate_save_post', [$this, 'rejectMalformedNativeValues'], 4);
+        $this->wpService->addFilter('acf/prepare_field/type=text', [$this, 'markPhoneField']);
+        $this->wpService->addAction('acf/input/admin_enqueue_scripts', [$this, 'enqueueAccessibility']);
         $this->wpService->addFilter('acf/validate_value/type=text', [$this, 'validate'], 10, 3);
+    }
+
+    public function markPhoneField(array $field): array
+    {
+        if (in_array($field['phone_validation'] ?? 'none', ['possible', 'valid'], true)) {
+            $field['wrapper']['data-phone-validation'] = 'true';
+        }
+        return $field;
+    }
+
+    public function enqueueAccessibility(): void
+    {
+        $this->wpService->wpEnqueueScript(
+            'modularity-phone-validation',
+            MODULARITYFRONTENDFORM_URL . '/dist/' . (new \ModularityFrontendForm\Helper\CacheBust())->name('js/phone-validation.js'),
+            ['acf-input'],
+            null,
+            true
+        );
     }
 
     public function rejectMalformedNativeValues(): void

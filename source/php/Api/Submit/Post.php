@@ -10,6 +10,8 @@ use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
 use ModularityFrontendForm\Config\GetModuleConfigInstanceTrait;
 use ModularityFrontendForm\DataProcessor\DataProcessor;
+use ModularityFrontendForm\FieldFormatting\PhoneNormalizer;
+use ModularityFrontendForm\FieldValidation\PhoneValidation;
 use WP_Error;
 use WP_Http;
 use WP_REST_Request;
@@ -83,6 +85,7 @@ class Post extends RestApiEndpoint
             $this->validatorFactory->createInsertValidators($params->moduleId),
             $this->handlerFactory->createHandlers($params, $request),
             $this->handlerFactory->createNullHandler($params),
+            new PhoneNormalizer(new PhoneValidation($this->wpService), $this->config),
         );
 
         $dataProcessorResult = $dataProcessor->process($data, $request);

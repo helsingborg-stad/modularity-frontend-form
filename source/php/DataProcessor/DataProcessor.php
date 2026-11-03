@@ -9,6 +9,7 @@
 namespace ModularityFrontendForm\DataProcessor;
 
 use ModularityFrontendForm\DataProcessor\DataProcessorInterface;
+use ModularityFrontendForm\FieldFormatting\PhoneNormalizer;
 use WP_Error;
 use WP_REST_Request;
 
@@ -20,7 +21,8 @@ class DataProcessor implements DataProcessorInterface {
     public function __construct(
         private array $validators,
         private array $handlers,
-        private $nullHandler
+        private $nullHandler,
+        private ?PhoneNormalizer $phoneNormalizer = null
     ) {}
 
     /**
@@ -43,6 +45,7 @@ class DataProcessor implements DataProcessorInterface {
 
         //2. If there are no errors, process the data
         if(empty($this->errors)) {
+            $data = $this->phoneNormalizer?->normalize($data) ?? $data;
 
             $this->useNullHandler = empty($this->handlers) ? true : false;
 

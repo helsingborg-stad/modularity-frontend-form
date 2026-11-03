@@ -4,6 +4,7 @@ namespace ModularityFrontendForm\FieldValidation;
 
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
 use WpService\WpService;
 
 class PhoneValidation
@@ -19,6 +20,7 @@ class PhoneValidation
         $this->wpService->addFilter('acf/prepare_field/type=text', [$this, 'markPhoneField']);
         $this->wpService->addAction('acf/input/admin_enqueue_scripts', [$this, 'enqueueAccessibility']);
         $this->wpService->addFilter('acf/validate_value/type=text', [$this, 'validate'], 10, 3);
+        $this->wpService->addFilter('acf/update_value/type=text', [$this, 'normalizeValue'], 10, 3);
     }
 
     public function migrateLegacyMode(array $field): array
@@ -87,6 +89,18 @@ class PhoneValidation
             ],
             'default_value' => 'none',
         ]);
+    }
+
+    public function normalizeValue(mixed $value, mixed $postId, array $field): mixed
+    {
+        if (!in_array($field['phone_validation'] ?? 'none', ['valid', 'possible'], true)
+            || !is_string($value) || $value === '' || $this->validate(true, $value, $field) !== true
+        ) {
+            return $value;
+        }
+
+        $util = PhoneNumberUtil::getInstance();
+        return $util->format($util->parse($value, 'SE'), PhoneNumberFormat::E164);
     }
 
     public function validate(mixed $valid, mixed $value, array $field): mixed

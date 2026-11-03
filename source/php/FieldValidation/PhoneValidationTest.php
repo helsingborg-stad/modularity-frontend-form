@@ -61,6 +61,23 @@ class PhoneValidationTest extends TestCase
         $this->validation = new PhoneValidation($wp);
     }
 
+    public function testNormalizationUsesE164OnlyForAcceptedEnabledValues(): void
+    {
+        foreach (['valid', 'possible'] as $mode) {
+            $field = ['phone_validation' => $mode];
+            foreach (['070-123 45 67', '+46 70 123 45 67', '0046 70 123 45 67', '+46701234567'] as $value) {
+                $this->assertSame('+46701234567', $this->validation->normalizeValue($value, 1, $field));
+            }
+            $this->assertSame('+4740612345', $this->validation->normalizeValue('0047 406 12 345', 1, $field));
+            foreach (['', null, '0', '123', '070ABC1234', '++46701234567', [], '+46 10 000 00 00'] as $value) {
+                $this->assertSame($value, $this->validation->normalizeValue($value, 1, $field));
+            }
+        }
+        foreach ([[], ['phone_validation' => 'none']] as $field) {
+            $this->assertSame('070-123 45 67', $this->validation->normalizeValue('070-123 45 67', 1, $field));
+        }
+    }
+
     public function testOnlyEnabledPhoneFieldsGetAccessibilityMarker(): void
     {
         $plain = ['type' => 'text', 'wrapper' => ['class' => 'existing']];

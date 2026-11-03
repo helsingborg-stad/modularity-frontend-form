@@ -22,6 +22,20 @@ class PhoneValidationTest extends TestCase
         $this->assertTrue($this->validation->validate(true, $number, ['phone_validation' => 'possible']));
     }
 
+    public function testStrictModeUsesLibraryValidityWithoutChangingOtherModes(): void
+    {
+        foreach (['070-123 45 67', '+46 70 123 45 67', '0046 70 123 45 67', '+47 406 12 345', '0047 406 12 345'] as $value) {
+            $this->assertTrue($this->validation->validate(true, $value, ['phone_validation' => 'valid']));
+        }
+        $value = '+46 10 000 00 00';
+        $this->assertTrue($this->validation->validate(true, $value, ['phone_validation' => 'possible']));
+        $this->assertIsString($this->validation->validate(true, $value, ['phone_validation' => 'valid']));
+        $this->assertTrue($this->validation->validate(true, '', ['phone_validation' => 'valid']));
+        $this->assertSame('Required', $this->validation->validate('Required', '', ['phone_validation' => 'valid']));
+        $this->assertIsString($this->validation->validate(true, '0', ['phone_validation' => 'valid']));
+        $this->assertIsString($this->validation->validate(true, [], ['phone_validation' => 'valid']));
+    }
+
     public static function possibleNumbers(): array
     {
         return array_map(fn($number) => [$number], [

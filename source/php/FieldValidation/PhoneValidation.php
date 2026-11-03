@@ -20,12 +20,13 @@ class PhoneValidation
     {
         acf_render_field_setting($field, [
             'label' => $this->wpService->__('Phone validation', 'modularity-frontend-form'),
-            'instructions' => $this->wpService->__('Use a country code starting with + or 00 for international numbers.', 'modularity-frontend-form'),
+            'instructions' => $this->wpService->__('None disables phone validation. Possible is lenient and recommended when validation is wanted. Valid is strict. Neither proves that a number exists or is reachable. Use a country code starting with + or 00 for international numbers.', 'modularity-frontend-form'),
             'name' => 'phone_validation',
             'type' => 'select',
             'choices' => [
                 'none' => $this->wpService->__('None', 'modularity-frontend-form'),
                 'possible' => $this->wpService->__('Possible', 'modularity-frontend-form'),
+                'valid' => $this->wpService->__('Valid', 'modularity-frontend-form'),
             ],
             'default_value' => 'none',
         ]);
@@ -33,14 +34,16 @@ class PhoneValidation
 
     public function validate(mixed $valid, mixed $value, array $field): mixed
     {
-        if ($valid !== true || ($field['phone_validation'] ?? 'none') !== 'possible' || $value === '' || $value === null) {
+        $mode = $field['phone_validation'] ?? 'none';
+        if ($valid !== true || !in_array($mode, ['possible', 'valid'], true) || $value === '' || $value === null) {
             return $valid;
         }
 
         if (is_string($value)) {
             try {
                 $util = PhoneNumberUtil::getInstance();
-                if ($util->isPossibleNumber($util->parse($value, 'SE'))) {
+                $number = $util->parse($value, 'SE');
+                if ($mode === 'valid' ? $util->isValidNumber($number) : $util->isPossibleNumber($number)) {
                     return true;
                 }
             } catch (NumberParseException $exception) {
@@ -48,6 +51,6 @@ class PhoneValidation
             }
         }
 
-        return $this->wpService->__('Enter a possible phone number. For international numbers, include the country code starting with + or 00.', 'modularity-frontend-form');
+        return $this->wpService->__('Check the phone number. For international numbers, include the country code starting with + or 00.', 'modularity-frontend-form');
     }
 }

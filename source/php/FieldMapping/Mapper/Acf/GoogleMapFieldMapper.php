@@ -24,6 +24,7 @@ class GoogleMapFieldMapper implements FieldMapperInterface
         $mapped['lat'] = $this->field['center_lat'] ?: '59.32932';
         $mapped['lng'] = $this->field['center_lng'] ?: '18.06858';
         $mapped['zoom'] = $this->field['zoom'] ?: '14';
+        $mapped['mapStyle'] = $this->wpService->getThemeMod('map_style', 'default');
 
         // Prefer Municipio's site-wide defaults when configured in Customizer.
         $center = $this->wpService->getThemeMod('map_start_lat_lng', '');

@@ -6,7 +6,16 @@ const entries = {
 	"js/admin": "./source/js/admin/admin.ts",
 };
 
-export default createViteConfig(entries, {
+const createConfig = createViteConfig(entries, {
 	outDir: "dist",
 	manifestFile: "manifest.json",
 });
+
+export default (environment) => {
+	const config = createConfig(environment);
+
+	return {
+		...config,
+		build: { ...config.build, cssTarget: "esnext" },
+	};
+};

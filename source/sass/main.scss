@@ -10,8 +10,6 @@
     @include meta.load-css("./map.scss");
     @include meta.load-css("./working.scss");
     @include meta.load-css("./multichoice.scss");
-    @include meta.load-css("@helsingborg-stad/openstreetmap/dist/main.css");
-
     .mod-frontend-form form {
         display: flex;
         flex-direction: column;

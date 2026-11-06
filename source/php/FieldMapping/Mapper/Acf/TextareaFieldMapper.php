@@ -17,7 +17,7 @@ class TextareaFieldMapper implements FieldMapperInterface
 
         $mapped['placeholder']                         = $this->field['placeholder'] ?? '';
         $mapped['value']                               = $this->field['default_value'] ?? '';
-        $mapped['rows']                                = $this->field['rows'] ?: 5;
+        $mapped['rows']                                = (int) ($this->field['rows'] ?: 5);
         $mapped['multiline']                           = $mapped['rows'];
         $mapped['moveAttributesListToFieldAttributes'] = false;
 

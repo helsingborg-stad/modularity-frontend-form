@@ -31,7 +31,7 @@ class CheckboxFieldMapper implements FieldMapperInterface
                 'type'     => $mapped['type'],
                 'label'    => $value,
                 'name'     => $this->config->getFieldNamespace($this->field['key']).'[]',
-                'value'    => $key,
+                'value'    => (string) $key,
                 'checked'  => in_array($key, $this->field['default_value'] ?? [], true),
             ];
         }

@@ -23,7 +23,7 @@ class BasicFieldMapper implements BasicFieldMapperInterface
             'view'        => $this->type,
             'label'       => $this->field['label'],
             'name'        => $this->field['key'],
-            'required'    => $this->field['required'] ?: false,
+            'required'    => !empty($this->field['required']),
             'description' => $this->field['instructions'] ?: '',
             'id'          => $this->field['wrapper']['id'] ?: $this->field['key'],
             'disabled'    => true,

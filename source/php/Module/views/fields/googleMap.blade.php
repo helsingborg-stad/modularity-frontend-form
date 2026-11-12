@@ -23,16 +23,17 @@
     ])
     @endfield
     @element([
-        'id' => $field['name'] . '_map',
-        'classList' => ['mod-frontend-form__openstreetmap','mod-frontend-form__openstreetmap_container'],
-        'attributeList' => [
-            'data-js-openstreetmap' => 'true',
-            'data-js-zoom' => $field['zoom'],
-            'data-js-lat' => $field['lat'],
-            'data-js-lng' => $field['lng'],
-            'style' => 'height: ' . $field['height'] . 'px; position: relative;',
-        ]
+        'classList' => ['mod-frontend-form__openstreetmap_container'],
     ])
-        <!-- osm -->
+        @map([
+            'id' => $field['name'] . '_map',
+            'lat' => $field['lat'],
+            'lng' => $field['lng'],
+            'zoom' => $field['zoom'],
+            'provider' => 'openstreetmap',
+            'mapStyle' => $field['mapStyle'],
+            'height' => $field['height'] . 'px',
+        ])
+        @endmap
     @endelement
 @endelement

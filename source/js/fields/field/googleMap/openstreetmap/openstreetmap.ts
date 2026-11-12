@@ -104,7 +104,10 @@ class Openstreetmap implements OpenstreetmapInterface {
 			return;
 		}
 
-		if (e.originalEvent.target && e.originalEvent.target.classList.contains('mod-frontend-form__openstreetmap')) {
+		if (
+			e.originalEvent.target instanceof Element &&
+			e.originalEvent.target.closest('[data-js-form-map]')
+		) {
 			this.addOrMoveMarker(e.latLng);
 		}
 	}

@@ -19,9 +19,12 @@ import FormParamExtractor from './formPopulator/formParamExtractor';
 import FormDataFetcher from './formPopulator/formDataFetcher';
 import FieldsPopulator from './formPopulator/fieldsPopulator';
 import FormProgressBar from './progressbar';
+import prepareGoogleMapsForFormControls from './fields/field/googleMap/openstreetmap/mapComponentAdapter';
 
 declare const modularityFrontendFormData: ModularityFrontendFormData;
 declare const modularityFrontendFormLang: ModularityFrontendFormLang;
+
+prepareGoogleMapsForFormControls();
 
 class FormHandler {
 	private form: Form;

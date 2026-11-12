@@ -29,8 +29,8 @@ class FieldsExistsOnPostType implements ValidatorInterface
      */
     public function validate(array $data, WP_REST_Request $request): ?ValidationResultInterface
     {
-      //All submitted keys
-      $fieldKeys = array_keys($data);
+      $fields = $data[$this->config->getFieldNamespace()] ?? [];
+      $fieldKeys = is_array($fields) ? array_keys($fields) : [];
 
       // Check for field keys that are present on the post type
       $validKeys = $this->filterUnmappedFieldKeysForPostType(

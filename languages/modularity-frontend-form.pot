@@ -567,10 +567,6 @@ msgstr ""
 msgid "Please enter a valid URL (ex. %s)"
 msgstr ""
 
-#: Module/FrontendForm.php:190
-msgid "Please enter a valid phone number"
-msgstr ""
-
 #: Module/FrontendForm.php:191
 msgid "Please enter a valid date (ex. yyyy-mm-dd)"
 msgstr ""

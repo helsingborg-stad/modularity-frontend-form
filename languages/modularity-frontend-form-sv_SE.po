@@ -629,10 +629,6 @@ msgstr "Vänligen ange en giltig e-postadress (t.ex. %s)"
 msgid "Please enter a valid URL (ex. %s)"
 msgstr "Vänligen ange en giltig URL (t.ex. %s)"
 
-#: php/Module/FrontendForm.php:195
-msgid "Please enter a valid phone number"
-msgstr "Vänligen ange ett giltigt telefonnummer"
-
 #: php/Module/FrontendForm.php:196
 msgid "Please enter a valid date (ex. yyyy-mm-dd)"
 msgstr "Vänligen ange ett giltigt datum (t.ex. åååå-mm-dd)"

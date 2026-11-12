@@ -187,7 +187,6 @@ class FrontendForm extends \Modularity\Module
             'errorSelect'              => $this->wpService->__('Please select an option', 'modularity-frontend-form'),
             'errorEmail'               => $this->wpService->__('Please enter a valid email address (ex. %s)', 'modularity-frontend-form'),
             'errorUrl'                 => $this->wpService->__('Please enter a valid URL (ex. %s)', 'modularity-frontend-form'),
-            'errorPhone'               => $this->wpService->__('Please enter a valid phone number', 'modularity-frontend-form'),
             'errorDate'                => $this->wpService->__('Please enter a valid date (ex. yyyy-mm-dd)', 'modularity-frontend-form'),
             'errorDateRangeUnderflow'  => $this->wpService->__('Please enter a date after %s', 'modularity-frontend-form'),
             'errorDateRangeOverflow'   => $this->wpService->__('Please enter a date before %s', 'modularity-frontend-form'),

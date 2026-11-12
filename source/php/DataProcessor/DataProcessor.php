@@ -43,6 +43,7 @@ class DataProcessor implements DataProcessorInterface {
 
         //2. If there are no errors, process the data
         if(empty($this->errors)) {
+            $data = apply_filters('ModularityFrontendForm/Submission/Data', $data);
 
             $this->useNullHandler = empty($this->handlers) ? true : false;
 

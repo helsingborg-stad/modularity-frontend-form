@@ -93,7 +93,7 @@ class PhoneIntegrationTest extends TestCase
     {
         \Brain\Monkey\Functions\when('acf_get_field_type')->justReturn(false);
         \Brain\Monkey\Functions\when('acf_get_field')->justReturn(['type' => 'phone_number']);
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(UnavailableFieldType::class);
         $this->integration->normalize(['form' => ['field_phone' => '202-555-0123']]);
     }
 }

@@ -32,7 +32,7 @@ class PhoneIntegration implements Hookable
             return $value;
         }
         if (!acf_get_field_type('phone_number')) {
-            throw new \RuntimeException('ACF Phone Number Field must be installed and registered.');
+            throw new UnavailableFieldType('ACF Phone Number Field must be installed and registered.');
         }
         return (new PhoneFormatter())->display(
             $value,
@@ -60,7 +60,7 @@ class PhoneIntegration implements Hookable
             if ($field['type'] === 'phone_number') {
                 $phone = acf_get_field_type('phone_number');
                 if (!$phone) {
-                    throw new \RuntimeException('ACF Phone Number Field must be installed and registered.');
+                    throw new UnavailableFieldType('ACF Phone Number Field must be installed and registered.');
                 }
                 $values[$key] = $phone->update_value($value, null, $field);
             } elseif ($field['type'] === 'repeater' && is_array($value)) {

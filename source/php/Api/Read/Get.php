@@ -4,6 +4,7 @@ namespace ModularityFrontendForm\Api\Read;
 
 use AcfService\AcfService;
 use ModularityFrontendForm\FieldFormatting\DisplayValue;
+use ModularityFrontendForm\FieldFormatting\UnavailableFieldType;
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
@@ -77,7 +78,18 @@ class Get extends RestApiEndpoint
 
         //Get fields from post id 
         $fieldData = get_field_objects($params->postId, false);
-        $fieldData = $this->retrieveValues($fieldData);
+        try {
+            $fieldData = $this->retrieveValues($fieldData);
+        } catch (UnavailableFieldType) {
+            return new WP_Error(
+                'form_unavailable',
+                $this->wpService->__(
+                    'The form is temporarily unavailable. Please try again later.',
+                    'modularity-frontend-form'
+                ),
+                ['status' => 503]
+            );
+        }
         $fieldData = $this->translateFieldNamesToFieldKeys($params->postId, $fieldData);
         $fieldData = $this->filterUnmappedFieldKeysForPostType($params->moduleId, $fieldData);
 

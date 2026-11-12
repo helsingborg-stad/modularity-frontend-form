@@ -1,3 +1,8 @@
+@if (!empty($error))
+    @notice(['type' => 'danger'])
+        {{ $error }}
+    @endnotice
+@else
 @card([
     'classList' => [
         'mod-frontend-form',
@@ -58,3 +63,4 @@
         @endelement
     @endelement
 @endcard
+@endif

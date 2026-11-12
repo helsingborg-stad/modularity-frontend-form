@@ -18,6 +18,7 @@ use ModularityFrontendForm\Config\Config;
 use ModularityFrontendForm\Config\ConfigFactory;
 use ModularityFrontendForm\FieldMapping\Director\WordpressMappingDirector;
 use ModularityFrontendForm\FieldMapping\Mapper;
+use ModularityFrontendForm\FieldFormatting\UnavailableFieldType;
 use ModularityFrontendForm\Helper\CacheBust;
 use ModularityFrontendForm\Module\FieldFormatterResolvers\AcfGroupFields;
 use ModularityFrontendForm\Module\FieldFormatterResolvers\WordpressFields;
@@ -122,7 +123,15 @@ class FrontendForm extends \Modularity\Module
         //Current post id (the page where the form is displayed)
         $data['holdingPostId'] = $this->wpService->getQueriedObjectId();
 
-        $data['steps'] = $this->formatSteps->formatSteps(($this->fields->formSteps ?? []) ?: []);
+        try {
+            $data['steps'] = $this->formatSteps->formatSteps(($this->fields->formSteps ?? []) ?: []);
+        } catch (UnavailableFieldType) {
+            $data['error'] = $this->wpService->__(
+                'The form is temporarily unavailable. Please try again later.',
+                'modularity-frontend-form'
+            );
+            return $data;
+        }
 
         $data['stepsCount'] = count($data['steps']);
 

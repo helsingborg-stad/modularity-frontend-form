@@ -37,7 +37,7 @@ class RadioFieldMapper implements FieldMapperInterface
                 'label'    => $value,
                 'required' => $mapped['required'] ?: false,
                 'name'     => $this->config->getFieldNamespace($this->field['key']),
-                'value'    => $key,
+                'value'    => (string) $key,
                 'checked'  => ($this->field['default_value'] ?? '') === $key,
             ];
         }

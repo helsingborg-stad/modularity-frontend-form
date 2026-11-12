@@ -79,15 +79,7 @@ class DataProcessor implements DataProcessorInterface {
             return null;
         }
 
-        $wpError = $this->errors[0];
-
-        $remainingErrors = $this->getRemainingErrors();
-        if($remainingErrors) {
-            foreach($remainingErrors as $error) {
-                $wpError->add($error->get_error_code(), $error->get_error_message(), $error->get_error_data());
-            }
-        }
-        return $wpError;
+        return $this->errors[0];
     }
 
     /**
@@ -97,18 +89,4 @@ class DataProcessor implements DataProcessorInterface {
         return $this->errors ?: null;
     }
 
-    /**
-     * Get the remaining errors (not the primary/first error).
-     * 
-     * @return array|null An array of errors or null if no errors.
-     */
-    private function getRemainingErrors(): ?array {
-        if(empty($this->errors)) {
-            return null;
-        }
-        $remainingErrors = $this->errors;
-        array_shift($remainingErrors);
-
-        return $remainingErrors ?: null;
-    }
 }

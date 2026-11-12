@@ -61,5 +61,5 @@
         "@helsingborg-stad/openstreetmap": "0.53.8",
         "vite-config-factory": "^1.0.1"
     },
-    "version": "0.84.28"
+    "version": "0.84.30"
 }

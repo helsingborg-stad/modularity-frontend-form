@@ -9,6 +9,7 @@ use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\TextFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\Acf\PhoneFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\EmailFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\UrlFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\TextareaFieldMapper;
@@ -47,26 +48,27 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
      * @var array
      */
     protected array $mapperMap = [
-        'text'          => TextFieldMapper::class,
-        'email'         => EmailFieldMapper::class,
-        'url'           => UrlFieldMapper::class,
-        'textarea'      => TextareaFieldMapper::class,
-        'true_false'    => TrueFalseFieldMapper::class,
-        'select'        => SelectFieldMapper::class,
-        'checkbox'      => CheckboxFieldMapper::class,
-        'message'       => MessageFieldMapper::class,
-        'file'          => FileFieldMapper::class,
-        'number'        => NumberFieldMapper::class,
-        'image'         => ImageFieldMapper::class,
-        'radio'         => RadioFieldMapper::class,
-        'repeater'      => RepeaterFieldMapper::class,
-        'time_picker'   => TimePickerFieldMapper::class,
-        'date_picker'   => DatePickerFieldMapper::class,
-        'button_group'  => ButtonGroupFieldMapper::class,
-        'google_map'    => GoogleMapFieldMapper::class,
-        'taxonomy'      => TaxonomyFieldMapper::class,
-        'gallery'       => GalleryFieldMapper::class,
-        'wysiwyg'       => WysiwygFieldMapper::class
+        'text'                   => TextFieldMapper::class,
+        'phone_number'           => PhoneFieldMapper::class,
+        'email'                  => EmailFieldMapper::class,
+        'url'                    => UrlFieldMapper::class,
+        'textarea'               => TextareaFieldMapper::class,
+        'true_false'             => TrueFalseFieldMapper::class,
+        'select'                 => SelectFieldMapper::class,
+        'checkbox'               => CheckboxFieldMapper::class,
+        'message'                => MessageFieldMapper::class,
+        'file'                   => FileFieldMapper::class,
+        'number'                 => NumberFieldMapper::class,
+        'image'                  => ImageFieldMapper::class,
+        'radio'                  => RadioFieldMapper::class,
+        'repeater'               => RepeaterFieldMapper::class,
+        'time_picker'            => TimePickerFieldMapper::class,
+        'date_picker'            => DatePickerFieldMapper::class,
+        'button_group'           => ButtonGroupFieldMapper::class,
+        'google_map'             => GoogleMapFieldMapper::class,
+        'taxonomy'               => TaxonomyFieldMapper::class,
+        'gallery'                => GalleryFieldMapper::class,
+        'wysiwyg'                => WysiwygFieldMapper::class
     ];
 
     /**

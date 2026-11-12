@@ -193,6 +193,8 @@ class App implements \Municipio\HooksRegistrar\Hookable {
 
     public function setUpFieldFormatting(): void
     {
+        (new FieldFormatting\PhoneIntegration($this->wpService, $this->config))->addHooks();
+
         (new FieldFormatting\FormatMapFieldOnSubmit(
             $this->wpService
         ))->addHooks();

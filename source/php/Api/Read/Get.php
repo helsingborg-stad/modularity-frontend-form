@@ -3,6 +3,7 @@
 namespace ModularityFrontendForm\Api\Read;
 
 use AcfService\AcfService;
+use ModularityFrontendForm\FieldFormatting\DisplayValue;
 use ModularityFrontendForm\Api\RestApiEndpoint;
 use \ModularityFrontendForm\Config\ConfigInterface;
 use ModularityFrontendForm\Config\ModuleConfigFactoryInterface;
@@ -115,7 +116,7 @@ class Get extends RestApiEndpoint
                     $fields[$field['name']] = $this->convertGoogleMapFieldValueToSchema($field);
                     break;
                 default:
-                    $fields[$field['name']] = $field['value'];
+                    $fields[$field['name']] = (new DisplayValue($this->wpService))->format($field['value'], $field);
                     break;
             }
         }

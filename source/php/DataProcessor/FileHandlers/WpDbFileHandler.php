@@ -59,10 +59,25 @@ class WpDbFileHandler implements FileHandlerInterface {
                 require_once ABSPATH . 'wp-admin/includes/media.php';
                 require_once ABSPATH . 'wp-admin/includes/image.php';
 
+                $sideloadTmpName = $this->createSideloadableTmpFile($fileArray);
+                if ($sideloadTmpName === null) {
+                    $errors[$fieldKey][] = new WP_Error(
+                      RestApiResponseStatusEnums::FileError->value,
+                      $this->wpService->__('File upload error.', 'modularity-frontend-form')
+                    );
+                    continue;
+                }
+                $fileArray['tmp_name'] = $sideloadTmpName;
+
                 $attachmentIdOrWpError = $this->wpService->mediaHandleSideload(
                   $fileArray,
                   $postId ?? 0
                 );
+
+                // Sideload moves the file on success, remove leftovers on failure.
+                if (file_exists($sideloadTmpName)) {
+                    unlink($sideloadTmpName);
+                }
 
                 if ($this->wpService->isWpError($attachmentIdOrWpError)) {
                     $errors[$fieldKey][] = $attachmentIdOrWpError;
@@ -87,6 +102,40 @@ class WpDbFileHandler implements FileHandlerInterface {
         }
 
         return $results;
+    }
+
+    /**
+     * Copy the uploaded file to a temporary file whose name has an extension.
+     *
+     * PHP names uploaded temp files without an extension (e.g. /tmp/phpAbC123).
+     * Stream wrappers such as S3 Uploads treat extensionless paths as
+     * directories, which makes media_handle_sideload() fail with
+     * "File is empty". wp_tempnam() returns a name ending in .tmp, the same
+     * as core's download_url() uses for sideloads.
+     *
+     * @param array $fileArray The file array from the request.
+     * @return string|null The path to the copy, or null on failure.
+     */
+    private function createSideloadableTmpFile(array $fileArray): ?string
+    {
+        if (!is_readable($fileArray['tmp_name'])) {
+            return null;
+        }
+
+        $tmpName = wp_tempnam($fileArray['name']);
+
+        if (!$tmpName) {
+            return null;
+        }
+
+        if (!copy($fileArray['tmp_name'], $tmpName)) {
+            if (file_exists($tmpName)) {
+                unlink($tmpName);
+            }
+            return null;
+        }
+
+        return $tmpName;
     }
 
     /**

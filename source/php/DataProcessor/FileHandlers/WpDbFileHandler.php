@@ -49,10 +49,25 @@ class WpDbFileHandler implements FileHandlerInterface {
                 require_once ABSPATH . 'wp-admin/includes/media.php';
                 require_once ABSPATH . 'wp-admin/includes/image.php';
 
+                $sideloadTmpName = $this->createSideloadableTmpFile($fileArray);
+                if ($sideloadTmpName === null) {
+                    $errors[$fieldKey][] = new WP_Error(
+                      RestApiResponseStatusEnums::FileError->value,
+                      $this->wpService->__('File upload error.', 'modularity-frontend-form')
+                    );
+                    continue;
+                }
+                $fileArray['tmp_name'] = $sideloadTmpName;
+
                 $attachmentIdOrWpError = $this->wpService->mediaHandleSideload(
                   $fileArray,
                   $postId ?? 0
                 );
+
+                // Sideload consumes the file on success. Remove a failed sideload's copy.
+                if (file_exists($sideloadTmpName)) {
+                    unlink($sideloadTmpName);
+                }
 
                 if ($this->wpService->isWpError($attachmentIdOrWpError)) {
                     $errors[$fieldKey][] = $attachmentIdOrWpError;
@@ -77,6 +92,26 @@ class WpDbFileHandler implements FileHandlerInterface {
         }
 
         return $results;
+    }
+
+    /**
+     * Create an extension-bearing copy for media_handle_sideload().
+     *
+     * PHP upload temp files are extensionless. Some upload stream wrappers
+     * interpret such paths as directories during the sideload prefilter.
+     */
+    private function createSideloadableTmpFile(array $fileArray): ?string
+    {
+        $tmpName = $this->wpService->wpTempnam($fileArray['name']);
+
+        if (empty($tmpName) || !copy($fileArray['tmp_name'], $tmpName)) {
+            if (!empty($tmpName) && file_exists($tmpName)) {
+                unlink($tmpName);
+            }
+            return null;
+        }
+
+        return $tmpName;
     }
 
     /**

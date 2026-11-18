@@ -12,6 +12,8 @@ use WpService\Implementations\FakeWpService;
 
 final class WpDbFileHandlerTest extends TestCase
 {
+    private array $sourcePaths = [];
+
     public static function setUpBeforeClass(): void
     {
         if (defined('ABSPATH')) {
@@ -28,6 +30,9 @@ final class WpDbFileHandlerTest extends TestCase
 
     public function testPassesCanonicalWordPressFileArraysToSideload(): void
     {
+        $single = $this->createSourceFile('single');
+        $first = $this->createSourceFile('first');
+        $second = $this->createSourceFile('second');
         $request = $this->createMock(WP_REST_Request::class);
         $request->method('get_file_params')->willReturn(['acf' => [
             'name' => [
@@ -41,8 +46,8 @@ final class WpDbFileHandlerTest extends TestCase
                 'field_optional' => [''],
             ],
             'tmp_name' => [
-                'field_single' => '/tmp/php-single',
-                'field_multiple' => ['/tmp/php-first', '/tmp/php-second'],
+                'field_single' => $single,
+                'field_multiple' => [$first, $second],
                 'field_optional' => [''],
             ],
             'error' => [
@@ -59,14 +64,26 @@ final class WpDbFileHandlerTest extends TestCase
         $config = $this->createMock(Config::class);
         $config->method('getFieldNamespace')->willReturn('acf');
         $module = $this->createMock(ModuleConfigInterface::class);
+        $contents = [
+            'single.pdf' => 'single',
+            'first.pdf' => 'first',
+            'second.pdf' => 'second',
+        ];
         $wp = new FakeWpService([
-            'mediaHandleSideload' => static function (array $file): int {
+            'wpTempnam' => static function (): string {
+                $path = tempnam(sys_get_temp_dir(), 'mff-sideload-');
+                $withExtension = $path . '.tmp';
+                rename($path, $withExtension);
+                return $withExtension;
+            },
+            'mediaHandleSideload' => static function (array $file) use ($contents): int {
                 static $id = 100;
                 self::assertSame(
                     ['name', 'type', 'tmp_name', 'error', 'size'],
                     array_keys($file),
                 );
-                self::assertNotSame('', $file['tmp_name']);
+                self::assertStringEndsWith('.tmp', $file['tmp_name']);
+                self::assertSame($contents[$file['name']], file_get_contents($file['tmp_name']));
                 return ++$id;
             },
             'isWpError' => false,
@@ -77,9 +94,27 @@ final class WpDbFileHandlerTest extends TestCase
 
         self::assertCount(3, $wp->methodCalls['mediaHandleSideload']);
         self::assertSame([99, 99, 99], array_column($wp->methodCalls['mediaHandleSideload'], 1));
-        self::assertSame('/tmp/php-single', $wp->methodCalls['mediaHandleSideload'][0][0]['tmp_name']);
-        self::assertSame('/tmp/php-second', $wp->methodCalls['mediaHandleSideload'][2][0]['tmp_name']);
+        self::assertFileDoesNotExist($wp->methodCalls['mediaHandleSideload'][0][0]['tmp_name']);
+        self::assertFileDoesNotExist($wp->methodCalls['mediaHandleSideload'][2][0]['tmp_name']);
         self::assertSame([102, 103], array_column($result['field_multiple'], 'id'));
         self::assertArrayNotHasKey('field_optional', $result);
+    }
+
+    protected function tearDown(): void
+    {
+        foreach ($this->sourcePaths as $path) {
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
+    }
+
+    private function createSourceFile(string $contents): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'mff-upload-');
+        file_put_contents($path, $contents);
+        $this->sourcePaths[] = $path;
+
+        return $path;
     }
 }

@@ -76,7 +76,7 @@ class WpDbFileHandler implements FileHandlerInterface {
 
                 // Sideload moves the file on success, remove leftovers on failure.
                 if (file_exists($sideloadTmpName)) {
-                    @unlink($sideloadTmpName);
+                    unlink($sideloadTmpName);
                 }
 
                 if ($this->wpService->isWpError($attachmentIdOrWpError)) {
@@ -118,11 +118,19 @@ class WpDbFileHandler implements FileHandlerInterface {
      */
     private function createSideloadableTmpFile(array $fileArray): ?string
     {
+        if (!is_readable($fileArray['tmp_name'])) {
+            return null;
+        }
+
         $tmpName = wp_tempnam($fileArray['name']);
 
-        if (!$tmpName || !@copy($fileArray['tmp_name'], $tmpName)) {
-            if ($tmpName && file_exists($tmpName)) {
-                @unlink($tmpName);
+        if (!$tmpName) {
+            return null;
+        }
+
+        if (!copy($fileArray['tmp_name'], $tmpName)) {
+            if (file_exists($tmpName)) {
+                unlink($tmpName);
             }
             return null;
         }

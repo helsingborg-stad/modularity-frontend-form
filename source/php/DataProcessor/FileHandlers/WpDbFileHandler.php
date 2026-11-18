@@ -8,6 +8,7 @@ use WP_REST_Request;
 use WpService\WpService;
 use WP_Error;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use ModularityFrontendForm\Helper\FilesArrayFormatter;
 
 class WpDbFileHandler implements FileHandlerInterface {
 
@@ -28,23 +29,12 @@ class WpDbFileHandler implements FileHandlerInterface {
     public function handle(WP_REST_Request $request, ?int $postId = null): WP_Error|array
     {
 
-        $files     = $request->get_file_params()[$this->config->getFieldNamespace()] ?? [];
-        $fieldKeys = array_keys($files['name'] ?? []);
         $results   = [];
         $errors    = [];
-        $files     = $this->filterEmptyFieldKeys($fieldKeys, $files);
+        $files     = (new FilesArrayFormatter($request, $this->config))->getFormatted() ?? [];
 
-        foreach ($fieldKeys as $fieldKey) {
-            $fileCount = is_array($files['name'][$fieldKey]) ? count($files['name'][$fieldKey]) : 0;
-
-            for ($i = 0; $i < $fileCount; $i++) {
-                $fileArray = [
-                    'name'     => $files['name'][$fieldKey][$i] ?? '',
-                    'type'     => $files['type'][$fieldKey][$i] ?? '',
-                    'tmp_name' => $files['tmp_name'][$fieldKey][$i] ?? '',
-                    'error'    => $files['error'][$fieldKey][$i] ?? 4,
-                    'size'     => $files['size'][$fieldKey][$i] ?? 0,
-                ];
+        foreach ($files as $fieldKey => $fieldFiles) {
+            foreach ($fieldFiles as $fileArray) {
 
                 if (empty($fileArray['name']) || $fileArray['error'] !== UPLOAD_ERR_OK) {
                     $errors[$fieldKey][] = new WP_Error(
@@ -87,27 +77,6 @@ class WpDbFileHandler implements FileHandlerInterface {
         }
 
         return $results;
-    }
-
-    /**
-     * Filter out field keys that have no files uploaded.
-     *
-     * @param array $fieldKeys The field keys to check.
-     * @return array The filtered field keys.
-     */
-    private function filterEmptyFieldKeys(array $fieldKeys, array $files): array {
-        foreach ($fieldKeys as $fieldKey) {
-            $tmpNames = $files['tmp_name'][$fieldKey] ?? [];
-            if (!is_array($tmpNames)) {
-              $tmpNames = [$tmpNames];
-            }
-            if (count(array_filter($tmpNames, fn($v) => !empty($v))) === 0) {
-              foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $attr) {
-                  unset($files[$attr][$fieldKey]);
-              }
-            }
-        }
-        return $files;
     }
 
     /**

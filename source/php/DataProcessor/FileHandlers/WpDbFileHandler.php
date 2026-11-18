@@ -8,6 +8,7 @@ use WP_REST_Request;
 use WpService\WpService;
 use WP_Error;
 use ModularityFrontendForm\Api\RestApiResponseStatusEnums;
+use ModularityFrontendForm\Helper\FilesArrayFormatter;
 
 class WpDbFileHandler implements FileHandlerInterface {
 
@@ -28,23 +29,12 @@ class WpDbFileHandler implements FileHandlerInterface {
     public function handle(WP_REST_Request $request, ?int $postId = null): WP_Error|array
     {
 
-        $files     = $request->get_file_params()[$this->config->getFieldNamespace()] ?? [];
-        $fieldKeys = array_keys($files['name'] ?? []);
         $results   = [];
         $errors    = [];
-        $files     = $this->filterEmptyFieldKeys($fieldKeys, $files);
+        $files     = (new FilesArrayFormatter($request, $this->config))->getFormatted() ?? [];
 
-        foreach ($fieldKeys as $fieldKey) {
-            $fileCount = is_array($files['name'][$fieldKey]) ? count($files['name'][$fieldKey]) : 0;
-
-            for ($i = 0; $i < $fileCount; $i++) {
-                $fileArray = [
-                    'name'     => $files['name'][$fieldKey][$i] ?? '',
-                    'type'     => $files['type'][$fieldKey][$i] ?? '',
-                    'tmp_name' => $files['tmp_name'][$fieldKey][$i] ?? '',
-                    'error'    => $files['error'][$fieldKey][$i] ?? 4,
-                    'size'     => $files['size'][$fieldKey][$i] ?? 0,
-                ];
+        foreach ($files as $fieldKey => $fieldFiles) {
+            foreach ($fieldFiles as $fileArray) {
 
                 if (empty($fileArray['name']) || $fileArray['error'] !== UPLOAD_ERR_OK) {
                     $errors[$fieldKey][] = new WP_Error(
@@ -59,10 +49,25 @@ class WpDbFileHandler implements FileHandlerInterface {
                 require_once ABSPATH . 'wp-admin/includes/media.php';
                 require_once ABSPATH . 'wp-admin/includes/image.php';
 
+                $sideloadTmpName = $this->createSideloadableTmpFile($fileArray);
+                if ($sideloadTmpName === null) {
+                    $errors[$fieldKey][] = new WP_Error(
+                      RestApiResponseStatusEnums::FileError->value,
+                      $this->wpService->__('File upload error.', 'modularity-frontend-form')
+                    );
+                    continue;
+                }
+                $fileArray['tmp_name'] = $sideloadTmpName;
+
                 $attachmentIdOrWpError = $this->wpService->mediaHandleSideload(
                   $fileArray,
                   $postId ?? 0
                 );
+
+                // Sideload consumes the file on success. Remove a failed sideload's copy.
+                if (file_exists($sideloadTmpName)) {
+                    unlink($sideloadTmpName);
+                }
 
                 if ($this->wpService->isWpError($attachmentIdOrWpError)) {
                     $errors[$fieldKey][] = $attachmentIdOrWpError;
@@ -90,24 +95,23 @@ class WpDbFileHandler implements FileHandlerInterface {
     }
 
     /**
-     * Filter out field keys that have no files uploaded.
+     * Create an extension-bearing copy for media_handle_sideload().
      *
-     * @param array $fieldKeys The field keys to check.
-     * @return array The filtered field keys.
+     * PHP upload temp files are extensionless. Some upload stream wrappers
+     * interpret such paths as directories during the sideload prefilter.
      */
-    private function filterEmptyFieldKeys(array $fieldKeys, array $files): array {
-        foreach ($fieldKeys as $fieldKey) {
-            $tmpNames = $files['tmp_name'][$fieldKey] ?? [];
-            if (!is_array($tmpNames)) {
-              $tmpNames = [$tmpNames];
+    private function createSideloadableTmpFile(array $fileArray): ?string
+    {
+        $tmpName = $this->wpService->wpTempnam($fileArray['name']);
+
+        if (empty($tmpName) || !copy($fileArray['tmp_name'], $tmpName)) {
+            if (!empty($tmpName) && file_exists($tmpName)) {
+                unlink($tmpName);
             }
-            if (count(array_filter($tmpNames, fn($v) => !empty($v))) === 0) {
-              foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $attr) {
-                  unset($files[$attr][$fieldKey]);
-              }
-            }
+            return null;
         }
-        return $files;
+
+        return $tmpName;
     }
 
     /**

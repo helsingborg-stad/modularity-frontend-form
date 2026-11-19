@@ -84,8 +84,15 @@ class DataProcessor implements DataProcessorInterface {
         $remainingErrors = $this->getRemainingErrors();
         if($remainingErrors) {
             foreach($remainingErrors as $error) {
-                $wpError->add($error->get_error_code(), $error->get_error_message(), $error->get_error_data());
+                $wpError->merge_from($error);
             }
+        }
+        $data = $wpError->get_error_data();
+        if (!is_array($data)) {
+            $data = ['details' => $data];
+        }
+        if (!isset($data['status'])) {
+            $wpError->add_data($data + ['status' => 400]);
         }
         return $wpError;
     }

@@ -81,7 +81,8 @@
                     'u-display--none'
                 ],
                 'attributeList' => [
-                    'data-js-frontend-form-working-return-button' => 'true'
+                    'data-js-frontend-form-working-return-button' => 'true',
+                    'data-show-fields-label' => $lang->showField ?? 'Show error'
                 ],
                 'text' => $lang->return ?? 'Return'
             ])

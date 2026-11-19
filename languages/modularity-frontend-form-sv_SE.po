@@ -551,6 +551,9 @@ msgstr "Steg"
 msgid "Return"
 msgstr "Återvänd"
 
+msgid "Show error"
+msgstr "Visa felet"
+
 #: php/Module/FrontendForm.php:174
 msgid "Completed"
 msgstr "Slutförd"

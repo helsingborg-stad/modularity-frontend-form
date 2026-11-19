@@ -1,4 +1,5 @@
 import AsyncNonce from "../asyncNonce/asyncNonce";
+import ServerErrors from "./serverErrors";
 import StatusHandler from "../formStatus/handler";
 import { SubmitStatus } from "../formStatus/enum";
 import Form from "../form/form";
@@ -13,6 +14,7 @@ class Submit implements SubmitInterface {
 		private asyncNonce: AsyncNonce,
 		private statusHandler: StatusHandler,
 		private statusRenderer: StatusRendererInterface,
+		private serverErrors?: ServerErrors,
 	) {
 		this.disableFormSubmission();
 	}
@@ -132,27 +134,30 @@ class Submit implements SubmitInterface {
 
 			// Failed
 			if (!response.ok) {
-				if (json.code == "invalid_field_values") {
-					this.statusHandler.setStatus(
-						SubmitStatus.Error,
-						json?.message ?? this.modularityFrontendFormLang?.submitError,
-						"data_alert",
-						0,
-						2000,
-						this,
-						this,
-					);
-					return;
-				}
-
+				const fallback = this.modularityFrontendFormLang?.submitError || "Form submission failed. Please try again.";
+				const errors = this.serverErrors?.display(json, fallback);
+				const fields = errors?.fields ?? [];
+				const returnAction: FormActionInterface = fields.length ? {
+					showFields: true,
+					retry: () => this.retry(),
+					return: () => {
+						this.return();
+						this.form.formElement.dispatchEvent(new CustomEvent("serverFieldErrors", { detail: fields }));
+					},
+				} : this;
+				// Handler errors can occur after a webhook has already created the record.
+				const canRetry = !fields.length && json?.code !== "validation_error"
+					&& json?.code !== "invalid_field_values" && json?.code !== "handler_error"
+					&& (response.status === 429 || response.status === 503);
+				this.statusRenderer.reset();
 				this.statusHandler.setStatus(
 					SubmitStatus.Error,
-					json?.message ?? this.modularityFrontendFormLang?.submitError,
+					errors?.messages.join("\n") || (typeof json?.message === "string" && json.message.trim() ? json.message : fallback),
 					"error",
 					0,
 					3000,
-					this,
-					this,
+					returnAction,
+					canRetry ? this : false,
 				);
 				return;
 			}

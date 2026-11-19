@@ -19,6 +19,17 @@ class Steps implements StepsInterface {
 		this.setupNext();
 		this.setupEdit();
 		this.setupPopstate();
+		this.stepNavigator.getActiveStep().getStepContainer().closest("form")?.addEventListener("serverFieldErrors", (event) => {
+			const fields = (event as CustomEvent<HTMLElement[]>).detail;
+			const first = Object.values(this.steps).find(step =>
+				fields.some(field => step.getStepContainer().contains(field)));
+			if (!first) return;
+			const current = this.stepNavigator.getActiveStep();
+			const target = this.stepNavigator.goTo(first.getId());
+			this.stepUIManager.handleValidity(first, false);
+			if (target) this.handleMove(current, target);
+			first.getStepContainer().scrollIntoView({ behavior: "smooth" });
+		});
 		this.updateUrlWithStep(this.stepNavigator.getActiveStepIndex(), true);
 	}
 

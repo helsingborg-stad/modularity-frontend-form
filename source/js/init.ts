@@ -2,6 +2,7 @@ import Steps from './steps/steps';
 import StepUIManager from './steps/stepUIManager';
 import StepNavigator from './steps/stepNavigator';
 import Submit from './submit/submit';
+import ServerErrors from './submit/serverErrors';
 import FieldBuilder from './fields/fieldBuilder';
 import ConditionBuilder from './conditions/conditionBuilder';
 import AsyncNonce from './asyncNonce/asyncNonce';
@@ -43,16 +44,16 @@ class FormHandler {
 			return;
 		}
 
+		const fieldsInitiatorInstance = new FieldsInitiator();
+		const builder = this.createBuilder(fieldsInitiatorInstance);
 		const stepValidator = new StepValidator();
-		const stepsObject = this.setupSteps(stepValidator, statusRenderer);
+		const stepsObject = this.setupSteps(stepValidator, statusRenderer, builder);
 
 		if (!stepsObject) {
 			console.error('No steps were found');
 			return;
 		}
 
-		const fieldsInitiatorInstance = new FieldsInitiator();
-		const builder = this.createBuilder(fieldsInitiatorInstance);
 		const conditionBuilder = new ConditionBuilder(builder);
 		stepValidator.init(builder);
 		fieldsInitiatorInstance.init(builder);
@@ -124,7 +125,7 @@ class FormHandler {
 		}
 	}
 
-	private setupSteps(validator: StepValidatorInterface, statusRenderer: StatusRendererInterface): StepsObject | null {
+	private setupSteps(validator: StepValidatorInterface, statusRenderer: StatusRendererInterface, builder: FieldBuilderInterface): StepsObject | null {
 		const nextButton = this.formContainer.querySelector('[data-js-frontend-form-next-step]');
 		const previousButton = this.formContainer.querySelector('[data-js-frontend-form-previous-step]');
 
@@ -142,6 +143,7 @@ class FormHandler {
 			new AsyncNonce(modularityFrontendFormData, modularityFrontendFormLang),
 			new StatusHandler(this.formContainer),
 			statusRenderer,
+			new ServerErrors(builder, this.form.formElement),
 		);
 
 		const stepUIManager = new StepUIManager(

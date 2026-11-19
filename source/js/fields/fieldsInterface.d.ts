@@ -110,6 +110,7 @@ interface FieldValueLoaderInterface {
 }
 
 interface FieldValidatorInterface {
+	setServerError?(message: string): void;
 	init(field: FieldInterface): void;
 	validate(): boolean;
 }

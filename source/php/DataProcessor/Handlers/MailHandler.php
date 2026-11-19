@@ -49,10 +49,11 @@ class MailHandler implements HandlerInterface {
       return $this->handlerResult;
     }
 
+    $fields = $data[$this->config->getFieldNamespace()] ?? [];
     $this->sendEmail(
       $reducedReciversToArray ?? [],
       $this->createEmailSubject($data),
-      $this->createEmailBody($data)
+      $this->createEmailBody(is_array($fields) ? $fields : [])
     );
 
     return $this->handlerResult;
@@ -199,7 +200,11 @@ class MailHandler implements HandlerInterface {
    */
   public function sanitizeFieldValue($value): string
   {
-    return $this->wpService->sanitizeTextField($value);
+    if (is_array($value)) {
+      return implode(', ', array_map([$this, 'sanitizeFieldValue'], $value));
+    }
+
+    return $this->wpService->sanitizeTextField((string) $value);
   }
 
   /**

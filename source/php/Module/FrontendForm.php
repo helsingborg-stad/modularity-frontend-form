@@ -166,6 +166,7 @@ class FrontendForm extends \Modularity\Module
             'of'                            => $this->wpService->__('of', 'modularity-frontend-form'),
             'step'                          => $this->wpService->__('Step', 'modularity-frontend-form'),
             'return'                        => $this->wpService->__('Return', 'modularity-frontend-form'),
+            'showField'                     => $this->wpService->__('Show error', 'modularity-frontend-form'),
             'completed'                     => $this->wpService->__('Completed', 'modularity-frontend-form'),
             'noResultsFound'                => $this->wpService->__('No results found', 'modularity-frontend-form'),
             'searchPlaceholder'             => $this->wpService->__('Search location...', 'modularity-frontend-form'),

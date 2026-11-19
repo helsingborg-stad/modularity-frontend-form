@@ -187,6 +187,8 @@ class WebHookHandler implements HandlerInterface
     {
         $normalizersByType = [
             'true_false'  => fn($v) => (bool)(int) $v,
+            // Avoid ACF's per-post value cache mixing different repeater rows.
+            'phone_number' => fn($value, $field) => $this->wpService->applyFilters('acf/format_value', $value, 0, $field, false),
             'google_map'  => function ($value) {
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 return is_array($value) ? $value : null;
@@ -204,7 +206,7 @@ class WebHookHandler implements HandlerInterface
             $fieldType = $fieldObject['type'] ?? 'null';
             $hasNormalizer = fn($t) => in_array($t, array_keys($normalizersByType));
             $normalizeFn = $hasNormalizer($fieldType) ? $normalizersByType[$fieldType] : $normalizersByType['null'];
-            $formData[$fieldId] = $normalizeFn($formData[$fieldId]);
+            $formData[$fieldId] = $normalizeFn($formData[$fieldId], $fieldObject);
         }
         
         return $formData;

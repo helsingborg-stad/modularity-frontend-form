@@ -89,6 +89,7 @@ class FieldBuilder implements FieldBuilderInterface {
 				);
 				break;
 			case "text":
+			case "tel":
 				fieldInstance = TextFactory.create(
 					field,
 					this.getFieldName(field),

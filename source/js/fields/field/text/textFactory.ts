@@ -14,7 +14,7 @@ class TextFactory {
 		notices: NoticeInterface,
 		stepId: string,
 	): FieldInterface {
-		const input = field.querySelector(`input[type="text"]`) as HTMLInputElement
+		const input = field.querySelector(`input[type="text"], input[type="tel"]`) as HTMLInputElement
 
 		if (!input) {
 			console.error('Text field is missing input element.')

@@ -9,6 +9,7 @@ use ModularityFrontendForm\FieldMapping\Director\FieldMappingDirectorInterface;
 use ModularityFrontendForm\FieldMapping\Mapper\Interfaces\FieldMapperInterface;
 
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\TextFieldMapper;
+use ModularityFrontendForm\FieldMapping\Mapper\Acf\PhoneNumberFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\EmailFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\UrlFieldMapper;
 use ModularityFrontendForm\FieldMapping\Mapper\Acf\TextareaFieldMapper;
@@ -48,6 +49,7 @@ class FieldMappingDirector implements FieldMappingDirectorInterface
      */
     protected array $mapperMap = [
         'text'          => TextFieldMapper::class,
+        'phone_number'  => PhoneNumberFieldMapper::class,
         'email'         => EmailFieldMapper::class,
         'url'           => UrlFieldMapper::class,
         'textarea'      => TextareaFieldMapper::class,

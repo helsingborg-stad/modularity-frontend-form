@@ -2,6 +2,8 @@
 
 A modular, accessible, and extensible multi-step frontend form system for WordPress, built with TypeScript, PHP, and SCSS. Supports custom field types, validation, REST API integration, and advanced admin configuration.
 
+The wpservice 3 dependency supports PHP 8.2 through 8.5.
+
 ---
 
 ## Features

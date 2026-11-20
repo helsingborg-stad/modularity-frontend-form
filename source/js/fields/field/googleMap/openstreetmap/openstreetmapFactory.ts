@@ -13,19 +13,17 @@ class OpenstreetmapFactory {
 			return null;
 		}
 
-		const map = openstreetmapContainer.querySelector(
-			"[data-js-openstreetmap]",
-		) as HTMLElement;
+		const map = openstreetmapContainer.querySelector<HTMLElement>("[data-js-form-map]");
 
 		if (!map) {
 			console.error("OpenstreetmapFactory: Missing map element.");
 			return null;
 		}
 
-		const id = map.id;
-		const zoom = map.dataset.jsZoom ?? "14";
-		const lat = map.dataset.jsLat;
-		const lng = map.dataset.jsLng;
+		const id = map.dataset.jsFormMap;
+		const zoom = map.dataset.jsMapZoom ?? "14";
+		const lat = map.dataset.jsMapLat;
+		const lng = map.dataset.jsMapLng;
 
 		if (id && zoom && lat && lng) {
 			return new Openstreetmap(
